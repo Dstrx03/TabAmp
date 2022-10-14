@@ -1,5 +1,5 @@
-﻿using System.Text;
-using TabAmp.Infrastructure;
+﻿using TabAmp.Infrastructure;
+using Decoder = TabAmp.Infrastructure.Decoder;
 
 namespace TabAmp.ConsoleApp
 {
@@ -10,15 +10,11 @@ namespace TabAmp.ConsoleApp
             var path = "../../../../../file.gp5";
 
             using var reader = new Reader(path);
-            Memory<byte> buffer;
+            var decoder = new Decoder(reader);
 
-            buffer = await reader.ReadBytesAsync(1, default);
-            var verTextSize = buffer.Span[0];
+            var version = await decoder.ReadByteStringAsync(default);
 
-            buffer = await reader.ReadBytesAsync(verTextSize, default);
-            var verText = Encoding.UTF8.GetString(buffer.Span);
-
-            Console.WriteLine($"verTextSize: {verTextSize}, verText: {verText}");
+            Console.WriteLine($"version: '{version}'");
         }
     }
 }
