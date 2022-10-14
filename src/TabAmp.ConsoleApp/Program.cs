@@ -1,4 +1,4 @@
-﻿using System.Buffers;
+﻿using System.Text;
 using TabAmp.Infrastructure;
 
 namespace TabAmp.ConsoleApp
@@ -10,14 +10,15 @@ namespace TabAmp.ConsoleApp
             var path = "../../../../../file.gp5";
 
             using var reader = new Reader(path);
-            using var owner = MemoryPool<byte>.Shared.Rent();
+            Memory<byte> buffer;
 
-            var buffer = owner.Memory[..4];
+            buffer = await reader.ReadBytesAsync(1, default);
+            var verTextSize = buffer.Span[0];
 
-            await reader.ReadBytesAsync(buffer, default);
-            await reader.ReadBytesAsync(buffer, default);
+            buffer = await reader.ReadBytesAsync(verTextSize, default);
+            var verText = Encoding.UTF8.GetString(buffer.Span);
 
-            Console.WriteLine("Exit");
+            Console.WriteLine($"verTextSize: {verTextSize}, verText: {verText}");
         }
     }
 }
