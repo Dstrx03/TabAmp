@@ -6,7 +6,14 @@
 
         public Reader()
         {
-            _stream = File.Open("", FileMode.Open);
+            _stream = File.Open("../../../../../file.gp5", FileMode.Open);
+        }
+
+        public async Task<byte[]> ReadBytesAsync()
+        {
+            var buffer = new byte[_stream.Length];
+            await _stream.ReadAsync(buffer);
+            return buffer;
         }
 
         public void Dispose()

@@ -4,11 +4,13 @@ namespace TabAmp.ConsoleApp
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             using var reader = new Reader();
 
-            Console.ReadLine();
+            var bytes = await reader.ReadBytesAsync();
+
+            Console.WriteLine(bytes.Length);
         }
     }
 }
