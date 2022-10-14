@@ -1,6 +1,6 @@
 ﻿namespace TabAmp.Infrastructure
 {
-    internal class Reader : IDisposable
+    public class Reader : IDisposable
     {
         private readonly FileStream _stream;
 
