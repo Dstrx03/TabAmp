@@ -9,9 +9,6 @@ namespace TabAmp.ConsoleApp
             var path = "../../../../../file.gp5";
 
             using var reader = new Reader(path);
-
-            var readOnlyMemory_1 = await reader.ReadBytesAsync(4, default);
-            var readOnlyMemory_2 = await reader.ReadBytesAsync(4, default);
         }
     }
 }
