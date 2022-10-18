@@ -13,7 +13,7 @@ namespace TabAmp.Infrastructure
             _owner = MemoryPool<byte>.Shared.Rent();
         }
 
-        public async Task<ReadOnlyMemory<byte>> ReadBytesAsync(int count, CancellationToken cancellationToken)
+        public async ValueTask<ReadOnlyMemory<byte>> ReadBytesAsync(int count, CancellationToken cancellationToken)
         {
             var buffer = _owner.Memory[..count];
             await _stream.ReadAsync(buffer, cancellationToken);
@@ -24,6 +24,14 @@ namespace TabAmp.Infrastructure
         {
             _stream?.Dispose();
             _owner?.Dispose();
+        }
+
+        [Obsolete]
+        public async Task<ReadOnlyMemory<byte>> ReadBytesAsync_Task(int count, CancellationToken cancellationToken)
+        {
+            var buffer = _owner.Memory[..count];
+            await _stream.ReadAsync(buffer, cancellationToken);
+            return buffer;
         }
 
         [Obsolete]

@@ -1,5 +1,4 @@
 ﻿using TabAmp.Infrastructure;
-using Decoder = TabAmp.Infrastructure.Decoder;
 
 namespace TabAmp.ConsoleApp
 {
