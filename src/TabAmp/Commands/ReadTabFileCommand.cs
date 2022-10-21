@@ -1,15 +1,19 @@
 ﻿using MediatR;
+using TabAmp.IO;
+using TabAmp.Models;
 
 namespace TabAmp.Commands
 {
-    public record ReadTabFileCommand(string Path) : IRequest<ReadTabFileResult>;
+    public record ReadTabFileCommand(string Path) : IRequest<Song>;
 
-    public class ReadTabFileCommandHandler : IRequestHandler<ReadTabFileCommand, ReadTabFileResult>
+    public class ReadTabFileCommandHandler : IRequestHandler<ReadTabFileCommand, Song>
     {
-        public Task<ReadTabFileResult> Handle(ReadTabFileCommand request, CancellationToken cancellationToken)
-        {
-            var result = new ReadTabFileResult { Path = request.Path };
-            return Task.FromResult(result);
-        }
+        private readonly TabFileReader _tabFileReader;
+
+        public ReadTabFileCommandHandler(TabFileReader tabFileReader) =>
+            _tabFileReader = tabFileReader;
+
+        public Task<Song> Handle(ReadTabFileCommand request, CancellationToken cancellationToken) =>
+            _tabFileReader.ReadAsync();
     }
 }
