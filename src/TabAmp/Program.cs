@@ -16,6 +16,7 @@ namespace TabAmp
                     services.AddMediatR(typeof(Program));
                     services.AddTransient<TabFileReader>();
                     services.AddTransient<TabFileTypesReader>();
+                    services.AddScoped<Reader>();
                 })
                 .Build();
 
@@ -24,11 +25,11 @@ namespace TabAmp
 
             var mediator = host.Services.GetRequiredService<IMediator>();
 
-            var song_1 = await mediator.Send(new ReadTabFileCommand(path));
-            Console.WriteLine($"Song 1 Version: '{song_1.Version}'");
+            var songFirst = await mediator.Send(new ReadTabFileCommand(path));
+            Console.WriteLine($"First Song Version: '{songFirst.Version}'");
 
-            var song_2 = await mediator.Send(new ReadTabFileCommand(path));
-            Console.WriteLine($"Song 2 Version: '{song_2.Version}'");
+            var songSecond = await mediator.Send(new ReadTabFileCommand(path));
+            Console.WriteLine($"Second Song Version: '{songSecond.Version}'");
 
             await host.RunAsync();
         }

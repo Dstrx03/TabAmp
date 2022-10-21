@@ -1,19 +1,33 @@
 ﻿namespace TabAmp.IO
 {
-    public abstract class Reader : IDisposable
+    public class Reader : IDisposable
     {
-        private byte _fakeData = 65;
+        private FileStream _fileStream;
 
-        public Reader()
+        public void Open(string path)
         {
+            var options = new FileStreamOptions
+            {
+                Options = FileOptions.Asynchronous,
+                BufferSize = 0,
+                Share = FileShare.None
+            };
+            _fileStream = File.Open(path, options);
         }
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            _fileStream?.Dispose();
         }
 
-        protected ValueTask<ReadOnlyMemory<byte>> ReadBytesSequenceAsync(int count) =>
-            ValueTask.FromResult(new ReadOnlyMemory<byte>(new[] { _fakeData++ }));
+        public async ValueTask<ReadOnlyMemory<byte>> ReadBytesSequenceAsync(int count)
+        {
+            var buffer = new byte[count];
+            await _fileStream.ReadAsync(buffer);
+            return buffer;
+        }
+
+        public void SkipBytesSequence(int count) =>
+            _fileStream.Position += count;
     }
 }
