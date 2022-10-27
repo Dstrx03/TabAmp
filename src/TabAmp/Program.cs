@@ -16,7 +16,7 @@ namespace TabAmp
                     services.AddMediatR(typeof(Program));
                     services.AddTransient<TabFileReader>();
                     services.AddTransient<TabFileTypesReader>();
-                    services.AddScoped<Reader>();
+                    services.AddScoped<IReader, Reader>();
                 })
                 .Build();
 

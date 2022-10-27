@@ -17,8 +17,13 @@ namespace TabAmp.Commands
         public async Task<Song> Handle(ReadTabFileCommand request, CancellationToken cancellationToken)
         {
             using IServiceScope scope = _serviceScopeFactory.CreateScope();
+
+            var reader = scope.ServiceProvider.GetRequiredService<IReader>();
+            reader.Open(request.Path);
+
             var tabFileReader = scope.ServiceProvider.GetRequiredService<TabFileReader>();
-            var song = await tabFileReader.ReadAsync(request.Path);
+            var song = await tabFileReader.ReadAsync();
+
             return song;
         }
     }

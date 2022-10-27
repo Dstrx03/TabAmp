@@ -1,6 +1,6 @@
 ﻿namespace TabAmp.IO
 {
-    public class Reader : IDisposable
+    public class Reader : IReader
     {
         private FileStream _fileStream;
 
