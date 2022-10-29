@@ -1,30 +1,38 @@
-﻿using System.Text;
+﻿using Microsoft.Extensions.DependencyInjection;
 using TabAmp.Models;
 
 namespace TabAmp.IO
 {
-    public class TabFileReader
+    public class TabFileReader : ITabFileReader
     {
-        private readonly TabFileTypesReader _typesReader;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
 
-        public TabFileReader(TabFileTypesReader typesReader) =>
-             _typesReader = typesReader;
+        public TabFileReader(IServiceScopeFactory serviceScopeFactory) =>
+            _serviceScopeFactory = serviceScopeFactory;
 
-        public async Task<Song> ReadAsync()
+        public Task<Song> ReadAsync(string path, CancellationToken cancellationToken)
         {
-            var song = new Song();
-            await ReadVersionAsync(song);
-            return song;
+            using var scope = CreateScope();
+            var context = CreateContextForScope(scope, path, cancellationToken);
+            var readingProcedure = GetReadingProcedure(scope, context);
+            return readingProcedure.ReadAsync();
         }
 
-        private async Task ReadVersionAsync(Song song)
+        private IServiceScope CreateScope() =>
+            _serviceScopeFactory.CreateScope();
+
+        private ITabFileReaderContext CreateContextForScope(IServiceScope scope, string path, CancellationToken cancellationToken)
         {
-            _typesReader.SkipBytesSequence(2);
-            var versionBytes = new byte[4];
-            for (var i = 0; i < 4; i++)
-                versionBytes[i] = await _typesReader.ReadByteAsync();
-            var versionString = Encoding.UTF8.GetString(versionBytes);
-            song.Version = versionString;
+            var context = GetRequiredService<TabFileReaderContext>(scope);
+            context.Path = path;
+            context.CancellationToken = cancellationToken;
+            return context;
         }
+
+        private ITabFileReadingProcedure GetReadingProcedure(IServiceScope scope, ITabFileReaderContext context) =>
+            GetRequiredService<GP5ReadingProcedure>(scope);
+
+        private T GetRequiredService<T>(IServiceScope scope) =>
+            scope.ServiceProvider.GetRequiredService<T>();
     }
 }

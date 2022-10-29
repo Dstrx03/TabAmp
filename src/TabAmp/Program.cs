@@ -14,9 +14,10 @@ namespace TabAmp
                 .ConfigureServices((_, services) =>
                 {
                     services.AddMediatR(typeof(Program));
-                    services.AddTransient<TabFileReader>();
-                    services.AddTransient<TabFileTypesReader>();
-                    services.AddScoped<IReader, Reader>();
+                    services.AddTransient<ITabFileReader, TabFileReader>();
+                    services.AddScoped<TabFileReaderContext>();
+                    services.AddScoped<ITabFileReaderContext>(x => x.GetRequiredService<TabFileReaderContext>());
+                    services.AddTransient<GP5ReadingProcedure>();
                 })
                 .Build();
 

@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Microsoft.Extensions.DependencyInjection;
 using TabAmp.IO;
 using TabAmp.Models;
 
@@ -9,22 +8,12 @@ namespace TabAmp.Commands
 
     public class ReadTabFileCommandHandler : IRequestHandler<ReadTabFileCommand, Song>
     {
-        private readonly IServiceScopeFactory _serviceScopeFactory;
+        private readonly ITabFileReader _tabFileReader;
 
-        public ReadTabFileCommandHandler(IServiceScopeFactory serviceScopeFactory) =>
-            _serviceScopeFactory = serviceScopeFactory;
+        public ReadTabFileCommandHandler(ITabFileReader tabFileReader) =>
+            _tabFileReader = tabFileReader;
 
-        public async Task<Song> Handle(ReadTabFileCommand request, CancellationToken cancellationToken)
-        {
-            using IServiceScope scope = _serviceScopeFactory.CreateScope();
-
-            var reader = scope.ServiceProvider.GetRequiredService<IReader>();
-            reader.Open(request.Path);
-
-            var tabFileReader = scope.ServiceProvider.GetRequiredService<TabFileReader>();
-            var song = await tabFileReader.ReadAsync();
-
-            return song;
-        }
+        public Task<Song> Handle(ReadTabFileCommand request, CancellationToken cancellationToken) =>
+            _tabFileReader.ReadAsync(request.Path, cancellationToken);
     }
 }
