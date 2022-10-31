@@ -32,8 +32,6 @@ public class SimpleSequentialStreamReader : ISequentialStreamReader
     public void SkipNextBytes(int count) =>
         _fileStream.Position += count;
 
-    public void Dispose()
-    {
+    public void Dispose() =>
         _fileStream?.Dispose();
-    }
 }
