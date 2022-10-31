@@ -10,12 +10,12 @@ public partial class TabFileReader : ITabFileReader
     public TabFileReader(IServiceScopeFactory serviceScopeFactory) =>
         _serviceScopeFactory = serviceScopeFactory;
 
-    public Task<Song> ReadAsync(string path, CancellationToken cancellationToken)
+    public async Task<Song> ReadAsync(string path, CancellationToken cancellationToken)
     {
         using var scope = CreateScope();
         var context = CreateContextForScope(scope, path, cancellationToken);
         var readingProcedure = GetReadingProcedure(scope, context);
-        return readingProcedure.ReadAsync();
+        return await readingProcedure.ReadAsync();
     }
 
     private IServiceScope CreateScope() =>

@@ -9,10 +9,10 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
     public GP5ReadingProcedure(GP5BasicTypesReader reader) =>
         _reader = reader;
 
-    public Task<Song> ReadAsync()
+    public async Task<Song> ReadAsync()
     {
         var song = new Song();
-        song.Version = $"v_{_reader.ReadNextString()}";
-        return Task.FromResult(song);
+        song.Version = await _reader.ReadNextByteSizeStringAsync();
+        return song;
     }
 }
