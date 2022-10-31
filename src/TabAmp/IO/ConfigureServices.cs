@@ -9,6 +9,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.AddTabFileReader();
             services.AddTransient<GP5ReadingProcedure>();
+            services.AddTransient<GP5BasicTypesReader>();
 
             return services;
         }
