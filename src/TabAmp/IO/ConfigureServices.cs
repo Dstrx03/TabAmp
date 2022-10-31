@@ -22,6 +22,7 @@ namespace TabAmp.IO
 {
     public partial class TabFileReader
     {
+        // TODO: Use file modifier (C# 11)
         internal static class ConfigureServices
         {
             public static IServiceCollection AddTabFileReader(IServiceCollection services)

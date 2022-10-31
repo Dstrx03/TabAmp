@@ -1,9 +1,8 @@
 ﻿using TabAmp.Models;
 
-namespace TabAmp.IO
+namespace TabAmp.IO;
+
+public interface ITabFileReadingProcedure
 {
-    public interface ITabFileReadingProcedure
-    {
-        public Task<Song> ReadAsync();
-    }
+    public Task<Song> ReadAsync();
 }

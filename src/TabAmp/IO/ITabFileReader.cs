@@ -1,9 +1,8 @@
 ﻿using TabAmp.Models;
 
-namespace TabAmp.IO
+namespace TabAmp.IO;
+
+public interface ITabFileReader
 {
-    public interface ITabFileReader
-    {
-        public Task<Song> ReadAsync(string path, CancellationToken cancellationToken);
-    }
+    public Task<Song> ReadAsync(string path, CancellationToken cancellationToken);
 }

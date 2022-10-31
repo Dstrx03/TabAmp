@@ -1,7 +1,6 @@
-﻿namespace TabAmp.Models
+﻿namespace TabAmp.Models;
+
+public class Song
 {
-    public class Song
-    {
-        public string Version { get; set; }
-    }
+    public string Version { get; set; }
 }
