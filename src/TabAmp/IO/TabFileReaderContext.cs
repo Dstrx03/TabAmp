@@ -1,8 +1,11 @@
 ﻿namespace TabAmp.IO
 {
-    public class TabFileReaderContext : ITabFileReaderContext
+    public partial class TabFileReader
     {
-        public string Path { get; set; } = null;
-        public CancellationToken CancellationToken { get; set; } = CancellationToken.None;
+        private class TabFileReaderContext : ITabFileReaderContext
+        {
+            public string Path { get; set; } = null;
+            public CancellationToken CancellationToken { get; set; } = CancellationToken.None;
+        }
     }
 }

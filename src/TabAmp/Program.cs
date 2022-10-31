@@ -2,7 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TabAmp.Commands;
-using TabAmp.IO;
 
 namespace TabAmp
 {
@@ -14,10 +13,7 @@ namespace TabAmp
                 .ConfigureServices((_, services) =>
                 {
                     services.AddMediatR(typeof(Program));
-                    services.AddTransient<ITabFileReader, TabFileReader>();
-                    services.AddScoped<TabFileReaderContext>();
-                    services.AddScoped<ITabFileReaderContext>(x => x.GetRequiredService<TabFileReaderContext>());
-                    services.AddTransient<GP5ReadingProcedure>();
+                    services.AddIOServices();
                 })
                 .Build();
 

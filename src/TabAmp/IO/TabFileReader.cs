@@ -3,7 +3,7 @@ using TabAmp.Models;
 
 namespace TabAmp.IO
 {
-    public class TabFileReader : ITabFileReader
+    public partial class TabFileReader : ITabFileReader
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
