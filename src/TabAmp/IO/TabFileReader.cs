@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using TabAmp.Commands;
 using TabAmp.Models;
 
 namespace TabAmp.IO;
@@ -10,12 +11,26 @@ public partial class TabFileReader : ITabFileReader
     public TabFileReader(IServiceScopeFactory serviceScopeFactory) =>
         _serviceScopeFactory = serviceScopeFactory;
 
-    public async Task<Song> ReadAsync(string path, CancellationToken cancellationToken)
+    public async Task<ReadTabFileResult> ReadAsync(string path, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var song = await ReadSongUsingScopeAsync(path, cancellationToken);
+            return new ReadTabFileResult(song);
+        }
+        catch (Exception e)
+        {
+            return new ReadTabFileResult(e);
+        }
+    }
+
+    private async Task<Song> ReadSongUsingScopeAsync(string path, CancellationToken cancellationToken)
     {
         using var scope = CreateScope();
         var context = CreateContextForScope(scope, path, cancellationToken);
         var readingProcedure = GetReadingProcedure(scope, context);
-        return await readingProcedure.ReadAsync();
+        var song = await readingProcedure.ReadAsync();
+        return song;
     }
 
     private IServiceScope CreateScope() =>

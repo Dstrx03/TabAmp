@@ -22,12 +22,20 @@ internal class Program
 
         var mediator = host.Services.GetRequiredService<IMediator>();
 
-        var songFirst = await mediator.Send(new ReadTabFileCommand(path));
-        Console.WriteLine($"First Song Version: '{songFirst.Version}'");
+        var resultFirst = await mediator.Send(new ReadTabFileCommand(path));
+        PrintResult(resultFirst, nameof(resultFirst));
 
-        var songSecond = await mediator.Send(new ReadTabFileCommand(path));
-        Console.WriteLine($"Second Song Version: '{songSecond.Version}'");
+        var resultSecond = await mediator.Send(new ReadTabFileCommand(path));
+        PrintResult(resultSecond, nameof(resultSecond));
 
         await host.RunAsync();
+    }
+
+    private static void PrintResult(ReadTabFileResult result, string resultName)
+    {
+        if (result.Success)
+            Console.WriteLine($"Result ({resultName}) Version: [{result.Song.Version}]");
+        else
+            Console.WriteLine($"Result ({resultName}) Error: {result.Exception.Message}");
     }
 }
