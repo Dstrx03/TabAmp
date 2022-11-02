@@ -4,12 +4,13 @@ using TabAmp.Models;
 
 namespace TabAmp.IO;
 
-public partial class TabFileReader : ITabFileReader
+public class TabFileReader : ITabFileReader
 {
     private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly TabFileReaderContextFactory _contextFactory;
 
-    public TabFileReader(IServiceScopeFactory serviceScopeFactory) =>
-        _serviceScopeFactory = serviceScopeFactory;
+    public TabFileReader(IServiceScopeFactory serviceScopeFactory, TabFileReaderContextFactory contextFactory) =>
+        (_serviceScopeFactory, _contextFactory) = (serviceScopeFactory, contextFactory);
 
     public async Task<ReadTabFileResult> ReadAsync(string path, CancellationToken cancellationToken)
     {
@@ -36,19 +37,8 @@ public partial class TabFileReader : ITabFileReader
     private IServiceScope CreateScope() =>
         _serviceScopeFactory.CreateScope();
 
-    private ITabFileReaderContext CreateContextForScope(IServiceScope scope, string path, CancellationToken cancellationToken)
-    {
-        var context = GetRequiredService<TabFileReaderContext>(scope);
-
-        var fileInfo = new FileInfo(path);
-
-        context.FilePath = fileInfo.FullName;
-        context.FileExtension = fileInfo.Extension.ToLowerInvariant() == ".gp5"
-            ? TabFileExtension.GP5 : TabFileExtension.Other;
-        context.CancellationToken = cancellationToken;
-
-        return context;
-    }
+    private ITabFileReaderContext CreateContextForScope(IServiceScope scope, string path, CancellationToken cancellationToken) => 
+        _contextFactory.CreateContextForScope(scope, path, cancellationToken);
 
     private ITabFileReadingProcedure GetReadingProcedure(IServiceScope scope, ITabFileReaderContext context)
     {
