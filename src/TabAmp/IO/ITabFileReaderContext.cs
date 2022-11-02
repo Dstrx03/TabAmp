@@ -2,7 +2,7 @@
 
 public interface ITabFileReaderContext
 {
-    public string Path { get; }
-    public TabFileExtension Extension { get; }
+    public string FilePath { get; }
+    public TabFileExtension FileExtension { get; }
     public CancellationToken CancellationToken { get; }
 }

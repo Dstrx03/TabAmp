@@ -19,7 +19,7 @@ public class SimpleSequentialStreamReader : ISequentialStreamReader
             BufferSize = 0,
             Share = FileShare.None
         };
-        return File.Open(_context.Path, options);
+        return File.Open(_context.FilePath, options);
     }
 
     public async ValueTask<ReadOnlyMemory<byte>> ReadNextBytesAsync(int count)

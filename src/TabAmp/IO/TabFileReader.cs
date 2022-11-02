@@ -39,22 +39,23 @@ public partial class TabFileReader : ITabFileReader
     private ITabFileReaderContext CreateContextForScope(IServiceScope scope, string path, CancellationToken cancellationToken)
     {
         var context = GetRequiredService<TabFileReaderContext>(scope);
+
         var fileInfo = new FileInfo(path);
-        if (!fileInfo.Exists)
-            throw new Exception($"File {fileInfo.FullName} does not exist.");
-        context.Path = fileInfo.FullName;
-        context.Extension = fileInfo.Extension.ToLowerInvariant() == ".gp5"
+
+        context.FilePath = fileInfo.FullName;
+        context.FileExtension = fileInfo.Extension.ToLowerInvariant() == ".gp5"
             ? TabFileExtension.GP5 : TabFileExtension.Other;
         context.CancellationToken = cancellationToken;
+
         return context;
     }
 
     private ITabFileReadingProcedure GetReadingProcedure(IServiceScope scope, ITabFileReaderContext context)
     {
-        return context.Extension switch
+        return context.FileExtension switch
         {
             TabFileExtension.GP5 => GetRequiredService<GP5ReadingProcedure>(scope),
-            _ => throw new Exception($"{context.Path} filename extension is not supproted."),
+            _ => throw new Exception($"{context.FilePath} filename extension is not supproted."),
         };
     }
 
