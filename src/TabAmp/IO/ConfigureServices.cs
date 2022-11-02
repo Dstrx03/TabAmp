@@ -8,8 +8,8 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddIOServices(this IServiceCollection services)
         {
             services.AddTabFileReader();
-            services.AddTransient<GP5ReadingProcedure>();
-            services.AddTransient<GP5BasicTypesReader>();
+            services.AddScoped<GP5ReadingProcedure>();
+            services.AddScoped<GP5BasicTypesReader>();
             services.AddScoped<ISequentialStreamReader, SimpleSequentialStreamReader>();
 
             return services;
