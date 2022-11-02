@@ -37,7 +37,7 @@ public class TabFileReader : ITabFileReader
     private IServiceScope CreateScope() =>
         _serviceScopeFactory.CreateScope();
 
-    private ITabFileReaderContext CreateContextForScope(IServiceScope scope, string path, CancellationToken cancellationToken) => 
+    private ITabFileReaderContext CreateContextForScope(IServiceScope scope, string path, CancellationToken cancellationToken) =>
         _contextFactory.CreateContextForScope(scope, path, cancellationToken);
 
     private ITabFileReadingProcedure GetReadingProcedure(IServiceScope scope, ITabFileReaderContext context)
