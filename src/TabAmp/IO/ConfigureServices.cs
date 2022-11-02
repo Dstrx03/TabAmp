@@ -7,7 +7,8 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IServiceCollection AddIOServices(this IServiceCollection services)
         {
-            services.AddTabFileReader();
+            services.AddTransient<ITabFileReader, TabFileReader>();
+            services.AddTabFileReaderContext();
             services.AddScoped<GP5ReadingProcedure>();
             services.AddScoped<GP5BasicTypesReader>();
             services.AddScoped<ISequentialStreamReader, SimpleSequentialStreamReader>();
@@ -15,8 +16,8 @@ namespace Microsoft.Extensions.DependencyInjection
             return services;
         }
 
-        private static IServiceCollection AddTabFileReader(this IServiceCollection services) =>
-            TabFileReaderContextFactory.ConfigureServices.AddTabFileReader(services);
+        private static IServiceCollection AddTabFileReaderContext(this IServiceCollection services) =>
+            TabFileReaderContextFactory.ConfigureServices.AddTabFileReaderContext(services);
     }
 }
 
@@ -27,9 +28,8 @@ namespace TabAmp.IO
         // TODO: Use file modifier (C# 11)
         internal static class ConfigureServices
         {
-            public static IServiceCollection AddTabFileReader(IServiceCollection services)
+            public static IServiceCollection AddTabFileReaderContext(IServiceCollection services)
             {
-                services.AddTransient<ITabFileReader, TabFileReader>();
                 services.AddSingleton<TabFileReaderContextFactory>();
                 services.AddScoped<TabFileReaderContext>();
                 services.AddScoped<ITabFileReaderContext>(x => x.GetRequiredService<TabFileReaderContext>());
