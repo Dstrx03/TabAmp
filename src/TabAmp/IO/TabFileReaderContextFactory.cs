@@ -17,9 +17,15 @@ public partial class TabFileReaderContextFactory
         return context;
     }
 
-    private TabFileExtension GetFileExtension(FileInfo fileInfo) =>
-        fileInfo.Extension.ToLowerInvariant() == ".gp5"
-            ? TabFileExtension.GP5 : TabFileExtension.Other;
+    private TabFileExtension GetFileExtension(FileInfo fileInfo)
+    {
+        var extension = fileInfo.Extension.ToLowerInvariant();
+        return extension switch
+        {
+            ".gp5" => TabFileExtension.GP5,
+            _ => TabFileExtension.Other,
+        };
+    }
 
     private TabFileReaderContext GetTabFileReaderContext(IServiceScope scope) =>
         scope.ServiceProvider.GetRequiredService<TabFileReaderContext>();
