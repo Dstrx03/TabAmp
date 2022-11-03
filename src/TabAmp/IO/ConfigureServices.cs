@@ -30,7 +30,7 @@ namespace TabAmp.IO
         {
             public static IServiceCollection AddTabFileReaderContext(IServiceCollection services)
             {
-                services.AddSingleton<TabFileReaderContextFactory>();
+                services.AddScoped<TabFileReaderContextFactory>();
                 services.AddScoped<TabFileReaderContext>();
                 services.AddScoped<ITabFileReaderContext>(x => x.GetRequiredService<TabFileReaderContext>());
 

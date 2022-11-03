@@ -7,10 +7,9 @@ namespace TabAmp.IO;
 public class TabFileReader : ITabFileReader
 {
     private readonly IServiceScopeFactory _serviceScopeFactory;
-    private readonly TabFileReaderContextFactory _contextFactory;
 
-    public TabFileReader(IServiceScopeFactory serviceScopeFactory, TabFileReaderContextFactory contextFactory) =>
-        (_serviceScopeFactory, _contextFactory) = (serviceScopeFactory, contextFactory);
+    public TabFileReader(IServiceScopeFactory serviceScopeFactory) =>
+        _serviceScopeFactory = serviceScopeFactory;
 
     public async Task<ReadTabFileResult> ReadAsync(ReadTabFileRequest request)
     {
@@ -28,9 +27,9 @@ public class TabFileReader : ITabFileReader
     private async Task<Song> ReadSongUsingScopeAsync(ReadTabFileRequest request)
     {
         using var scope = CreateScope();
-        var context = CreateContextForScope(scope, request);
-        var readingProcedure = GetReadingProcedure(scope, context);
-        var song = await readingProcedure.ReadAsync();
+        CreateContextForScope(scope, request);
+        var procedure = GetReadingProcedure(scope);
+        var song = await procedure.ReadAsync();
         return song;
     }
 
@@ -38,10 +37,11 @@ public class TabFileReader : ITabFileReader
         _serviceScopeFactory.CreateScope();
 
     private ITabFileReaderContext CreateContextForScope(IServiceScope scope, ReadTabFileRequest request) =>
-        _contextFactory.CreateContextForScope(scope, request);
+        GetRequiredService<TabFileReaderContextFactory>(scope).CreateContextForScope(request);
 
-    private ITabFileReadingProcedure GetReadingProcedure(IServiceScope scope, ITabFileReaderContext context)
+    private ITabFileReadingProcedure GetReadingProcedure(IServiceScope scope)
     {
+        var context = GetRequiredService<ITabFileReaderContext>(scope);
         return context.FileExtension switch
         {
             TabFileExtension.GP5 => GetRequiredService<GP5ReadingProcedure>(scope),

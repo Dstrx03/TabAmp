@@ -5,15 +5,20 @@ namespace TabAmp.IO;
 
 public partial class TabFileReaderContextFactory
 {
-    public ITabFileReaderContext CreateContextForScope(IServiceScope scope, ReadTabFileRequest request)
+    private readonly IServiceProvider _serviceProvider;
+
+    public TabFileReaderContextFactory(IServiceProvider serviceProvider) =>
+        _serviceProvider = serviceProvider;
+
+    public ITabFileReaderContext CreateContextForScope(ReadTabFileRequest request)
     {
-        var context = CreateTabFileReaderContext(scope);
+        var context = CreateTabFileReaderContext();
         InitTabFileReaderContext(context, request);
         return context;
     }
 
-    private TabFileReaderContext CreateTabFileReaderContext(IServiceScope scope) =>
-        scope.ServiceProvider.GetRequiredService<TabFileReaderContext>();
+    private TabFileReaderContext CreateTabFileReaderContext() =>
+        _serviceProvider.GetRequiredService<TabFileReaderContext>();
 
     private void InitTabFileReaderContext(TabFileReaderContext context, ReadTabFileRequest request)
     {
