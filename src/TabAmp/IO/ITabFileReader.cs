@@ -4,5 +4,5 @@ namespace TabAmp.IO;
 
 public interface ITabFileReader
 {
-    public Task<ReadTabFileResult> ReadAsync(string path, CancellationToken cancellationToken);
+    public Task<ReadTabFileResult> ReadAsync(ReadTabFileRequest request);
 }

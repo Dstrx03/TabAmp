@@ -1,25 +1,26 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using TabAmp.Commands;
 
 namespace TabAmp.IO;
 
 public partial class TabFileReaderContextFactory
 {
-    public ITabFileReaderContext CreateContextForScope(IServiceScope scope, string path, CancellationToken cancellationToken)
+    public ITabFileReaderContext CreateContextForScope(IServiceScope scope, ReadTabFileRequest request)
     {
         var context = CreateTabFileReaderContext(scope);
-        InitTabFileReaderContext(context, path, cancellationToken);
+        InitTabFileReaderContext(context, request);
         return context;
     }
 
     private TabFileReaderContext CreateTabFileReaderContext(IServiceScope scope) =>
         scope.ServiceProvider.GetRequiredService<TabFileReaderContext>();
 
-    private void InitTabFileReaderContext(TabFileReaderContext context, string path, CancellationToken cancellationToken)
+    private void InitTabFileReaderContext(TabFileReaderContext context, ReadTabFileRequest request)
     {
-        var fileInfo = new FileInfo(path);
+        var fileInfo = new FileInfo(request.Path);
         context.FilePath = fileInfo.FullName;
         context.FileExtension = GetFileExtension(fileInfo);
-        context.CancellationToken = cancellationToken;
+        context.CancellationToken = request.CancellationToken;
     }
 
     private TabFileExtension GetFileExtension(FileInfo fileInfo)
