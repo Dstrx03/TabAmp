@@ -28,7 +28,7 @@ public class TabFileReader : ITabFileReader
     {
         using var scope = CreateScope();
         CreateContextForScope(scope, request);
-        var procedure = GetReadingProcedure(scope);
+        var procedure = CreateReadingProcedureForScope(scope);
         var song = await procedure.ReadAsync();
         return song;
     }
@@ -39,15 +39,8 @@ public class TabFileReader : ITabFileReader
     private ITabFileReaderContext CreateContextForScope(IServiceScope scope, ReadTabFileRequest request) =>
         GetRequiredService<TabFileReaderContextFactory>(scope).CreateContextForScope(request);
 
-    private ITabFileReadingProcedure GetReadingProcedure(IServiceScope scope)
-    {
-        var context = GetRequiredService<ITabFileReaderContext>(scope);
-        return context.FileExtension switch
-        {
-            TabFileExtension.GP5 => GetRequiredService<GP5ReadingProcedure>(scope),
-            _ => throw new Exception($"{context.FilePath} filename extension is not supproted."),
-        };
-    }
+    private ITabFileReadingProcedure CreateReadingProcedureForScope(IServiceScope scope) =>
+        GetRequiredService<TabFileReadingProcedureFactory>(scope).CreateReadingProcedureForScope();
 
     private T GetRequiredService<T>(IServiceScope scope) =>
         scope.ServiceProvider.GetRequiredService<T>();

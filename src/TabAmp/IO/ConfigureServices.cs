@@ -9,6 +9,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.AddTransient<ITabFileReader, TabFileReader>();
             services.AddTabFileReaderContext();
+            services.AddScoped<TabFileReadingProcedureFactory>();
             services.AddScoped<GP5ReadingProcedure>();
             services.AddScoped<GP5BasicTypesReader>();
             services.AddScoped<ISequentialStreamReader, SimpleSequentialStreamReader>();
