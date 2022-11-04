@@ -9,4 +9,7 @@ internal class TabFileReaderException : Exception
 
     public TabFileReaderException(string message, Exception inner)
         : base(message, inner) { }
+
+    public TabFileReaderException(Exception inner)
+        : base(inner.Message, inner) { }
 }

@@ -13,13 +13,20 @@ public class SimpleSequentialStreamReader : ISequentialStreamReader
 
     private FileStream OpenFile()
     {
-        var options = new FileStreamOptions
+        try
         {
-            Options = FileOptions.Asynchronous,
-            BufferSize = 0,
-            Share = FileShare.None
-        };
-        return File.Open(_context.FilePath, options);
+            var options = new FileStreamOptions
+            {
+                Options = FileOptions.Asynchronous,
+                BufferSize = 0,
+                Share = FileShare.None
+            };
+            return File.Open(_context.FilePath, options);
+        }
+        catch (IOException e)
+        {
+            throw new TabFileReaderException(e);
+        }
     }
 
     public async ValueTask<ReadOnlyMemory<byte>> ReadNextBytesAsync(int count)
