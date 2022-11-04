@@ -14,11 +14,11 @@ public class TabFileReadingProcedureFactory
     {
         return _context.FileExtension switch
         {
-            TabFileExtension.GP5 => GetRequiredService<GP5ReadingProcedure>(),
-            _ => throw new Exception($"{_context.FilePath} filename extension is not supproted."),
+            TabFileExtension.GP5 => GetReadingProcedure<GP5ReadingProcedure>(),
+            _ => throw new TabFileExtensionNotSupportedException(_context.FilePath),
         };
     }
 
-    private T GetRequiredService<T>() =>
-        _serviceProvider.GetRequiredService<T>();
+    private ITabFileReadingProcedure GetReadingProcedure<T>()
+        where T : ITabFileReadingProcedure => _serviceProvider.GetRequiredService<T>();
 }
