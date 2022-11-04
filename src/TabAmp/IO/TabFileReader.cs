@@ -18,7 +18,7 @@ public class TabFileReader : ITabFileReader
             var song = await ReadSongUsingScopeAsync(request);
             return new ReadTabFileResult(song);
         }
-        catch (Exception e)
+        catch (TabFileReaderException e)
         {
             return new ReadTabFileResult(e);
         }
