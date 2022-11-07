@@ -33,9 +33,17 @@ namespace TabAmp.IO
             {
                 services.AddScoped<TabFileReaderContextFactory>();
                 services.AddScoped<TabFileReaderContext>();
-                services.AddScoped<ITabFileReaderContext>(x => x.GetRequiredService<TabFileReaderContext>());
+                services.AddScoped<ITabFileReaderContext>(GetTabFileReaderContextImplementation);
 
                 return services;
+            }
+
+            private static ITabFileReaderContext GetTabFileReaderContextImplementation(IServiceProvider serviceProvider)
+            {
+                var context = serviceProvider.GetRequiredService<TabFileReaderContext>();
+                if (context.Signed)
+                    return context;
+                throw new InvalidOperationException("Cannot inject unsigned context.");
             }
         }
     }
