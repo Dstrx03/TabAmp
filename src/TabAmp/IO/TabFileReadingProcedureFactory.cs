@@ -10,7 +10,7 @@ public class TabFileReadingProcedureFactory
     public TabFileReadingProcedureFactory(IServiceProvider serviceProvider, ITabFileReaderContext context) =>
         (_serviceProvider, _context) = (serviceProvider, context);
 
-    public ITabFileReadingProcedure CreateReadingProcedureForScope()
+    public ITabFileReadingProcedure GetReadingProcedure()
     {
         return _context.FileExtension switch
         {

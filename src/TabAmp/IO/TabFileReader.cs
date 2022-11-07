@@ -28,7 +28,7 @@ public class TabFileReader : ITabFileReader
     {
         using var scope = CreateScope();
         CreateContextForScope(scope, request);
-        var procedure = CreateReadingProcedureForScope(scope);
+        var procedure = GetReadingProcedureForScope(scope);
         var song = await procedure.ReadAsync();
         return song;
     }
@@ -39,8 +39,8 @@ public class TabFileReader : ITabFileReader
     private ITabFileReaderContext CreateContextForScope(IServiceScope scope, ReadTabFileRequest request) =>
         GetRequiredService<TabFileReaderContextFactory>(scope).CreateContextForScope(request);
 
-    private ITabFileReadingProcedure CreateReadingProcedureForScope(IServiceScope scope) =>
-        GetRequiredService<TabFileReadingProcedureFactory>(scope).CreateReadingProcedureForScope();
+    private ITabFileReadingProcedure GetReadingProcedureForScope(IServiceScope scope) =>
+        GetRequiredService<TabFileReadingProcedureFactory>(scope).GetReadingProcedure();
 
     private T GetRequiredService<T>(IServiceScope scope) =>
         scope.ServiceProvider.GetRequiredService<T>();
