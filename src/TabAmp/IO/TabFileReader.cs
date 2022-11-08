@@ -15,7 +15,7 @@ public class TabFileReader : ITabFileReader
     {
         try
         {
-            var song = await ReadSongUsingScopeAsync(request);
+            var song = await ReadSongAsync(request);
             return new ReadTabFileResult(song);
         }
         catch (TabFileReaderException e)
@@ -24,23 +24,30 @@ public class TabFileReader : ITabFileReader
         }
     }
 
-    private async Task<Song> ReadSongUsingScopeAsync(ReadTabFileRequest request)
+    private async Task<Song> ReadSongAsync(ReadTabFileRequest request)
     {
         using var scope = CreateScope();
-        CreateContextForScope(scope, request);
-        var procedure = GetReadingProcedureForScope(scope);
-        var song = await procedure.ReadAsync();
+        BuildContextForScope(scope, request);
+        var song = await ReadSongUsingScopeAsync(scope);
         return song;
     }
 
     private IServiceScope CreateScope() =>
         _serviceScopeFactory.CreateScope();
 
-    private void CreateContextForScope(IServiceScope scope, ReadTabFileRequest request) =>
-        GetRequiredService<TabFileReaderContextFactory>(scope).CreateContext(request);
+    private void BuildContextForScope(IServiceScope scope, ReadTabFileRequest request)
+    {
+        var contextBuilder = GetRequiredService<TabFileReaderContextBuilder>(scope);
+        contextBuilder.SetContextData(request);
+        contextBuilder.SignContext();
+    }
 
-    private ITabFileReadingProcedure GetReadingProcedureForScope(IServiceScope scope) =>
-        GetRequiredService<TabFileReadingProcedureFactory>(scope).GetReadingProcedure();
+    private Task<Song> ReadSongUsingScopeAsync(IServiceScope scope)
+    {
+        var readingProcedureFactory = GetRequiredService<TabFileReadingProcedureFactory>(scope);
+        var readingProcedure = readingProcedureFactory.GetReadingProcedure();
+        return readingProcedure.ReadAsync();
+    }
 
     private T GetRequiredService<T>(IServiceScope scope) =>
         scope.ServiceProvider.GetRequiredService<T>();

@@ -1,6 +1,6 @@
 ﻿namespace TabAmp.IO;
 
-public partial class TabFileReaderContextFactory
+public partial class TabFileReaderContextBuilder
 {
     private class TabFileReaderContext : ITabFileReaderContext
     {

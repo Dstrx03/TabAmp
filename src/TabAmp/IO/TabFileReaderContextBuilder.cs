@@ -3,28 +3,23 @@ using TabAmp.Commands;
 
 namespace TabAmp.IO;
 
-public partial class TabFileReaderContextFactory
+public partial class TabFileReaderContextBuilder
 {
     private const string TabFileExtensionGP5 = ".gp5";
 
     private readonly TabFileReaderContext _context;
 
-    public TabFileReaderContextFactory(IServiceProvider serviceProvider) =>
+    public TabFileReaderContextBuilder(IServiceProvider serviceProvider) =>
         _context = serviceProvider.GetRequiredService<TabFileReaderContext>();
 
-    public void CreateContext(ReadTabFileRequest request)
+    public void SetContextData(ReadTabFileRequest request)
     {
         var fileInfo = new FileInfo(request.Path);
 
         _context.FilePath = fileInfo.FullName;
         _context.FileExtension = GetTabFileExtension(fileInfo);
         _context.CancellationToken = request.CancellationToken;
-
-        SignContext();
     }
-
-    private void SignContext() =>
-        _context.Sign();
 
     private TabFileExtension GetTabFileExtension(FileInfo fileInfo)
     {
@@ -35,4 +30,7 @@ public partial class TabFileReaderContextFactory
             _ => TabFileExtension.Other,
         };
     }
+
+    public void SignContext() =>
+        _context.Sign();
 }
