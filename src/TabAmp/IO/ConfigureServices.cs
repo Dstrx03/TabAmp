@@ -40,11 +40,16 @@ namespace TabAmp.IO
 
             private static ITabFileReaderContext GetTabFileReaderContextImplementation(IServiceProvider serviceProvider)
             {
+                if (IsRootScope(serviceProvider))
+                    throw new InvalidOperationException($"Cannot resolve '{nameof(TabFileReaderContext)}' from root provider.");
                 var context = serviceProvider.GetRequiredService<TabFileReaderContext>();
-                if (context.Signed)
-                    return context;
-                throw new InvalidOperationException("Unsigned context cannot be resolved.");
+                if (!context.IsSigned)
+                    throw new InvalidOperationException($"Unsigned '{nameof(TabFileReaderContext)}' cannot be resolved.");
+                return context;
             }
+
+            private static bool IsRootScope(IServiceProvider serviceProvider) =>
+                (bool)serviceProvider.GetType().GetProperty("IsRootScope").GetValue(serviceProvider);
         }
     }
 }

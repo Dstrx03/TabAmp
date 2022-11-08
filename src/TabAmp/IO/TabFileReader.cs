@@ -38,8 +38,7 @@ public class TabFileReader : ITabFileReader
     private void BuildContextForScope(IServiceScope scope, ReadTabFileRequest request)
     {
         var contextBuilder = GetRequiredService<TabFileReaderContextBuilder>(scope);
-        contextBuilder.SetContextData(request);
-        contextBuilder.SignContext();
+        contextBuilder.BuildContext(request);
     }
 
     private Task<Song> ReadSongUsingScopeAsync(IServiceScope scope)

@@ -8,8 +8,8 @@ public partial class TabFileReaderContextBuilder
         public TabFileExtension FileExtension { get; set; } = TabFileExtension.Other;
         public CancellationToken CancellationToken { get; set; } = CancellationToken.None;
 
-        public bool Signed { get; private set; } = false;
+        public bool IsSigned { get; private set; }
         public void Sign() =>
-            Signed = true;
+            IsSigned = true;
     }
 }

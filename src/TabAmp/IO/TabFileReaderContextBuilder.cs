@@ -12,7 +12,13 @@ public partial class TabFileReaderContextBuilder
     public TabFileReaderContextBuilder(IServiceProvider serviceProvider) =>
         _context = serviceProvider.GetRequiredService<TabFileReaderContext>();
 
-    public void SetContextData(ReadTabFileRequest request)
+    public void BuildContext(ReadTabFileRequest request)
+    {
+        SetContextData(request);
+        SignContext();
+    }
+
+    private void SetContextData(ReadTabFileRequest request)
     {
         var fileInfo = new FileInfo(request.Path);
 
@@ -31,6 +37,6 @@ public partial class TabFileReaderContextBuilder
         };
     }
 
-    public void SignContext() =>
+    private void SignContext() =>
         _context.Sign();
 }
