@@ -43,7 +43,7 @@ namespace TabAmp.IO
                 var context = serviceProvider.GetRequiredService<TabFileReaderContext>();
                 if (context.Signed)
                     return context;
-                throw new InvalidOperationException("Cannot inject unsigned context.");
+                throw new InvalidOperationException("Unsigned context cannot be resolved.");
             }
         }
     }
