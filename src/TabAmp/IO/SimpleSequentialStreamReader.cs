@@ -21,7 +21,7 @@ public class SimpleSequentialStreamReader : ISequentialStreamReader
                 BufferSize = 0,
                 Share = FileShare.None
             };
-            return File.Open(_context.FilePath, options);
+            return File.Open(_context.PathInfo.FilePath, options);
         }
         catch (IOException e)
         {

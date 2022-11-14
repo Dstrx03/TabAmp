@@ -13,6 +13,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<GP5ReadingProcedure>();
             services.AddScoped<GP5BasicTypesReader>();
             services.AddScoped<ISequentialStreamReader, SimpleSequentialStreamReader>();
+            services.AddTransient<IPathParser, PathParser>();
 
             return services;
         }

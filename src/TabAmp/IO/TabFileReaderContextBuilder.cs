@@ -5,12 +5,11 @@ namespace TabAmp.IO;
 
 public partial class TabFileReaderContextBuilder
 {
-    private const string TabFileExtensionGP5 = ".gp5";
-
     private readonly TabFileReaderContext _context;
+    private readonly IPathParser _pathParser;
 
-    public TabFileReaderContextBuilder(IServiceProvider serviceProvider) =>
-        _context = serviceProvider.GetRequiredService<TabFileReaderContext>();
+    public TabFileReaderContextBuilder(IServiceProvider serviceProvider, IPathParser pathParser) =>
+        (_context, _pathParser) = (serviceProvider.GetRequiredService<TabFileReaderContext>(), pathParser);
 
     public void BuildContext(ReadTabFileRequest request)
     {
@@ -20,21 +19,8 @@ public partial class TabFileReaderContextBuilder
 
     private void SetContextData(ReadTabFileRequest request)
     {
-        var fileInfo = new FileInfo(request.Path);
-
-        _context.FilePath = fileInfo.FullName;
-        _context.FileExtension = GetTabFileExtension(fileInfo);
+        _context.PathInfo = _pathParser.Parse(request.Path);
         _context.CancellationToken = request.CancellationToken;
-    }
-
-    private TabFileExtension GetTabFileExtension(FileInfo fileInfo)
-    {
-        var extension = fileInfo.Extension.ToLowerInvariant();
-        return extension switch
-        {
-            TabFileExtensionGP5 => TabFileExtension.GP5,
-            _ => TabFileExtension.Other,
-        };
     }
 
     private void SignContext() =>

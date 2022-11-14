@@ -1,11 +1,12 @@
-﻿namespace TabAmp.IO;
+﻿using TabAmp.Models;
+
+namespace TabAmp.IO;
 
 public partial class TabFileReaderContextBuilder
 {
     private class TabFileReaderContext : ITabFileReaderContext
     {
-        public string FilePath { get; set; } = null;
-        public TabFileExtension FileExtension { get; set; } = TabFileExtension.Other;
+        public PathInfo PathInfo { get; set; } = null;
         public CancellationToken CancellationToken { get; set; } = CancellationToken.None;
 
         public bool IsSigned { get; private set; }

@@ -1,8 +1,9 @@
-﻿namespace TabAmp.IO;
+﻿using TabAmp.Models;
+
+namespace TabAmp.IO;
 
 public interface ITabFileReaderContext
 {
-    public string FilePath { get; }
-    public TabFileExtension FileExtension { get; }
+    public PathInfo PathInfo { get; }
     public CancellationToken CancellationToken { get; }
 }

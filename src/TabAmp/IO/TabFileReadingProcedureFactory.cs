@@ -4,6 +4,8 @@ namespace TabAmp.IO;
 
 public class TabFileReadingProcedureFactory
 {
+    private const string FileExtensionGP5 = ".gp5";
+
     private readonly IServiceProvider _serviceProvider;
     private readonly ITabFileReaderContext _context;
 
@@ -12,10 +14,10 @@ public class TabFileReadingProcedureFactory
 
     public ITabFileReadingProcedure GetReadingProcedure()
     {
-        return _context.FileExtension switch
+        return _context.PathInfo.FileExtension switch
         {
-            TabFileExtension.GP5 => GetReadingProcedure<GP5ReadingProcedure>(),
-            _ => throw new TabFileExtensionNotSupportedException(_context.FilePath),
+            FileExtensionGP5 => GetReadingProcedure<GP5ReadingProcedure>(),
+            _ => throw new TabFileExtensionNotSupportedException(_context.PathInfo.FilePath),
         };
     }
 
