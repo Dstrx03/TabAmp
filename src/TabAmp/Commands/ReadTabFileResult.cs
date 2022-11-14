@@ -4,10 +4,10 @@ namespace TabAmp.Commands
 {
     public class ReadTabFileResult
     {
-        public ReadTabFileResult(Song song)
+        public ReadTabFileResult(TabFile tabFile)
         {
             Success = true;
-            Song = song;
+            TabFile = tabFile;
         }
 
         public ReadTabFileResult(Exception exception)
@@ -16,7 +16,7 @@ namespace TabAmp.Commands
             Exception = exception;
         }
 
-        public Song Song { get; }
+        public TabFile TabFile { get; }
         public bool Success { get; }
         public Exception Exception { get; }
     }

@@ -1,6 +1,7 @@
 ﻿namespace TabAmp.Models;
 
-public class Song
+public class TabFile
 {
+    public PathInfo PathInfo { get; set; }
     public string Version { get; set; }
 }

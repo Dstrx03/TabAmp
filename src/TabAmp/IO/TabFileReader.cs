@@ -15,8 +15,8 @@ public class TabFileReader : ITabFileReader
     {
         try
         {
-            var song = await ReadSongAsync(request);
-            return new ReadTabFileResult(song);
+            var tabFile = await ReadTabFileAsync(request);
+            return new ReadTabFileResult(tabFile);
         }
         catch (TabFileReaderException e)
         {
@@ -24,12 +24,12 @@ public class TabFileReader : ITabFileReader
         }
     }
 
-    private async Task<Song> ReadSongAsync(ReadTabFileRequest request)
+    private async Task<TabFile> ReadTabFileAsync(ReadTabFileRequest request)
     {
         using var scope = CreateScope();
         BuildContextForScope(scope, request);
-        var song = await ReadSongUsingScopeAsync(scope);
-        return song;
+        var tabFile = await ReadTabFileUsingScopeAsync(scope);
+        return tabFile;
     }
 
     private IServiceScope CreateScope() =>
@@ -41,7 +41,7 @@ public class TabFileReader : ITabFileReader
         contextBuilder.BuildContext(request);
     }
 
-    private Task<Song> ReadSongUsingScopeAsync(IServiceScope scope)
+    private Task<TabFile> ReadTabFileUsingScopeAsync(IServiceScope scope)
     {
         var readingProcedureFactory = GetRequiredService<TabFileReadingProcedureFactory>(scope);
         var readingProcedure = readingProcedureFactory.GetReadingProcedure();
