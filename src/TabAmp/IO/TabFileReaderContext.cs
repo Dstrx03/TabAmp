@@ -9,8 +9,8 @@ public partial class TabFileReaderContextBuilder
         public PathInfo PathInfo { get; set; } = null;
         public CancellationToken CancellationToken { get; set; } = CancellationToken.None;
 
-        public bool IsSigned { get; private set; }
+        public bool IsBuilt { get; private set; }
         public void Sign() =>
-            IsSigned = true;
+            IsBuilt = true;
     }
 }

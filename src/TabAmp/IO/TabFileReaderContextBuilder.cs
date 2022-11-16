@@ -13,8 +13,15 @@ public partial class TabFileReaderContextBuilder
 
     public void BuildContext(ReadTabFileRequest request)
     {
+        CheckContextCanBeBuilt();
         SetContextData(request);
         SignContext();
+    }
+
+    private void CheckContextCanBeBuilt()
+    {
+        if (_context.IsBuilt)
+            throw new InvalidOperationException($"Cannot build '{typeof(TabFileReaderContext)}', it's already built for its scope.");
     }
 
     private void SetContextData(ReadTabFileRequest request)
