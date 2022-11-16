@@ -45,7 +45,7 @@ namespace TabAmp.IO
                     throw new InvalidOperationException($"Cannot resolve '{typeof(TabFileReaderContext)}' from root provider.");
                 var context = serviceProvider.GetRequiredService<TabFileReaderContext>();
                 if (!context.IsSigned)
-                    throw new InvalidOperationException($"Unsigned '{typeof(TabFileReaderContext)}' cannot be resolved.");
+                    throw new InvalidOperationException($"Cannot resolve not built '{typeof(TabFileReaderContext)}'.");
                 return context;
             }
         }
