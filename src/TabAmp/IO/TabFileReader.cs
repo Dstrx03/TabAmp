@@ -48,6 +48,6 @@ public class TabFileReader : ITabFileReader
         return readingProcedure.ReadAsync();
     }
 
-    private T GetRequiredService<T>(IServiceScope scope) =>
+    private T GetRequiredService<T>(IServiceScope scope) where T : notnull =>
         scope.ServiceProvider.GetRequiredService<T>();
 }

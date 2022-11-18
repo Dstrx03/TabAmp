@@ -31,8 +31,8 @@ namespace TabAmp.IO
         {
             public static IServiceCollection AddTabFileReaderContext(IServiceCollection services)
             {
-                services.AddScoped<TabFileReaderContextBuilder>();
-                services.AddScoped<TabFileReaderContext>();
+                services.AddScoped(x => x.CreateInstanceForNonRootScope<TabFileReaderContextBuilder>());
+                services.AddScoped(x => x.CreateInstanceForNonRootScope<TabFileReaderContext>());
                 services.AddScoped(GetTabFileReaderContextImplementation);
 
                 return services;
@@ -40,8 +40,6 @@ namespace TabAmp.IO
 
             private static ITabFileReaderContext GetTabFileReaderContextImplementation(IServiceProvider serviceProvider)
             {
-                if (serviceProvider.IsRootScope())
-                    throw new InvalidOperationException($"Cannot resolve '{typeof(TabFileReaderContext)}' from root provider.");
                 var context = serviceProvider.GetRequiredService<TabFileReaderContext>();
                 if (!context.IsBuilt)
                     throw new InvalidOperationException($"Cannot resolve not built '{typeof(TabFileReaderContext)}'.");
