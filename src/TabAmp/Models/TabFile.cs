@@ -2,6 +2,12 @@
 
 public class TabFile
 {
-    public PathInfo PathInfo { get; set; }
-    public GP5Song Song { get; set; }
+    public TabFile(PathInfo pathInfo, GP5Song song)
+    {
+        PathInfo = pathInfo;
+        Song = song;
+    }
+
+    public PathInfo PathInfo { get; }
+    public GP5Song Song { get; }
 }

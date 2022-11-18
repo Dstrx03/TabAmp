@@ -14,10 +14,6 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
     {
         var song = new GP5Song();
         song.Version = await _reader.ReadNextByteSizeStringAsync();
-        return new TabFile
-        {
-            PathInfo = _context.PathInfo,
-            Song = song
-        };
+        return new TabFile(_context.PathInfo, song);
     }
 }
