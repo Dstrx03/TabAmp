@@ -34,7 +34,7 @@ internal class Program
     private static void PrintResult(ReadTabFileResult result, string resultName)
     {
         if (result.Success)
-            Console.WriteLine($"Result ({resultName}) Version: [{result.TabFile.Song.Version}]");
+            Console.WriteLine($"Result ({resultName}) Version: [{result.TabFile.Song.Version}] ({result.TabFile.PathInfo.FilePath})");
         else
             Console.WriteLine($"Result ({resultName}) Error: {result.Exception.Message}");
     }
