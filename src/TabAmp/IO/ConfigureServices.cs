@@ -8,7 +8,9 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddIOServices(this IServiceCollection services)
         {
             services.AddTransient<ITabFileReader, TabFileReader>();
+            services.AddScoped(x => x.CreateInstanceForInnerScope<TabFileReaderContextBuilder>());
             services.AddTabFileReaderContext();
+            services.AddScoped(x => x.GetRequiredService<TabFileReaderContextBuilder>().GetContext());
             services.AddScoped<TabFileReadingProcedureFactory>();
             services.AddScoped<GP5ReadingProcedure>();
             services.AddScoped<GP5BasicTypesReader>();
@@ -29,22 +31,8 @@ namespace TabAmp.IO
     {
         internal static class ConfigureServices
         {
-            public static IServiceCollection AddTabFileReaderContext(IServiceCollection services)
-            {
-                services.AddScoped(x => x.CreateInstanceForNonRootScope<TabFileReaderContextBuilder>());
-                services.AddScoped(x => x.CreateInstanceForNonRootScope<TabFileReaderContext>());
-                services.AddScoped(GetTabFileReaderContextImplementation);
-
-                return services;
-            }
-
-            private static ITabFileReaderContext GetTabFileReaderContextImplementation(IServiceProvider serviceProvider)
-            {
-                var context = serviceProvider.GetRequiredService<TabFileReaderContext>();
-                if (!context.IsBuilt)
-                    throw new InvalidOperationException($"Cannot resolve not built '{typeof(TabFileReaderContext)}'.");
-                return context;
-            }
+            public static IServiceCollection AddTabFileReaderContext(IServiceCollection services) =>
+                services.AddScoped(x => x.CreateInstanceForInnerScope<TabFileReaderContext>());
         }
     }
 }

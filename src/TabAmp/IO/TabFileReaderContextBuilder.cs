@@ -11,17 +11,21 @@ public partial class TabFileReaderContextBuilder
     public TabFileReaderContextBuilder(IServiceProvider serviceProvider, IPathParser pathParser) =>
         (_context, _pathParser) = (serviceProvider.GetRequiredService<TabFileReaderContext>(), pathParser);
 
-    public void BuildContext(ReadTabFileRequest request)
+    public bool IsContextBuilt { get; private set; }
+
+    public ITabFileReaderContext GetContext()
     {
-        CheckContextCanBeBuilt();
-        SetContextData(request);
-        SignContext();
+        if (!IsContextBuilt)
+            throw new InvalidOperationException($"Cannot provide not built '{typeof(TabFileReaderContext)}'.");
+        return _context;
     }
 
-    private void CheckContextCanBeBuilt()
+    public void BuildContext(ReadTabFileRequest request)
     {
-        if (_context.IsBuilt)
+        if (IsContextBuilt)
             throw new InvalidOperationException($"Cannot build '{typeof(TabFileReaderContext)}', it's already built for its scope.");
+        SetContextData(request);
+        IsContextBuilt = true;
     }
 
     private void SetContextData(ReadTabFileRequest request)
@@ -29,7 +33,4 @@ public partial class TabFileReaderContextBuilder
         _context.PathInfo = _pathParser.Parse(request.Path);
         _context.CancellationToken = request.CancellationToken;
     }
-
-    private void SignContext() =>
-        _context.Sign();
 }

@@ -9,7 +9,7 @@ internal static class ServiceProviderExtensions
     public static bool IsRootScope(this IServiceProvider serviceProvider) =>
         (bool)serviceProvider.GetType().GetProperty(PropertyIsRootScope).GetValue(serviceProvider);
 
-    public static T CreateInstanceForNonRootScope<T>(this IServiceProvider serviceProvider)
+    public static T CreateInstanceForInnerScope<T>(this IServiceProvider serviceProvider)
     {
         if (serviceProvider.IsRootScope())
             throw new InvalidOperationException($"Cannot resolve '{typeof(T)}' from root provider.");
