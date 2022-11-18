@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Buffers.Binary;
+using System.Text;
 
 namespace TabAmp.IO;
 
@@ -15,32 +16,40 @@ public class GP5BasicTypesReader
         return memory.Span[0];
     }
 
-    public Task<sbyte> ReadNextSignedByteAsync() =>
-        ReadNextSignedByteAsync();
-
-    public Task<bool> ReadNextBoolAsync()
+    public async Task<sbyte> ReadNextSignedByteAsync()
     {
-        throw new NotImplementedException();
+        var value = await ReadNextByteAsync();
+        return (sbyte)value;
     }
 
-    public Task<short> ReadNextShortAsync()
+    public async Task<bool> ReadNextBoolAsync()
     {
-        throw new NotImplementedException();
+        var value = await ReadNextByteAsync();
+        return value == 1;
     }
 
-    public Task<int> ReadNextIntAsync()
+    public async Task<short> ReadNextShortAsync()
     {
-        throw new NotImplementedException();
+        var memory = await _streamReader.ReadNextBytesAsync(2);
+        return BinaryPrimitives.ReadInt16LittleEndian(memory.Span);
     }
 
-    public Task<float> ReadNextFloatAsync()
+    public async Task<int> ReadNextIntAsync()
     {
-        throw new NotImplementedException();
+        var memory = await _streamReader.ReadNextBytesAsync(4);
+        return BinaryPrimitives.ReadInt32LittleEndian(memory.Span);
     }
 
-    public Task<double> ReadNextDoubleAsync()
+    public async Task<float> ReadNextFloatAsync()
     {
-        throw new NotImplementedException();
+        var memory = await _streamReader.ReadNextBytesAsync(4);
+        return BinaryPrimitives.ReadSingleLittleEndian(memory.Span);
+    }
+
+    public async Task<double> ReadNextDoubleAsync()
+    {
+        var memory = await _streamReader.ReadNextBytesAsync(8);
+        return BinaryPrimitives.ReadDoubleLittleEndian(memory.Span);
     }
 
     public async Task<string> ReadNextByteSizeStringAsync()
@@ -55,12 +64,17 @@ public class GP5BasicTypesReader
         return await ReadNextStringAsync(size);
     }
 
-    public Task<string> ReadNextIntByteSizeStringAsync()
+    public async Task<string> ReadNextIntByteSizeStringAsync()
     {
-        throw new NotImplementedException();
+        var intValue = await ReadNextIntAsync();
+        var byteValue = await ReadNextByteAsync();
+        var stringValue = await ReadNextStringAsync(byteValue);
+        var skipBytes = intValue - byteValue - 1;
+        _streamReader.SkipNextBytes(skipBytes);
+        return stringValue;
     }
 
-    public async Task<string> ReadNextStringAsync(int size)
+    private async Task<string> ReadNextStringAsync(int size)
     {
         var memory = await _streamReader.ReadNextBytesAsync(size);
         return Encoding.UTF8.GetString(memory.Span);
