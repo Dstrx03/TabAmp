@@ -13,6 +13,9 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
     public async Task<TabFile> ReadAsync()
     {
         var song = new GP5Song();
+        var tabFile = new TabFile(_context.PathInfo, song);
+
+        // Version
         song.Version = await _reader.ReadNextByteSizeStringAsync(30);
 
         // Score Info
@@ -49,6 +52,6 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
         var masterEffectUnknwnTodo = await _reader.ReadNextIntAsync();
 
 
-        return new TabFile(_context.PathInfo, song);
+        return tabFile;
     }
 }
