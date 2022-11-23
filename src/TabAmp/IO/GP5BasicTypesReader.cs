@@ -52,31 +52,33 @@ public class GP5BasicTypesReader
         return BinaryPrimitives.ReadDoubleLittleEndian(memory.Span);
     }
 
-    public async Task<string> ReadNextByteSizeStringAsync()
+    public async Task<string> ReadNextByteSizeStringAsync(int readSize = 0)
     {
         var size = await ReadNextByteAsync();
-        return await ReadNextStringAsync(size);
+        return await ReadNextStringAsync(size, readSize);
     }
 
-    public async Task<string> ReadNextIntSizeStringAsync()
+    public async Task<string> ReadNextIntSizeStringAsync(int readSize = 0)
     {
         var size = await ReadNextIntAsync();
-        return await ReadNextStringAsync(size);
+        return await ReadNextStringAsync(size, readSize);
     }
 
     public async Task<string> ReadNextIntByteSizeStringAsync()
     {
         var intValue = await ReadNextIntAsync();
         var byteValue = await ReadNextByteAsync();
-        var stringValue = await ReadNextStringAsync(byteValue);
-        var skipBytes = intValue - byteValue - 1;
-        _streamReader.SkipNextBytes(skipBytes);
+        var readSize = intValue - 1;
+        var stringValue = await ReadNextStringAsync(byteValue, readSize);
         return stringValue;
     }
 
-    private async Task<string> ReadNextStringAsync(int size)
+    private async Task<string> ReadNextStringAsync(int size, int readSize)
     {
         var memory = await _streamReader.ReadNextBytesAsync(size);
+        var skipBytes = readSize - size;
+        if (skipBytes > 0)
+            _streamReader.SkipNextBytes(skipBytes);
         return Encoding.UTF8.GetString(memory.Span);
     }
 }
