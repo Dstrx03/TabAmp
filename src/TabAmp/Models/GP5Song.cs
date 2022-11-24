@@ -6,4 +6,6 @@ public class GP5Song
     public ScoreInformation ScoreInformation { get; set; }
     public Lyrics Lyrics { get; set; }
     public RSEMasterEffect RSEMasterEffect { get; set; }
+    // page setup
+    public Tempo Tempo { get; set; }
 }

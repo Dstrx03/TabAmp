@@ -21,6 +21,8 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
         await ReadScoreInformationAsync();
         await ReadLyricsAsync();
         await ReadRSEMasterEffectAsync();
+        // page setup
+        await ReadTempoAsync();
 
         return new TabFile(_context.PathInfo, _song);
     }
@@ -56,7 +58,7 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
         _song.ScoreInformation = scoreInformation;
     }
 
-    public async Task ReadLyricsAsync()
+    private async Task ReadLyricsAsync()
     {
         var lyrics = new Lyrics
         {
@@ -74,7 +76,7 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
         _song.Lyrics = lyrics;
     }
 
-    public async Task ReadRSEMasterEffectAsync()
+    private async Task ReadRSEMasterEffectAsync()
     {
         var masterEffect = new RSEMasterEffect
         {
@@ -93,5 +95,17 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
         masterEffect.EqualizerGain = await _reader.ReadNextSignedByteAsync();
 
         _song.RSEMasterEffect = masterEffect;
+    }
+
+    private async Task ReadTempoAsync()
+    {
+        var tempo = new Tempo
+        {
+            Name = await _reader.ReadNextIntByteSizeStringAsync(),
+            Value = await _reader.ReadNextIntAsync(),
+            Hide = await _reader.ReadNextBoolAsync()
+        };
+
+        _song.Tempo = tempo;
     }
 }
