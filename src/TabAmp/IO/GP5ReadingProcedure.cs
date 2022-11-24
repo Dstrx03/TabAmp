@@ -6,36 +6,20 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
 {
     private readonly ITabFileReaderContext _context;
     private readonly GP5BasicTypesReader _reader;
+    private readonly GP5Song _song;
 
-    public GP5ReadingProcedure(ITabFileReaderContext context, GP5BasicTypesReader reader) =>
-        (_context, _reader) = (context, reader);
+    public GP5ReadingProcedure(ITabFileReaderContext context, GP5BasicTypesReader reader)
+    {
+        _context = context;
+        _reader = reader;
+        _song = new GP5Song();
+    }
 
     public async Task<TabFile> ReadAsync()
     {
-        var song = new GP5Song();
-        var tabFile = new TabFile(_context.PathInfo, song);
+        await ReadVersionAsync();
+        await ReadScoreInformationAsync();
 
-        // Version
-        song.Version = await _reader.ReadNextByteSizeStringAsync(30);
-
-        // Score Info
-        var scoreInformation = new ScoreInformation();
-        scoreInformation.Title = await _reader.ReadNextIntByteSizeStringAsync();
-        scoreInformation.Subtitle = await _reader.ReadNextIntByteSizeStringAsync();
-        scoreInformation.Artist = await _reader.ReadNextIntByteSizeStringAsync();
-        scoreInformation.Album = await _reader.ReadNextIntByteSizeStringAsync();
-        scoreInformation.Words = await _reader.ReadNextIntByteSizeStringAsync();
-        scoreInformation.Music = await _reader.ReadNextIntByteSizeStringAsync();
-        scoreInformation.Copyright = await _reader.ReadNextIntByteSizeStringAsync();
-        scoreInformation.Tab = await _reader.ReadNextIntByteSizeStringAsync();
-        scoreInformation.Instructions = await _reader.ReadNextIntByteSizeStringAsync();
-
-        var noticeCount = await _reader.ReadNextIntAsync();
-        scoreInformation.Notice = new List<string>();
-        for (var i = 0; i < noticeCount; i++)
-            scoreInformation.Notice.Add(await _reader.ReadNextIntByteSizeStringAsync());
-
-        song.ScoreInformation = scoreInformation;
 
         // Lyrics
         var trackChoice = await _reader.ReadNextIntAsync();
@@ -55,6 +39,37 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
         var masterEffectUnknwnTodo = await _reader.ReadNextIntAsync();
 
 
-        return tabFile;
+        return new TabFile(_context.PathInfo, _song);
+    }
+
+    private async Task ReadVersionAsync()
+    {
+        _song.Version = await _reader.ReadNextByteSizeStringAsync(30);
+    }
+
+    private async Task ReadScoreInformationAsync()
+    {
+        var scoreInformation = new ScoreInformation
+        {
+            Title = await _reader.ReadNextIntByteSizeStringAsync(),
+            Subtitle = await _reader.ReadNextIntByteSizeStringAsync(),
+            Artist = await _reader.ReadNextIntByteSizeStringAsync(),
+            Album = await _reader.ReadNextIntByteSizeStringAsync(),
+            Words = await _reader.ReadNextIntByteSizeStringAsync(),
+            Music = await _reader.ReadNextIntByteSizeStringAsync(),
+            Copyright = await _reader.ReadNextIntByteSizeStringAsync(),
+            Tab = await _reader.ReadNextIntByteSizeStringAsync(),
+            Instructions = await _reader.ReadNextIntByteSizeStringAsync(),
+            Notice = new List<string>()
+        };
+
+        var noticeCount = await _reader.ReadNextIntAsync();
+        for (var i = 0; i < noticeCount; i++)
+        {
+            var noticeElement = await _reader.ReadNextIntByteSizeStringAsync();
+            scoreInformation.Notice.Add(noticeElement);
+        }
+
+        _song.ScoreInformation = scoreInformation;
     }
 }
