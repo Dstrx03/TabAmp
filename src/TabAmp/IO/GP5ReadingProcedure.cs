@@ -19,20 +19,23 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
         song.Version = await _reader.ReadNextByteSizeStringAsync(30);
 
         // Score Info
-        var title = await _reader.ReadNextIntByteSizeStringAsync();
-        var subtitle = await _reader.ReadNextIntByteSizeStringAsync();
-        var artist = await _reader.ReadNextIntByteSizeStringAsync();
-        var album = await _reader.ReadNextIntByteSizeStringAsync();
-        var words = await _reader.ReadNextIntByteSizeStringAsync();
-        var music = await _reader.ReadNextIntByteSizeStringAsync();
-        var copyright = await _reader.ReadNextIntByteSizeStringAsync();
-        var tab = await _reader.ReadNextIntByteSizeStringAsync();
-        var instructions = await _reader.ReadNextIntByteSizeStringAsync();
+        var scoreInformation = new ScoreInformation();
+        scoreInformation.Title = await _reader.ReadNextIntByteSizeStringAsync();
+        scoreInformation.Subtitle = await _reader.ReadNextIntByteSizeStringAsync();
+        scoreInformation.Artist = await _reader.ReadNextIntByteSizeStringAsync();
+        scoreInformation.Album = await _reader.ReadNextIntByteSizeStringAsync();
+        scoreInformation.Words = await _reader.ReadNextIntByteSizeStringAsync();
+        scoreInformation.Music = await _reader.ReadNextIntByteSizeStringAsync();
+        scoreInformation.Copyright = await _reader.ReadNextIntByteSizeStringAsync();
+        scoreInformation.Tab = await _reader.ReadNextIntByteSizeStringAsync();
+        scoreInformation.Instructions = await _reader.ReadNextIntByteSizeStringAsync();
 
         var noticeCount = await _reader.ReadNextIntAsync();
-        var notice = new List<string>();
+        scoreInformation.Notice = new List<string>();
         for (var i = 0; i < noticeCount; i++)
-            notice.Add(await _reader.ReadNextIntByteSizeStringAsync());
+            scoreInformation.Notice.Add(await _reader.ReadNextIntByteSizeStringAsync());
+
+        song.ScoreInformation = scoreInformation;
 
         // Lyrics
         var trackChoice = await _reader.ReadNextIntAsync();
