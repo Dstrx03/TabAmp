@@ -19,25 +19,11 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
     {
         await ReadVersionAsync();
         await ReadScoreInformationAsync();
-
-
-        // Lyrics
-        var trackChoice = await _reader.ReadNextIntAsync();
-        var startingMeasure1 = await _reader.ReadNextIntAsync();
-        var lyrics1 = await _reader.ReadNextIntSizeStringAsync();
-        var startingMeasure2 = await _reader.ReadNextIntAsync();
-        var lyrics2 = await _reader.ReadNextIntSizeStringAsync();
-        var startingMeasure3 = await _reader.ReadNextIntAsync();
-        var lyrics3 = await _reader.ReadNextIntSizeStringAsync();
-        var startingMeasure4 = await _reader.ReadNextIntAsync();
-        var lyrics4 = await _reader.ReadNextIntSizeStringAsync();
-        var startingMeasure5 = await _reader.ReadNextIntAsync();
-        var lyrics5 = await _reader.ReadNextIntSizeStringAsync();
+        await ReadLyricsAsync();
 
         // RSE Master Effect
         var masterEffectVolume = await _reader.ReadNextIntAsync();
         var masterEffectUnknwnTodo = await _reader.ReadNextIntAsync();
-
 
         return new TabFile(_context.PathInfo, _song);
     }
@@ -71,5 +57,23 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
         }
 
         _song.ScoreInformation = scoreInformation;
+    }
+
+    public async Task ReadLyricsAsync()
+    {
+        var lyrics = new Lyrics
+        {
+            TrackChoice = await _reader.ReadNextIntAsync(),
+            Lines = new List<(int startingMeasure, string line)>()
+        };
+
+        for (var i = 0; i < 5; i++)
+        {
+            var startingMeasure = await _reader.ReadNextIntAsync();
+            var line = await _reader.ReadNextIntSizeStringAsync();
+            lyrics.Lines.Add((startingMeasure, line));
+        }
+
+        _song.Lyrics = lyrics;
     }
 }
