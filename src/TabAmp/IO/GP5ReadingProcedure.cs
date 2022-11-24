@@ -20,10 +20,7 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
         await ReadVersionAsync();
         await ReadScoreInformationAsync();
         await ReadLyricsAsync();
-
-        // RSE Master Effect
-        var masterEffectVolume = await _reader.ReadNextIntAsync();
-        var masterEffectUnknwnTodo = await _reader.ReadNextIntAsync();
+        await ReadRSEMasterEffectAsync();
 
         return new TabFile(_context.PathInfo, _song);
     }
@@ -75,5 +72,26 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
         }
 
         _song.Lyrics = lyrics;
+    }
+
+    public async Task ReadRSEMasterEffectAsync()
+    {
+        var masterEffect = new RSEMasterEffect
+        {
+            Volume = await _reader.ReadNextIntAsync(),
+            EqualizerKnobs = new List<sbyte>()
+        };
+
+        var unknownValue_0 = await _reader.ReadNextIntAsync();
+
+        for (var i = 0; i < 10; i++)
+        {
+            var knob = await _reader.ReadNextSignedByteAsync();
+            masterEffect.EqualizerKnobs.Add(knob);
+        }
+
+        masterEffect.EqualizerGain = await _reader.ReadNextSignedByteAsync();
+
+        _song.RSEMasterEffect = masterEffect;
     }
 }
