@@ -21,7 +21,7 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
         await ReadScoreInformationAsync();
         await ReadLyricsAsync();
         await ReadRSEMasterEffectAsync();
-        // page setup
+        await ReadPageSetupAsync();
         await ReadTempoAsync();
 
         return new TabFile(_context.PathInfo, _song);
@@ -95,6 +95,13 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
         masterEffect.EqualizerGain = await _reader.ReadNextSignedByteAsync();
 
         _song.RSEMasterEffect = masterEffect;
+    }
+
+    private async Task ReadPageSetupAsync()
+    {
+        // TODO: page setup reading
+        var pageSetup = new PageSetup();
+        _song.PageSetup = pageSetup;
     }
 
     private async Task ReadTempoAsync()
