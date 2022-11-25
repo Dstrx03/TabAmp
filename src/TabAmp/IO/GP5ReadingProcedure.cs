@@ -26,6 +26,10 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
         await ReadKeyOctaveAsync();
         await ReadMidiChannelsAsync();
         await ReadMusicalDirectionsAsync();
+        await ReadRSEMasterEffectReverbAsync();
+
+        var measureCount = await _reader.ReadNextIntAsync();
+        var trackCount = await _reader.ReadNextIntAsync();
 
         return new TabFile(_context.PathInfo, _song);
     }
@@ -189,5 +193,10 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
             ("Da Coda", await _reader.ReadNextShortAsync()),
             ("Da Double Coda", await _reader.ReadNextShortAsync())
         };
+    }
+
+    private async Task ReadRSEMasterEffectReverbAsync()
+    {
+        _song.RSEMasterEffect.Reverb = await _reader.ReadNextIntAsync();
     }
 }
