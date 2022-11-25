@@ -23,10 +23,7 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
         await ReadRSEMasterEffectAsync();
         await ReadPageSetupAsync();
         await ReadTempoAsync();
-
-        _song.Key = await _reader.ReadNextSignedByteAsync();
-        _song.Octave = await _reader.ReadNextIntAsync();
-
+        await ReadKeyOctaveAsync();
         await ReadMidiChannelsAsync();
 
         return new TabFile(_context.PathInfo, _song);
@@ -138,6 +135,12 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
         };
 
         _song.Tempo = tempo;
+    }
+
+    private async Task ReadKeyOctaveAsync()
+    {
+        _song.Key = await _reader.ReadNextSignedByteAsync();
+        _song.Octave = await _reader.ReadNextIntAsync();
     }
 
     private async Task ReadMidiChannelsAsync()
