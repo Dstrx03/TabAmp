@@ -81,10 +81,9 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
         var masterEffect = new RSEMasterEffect
         {
             Volume = await _reader.ReadNextIntAsync(),
+            UnknownProperty_0 = await _reader.ReadNextIntAsync(),
             EqualizerKnobs = new List<sbyte>()
         };
-
-        var unknownValue_0 = await _reader.ReadNextIntAsync();
 
         for (var i = 0; i < 10; i++)
         {
