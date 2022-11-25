@@ -8,4 +8,6 @@ public class GP5Song
     public RSEMasterEffect RSEMasterEffect { get; set; }
     public PageSetup PageSetup { get; set; }
     public Tempo Tempo { get; set; }
+    public sbyte Key { get; set; }
+    public int Octave { get; set; }
 }

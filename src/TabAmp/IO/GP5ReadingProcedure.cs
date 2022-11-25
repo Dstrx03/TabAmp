@@ -24,8 +24,8 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
         await ReadPageSetupAsync();
         await ReadTempoAsync();
 
-        var key = await _reader.ReadNextSignedByteAsync();
-        var octave = await _reader.ReadNextIntAsync();
+        _song.Key = await _reader.ReadNextSignedByteAsync();
+        _song.Octave = await _reader.ReadNextIntAsync();
 
         return new TabFile(_context.PathInfo, _song);
     }
