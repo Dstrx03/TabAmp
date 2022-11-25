@@ -25,6 +25,7 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
         await ReadTempoAsync();
         await ReadKeyOctaveAsync();
         await ReadMidiChannelsAsync();
+        await ReadMusicalDirectionsAsync();
 
         return new TabFile(_context.PathInfo, _song);
     }
@@ -162,5 +163,31 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
             };
             _song.MidiChannels.Add(midiChannel);
         }
+    }
+
+    private async Task ReadMusicalDirectionsAsync()
+    {
+        _song.MusicalDirections = new List<(string, short)>
+        {
+            ("Coda", await _reader.ReadNextShortAsync()),
+            ("Double Coda", await _reader.ReadNextShortAsync()),
+            ("Segno", await _reader.ReadNextShortAsync()),
+            ("Segno Segno", await _reader.ReadNextShortAsync()),
+            ("Fine", await _reader.ReadNextShortAsync()),
+            ("Da Capo", await _reader.ReadNextShortAsync()),
+            ("Da Capo al Coda", await _reader.ReadNextShortAsync()),
+            ("Da Capo al Double Coda", await _reader.ReadNextShortAsync()),
+            ("Da Capo al Fine", await _reader.ReadNextShortAsync()),
+            ("Da Segno", await _reader.ReadNextShortAsync()),
+            ("Da Segno al Coda", await _reader.ReadNextShortAsync()),
+            ("Da Segno al Double Coda", await _reader.ReadNextShortAsync()),
+            ("Da Segno al Fine", await _reader.ReadNextShortAsync()),
+            ("Da Segno Segno", await _reader.ReadNextShortAsync()),
+            ("Da Segno Segno al Coda", await _reader.ReadNextShortAsync()),
+            ("Da Segno Segno al Double Coda", await _reader.ReadNextShortAsync()),
+            ("Da Segno Segno al Fine", await _reader.ReadNextShortAsync()),
+            ("Da Coda", await _reader.ReadNextShortAsync()),
+            ("Da Double Coda", await _reader.ReadNextShortAsync())
+        };
     }
 }

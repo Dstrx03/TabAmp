@@ -11,4 +11,5 @@ public class GP5Song
     public sbyte Key { get; set; }
     public int Octave { get; set; }
     public List<MidiChannel> MidiChannels { get; set; }
+    public List<(string, short)> MusicalDirections { get; set; }
 }
