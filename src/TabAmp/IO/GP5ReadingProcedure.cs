@@ -27,6 +27,8 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
         _song.Key = await _reader.ReadNextSignedByteAsync();
         _song.Octave = await _reader.ReadNextIntAsync();
 
+        await ReadMidiChannelsAsync();
+
         return new TabFile(_context.PathInfo, _song);
     }
 
@@ -136,5 +138,26 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
         };
 
         _song.Tempo = tempo;
+    }
+
+    private async Task ReadMidiChannelsAsync()
+    {
+        _song.MidiChannels = new List<MidiChannel>();
+        for (var i = 0; i < 64; i++)
+        {
+            var midiChannel = new MidiChannel
+            {
+                Instrument = await _reader.ReadNextIntAsync(),
+                Volume = await _reader.ReadNextSignedByteAsync(),
+                Balance = await _reader.ReadNextSignedByteAsync(),
+                Chorus = await _reader.ReadNextSignedByteAsync(),
+                Reverb = await _reader.ReadNextSignedByteAsync(),
+                Phaser = await _reader.ReadNextSignedByteAsync(),
+                Tremolo = await _reader.ReadNextSignedByteAsync(),
+                Blank1 = await _reader.ReadNextSignedByteAsync(),
+                Blank2 = await _reader.ReadNextSignedByteAsync()
+            };
+            _song.MidiChannels.Add(midiChannel);
+        }
     }
 }
