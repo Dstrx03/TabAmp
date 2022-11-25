@@ -24,6 +24,9 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
         await ReadPageSetupAsync();
         await ReadTempoAsync();
 
+        var key = await _reader.ReadNextSignedByteAsync();
+        var octave = await _reader.ReadNextIntAsync();
+
         return new TabFile(_context.PathInfo, _song);
     }
 
@@ -98,8 +101,28 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
 
     private async Task ReadPageSetupAsync()
     {
-        // TODO: page setup reading
-        var pageSetup = new PageSetup();
+        var pageSetup = new PageSetup
+        {
+            Width = await _reader.ReadNextIntAsync(),
+            Height = await _reader.ReadNextIntAsync(),
+            MarginLeft = await _reader.ReadNextIntAsync(),
+            MarginRight = await _reader.ReadNextIntAsync(),
+            MarginTop = await _reader.ReadNextIntAsync(),
+            MarginBottom = await _reader.ReadNextIntAsync(),
+            ScoreSizeProportion = await _reader.ReadNextIntAsync(),
+            HeaderAndFooter = await _reader.ReadNextShortAsync(),
+            Title = await _reader.ReadNextIntByteSizeStringAsync(),
+            Subtitle = await _reader.ReadNextIntByteSizeStringAsync(),
+            Artist = await _reader.ReadNextIntByteSizeStringAsync(),
+            Album = await _reader.ReadNextIntByteSizeStringAsync(),
+            Words = await _reader.ReadNextIntByteSizeStringAsync(),
+            Music = await _reader.ReadNextIntByteSizeStringAsync(),
+            WordsAndMusic = await _reader.ReadNextIntByteSizeStringAsync(),
+            Copyright = await _reader.ReadNextIntByteSizeStringAsync(),
+            CopyrightAdditional = await _reader.ReadNextIntByteSizeStringAsync(),
+            PageNumber = await _reader.ReadNextIntByteSizeStringAsync()
+        };
+
         _song.PageSetup = pageSetup;
     }
 
