@@ -27,9 +27,7 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
         await ReadMidiChannelsAsync();
         await ReadMusicalDirectionsAsync();
         await ReadRSEMasterEffectReverbAsync();
-
-        var measureCount = await _reader.ReadNextIntAsync();
-        var trackCount = await _reader.ReadNextIntAsync();
+        await ReadMeasureTrackCountAsync();
 
         return new TabFile(_context.PathInfo, _song);
     }
@@ -198,5 +196,11 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
     private async Task ReadRSEMasterEffectReverbAsync()
     {
         _song.RSEMasterEffect.Reverb = await _reader.ReadNextIntAsync();
+    }
+
+    private async Task ReadMeasureTrackCountAsync()
+    {
+        _song.MeasureCount = await _reader.ReadNextIntAsync();
+        _song.TrackCount = await _reader.ReadNextIntAsync();
     }
 }

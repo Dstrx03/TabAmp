@@ -12,4 +12,6 @@ public class GP5Song
     public int Octave { get; set; }
     public List<MidiChannel> MidiChannels { get; set; }
     public List<(string, short)> MusicalDirections { get; set; }
+    public int MeasureCount { get; set; }
+    public int TrackCount { get; set; }
 }
