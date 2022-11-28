@@ -28,65 +28,7 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
         await ReadMusicalDirectionsAsync();
         await ReadRSEMasterEffectReverbAsync();
         await ReadMeasureTrackCountAsync();
-
-        for (var i = 0; i < _song.MeasureCount; i++)
-        {
-            byte blankByte0 = 1;
-            if (i > 0)
-            {
-                blankByte0 = await _reader.ReadNextByteAsync();
-            }
-
-            var flags = await _reader.ReadNextByteAsync();
-            sbyte numerator;
-            sbyte denominator;
-            sbyte repeatClose;
-            string markerTitle;
-            byte markerColorR;
-            byte markerColorG;
-            byte markerColorB;
-            sbyte root;
-            sbyte type;
-            byte repeatAlternative;
-            byte beams1;
-            byte beams2;
-            byte beams3;
-            byte beams4;
-            if ((flags & 0x01) > 0)
-                numerator = await _reader.ReadNextSignedByteAsync();
-            if ((flags & 0x02) > 0)
-                denominator = await _reader.ReadNextSignedByteAsync();
-            var isRepeatOpen = (flags & 0x04) > 0;
-            if ((flags & 0x08) > 0)
-                repeatClose = await _reader.ReadNextSignedByteAsync();
-            if ((flags & 0x20) > 0)
-            {
-                markerTitle = await _reader.ReadNextIntByteSizeStringAsync();
-                markerColorR = await _reader.ReadNextByteAsync();
-                markerColorG = await _reader.ReadNextByteAsync();
-                markerColorB = await _reader.ReadNextByteAsync();
-                var blankMarkerColorByte = await _reader.ReadNextByteAsync();
-            }
-            if ((flags & 0x40) > 0)
-            {
-                root = await _reader.ReadNextSignedByteAsync();
-                type = await _reader.ReadNextSignedByteAsync();
-            }
-            if ((flags & 0x10) > 0)
-                repeatAlternative = await _reader.ReadNextByteAsync();
-            var hasDoubleBar = (flags & 0x80) > 0;
-            if ((flags & 0x03) > 0)
-            {
-                beams1 = await _reader.ReadNextByteAsync();
-                beams2 = await _reader.ReadNextByteAsync();
-                beams3 = await _reader.ReadNextByteAsync();
-                beams4 = await _reader.ReadNextByteAsync();
-            }
-            byte blankByte1 = 1;
-            if ((flags & 0x10) == 0)
-                blankByte1 = await _reader.ReadNextByteAsync();
-            var tripletFeel = await _reader.ReadNextByteAsync();
-        }
+        await ReadMeasureHeadersAsync();
 
         return new TabFile(_context.PathInfo, _song);
     }
@@ -222,6 +164,8 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
                 Blank1 = await _reader.ReadNextSignedByteAsync(),
                 Blank2 = await _reader.ReadNextSignedByteAsync()
             };
+            if (midiChannel.Blank1 != 0 || midiChannel.Blank2 != 0)
+                throw new InvalidOperationException();
             _song.MidiChannels.Add(midiChannel);
         }
     }
@@ -261,5 +205,68 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
     {
         _song.MeasureCount = await _reader.ReadNextIntAsync();
         _song.TrackCount = await _reader.ReadNextIntAsync();
+    }
+
+    private async Task ReadMeasureHeadersAsync()
+    {
+        _song.MeasureHeaders = new List<MeasureHeader>();
+        for (var i = 0; i < _song.MeasureCount; i++)
+        {
+            var measureHeader = new MeasureHeader();
+
+            var isFirstMeasure = i == 0;
+            if (!isFirstMeasure)
+            {
+                if (await _reader.ReadNextByteAsync() != 0)
+                    throw new InvalidOperationException();
+            }
+
+            measureHeader.Flags = await _reader.ReadNextByteAsync();
+
+            measureHeader.IsRepeatOpen = (measureHeader.Flags & 0x04) > 0;
+            measureHeader.HasDoubleBar = (measureHeader.Flags & 0x80) > 0;
+
+            if ((measureHeader.Flags & 0x01) > 0)
+                measureHeader.Numerator = await _reader.ReadNextSignedByteAsync();
+            if ((measureHeader.Flags & 0x02) > 0)
+                measureHeader.Denominator = await _reader.ReadNextSignedByteAsync();
+            if ((measureHeader.Flags & 0x08) > 0)
+                measureHeader.RepeatClose = await _reader.ReadNextSignedByteAsync();
+            if ((measureHeader.Flags & 0x20) > 0)
+            {
+                var marker = new Marker();
+                marker.Title = await _reader.ReadNextIntByteSizeStringAsync();
+                marker.ColorR = await _reader.ReadNextByteAsync();
+                marker.ColorG = await _reader.ReadNextByteAsync();
+                marker.ColorB = await _reader.ReadNextByteAsync();
+                if (await _reader.ReadNextByteAsync() != 0)
+                    throw new InvalidOperationException();
+                measureHeader.Marker = marker;
+            }
+            if ((measureHeader.Flags & 0x40) > 0)
+            {
+                measureHeader.Root = await _reader.ReadNextSignedByteAsync();
+                measureHeader.Type = await _reader.ReadNextSignedByteAsync();
+            }
+            if ((measureHeader.Flags & 0x10) > 0)
+                measureHeader.RepeatAlternative = await _reader.ReadNextByteAsync();
+            if ((measureHeader.Flags & 0x03) > 0)
+            {
+                measureHeader.Beams = new List<byte>();
+                for (var j = 0; j < 4; j++)
+                {
+                    var beam = await _reader.ReadNextByteAsync();
+                    measureHeader.Beams.Add(beam);
+                }
+            }
+            if ((measureHeader.Flags & 0x10) == 0)
+            {
+                if (await _reader.ReadNextByteAsync() != 0)
+                    throw new InvalidOperationException();
+            }
+            measureHeader.TripletFeel = await _reader.ReadNextByteAsync();
+
+            _song.MeasureHeaders.Add(measureHeader);
+        }
     }
 }

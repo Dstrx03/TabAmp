@@ -14,4 +14,5 @@ public class GP5Song
     public List<(string, short)> MusicalDirections { get; set; }
     public int MeasureCount { get; set; }
     public int TrackCount { get; set; }
+    public List<MeasureHeader> MeasureHeaders { get; set; }
 }
