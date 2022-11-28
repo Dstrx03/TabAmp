@@ -30,6 +30,44 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
         await ReadMeasureTrackCountAsync();
         await ReadMeasureHeadersAsync();
 
+        for (var i = 0; i < _song.TrackCount; i++)
+        {
+            if (await _reader.ReadNextByteAsync() != 0)
+                throw new InvalidOperationException();
+
+            var flags1 = await _reader.ReadNextByteAsync();
+
+            var isPercussionTrack = (flags1 & 0x01) > 0;
+            var is12StringedGuitarTrack = (flags1 & 0x02) > 0;
+            var isBanjoTrack = (flags1 & 0x04) > 0;
+            var isVisible = (flags1 & 0x08) > 0;
+            var isSolo = (flags1 & 0x10) > 0;
+            var isMute = (flags1 & 0x20) > 0;
+            var useRSE = (flags1 & 0x40) > 0;
+            var indicateTuning = (flags1 & 0x80) > 0;
+
+            var name = await _reader.ReadNextByteSizeStringAsync(40);
+            var stringCount = await _reader.ReadNextIntAsync();
+            var stringTunings = new List<int>();
+            for (var j = 0; j < stringCount; j++)
+            {
+                var stringTuning = await _reader.ReadNextIntAsync();
+                stringTunings.Add(stringTuning);
+            }
+            var port = await _reader.ReadNextIntAsync();
+            var channelIndex = await _reader.ReadNextIntAsync() - 1;
+            var effectChannel = await _reader.ReadNextIntAsync() - 1;
+            var fretCount = await _reader.ReadNextIntAsync();
+            var offset = await _reader.ReadNextIntAsync();
+            var colorR = await _reader.ReadNextByteAsync();
+            var colorG = await _reader.ReadNextByteAsync();
+            var colorB = await _reader.ReadNextByteAsync();
+            if (await _reader.ReadNextByteAsync() != 0)
+                throw new InvalidOperationException();
+
+            var flags2 = await _reader.ReadNextShortAsync();
+        }
+
         return new TabFile(_context.PathInfo, _song);
     }
 
