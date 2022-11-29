@@ -32,8 +32,10 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
 
         for (var i = 0; i < _song.TrackCount; i++)
         {
-            if (await _reader.ReadNextByteAsync() != 0)
-                throw new InvalidOperationException();
+            var isFirstMeasure = i == 0;
+            if (isFirstMeasure)
+                if (await _reader.ReadNextByteAsync() != 0)
+                    throw new InvalidOperationException();
 
             var flags1 = await _reader.ReadNextByteAsync();
 
@@ -49,7 +51,7 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
             var name = await _reader.ReadNextByteSizeStringAsync(40);
             var stringCount = await _reader.ReadNextIntAsync();
             var stringTunings = new List<int>();
-            for (var j = 0; j < stringCount; j++)
+            for (var j = 0; j < 7; j++)
             {
                 var stringTuning = await _reader.ReadNextIntAsync();
                 stringTunings.Add(stringTuning);
@@ -66,6 +68,46 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
                 throw new InvalidOperationException();
 
             var flags2 = await _reader.ReadNextShortAsync();
+
+            var tablature = (flags2 & 0x0001) > 0;
+            var notation = (flags2 & 0x0002) > 0;
+            var diagramsAreBelow = (flags2 & 0x0004) > 0;
+            var showRhythm = (flags2 & 0x0008) > 0;
+            var forceHorizontal = (flags2 & 0x0010) > 0;
+            var forceChannels = (flags2 & 0x0020) > 0;
+            var diagramList = (flags2 & 0x0040) > 0;
+            var diagramsInScore = (flags2 & 0x0080) > 0;
+            var unknown = (flags2 & 0x0100) > 0;
+            var autoLetRing = (flags2 & 0x0200) > 0;
+            var autoBrush = (flags2 & 0x0400) > 0;
+            var extendRhythmic = (flags2 & 0x0800) > 0;
+
+            var autoAccentuation = await _reader.ReadNextByteAsync();
+            var bank = await _reader.ReadNextByteAsync();
+
+            var trackRSEHumanize = await _reader.ReadNextByteAsync();
+            var unknown1 = await _reader.ReadNextIntAsync();
+            var unknown2 = await _reader.ReadNextIntAsync();
+            var unknown3 = await _reader.ReadNextIntAsync();
+            var unknown4 = await _reader.ReadNextIntAsync();
+            var unknown5 = await _reader.ReadNextIntAsync();
+            var unknown6 = await _reader.ReadNextIntAsync();
+
+            var instrument = await _reader.ReadNextIntAsync();
+            var unknown8 = await _reader.ReadNextIntAsync();
+            var soundBank = await _reader.ReadNextIntAsync();
+            var effectNumber = await _reader.ReadNextIntAsync();
+
+            var equalizerKnobs = new List<sbyte>();
+            for (var j = 0; j < 3; j++)
+            {
+                var knob = await _reader.ReadNextSignedByteAsync();
+                equalizerKnobs.Add(knob);
+            }
+            var equalizerGain = await _reader.ReadNextSignedByteAsync();
+
+            var effect = await _reader.ReadNextIntByteSizeStringAsync();
+            var effectCategory = await _reader.ReadNextIntByteSizeStringAsync();
         }
 
         return new TabFile(_context.PathInfo, _song);
