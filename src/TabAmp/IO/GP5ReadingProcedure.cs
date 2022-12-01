@@ -29,86 +29,7 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
         await ReadRSEMasterEffectReverbAsync();
         await ReadMeasureTrackCountAsync();
         await ReadMeasureHeadersAsync();
-
-        for (var i = 0; i < _song.TrackCount; i++)
-        {
-            var isFirstMeasure = i == 0;
-            if (isFirstMeasure)
-                if (await _reader.ReadNextByteAsync() != 0)
-                    throw new InvalidOperationException();
-
-            var flags1 = await _reader.ReadNextByteAsync();
-
-            var isPercussionTrack = (flags1 & 0x01) > 0;
-            var is12StringedGuitarTrack = (flags1 & 0x02) > 0;
-            var isBanjoTrack = (flags1 & 0x04) > 0;
-            var isVisible = (flags1 & 0x08) > 0;
-            var isSolo = (flags1 & 0x10) > 0;
-            var isMute = (flags1 & 0x20) > 0;
-            var useRSE = (flags1 & 0x40) > 0;
-            var indicateTuning = (flags1 & 0x80) > 0;
-
-            var name = await _reader.ReadNextByteSizeStringAsync(40);
-            var stringCount = await _reader.ReadNextIntAsync();
-            var stringTunings = new List<int>();
-            for (var j = 0; j < 7; j++)
-            {
-                var stringTuning = await _reader.ReadNextIntAsync();
-                stringTunings.Add(stringTuning);
-            }
-            var port = await _reader.ReadNextIntAsync();
-            var channelIndex = await _reader.ReadNextIntAsync() - 1;
-            var effectChannel = await _reader.ReadNextIntAsync() - 1;
-            var fretCount = await _reader.ReadNextIntAsync();
-            var offset = await _reader.ReadNextIntAsync();
-            var colorR = await _reader.ReadNextByteAsync();
-            var colorG = await _reader.ReadNextByteAsync();
-            var colorB = await _reader.ReadNextByteAsync();
-            if (await _reader.ReadNextByteAsync() != 0)
-                throw new InvalidOperationException();
-
-            var flags2 = await _reader.ReadNextShortAsync();
-
-            var tablature = (flags2 & 0x0001) > 0;
-            var notation = (flags2 & 0x0002) > 0;
-            var diagramsAreBelow = (flags2 & 0x0004) > 0;
-            var showRhythm = (flags2 & 0x0008) > 0;
-            var forceHorizontal = (flags2 & 0x0010) > 0;
-            var forceChannels = (flags2 & 0x0020) > 0;
-            var diagramList = (flags2 & 0x0040) > 0;
-            var diagramsInScore = (flags2 & 0x0080) > 0;
-            var unknown = (flags2 & 0x0100) > 0;
-            var autoLetRing = (flags2 & 0x0200) > 0;
-            var autoBrush = (flags2 & 0x0400) > 0;
-            var extendRhythmic = (flags2 & 0x0800) > 0;
-
-            var autoAccentuation = await _reader.ReadNextByteAsync();
-            var bank = await _reader.ReadNextByteAsync();
-
-            var trackRSEHumanize = await _reader.ReadNextByteAsync();
-            var unknown1 = await _reader.ReadNextIntAsync();
-            var unknown2 = await _reader.ReadNextIntAsync();
-            var unknown3 = await _reader.ReadNextIntAsync();
-            var unknown4 = await _reader.ReadNextIntAsync();
-            var unknown5 = await _reader.ReadNextIntAsync();
-            var unknown6 = await _reader.ReadNextIntAsync();
-
-            var instrument = await _reader.ReadNextIntAsync();
-            var unknown8 = await _reader.ReadNextIntAsync();
-            var soundBank = await _reader.ReadNextIntAsync();
-            var effectNumber = await _reader.ReadNextIntAsync();
-
-            var equalizerKnobs = new List<sbyte>();
-            for (var j = 0; j < 3; j++)
-            {
-                var knob = await _reader.ReadNextSignedByteAsync();
-                equalizerKnobs.Add(knob);
-            }
-            var equalizerGain = await _reader.ReadNextSignedByteAsync();
-
-            var effect = await _reader.ReadNextIntByteSizeStringAsync();
-            var effectCategory = await _reader.ReadNextIntByteSizeStringAsync();
-        }
+        await ReadTracksAsync();
 
         return new TabFile(_context.PathInfo, _song);
     }
@@ -348,5 +269,96 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
 
             _song.MeasureHeaders.Add(measureHeader);
         }
+    }
+
+    private async Task ReadTracksAsync()
+    {
+        _song.Tracks = new List<Track>();
+        for (var i = 0; i < _song.TrackCount; i++)
+        {
+            var track = new Track();
+
+            var isFirstMeasure = i == 0;
+            if (isFirstMeasure)
+                if (await _reader.ReadNextByteAsync() != 0)
+                    throw new InvalidOperationException();
+
+            track.Flags1 = await _reader.ReadNextByteAsync();
+
+            track.IsPercussionTrack = (track.Flags1 & 0x01) > 0;
+            track.Is12StringedGuitarTrack = (track.Flags1 & 0x02) > 0;
+            track.IsBanjoTrack = (track.Flags1 & 0x04) > 0;
+            track.IsVisible = (track.Flags1 & 0x08) > 0;
+            track.IsSolo = (track.Flags1 & 0x10) > 0;
+            track.IsMute = (track.Flags1 & 0x20) > 0;
+            track.UseRSE = (track.Flags1 & 0x40) > 0;
+            track.IndicateTuning = (track.Flags1 & 0x80) > 0;
+
+            track.Name = await _reader.ReadNextByteSizeStringAsync(40);
+            track.StringCount = await _reader.ReadNextIntAsync();
+            track.StringTunings = new List<int>();
+            for (var j = 0; j < 7; j++)
+            {
+                var stringTuning = await _reader.ReadNextIntAsync();
+                track.StringTunings.Add(stringTuning);
+            }
+            track.Port = await _reader.ReadNextIntAsync();
+            track.ChannelIndex = await _reader.ReadNextIntAsync() - 1;
+            track.EffectChannel = await _reader.ReadNextIntAsync() - 1;
+            track.FretCount = await _reader.ReadNextIntAsync();
+            track.Offset = await _reader.ReadNextIntAsync();
+            track.ColorR = await _reader.ReadNextByteAsync();
+            track.ColorG = await _reader.ReadNextByteAsync();
+            track.ColorB = await _reader.ReadNextByteAsync();
+            if (await _reader.ReadNextByteAsync() != 0)
+                throw new InvalidOperationException();
+
+            track.Flags2 = await _reader.ReadNextShortAsync();
+
+            track.Tablature = (track.Flags2 & 0x0001) > 0;
+            track.Notation = (track.Flags2 & 0x0002) > 0;
+            track.DiagramsAreBelow = (track.Flags2 & 0x0004) > 0;
+            track.ShowRhythm = (track.Flags2 & 0x0008) > 0;
+            track.ForceHorizontal = (track.Flags2 & 0x0010) > 0;
+            track.ForceChannels = (track.Flags2 & 0x0020) > 0;
+            track.DiagramList = (track.Flags2 & 0x0040) > 0;
+            track.DiagramsInScore = (track.Flags2 & 0x0080) > 0;
+            track.Unknown0 = (track.Flags2 & 0x0100) > 0;
+            track.AutoLetRing = (track.Flags2 & 0x0200) > 0;
+            track.AutoBrush = (track.Flags2 & 0x0400) > 0;
+            track.ExtendRhythmic = (track.Flags2 & 0x0800) > 0;
+
+            track.AutoAccentuation = await _reader.ReadNextByteAsync();
+            track.Bank = await _reader.ReadNextByteAsync();
+
+            track.TrackRSEHumanize = await _reader.ReadNextByteAsync();
+            track.Unknown1 = await _reader.ReadNextIntAsync();
+            track.Unknown2 = await _reader.ReadNextIntAsync();
+            track.Unknown3 = await _reader.ReadNextIntAsync();
+            track.Unknown4 = await _reader.ReadNextIntAsync();
+            track.Unknown5 = await _reader.ReadNextIntAsync();
+            track.Unknown6 = await _reader.ReadNextIntAsync();
+
+            track.Instrument = await _reader.ReadNextIntAsync();
+            track.Unknown8 = await _reader.ReadNextIntAsync();
+            track.SoundBank = await _reader.ReadNextIntAsync();
+            track.EffectNumber = await _reader.ReadNextIntAsync();
+
+            track.EqualizerKnobs = new List<sbyte>();
+            for (var j = 0; j < 3; j++)
+            {
+                var knob = await _reader.ReadNextSignedByteAsync();
+                track.EqualizerKnobs.Add(knob);
+            }
+            track.EqualizerGain = await _reader.ReadNextSignedByteAsync();
+
+            track.Effect = await _reader.ReadNextIntByteSizeStringAsync();
+            track.EffectCategory = await _reader.ReadNextIntByteSizeStringAsync();
+
+            _song.Tracks.Add(track);
+        }
+
+        if (await _reader.ReadNextByteAsync() != 0)
+            throw new InvalidOperationException();
     }
 }
