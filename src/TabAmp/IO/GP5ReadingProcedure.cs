@@ -386,6 +386,8 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
 
                 measure.Beats.Add(beat);
             }
+
+            _song.Measures.Add(measure);
         }
     }
 }
