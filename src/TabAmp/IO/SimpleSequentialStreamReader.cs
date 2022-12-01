@@ -31,6 +31,8 @@ public class SimpleSequentialStreamReader : ISequentialStreamReader
 
     public async ValueTask<ReadOnlyMemory<byte>> ReadNextBytesAsync(int count)
     {
+        if (_fileStream.Position + count >= _fileStream.Length)
+            throw new InvalidOperationException("End of file is reached.");
         var buffer = new byte[count];
         await _fileStream.ReadAsync(buffer, _context.CancellationToken);
         return buffer;

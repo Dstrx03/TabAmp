@@ -30,6 +30,7 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
         await ReadMeasureTrackCountAsync();
         await ReadMeasureHeadersAsync();
         await ReadTracksAsync();
+        await ReadMeasuresAsync();
 
         return new TabFile(_context.PathInfo, _song);
     }
@@ -37,6 +38,8 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
     private async Task ReadVersionAsync()
     {
         _song.Version = await _reader.ReadNextByteSizeStringAsync(30);
+        if (!_song.Version.Equals("FICHIER GUITAR PRO v5.10"))
+            throw new InvalidOperationException();
     }
 
     private async Task ReadScoreInformationAsync()
@@ -360,5 +363,29 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
 
         if (await _reader.ReadNextByteAsync() != 0)
             throw new InvalidOperationException();
+    }
+
+    private async Task ReadMeasuresAsync()
+    {
+        _song.Measures = new List<Measure>();
+        for (var i = 0; i < _song.MeasureCount * _song.TrackCount; i++)
+        {
+            var measure = new Measure();
+
+            measure.BeatsCount = await _reader.ReadNextIntAsync();
+
+            measure.Beats = new List<Beat>();
+            for (var j = 0; j < measure.BeatsCount; j++)
+            {
+                var beat = new Beat();
+
+                beat.Flags = await _reader.ReadNextByteAsync();
+
+                if ((beat.Flags & 0x40) > 0)
+                    beat.Status = await _reader.ReadNextByteAsync();
+
+                measure.Beats.Add(beat);
+            }
+        }
     }
 }
