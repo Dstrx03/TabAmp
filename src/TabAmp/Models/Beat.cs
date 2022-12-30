@@ -3,5 +3,8 @@
 public class Beat
 {
     public byte Flags { get; set; }
-    public byte? Status { get; internal set; }
+    public byte? Status { get; set; }
+    public sbyte Duration { get; set; }
+    public Chord Chord { get; set; }
+    public string Text { get; set; }
 }
