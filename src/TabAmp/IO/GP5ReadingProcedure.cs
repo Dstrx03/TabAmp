@@ -501,6 +501,8 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
                     if ((beat.Flags & 0x10) > 0)
                         beat.MixTableChange = await ReadMixTableChangeAsync();
 
+                    await ReadNotesAsync();
+
                     measure.Beats.Add(beat);
                 }
 
@@ -509,11 +511,55 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
         }
     }
 
+    private async Task<object> ReadNotesAsync()
+    {
+        // TODO: implementation
+        return null;
+    }
+
     private async Task<MixTableChange> ReadMixTableChangeAsync()
     {
         var mixTableChange = new MixTableChange();
 
-        //TODO: implementation
+        mixTableChange.Instrument = await _reader.ReadNextSignedByteAsync();
+        mixTableChange.RSEInstrument = await _reader.ReadNextIntAsync();
+        mixTableChange.RSEUnknown0 = await _reader.ReadNextIntAsync();
+        mixTableChange.RSESoundBank = await _reader.ReadNextIntAsync();
+        mixTableChange.RSEEffectNumber = await _reader.ReadNextIntAsync();
+
+        mixTableChange.Volume = await _reader.ReadNextSignedByteAsync();
+        mixTableChange.Balance = await _reader.ReadNextSignedByteAsync();
+        mixTableChange.Chorus = await _reader.ReadNextSignedByteAsync();
+        mixTableChange.Reverb = await _reader.ReadNextSignedByteAsync();
+        mixTableChange.Phaser = await _reader.ReadNextSignedByteAsync();
+        mixTableChange.Tremolo = await _reader.ReadNextSignedByteAsync();
+        mixTableChange.TempoName = await _reader.ReadNextIntByteSizeStringAsync();
+        mixTableChange.Tempo = await _reader.ReadNextIntAsync();
+
+        if (mixTableChange.Volume >= 0)
+            mixTableChange.VolumeDuration = await _reader.ReadNextSignedByteAsync();
+        if (mixTableChange.Balance >= 0)
+            mixTableChange.BalanceDuration = await _reader.ReadNextSignedByteAsync();
+        if (mixTableChange.Chorus >= 0)
+            mixTableChange.ChorusDuration = await _reader.ReadNextSignedByteAsync();
+        if (mixTableChange.Reverb >= 0)
+            mixTableChange.ReverbDuration = await _reader.ReadNextSignedByteAsync();
+        if (mixTableChange.Phaser >= 0)
+            mixTableChange.PhaserDuration = await _reader.ReadNextSignedByteAsync();
+        if (mixTableChange.Tremolo >= 0)
+            mixTableChange.TremoloDuration = await _reader.ReadNextSignedByteAsync();
+        if (mixTableChange.Tempo >= 0)
+        {
+            mixTableChange.TempoDuration = await _reader.ReadNextSignedByteAsync();
+            mixTableChange.HideTempo = await _reader.ReadNextBoolAsync();
+        }
+
+        mixTableChange.Flags = await _reader.ReadNextSignedByteAsync();
+
+        mixTableChange.WahValue = await _reader.ReadNextSignedByteAsync();
+
+        mixTableChange.RSEEffect = await _reader.ReadNextIntByteSizeStringAsync();
+        mixTableChange.RSEEffectCategory = await _reader.ReadNextIntByteSizeStringAsync();
 
         return mixTableChange;
     }
