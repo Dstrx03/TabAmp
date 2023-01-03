@@ -14,7 +14,7 @@ public class MixTableChange
     public sbyte Phaser { get; set; }
     public sbyte Tremolo { get; set; }
     public string TempoName { get; set; }
-    public int Tempo { get; internal set; }
+    public int Tempo { get; set; }
     public sbyte VolumeDuration { get; set; }
     public sbyte BalanceDuration { get; set; }
     public sbyte ChorusDuration { get; set; }
