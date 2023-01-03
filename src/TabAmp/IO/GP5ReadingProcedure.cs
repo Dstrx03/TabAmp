@@ -476,11 +476,75 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
                     if ((beat.Flags & 0x04) > 0)
                         beat.Text = await _reader.ReadNextIntByteSizeStringAsync();
 
+                    if ((beat.Flags & 0x08) > 0)
+                    {
+                        var beatEffect = new BeatEffect();
+
+                        beatEffect.Flags1 = await _reader.ReadNextSignedByteAsync();
+                        beatEffect.Flags2 = await _reader.ReadNextSignedByteAsync();
+
+                        if ((beatEffect.Flags1 & 0x20) > 0)
+                            beatEffect.SlapEffect = await _reader.ReadNextSignedByteAsync();
+
+                        if ((beatEffect.Flags2 & 0x04) > 0)
+                            beatEffect.TremoloBar = await ReadBendAsync();
+
+                        if ((beatEffect.Flags1 & 0x40) > 0)
+                            beatEffect.Stroke = await ReadBeatStrokeAsync();
+
+                        if ((beatEffect.Flags2 & 0x02) > 0)
+                            beatEffect.PickStroke = await _reader.ReadNextSignedByteAsync();
+
+                        beat.BeatEffect = beatEffect;
+                    }
+
+                    if ((beat.Flags & 0x10) > 0)
+                        beat.MixTableChange = await ReadMixTableChangeAsync();
+
                     measure.Beats.Add(beat);
                 }
 
                 _song.Measures.Add(measure);
             }
         }
+    }
+
+    private async Task<MixTableChange> ReadMixTableChangeAsync()
+    {
+        var mixTableChange = new MixTableChange();
+
+        //TODO: implementation
+
+        return mixTableChange;
+    }
+
+    private async Task<BeatStroke> ReadBeatStrokeAsync()
+    {
+        var beatStroke = new BeatStroke();
+
+        beatStroke.StrokeDown = await _reader.ReadNextSignedByteAsync();
+        beatStroke.StrokeUp = await _reader.ReadNextSignedByteAsync();
+
+        return beatStroke;
+    }
+
+    private async Task<BendEffect> ReadBendAsync()
+    {
+        var bendEffect = new BendEffect();
+
+        bendEffect.Type = await _reader.ReadNextSignedByteAsync();
+        bendEffect.Value = await _reader.ReadNextIntAsync();
+        bendEffect.PointCount = await _reader.ReadNextIntAsync();
+
+        bendEffect.Points = new List<(int position, int value, bool vibrato)>();
+        for (var i = 0; i < bendEffect.PointCount; i++)
+        {
+            var position = await _reader.ReadNextIntAsync();
+            var value = await _reader.ReadNextIntAsync();
+            var vibrato = await _reader.ReadNextBoolAsync();
+            bendEffect.Points.Add((position, value, vibrato));
+        }
+
+        return bendEffect;
     }
 }
