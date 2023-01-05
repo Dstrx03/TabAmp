@@ -367,154 +367,296 @@ public class GP5ReadingProcedure : ITabFileReadingProcedure
 
     private async Task ReadMeasuresAsync()
     {
-        _song.Measures = new List<Measure>();
+        _song.Measures = new List<(Measure sm1, Measure sm2, byte lineBreak)>();
         for (var i = 0; i < _song.MeasureCount; i++)
         {
             for (var j = 0; j < _song.TrackCount; j++)
             {
-                var measure = new Measure();
-
-                measure.BeatsCount = await _reader.ReadNextIntAsync();
-
-                measure.Beats = new List<Beat>();
-                for (var c = 0; c < measure.BeatsCount; c++)
-                {
-                    var beat = new Beat();
-
-                    beat.Flags = await _reader.ReadNextByteAsync();
-
-                    if ((beat.Flags & 0x40) > 0)
-                        beat.Status = await _reader.ReadNextByteAsync();
-
-                    beat.Duration = await _reader.ReadNextSignedByteAsync();
-
-                    if ((beat.Flags & 0x02) > 0)
-                    {
-                        var chord = new Chord();
-                        chord.NewFormat = await _reader.ReadNextBoolAsync();
-                        if (!chord.NewFormat)
-                        {
-                            chord.Name = await _reader.ReadNextIntByteSizeStringAsync();
-                            chord.FirstFret = await _reader.ReadNextIntAsync();
-                            if (chord.FirstFret > -1)
-                            {
-                                var strings = new List<int>();
-                                for (var q = 0; q < 6; q++)
-                                {
-                                    var fret = await _reader.ReadNextIntAsync();
-                                    strings.Add(fret);
-                                }
-                                chord.Strings = strings;
-                            }
-                        }
-                        else
-                        {
-                            chord.Sharp = await _reader.ReadNextBoolAsync();
-                            chord.Unknown0 = await _reader.ReadNextByteAsync();
-                            chord.Unknown1 = await _reader.ReadNextByteAsync();
-                            chord.Unknown2 = await _reader.ReadNextByteAsync();
-                            chord.Root = await _reader.ReadNextByteAsync();
-                            chord.Type = await _reader.ReadNextByteAsync();
-                            chord.Extension = await _reader.ReadNextByteAsync();
-                            chord.Bass = await _reader.ReadNextIntAsync();
-                            chord.Tonality = await _reader.ReadNextIntAsync();
-                            chord.Add = await _reader.ReadNextBoolAsync();
-                            chord.Name = await _reader.ReadNextByteSizeStringAsync(22);
-                            chord.Fifth = await _reader.ReadNextByteAsync();
-                            chord.Ninth = await _reader.ReadNextByteAsync();
-                            chord.Eleventh = await _reader.ReadNextByteAsync();
-                            chord.FirstFret = await _reader.ReadNextIntAsync();
-                            var strings = new List<int>();
-                            for (var q = 0; q < 7; q++)
-                            {
-                                var fret = await _reader.ReadNextIntAsync();
-                                strings.Add(fret);
-                            }
-                            chord.Strings = strings;
-                            chord.BarresCount = await _reader.ReadNextByteAsync();
-                            var barreFrets = new List<byte>();
-                            for (var q = 0; q < 5; q++)
-                            {
-                                var fret = await _reader.ReadNextByteAsync();
-                                barreFrets.Add(fret);
-                            }
-                            chord.BarreFrets = barreFrets;
-                            var barreStarts = new List<byte>();
-                            for (var q = 0; q < 5; q++)
-                            {
-                                var start = await _reader.ReadNextByteAsync();
-                                barreStarts.Add(start);
-                            }
-                            chord.BarreStarts = barreStarts;
-                            var barreEnds = new List<byte>();
-                            for (var q = 0; q < 5; q++)
-                            {
-                                var end = await _reader.ReadNextByteAsync();
-                                barreEnds.Add(end);
-                            }
-                            chord.BarreEnds = barreEnds;
-                            var omissions = new List<bool>();
-                            for (var q = 0; q < 7; q++)
-                            {
-                                var omission = await _reader.ReadNextBoolAsync();
-                                omissions.Add(omission);
-                            }
-                            chord.Omissions = omissions;
-                            chord.Unknown3 = await _reader.ReadNextByteAsync();
-                            var fingerings = new List<sbyte>();
-                            for (var q = 0; q < 7; q++)
-                            {
-                                var fingering = await _reader.ReadNextSignedByteAsync();
-                                fingerings.Add(fingering);
-                            }
-                            chord.Fingerings = fingerings;
-                            chord.Show = await _reader.ReadNextBoolAsync();
-                        }
-                        beat.Chord = chord;
-                    }
-
-                    if ((beat.Flags & 0x04) > 0)
-                        beat.Text = await _reader.ReadNextIntByteSizeStringAsync();
-
-                    if ((beat.Flags & 0x08) > 0)
-                    {
-                        var beatEffect = new BeatEffect();
-
-                        beatEffect.Flags1 = await _reader.ReadNextSignedByteAsync();
-                        beatEffect.Flags2 = await _reader.ReadNextSignedByteAsync();
-
-                        if ((beatEffect.Flags1 & 0x20) > 0)
-                            beatEffect.SlapEffect = await _reader.ReadNextSignedByteAsync();
-
-                        if ((beatEffect.Flags2 & 0x04) > 0)
-                            beatEffect.TremoloBar = await ReadBendAsync();
-
-                        if ((beatEffect.Flags1 & 0x40) > 0)
-                            beatEffect.Stroke = await ReadBeatStrokeAsync();
-
-                        if ((beatEffect.Flags2 & 0x02) > 0)
-                            beatEffect.PickStroke = await _reader.ReadNextSignedByteAsync();
-
-                        beat.BeatEffect = beatEffect;
-                    }
-
-                    if ((beat.Flags & 0x10) > 0)
-                        beat.MixTableChange = await ReadMixTableChangeAsync();
-
-                    await ReadNotesAsync();
-
-                    measure.Beats.Add(beat);
-                }
-
-                _song.Measures.Add(measure);
+                var subMeasure1 = await ReadVoiceAsync();
+                var subMeasure2 = await ReadVoiceAsync();
+                var lineBreak = await _reader.ReadNextByteAsync();
+                _song.Measures.Add((subMeasure1, subMeasure2, lineBreak));
             }
         }
     }
 
-    private async Task<object> ReadNotesAsync()
+    private async Task<Measure> ReadVoiceAsync()
     {
-        // TODO: implementation
-        return null;
+        var measure = new Measure();
+
+        measure.BeatsCount = await _reader.ReadNextIntAsync();
+
+        measure.Beats = new List<Beat>();
+        for (var c = 0; c < measure.BeatsCount; c++)
+        {
+            var beat = new Beat();
+
+            beat.Flags = await _reader.ReadNextByteAsync();
+
+            if ((beat.Flags & 0x40) > 0)
+                beat.Status = await _reader.ReadNextByteAsync();
+
+            beat.Duration = await _reader.ReadNextSignedByteAsync();
+
+            if ((beat.Flags & 0x02) > 0)
+            {
+                var chord = new Chord();
+                chord.NewFormat = await _reader.ReadNextBoolAsync();
+                if (!chord.NewFormat)
+                {
+                    chord.Name = await _reader.ReadNextIntByteSizeStringAsync();
+                    chord.FirstFret = await _reader.ReadNextIntAsync();
+                    if (chord.FirstFret > -1)
+                    {
+                        var strings = new List<int>();
+                        for (var q = 0; q < 6; q++)
+                        {
+                            var fret = await _reader.ReadNextIntAsync();
+                            strings.Add(fret);
+                        }
+                        chord.Strings = strings;
+                    }
+                }
+                else
+                {
+                    chord.Sharp = await _reader.ReadNextBoolAsync();
+                    chord.Unknown0 = await _reader.ReadNextByteAsync();
+                    chord.Unknown1 = await _reader.ReadNextByteAsync();
+                    chord.Unknown2 = await _reader.ReadNextByteAsync();
+                    chord.Root = await _reader.ReadNextByteAsync();
+                    chord.Type = await _reader.ReadNextByteAsync();
+                    chord.Extension = await _reader.ReadNextByteAsync();
+                    chord.Bass = await _reader.ReadNextIntAsync();
+                    chord.Tonality = await _reader.ReadNextIntAsync();
+                    chord.Add = await _reader.ReadNextBoolAsync();
+                    chord.Name = await _reader.ReadNextByteSizeStringAsync(22);
+                    chord.Fifth = await _reader.ReadNextByteAsync();
+                    chord.Ninth = await _reader.ReadNextByteAsync();
+                    chord.Eleventh = await _reader.ReadNextByteAsync();
+                    chord.FirstFret = await _reader.ReadNextIntAsync();
+                    var strings = new List<int>();
+                    for (var q = 0; q < 7; q++)
+                    {
+                        var fret = await _reader.ReadNextIntAsync();
+                        strings.Add(fret);
+                    }
+                    chord.Strings = strings;
+                    chord.BarresCount = await _reader.ReadNextByteAsync();
+                    var barreFrets = new List<byte>();
+                    for (var q = 0; q < 5; q++)
+                    {
+                        var fret = await _reader.ReadNextByteAsync();
+                        barreFrets.Add(fret);
+                    }
+                    chord.BarreFrets = barreFrets;
+                    var barreStarts = new List<byte>();
+                    for (var q = 0; q < 5; q++)
+                    {
+                        var start = await _reader.ReadNextByteAsync();
+                        barreStarts.Add(start);
+                    }
+                    chord.BarreStarts = barreStarts;
+                    var barreEnds = new List<byte>();
+                    for (var q = 0; q < 5; q++)
+                    {
+                        var end = await _reader.ReadNextByteAsync();
+                        barreEnds.Add(end);
+                    }
+                    chord.BarreEnds = barreEnds;
+                    var omissions = new List<bool>();
+                    for (var q = 0; q < 7; q++)
+                    {
+                        var omission = await _reader.ReadNextBoolAsync();
+                        omissions.Add(omission);
+                    }
+                    chord.Omissions = omissions;
+                    chord.Unknown3 = await _reader.ReadNextByteAsync();
+                    var fingerings = new List<sbyte>();
+                    for (var q = 0; q < 7; q++)
+                    {
+                        var fingering = await _reader.ReadNextSignedByteAsync();
+                        fingerings.Add(fingering);
+                    }
+                    chord.Fingerings = fingerings;
+                    chord.Show = await _reader.ReadNextBoolAsync();
+                }
+                beat.Chord = chord;
+            }
+
+            if ((beat.Flags & 0x04) > 0)
+                beat.Text = await _reader.ReadNextIntByteSizeStringAsync();
+
+            if ((beat.Flags & 0x08) > 0)
+            {
+                var beatEffect = new BeatEffect();
+
+                beatEffect.Flags1 = await _reader.ReadNextSignedByteAsync();
+                beatEffect.Flags2 = await _reader.ReadNextSignedByteAsync();
+
+                if ((beatEffect.Flags1 & 0x20) > 0)
+                    beatEffect.SlapEffect = await _reader.ReadNextSignedByteAsync();
+
+                if ((beatEffect.Flags2 & 0x04) > 0)
+                    beatEffect.TremoloBar = await ReadBendAsync();
+
+                if ((beatEffect.Flags1 & 0x40) > 0)
+                    beatEffect.Stroke = await ReadBeatStrokeAsync();
+
+                if ((beatEffect.Flags2 & 0x02) > 0)
+                    beatEffect.PickStroke = await _reader.ReadNextSignedByteAsync();
+
+                beat.BeatEffect = beatEffect;
+            }
+
+            if ((beat.Flags & 0x10) > 0)
+                beat.MixTableChange = await ReadMixTableChangeAsync();
+
+            beat.Notes = await ReadNotesAsync();
+
+            beat.Flags2 = await _reader.ReadNextShortAsync();
+
+            if ((beat.Flags2 & 0x0800) > 0)
+                beat.DisplayBreakSecondary = await _reader.ReadNextByteAsync();
+
+            measure.Beats.Add(beat);
+        }
+
+        return measure;
+    }
+
+    private async Task<Notes> ReadNotesAsync()
+    {
+        var notes = new Notes();
+        notes.StringFlags = await _reader.ReadNextByteAsync();
+        notes.Strings = new List<Note>();
+        for (var i = 0; i < 7; i++)
+        {
+            var stringNumber = i + 1;
+            if ((notes.StringFlags & 1 << (7 - stringNumber)) > 0)
+            {
+                var note = await ReadNoteAsync(stringNumber);
+                notes.Strings.Add(note);
+            }
+        }
+        return notes;
+    }
+
+    private async Task<Note> ReadNoteAsync(int stringNumber)
+    {
+        var note = new Note();
+
+        note.StringNumber = stringNumber;
+        note.Flags = await _reader.ReadNextByteAsync();
+
+        if ((note.Flags & 0x20) > 0)
+            note.Type = await _reader.ReadNextByteAsync();
+
+        if ((note.Flags & 0x10) > 0)
+            note.Velocity = await _reader.ReadNextSignedByteAsync();
+
+        if ((note.Flags & 0x20) > 0)
+            note.Value = await _reader.ReadNextSignedByteAsync();
+
+        if ((note.Flags & 0x80) > 0)
+        {
+            note.LeftHandFinger = await _reader.ReadNextSignedByteAsync();
+            note.RightHandFinger = await _reader.ReadNextSignedByteAsync();
+        }
+
+        if ((note.Flags & 0x01) > 0)
+            note.DurationPercent = await _reader.ReadNextDoubleAsync();
+
+        note.Flags2 = await _reader.ReadNextByteAsync();
+
+        if ((note.Flags & 0x08) > 0)
+            note.Effect = await ReadNoteEffectsAsync();
+
+        return note;
+    }
+
+    private async Task<NoteEffect> ReadNoteEffectsAsync()
+    {
+        var noteEffect = new NoteEffect();
+
+        noteEffect.Flags1 = await _reader.ReadNextSignedByteAsync();
+        noteEffect.Flags2 = await _reader.ReadNextSignedByteAsync();
+
+        if ((noteEffect.Flags1 & 0x01) > 0)
+            noteEffect.Bend = await ReadBendAsync();
+
+        if ((noteEffect.Flags1 & 0x10) > 0)
+            noteEffect.Grace = await ReadGraceAsync();
+
+        if ((noteEffect.Flags2 & 0x04) > 0)
+            noteEffect.TremoloPicking = await ReadTremoloPickingAsync();
+
+        if ((noteEffect.Flags2 & 0x08) > 0)
+            noteEffect.Slides = await ReadSlidesAsync();
+
+        if ((noteEffect.Flags2 & 0x10) > 0)
+            noteEffect.Harmonic = await ReadHarmonicAsync();
+
+        if ((noteEffect.Flags2 & 0x20) > 0)
+            noteEffect.Trill = await ReadTrillAsync();
+
+        return noteEffect;
+    }
+
+    private async Task<TrillEffect> ReadTrillAsync()
+    {
+        var trillEffect = new TrillEffect();
+
+        trillEffect.Fret = await _reader.ReadNextSignedByteAsync();
+        trillEffect.Duration = await _reader.ReadNextSignedByteAsync();
+
+        return trillEffect;
+    }
+
+    private async Task<HarmonicEffect> ReadHarmonicAsync()
+    {
+        var harmonicEffect = new HarmonicEffect();
+
+        harmonicEffect.HarmonicType = await _reader.ReadNextSignedByteAsync();
+
+        if (harmonicEffect.HarmonicType == 2)
+        {
+            harmonicEffect.Semitone = await _reader.ReadNextByteAsync();
+            harmonicEffect.Accidental = await _reader.ReadNextSignedByteAsync();
+            harmonicEffect.Octave = await _reader.ReadNextByteAsync();
+        }
+        else if (harmonicEffect.HarmonicType == 3)
+        {
+            harmonicEffect.Fret = await _reader.ReadNextByteAsync();
+        }
+
+        return harmonicEffect;
+    }
+
+    private async Task<SlidesEffect> ReadSlidesAsync()
+    {
+        var slidesEffect = new SlidesEffect();
+        slidesEffect.SlideType = await _reader.ReadNextByteAsync();
+        return slidesEffect;
+    }
+
+    private async Task<TremoloPickingEffect> ReadTremoloPickingAsync()
+    {
+        var tremoloPickingEffect = new TremoloPickingEffect();
+        tremoloPickingEffect.Value = await _reader.ReadNextSignedByteAsync();
+        return tremoloPickingEffect;
+    }
+
+    private async Task<GraceEffect> ReadGraceAsync()
+    {
+        var graceEffect = new GraceEffect();
+
+        graceEffect.Fret = await _reader.ReadNextByteAsync();
+        graceEffect.Velocity = await _reader.ReadNextByteAsync();
+        graceEffect.Transition = await _reader.ReadNextByteAsync();
+        graceEffect.Duration = await _reader.ReadNextByteAsync();
+        graceEffect.Flags = await _reader.ReadNextByteAsync();
+
+        return graceEffect;
     }
 
     private async Task<MixTableChange> ReadMixTableChangeAsync()

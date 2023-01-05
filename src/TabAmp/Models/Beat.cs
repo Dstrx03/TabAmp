@@ -9,4 +9,7 @@ public class Beat
     public string Text { get; set; }
     public BeatEffect BeatEffect { get; set; }
     public MixTableChange MixTableChange { get; set; }
+    public Notes Notes { get; set; }
+    public short Flags2 { get; set; }
+    public byte DisplayBreakSecondary { get; set; }
 }
