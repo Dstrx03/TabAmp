@@ -5,9 +5,19 @@ VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{0D1561ED-EB1B-4CCC-8830-616C709CF01F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engine", "Engine", "{342D8963-7962-43C3-8BE2-31BD91F25264}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{B056F018-1D82-4B8D-B2EA-0C8BEAC9CA70}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{BCD0FBA1-BECF-4572-AE2E-266C9204E03B}"
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{342D8963-7962-43C3-8BE2-31BD91F25264} = {0D1561ED-EB1B-4CCC-8830-616C709CF01F}
+		{B056F018-1D82-4B8D-B2EA-0C8BEAC9CA70} = {342D8963-7962-43C3-8BE2-31BD91F25264}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B3C11EBD-37E0-49F6-8B90-A8FAFC7E1B12}
