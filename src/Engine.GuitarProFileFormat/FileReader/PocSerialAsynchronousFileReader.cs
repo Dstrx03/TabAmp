@@ -1,14 +1,13 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Threading.Tasks;
 
-namespace TabAmp.Engine.GuitarProFileFormat.FileStreamReader;
+namespace TabAmp.Engine.GuitarProFileFormat.FileReader;
 
-public class PocFileStreamReader : IFileStreamReader, IDisposable
+public class PocSerialAsynchronousFileReader : ISerialAsynchronousFileReader
 {
     private readonly FileStream _fileStream;
 
-    public PocFileStreamReader(string filePath, FileStreamOptions options = null)
+    public PocSerialAsynchronousFileReader(string filePath, FileStreamOptions options = null)
     {
         options ??= new FileStreamOptions
         {
@@ -22,15 +21,15 @@ public class PocFileStreamReader : IFileStreamReader, IDisposable
     public long Length => _fileStream.Length;
     public long Position => _fileStream.Position;
 
-    public async ValueTask<byte[]> ReadNextAsync(int bytesCount)
+    public async ValueTask<byte[]> ReadBytesAsync(int count)
     {
-        var buffer = new byte[bytesCount];
+        var buffer = new byte[count];
         await _fileStream.ReadAsync(buffer, default);
         return buffer;
     }
 
-    public void SkipNext(int bytesCount) =>
-        _fileStream.Position += bytesCount;
+    public void SkipBytes(int count) =>
+        _fileStream.Position += count;
 
     public void Dispose() =>
         _fileStream?.Dispose();

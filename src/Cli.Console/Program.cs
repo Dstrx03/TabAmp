@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using TabAmp.Engine.GuitarProFileFormat.FileStreamReader;
+using TabAmp.Engine.GuitarProFileFormat.FileReader;
 
 namespace TabAmp.Cli.Console;
 
@@ -9,7 +9,7 @@ internal class Program
 {
     static async Task Main(string[] args)
     {
-        using var reader = new PocFileStreamReader("sample.gp5");
+        using var reader = new PocSerialAsynchronousFileReader("sample.gp5");
         var bytesCount = 4;
 
         Stopwatch stopWatch = new Stopwatch();
@@ -22,7 +22,7 @@ internal class Program
         stopWatch.Start();
         while (reader.Position + bytesCount <= reader.Length)
         {
-            var res = await reader.ReadNextAsync(bytesCount);
+            var res = await reader.ReadBytesAsync(bytesCount);
         }
 
         stopWatch.Stop();
