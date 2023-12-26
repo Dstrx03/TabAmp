@@ -17,7 +17,7 @@ namespace TabAmp.Engine.GuitarProFileFormat
 
         public async Task<object> DeserializeAsync()
         {
-            var verString = await _complexTypesDecoder.ReadByteSizeStringAsync();
+            var verString = await _complexTypesDecoder.ReadStringOfByteSizeAsync();
             Console.WriteLine($"Ver: [{verString}]");
             throw new NotImplementedException();
         }
