@@ -1,6 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using TabAmp.Engine.GuitarProFileFormat;
 using TabAmp.Engine.GuitarProFileFormat.FileReader;
 
@@ -13,6 +11,6 @@ internal class Program
         using var reader = new PocSerialAsynchronousFileReader("sample.gp5");
         var deserializer = new Gp5FileDeserializer(reader);
 
-        var result = await deserializer.DeserializeAsync();
+        var file = await deserializer.DeserializeAsync();
     }
 }
