@@ -1,4 +1,4 @@
-﻿namespace TabAmp.Engine.GuitarProFileFormat;
+﻿namespace TabAmp.Engine.GuitarProFileFormat.Models;
 
 public class Gp5File
 {
