@@ -16,36 +16,38 @@ internal class Gp5ComplexTypesSerialDecoder
         _primitivesDecoder = primitivesDecoder;
     }
 
-    public async ValueTask<string> ReadStringAsync(int size)
+    public async ValueTask<string> ReadStringAsync(int length, int? size = null)
     {
-        var buffer = await _fileReader.ReadBytesAsync(size);
+        var buffer = await _fileReader.ReadBytesAsync(length);
+        SkipStringTrailingBytes(length, size ?? length);
         return Encoding.UTF8.GetString(buffer);
     }
 
-    public async ValueTask<string> ReadStringOfByteSizeAsync()
+    private void SkipStringTrailingBytes(int length, int size)
     {
-        var size = await _primitivesDecoder.ReadByteAsync();
-        return await ReadStringAsync(size);
+        var trailingBytesCount = size - length;
+        if (trailingBytesCount > 0)
+            _fileReader.SkipBytes(trailingBytesCount);
+        else if (trailingBytesCount < 0)
+            // TODO: more specific exception type
+            throw new InvalidOperationException("String size cannot be less than length.");
     }
 
-    public async ValueTask<string> ReadStringOfIntSizeAsync()
+    public async ValueTask<string> ReadStringOfByteLengthAsync(int? size = null)
     {
-        var size = await _primitivesDecoder.ReadIntAsync();
-        return await ReadStringAsync(size);
+        var length = await _primitivesDecoder.ReadByteAsync();
+        return await ReadStringAsync(length, size);
     }
 
-    [Obsolete("Needs better design and naming for strings with encoded 'reserved size' value.")]
-    public async ValueTask<string> ReadIntByteSizeStringAsync()
+    public async ValueTask<string> ReadStringOfByteLengthIntSizeAsync()
     {
-        var intValue = await _primitivesDecoder.ReadIntZeroBasedAsync();
-        var size = await _primitivesDecoder.ReadByteAsync();
+        var size = await _primitivesDecoder.ReadIntZeroBasedAsync();
+        return await ReadStringOfByteLengthAsync(size);
+    }
 
-        var stringValue = await ReadStringAsync(size);
-
-        var skipBytes = intValue - size;
-        if (skipBytes > 0)
-            _fileReader.SkipBytes(skipBytes);
-
-        return stringValue;
+    public async ValueTask<string> ReadStringOfIntLengthAsync()
+    {
+        var length = await _primitivesDecoder.ReadIntAsync();
+        return await ReadStringAsync(length);
     }
 }
