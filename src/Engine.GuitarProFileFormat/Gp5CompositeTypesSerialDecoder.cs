@@ -5,12 +5,12 @@ using TabAmp.Engine.GuitarProFileFormat.FileReader;
 
 namespace TabAmp.Engine.GuitarProFileFormat;
 
-internal class Gp5ComplexTypesSerialDecoder
+internal class Gp5CompositeTypesSerialDecoder
 {
     private readonly ISerialAsynchronousFileReader _fileReader;
     private readonly Gp5PrimitivesSerialDecoder _primitivesDecoder;
 
-    public Gp5ComplexTypesSerialDecoder(ISerialAsynchronousFileReader fileReader, Gp5PrimitivesSerialDecoder primitivesDecoder)
+    public Gp5CompositeTypesSerialDecoder(ISerialAsynchronousFileReader fileReader, Gp5PrimitivesSerialDecoder primitivesDecoder)
     {
         _fileReader = fileReader;
         _primitivesDecoder = primitivesDecoder;
