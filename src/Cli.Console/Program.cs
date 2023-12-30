@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Text.Json;
+using System.Threading.Tasks;
 using TabAmp.Engine.GuitarProFileFormat;
 using TabAmp.Engine.GuitarProFileFormat.FileReader;
 
@@ -12,5 +13,8 @@ internal class Program
         var deserializer = new Gp5FileDeserializer(reader);
 
         var file = await deserializer.DeserializeAsync();
+        var fileJson = JsonSerializer.Serialize(file, new JsonSerializerOptions { WriteIndented = true });
+
+        System.Console.WriteLine(fileJson);
     }
 }
