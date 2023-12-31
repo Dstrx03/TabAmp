@@ -25,6 +25,7 @@ public class Gp5FileDeserializer
     {
         await ReadVersionAsync();
         await ReadScoreInformationAsync();
+        await ReadLyricsAsync();
         return _file;
     }
 
@@ -63,5 +64,26 @@ public class Gp5FileDeserializer
         }
 
         _file.ScoreInformation = scoreInformation;
+    }
+
+    private async ValueTask ReadLyricsAsync()
+    {
+        const int lyricsLinesCount = 5;
+        var lyrics = new Gp5Lyrics
+        {
+            ApplyToTrack = await _primitivesDecoder.ReadIntAsync(),
+            Lines = new Gp5LyricsLine[lyricsLinesCount]
+        };
+
+        for (var i = 0; i < lyrics.Lines.Length; i++)
+        {
+            lyrics.Lines[i] = new Gp5LyricsLine
+            {
+                StartFromBar = await _primitivesDecoder.ReadIntAsync(),
+                Lyrics = await _compositeTypesDecoder.ReadStringOfIntLengthAsync()
+            };
+        }
+
+        _file.Lyrics = lyrics;
     }
 }
