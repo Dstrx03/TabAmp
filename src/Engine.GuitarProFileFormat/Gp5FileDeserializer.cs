@@ -26,19 +26,21 @@ public class Gp5FileDeserializer
         await ReadVersionAsync();
         await ReadScoreInformationAsync();
         await ReadLyricsAsync();
+        await ReadRseMasterEffectAsync();
         return _file;
     }
 
-    // TODO:
-    // "version" data is stored in size of 30 bytes, the actual version string is 24 characters long
-    // remaining 6 bytes seems to have some arbitrary data - it may be not just trailing string bytes
-    // does that 30 bytes is actually a "header" of guitar pro file?
     private async ValueTask ReadVersionAsync()
     {
         const int versionStringSize = 30;
         var versionString = await _compositeTypesDecoder.ReadStringOfByteLengthAsync(versionStringSize);
 
         _file.Version = versionString;
+
+        // TODO:
+        // "version" data is stored in size of 30 bytes, the actual version string is 24 characters long
+        // remaining 6 bytes seems to have some arbitrary data - it may be not just trailing string bytes
+        // does that 30 bytes is actually a "header" of guitar pro file?
     }
 
     private async ValueTask ReadScoreInformationAsync()
@@ -85,5 +87,17 @@ public class Gp5FileDeserializer
         }
 
         _file.Lyrics = lyrics;
+    }
+
+    private async ValueTask ReadRseMasterEffectAsync()
+    {
+        var masterEffect = new Gp5RseMasterEffect
+        {
+            Volume = await _primitivesDecoder.ReadIntAsync(),
+            unknown_todo = await _primitivesDecoder.ReadIntAsync(),
+            Equalizer = await _compositeTypesDecoder.ReadRseEqualizerAsync()
+        };
+
+        _file.RseMasterEffect = masterEffect;
     }
 }

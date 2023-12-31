@@ -2,6 +2,7 @@
 using System.Text;
 using System.Threading.Tasks;
 using TabAmp.Engine.GuitarProFileFormat.FileReader;
+using TabAmp.Engine.GuitarProFileFormat.Models;
 
 namespace TabAmp.Engine.GuitarProFileFormat;
 
@@ -49,5 +50,23 @@ internal class Gp5CompositeTypesSerialDecoder
     {
         var length = await _primitivesDecoder.ReadIntAsync();
         return await ReadStringAsync(length);
+    }
+
+    public async ValueTask<Gp5RseEqualizer> ReadRseEqualizerAsync()
+    {
+        var equalizer = new Gp5RseEqualizer
+        {
+        };
+
+        var knobs = new sbyte[10];
+        for (var i = 0; i < 10; i++)
+        {
+            var eqKnob = await _primitivesDecoder.ReadSignedByteAsync();
+            knobs[i] = eqKnob;
+        }
+
+        var gain = await _primitivesDecoder.ReadSignedByteAsync();
+
+        return equalizer;
     }
 }
