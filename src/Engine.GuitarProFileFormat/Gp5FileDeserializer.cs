@@ -91,11 +91,12 @@ public class Gp5FileDeserializer
 
     private async ValueTask ReadRseMasterEffectAsync()
     {
+        const int rseMasterEffectEqualizerBandsCount = 10;
         var masterEffect = new Gp5RseMasterEffect
         {
             Volume = await _primitivesDecoder.ReadIntAsync(),
             unknown_todo = await _primitivesDecoder.ReadIntAsync(),
-            Equalizer = await _compositeTypesDecoder.ReadRseEqualizerAsync()
+            Equalizer = await _compositeTypesDecoder.ReadRseEqualizerAsync(rseMasterEffectEqualizerBandsCount)
         };
 
         _file.RseMasterEffect = masterEffect;

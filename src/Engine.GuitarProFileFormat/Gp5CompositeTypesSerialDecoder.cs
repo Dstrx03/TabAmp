@@ -52,21 +52,20 @@ internal class Gp5CompositeTypesSerialDecoder
         return await ReadStringAsync(length);
     }
 
-    public async ValueTask<Gp5RseEqualizer> ReadRseEqualizerAsync()
+    public async ValueTask<Gp5RseEqualizer> ReadRseEqualizerAsync(int bandsCount)
     {
-        var equalizer = new Gp5RseEqualizer
+        var bands = new sbyte[bandsCount];
+        for (var i = 0; i < bandsCount; i++)
         {
-        };
-
-        var knobs = new sbyte[10];
-        for (var i = 0; i < 10; i++)
-        {
-            var eqKnob = await _primitivesDecoder.ReadSignedByteAsync();
-            knobs[i] = eqKnob;
+            bands[i] = await _primitivesDecoder.ReadSignedByteAsync();
         }
 
-        var gain = await _primitivesDecoder.ReadSignedByteAsync();
+        var gainPreFader = await _primitivesDecoder.ReadSignedByteAsync();
 
-        return equalizer;
+        return new Gp5RseEqualizer
+        {
+            Bands = bands,
+            GainPreFader = gainPreFader
+        };
     }
 }
