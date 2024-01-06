@@ -95,7 +95,7 @@ public class Gp5FileDeserializer
         var masterEffect = new Gp5RseMasterEffect
         {
             Volume = await _primitivesDecoder.ReadIntAsync(),
-            unknown_todo = await _primitivesDecoder.ReadIntAsync(),
+            _A01 = await _primitivesDecoder.ReadIntAsync(),
             Equalizer = await _compositeTypesDecoder.ReadRseEqualizerAsync(rseMasterEffectEqualizerBandsCount)
         };
 
