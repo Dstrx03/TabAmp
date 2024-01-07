@@ -27,6 +27,7 @@ public class Gp5FileDeserializer
         await ReadScoreInformationAsync();
         await ReadLyricsAsync();
         await ReadRseMasterEffectAsync();
+        await ReadPageSetupAsync();
         return _file;
     }
 
@@ -100,5 +101,38 @@ public class Gp5FileDeserializer
         };
 
         _file.RseMasterEffect = masterEffect;
+    }
+
+    private async ValueTask ReadPageSetupAsync()
+    {
+        var pageSetup = new Gp5PageSetup
+        {
+            Width = await _primitivesDecoder.ReadIntAsync(),
+            Height = await _primitivesDecoder.ReadIntAsync(),
+            MarginLeft = await _primitivesDecoder.ReadIntAsync(),
+            MarginRight = await _primitivesDecoder.ReadIntAsync(),
+            MarginTop = await _primitivesDecoder.ReadIntAsync(),
+            MarginBottom = await _primitivesDecoder.ReadIntAsync(),
+            ScoreSizeProportion = await _primitivesDecoder.ReadIntAsync()
+        };
+
+        // TODO: mapping, flags type handling
+        var HeaderAndFooter = await _primitivesDecoder.ReadShortAsync();
+
+        var headerAndFooterFlags = new Gp5Flag(HeaderAndFooter);
+        var res = headerAndFooterFlags.Evaluate(nameof(Gp5Flag.Evaluate));
+
+        var Title = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync();
+        var Subtitle = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync();
+        var Artist = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync();
+        var Album = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync();
+        var Words = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync();
+        var Music = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync();
+        var WordsAndMusic = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync();
+        var Copyright = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync();
+        var CopyrightAdditional = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync();
+        var PageNumber = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync();
+
+        _file.PageSetup = pageSetup;
     }
 }
