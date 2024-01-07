@@ -1,4 +1,6 @@
-﻿namespace TabAmp.Engine.GuitarProFileFormat.Models;
+﻿using System;
+
+namespace TabAmp.Engine.GuitarProFileFormat.Models;
 
 public class Gp5PageSetup
 {
@@ -9,4 +11,19 @@ public class Gp5PageSetup
     public int MarginTop { get; set; }
     public int MarginBottom { get; set; }
     public int ScoreSizeProportion { get; set; }
+    public HeaderAndFooterFlags HeaderAndFooter { get; set; }
+
+    [Flags]
+    public enum HeaderAndFooterFlags : short
+    {
+        Title = 0x001,
+        Subtitle = 0x002,
+        Artist = 0x004,
+        Album = 0x008,
+        Words = 0x010,
+        Music = 0x020,
+        WordsAndMusic = 0x040,
+        Copyright = 0x080,
+        PageNumber = 0x100
+    }
 }

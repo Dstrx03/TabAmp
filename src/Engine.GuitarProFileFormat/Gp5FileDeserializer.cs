@@ -113,15 +113,11 @@ public class Gp5FileDeserializer
             MarginRight = await _primitivesDecoder.ReadIntAsync(),
             MarginTop = await _primitivesDecoder.ReadIntAsync(),
             MarginBottom = await _primitivesDecoder.ReadIntAsync(),
-            ScoreSizeProportion = await _primitivesDecoder.ReadIntAsync()
+            ScoreSizeProportion = await _primitivesDecoder.ReadIntAsync(),
+            HeaderAndFooter = (Gp5PageSetup.HeaderAndFooterFlags)await _primitivesDecoder.ReadShortAsync()
         };
 
-        // TODO: mapping, flags type handling
-        var HeaderAndFooter = await _primitivesDecoder.ReadShortAsync();
-
-        var headerAndFooterFlags = new Gp5Flag(HeaderAndFooter);
-        var res = headerAndFooterFlags.Evaluate(nameof(Gp5Flag.Evaluate));
-
+        // TODO: mapping 
         var Title = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync();
         var Subtitle = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync();
         var Artist = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync();
