@@ -12,6 +12,14 @@ public class Gp5PageSetup
     public int MarginBottom { get; set; }
     public int ScoreSizeProportion { get; set; }
     public HeaderAndFooterFlags HeaderAndFooter { get; set; }
+    public string Title { get; set; }
+    public string Subtitle { get; set; }
+    public string Artist { get; set; }
+    public string Album { get; set; }
+    public string Words { get; set; }
+    public string Music { get; set; }
+    public string WordsAndMusic { get; set; }
+    public string Copyright { get; set; }
 
     [Flags]
     public enum HeaderAndFooterFlags : short
