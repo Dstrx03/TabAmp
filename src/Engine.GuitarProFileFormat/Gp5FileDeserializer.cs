@@ -28,6 +28,7 @@ public class Gp5FileDeserializer
         await ReadLyricsAsync();
         await ReadRseMasterEffectAsync();
         await ReadPageSetupAsync();
+        await ReadTempoAsync();
         return _file;
     }
 
@@ -128,5 +129,17 @@ public class Gp5FileDeserializer
         };
 
         _file.PageSetup = pageSetup;
+    }
+
+    private async ValueTask ReadTempoAsync()
+    {
+        var tempo = new Gp5Tempo
+        {
+            WordIndication = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync(),
+            BeatsPerMinute = await _primitivesDecoder.ReadIntAsync(),
+            HideBeatsPerMinute = await _primitivesDecoder.ReadBoolAsync()
+        };
+
+        _file.Tempo = tempo;
     }
 }

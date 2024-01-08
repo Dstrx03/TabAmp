@@ -7,4 +7,5 @@ public class Gp5File
     public Gp5Lyrics Lyrics { get; set; }
     public Gp5RseMasterEffect RseMasterEffect { get; set; }
     public Gp5PageSetup PageSetup { get; set; }
+    public Gp5Tempo Tempo { get; set; }
 }
