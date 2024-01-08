@@ -19,7 +19,9 @@ public class Gp5PageSetup
     public string Words { get; set; }
     public string Music { get; set; }
     public string WordsAndMusic { get; set; }
-    public string Copyright { get; set; }
+    public string CopyrightFirstLine { get; set; }
+    public string CopyrightSecondLine { get; set; }
+    public string PageNumber { get; set; }
 
     [Flags]
     public enum HeaderAndFooterFlags : short

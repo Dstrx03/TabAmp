@@ -122,14 +122,10 @@ public class Gp5FileDeserializer
             Words = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync(),
             Music = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync(),
             WordsAndMusic = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync(),
-            Copyright = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync()
+            CopyrightFirstLine = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync(),
+            CopyrightSecondLine = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync(),
+            PageNumber = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync()
         };
-
-        // TODO: mapping
-        var CopyrightAdditional = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync();
-        var PageNumber = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync();
-
-        // TODO: try UTF-16 (ampersand chars is seems to be broken when decoded)
 
         _file.PageSetup = pageSetup;
     }

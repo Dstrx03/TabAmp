@@ -22,6 +22,8 @@ internal class Gp5CompositeTypesSerialDecoder
         var buffer = await _fileReader.ReadBytesAsync(length);
         SkipStringTrailingBytes(length, size ?? length);
         return Encoding.UTF8.GetString(buffer);
+
+        // TODO: fix ampersand characters are being decoded as \u0026
     }
 
     private void SkipStringTrailingBytes(int length, int size)
