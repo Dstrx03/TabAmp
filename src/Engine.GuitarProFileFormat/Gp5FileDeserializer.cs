@@ -29,6 +29,7 @@ public class Gp5FileDeserializer
         await ReadRseMasterEffectAsync();
         await ReadPageSetupAsync();
         await ReadTempoAsync();
+        await ReadKeySignatureAsync();
         return _file;
     }
 
@@ -141,5 +142,19 @@ public class Gp5FileDeserializer
         };
 
         _file.Tempo = tempo;
+    }
+
+    private async ValueTask ReadKeySignatureAsync()
+    {
+        var keySignature = await _primitivesDecoder.ReadSignedByteAsync();
+
+        var sbyte1 = await _primitivesDecoder.ReadSignedByteAsync();
+        var sbyte2 = await _primitivesDecoder.ReadSignedByteAsync();
+        var sbyte3 = await _primitivesDecoder.ReadSignedByteAsync();
+
+        // "octave"?
+        var sbyte4 = await _primitivesDecoder.ReadSignedByteAsync();
+
+        _file.KeySignature = keySignature;
     }
 }
