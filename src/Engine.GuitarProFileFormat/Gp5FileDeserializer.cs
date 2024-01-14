@@ -28,8 +28,8 @@ public class Gp5FileDeserializer
         await ReadLyricsAsync();
         await ReadRseMasterEffectAsync();
         await ReadPageSetupAsync();
-        await ReadTempoAsync();
-        await ReadKeySignatureAsync();
+        await ReadHeaderTempoAsync();
+        await ReadHeaderKeySignatureAsync();
         return _file;
     }
 
@@ -132,7 +132,7 @@ public class Gp5FileDeserializer
         _file.PageSetup = pageSetup;
     }
 
-    private async ValueTask ReadTempoAsync()
+    private async ValueTask ReadHeaderTempoAsync()
     {
         var tempo = new Gp5Tempo
         {
@@ -144,16 +144,16 @@ public class Gp5FileDeserializer
         _file.Tempo = tempo;
     }
 
-    private async ValueTask ReadKeySignatureAsync()
+    private async ValueTask ReadHeaderKeySignatureAsync()
     {
-        var keySignature = await _primitivesDecoder.ReadSignedByteAsync();
-
-        var sbyte1 = await _primitivesDecoder.ReadSignedByteAsync();
-        var sbyte2 = await _primitivesDecoder.ReadSignedByteAsync();
-        var sbyte3 = await _primitivesDecoder.ReadSignedByteAsync();
-
-        // "octave"?
-        var sbyte4 = await _primitivesDecoder.ReadSignedByteAsync();
+        var keySignature = new Gp5HeaderKeySignature
+        {
+            Key = await _primitivesDecoder.ReadSignedByteAsync(),
+            _A01 = await _primitivesDecoder.ReadSignedByteAsync(),
+            _A02 = await _primitivesDecoder.ReadSignedByteAsync(),
+            _A03 = await _primitivesDecoder.ReadSignedByteAsync(),
+            Octave = await _primitivesDecoder.ReadSignedByteAsync()
+        };
 
         _file.KeySignature = keySignature;
     }
