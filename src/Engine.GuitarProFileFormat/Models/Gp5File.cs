@@ -11,4 +11,6 @@ public class Gp5File
     public Gp5HeaderKeySignature KeySignature { get; set; }
     public Gp5MidiChannel[] MidiChannels { get; set; }
     public Gp5MusicalDirections MusicalDirections { get; set; }
+    public int MeasuresCount { get; set; }
+    public int TracksCount { get; set; }
 }

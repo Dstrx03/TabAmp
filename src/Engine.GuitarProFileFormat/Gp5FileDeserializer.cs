@@ -33,6 +33,8 @@ public class Gp5FileDeserializer
         await ReadMidiChannelsAsync();
         await ReadMusicalDirectionsAsync();
         await ReadRseMasterEffectReverbAsync();
+        await ReadMeasuresCountAsync();
+        await ReadTracksCountAsync();
         return _file;
     }
 
@@ -212,10 +214,24 @@ public class Gp5FileDeserializer
         _file.MusicalDirections = musicalDirections;
     }
 
-    public async ValueTask ReadRseMasterEffectReverbAsync()
+    private async ValueTask ReadRseMasterEffectReverbAsync()
     {
         var reverb = await _primitivesDecoder.ReadIntAsync();
 
         _file.RseMasterEffect.Reverb = reverb;
+    }
+
+    private async ValueTask ReadMeasuresCountAsync()
+    {
+        var measuresCount = await _primitivesDecoder.ReadIntAsync();
+
+        _file.MeasuresCount = measuresCount;
+    }
+
+    private async ValueTask ReadTracksCountAsync()
+    {
+        var tracksCount = await _primitivesDecoder.ReadIntAsync();
+
+        _file.TracksCount = tracksCount;
     }
 }
