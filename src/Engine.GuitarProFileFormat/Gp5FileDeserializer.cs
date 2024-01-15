@@ -32,6 +32,7 @@ public class Gp5FileDeserializer
         await ReadHeaderKeySignatureAsync();
         await ReadMidiChannelsAsync();
         await ReadMusicalDirectionsAsync();
+        await ReadRseMasterEffectReverbAsync();
         return _file;
     }
 
@@ -209,5 +210,12 @@ public class Gp5FileDeserializer
         };
 
         _file.MusicalDirections = musicalDirections;
+    }
+
+    public async ValueTask ReadRseMasterEffectReverbAsync()
+    {
+        var reverb = await _primitivesDecoder.ReadIntAsync();
+
+        _file.RseMasterEffect.Reverb = reverb;
     }
 }

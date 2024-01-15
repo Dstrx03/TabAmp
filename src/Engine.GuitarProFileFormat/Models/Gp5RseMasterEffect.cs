@@ -4,6 +4,7 @@ public class Gp5RseMasterEffect
 {
     public int Volume { get; set; }
     public Gp5RseEqualizer Equalizer { get; set; }
+    public int Reverb { get; set; }
 
 
     #region Unknown Properties
