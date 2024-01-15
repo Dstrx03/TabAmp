@@ -169,14 +169,14 @@ public class Gp5FileDeserializer
             midiChannels[i] = new Gp5MidiChannel
             {
                 Instrument = await _primitivesDecoder.ReadIntAsync(),
-                Volume = await _primitivesDecoder.ReadSignedByteAsync(),
-                Balance = await _primitivesDecoder.ReadSignedByteAsync(),
-                Chorus = await _primitivesDecoder.ReadSignedByteAsync(),
-                Reverb = await _primitivesDecoder.ReadSignedByteAsync(),
-                Phaser = await _primitivesDecoder.ReadSignedByteAsync(),
-                Tremolo = await _primitivesDecoder.ReadSignedByteAsync(),
-                Blank1 = await _primitivesDecoder.ReadSignedByteAsync(),
-                Blank2 = await _primitivesDecoder.ReadSignedByteAsync()
+                Volume = await _primitivesDecoder.ReadByteAsync(),
+                Balance = await _primitivesDecoder.ReadByteAsync(),
+                Chorus = await _primitivesDecoder.ReadByteAsync(),
+                Reverb = await _primitivesDecoder.ReadByteAsync(),
+                Phaser = await _primitivesDecoder.ReadByteAsync(),
+                Tremolo = await _primitivesDecoder.ReadByteAsync(),
+                Blank1 = await _primitivesDecoder.ReadByteAsync(),
+                Blank2 = await _primitivesDecoder.ReadByteAsync()
             };
         }
 

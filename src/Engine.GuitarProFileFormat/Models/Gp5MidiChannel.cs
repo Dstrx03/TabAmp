@@ -3,13 +3,13 @@
 public class Gp5MidiChannel
 {
     public int Instrument { get; set; }
-    public sbyte Volume { get; set; }
-    public sbyte Balance { get; set; }
-    public sbyte Chorus { get; set; }
-    public sbyte Reverb { get; set; }
-    public sbyte Phaser { get; set; }
-    public sbyte Tremolo { get; set; }
+    public byte Volume { get; set; }
+    public byte Balance { get; set; }
+    public byte Chorus { get; set; }
+    public byte Reverb { get; set; }
+    public byte Phaser { get; set; }
+    public byte Tremolo { get; set; }
 
-    public sbyte Blank1 { get; set; }
-    public sbyte Blank2 { get; set; }
+    public byte Blank1 { get; set; }
+    public byte Blank2 { get; set; }
 }
