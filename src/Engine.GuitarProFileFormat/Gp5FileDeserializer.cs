@@ -31,6 +31,7 @@ public class Gp5FileDeserializer
         await ReadHeaderTempoAsync();
         await ReadHeaderKeySignatureAsync();
         await ReadMidiChannelsAsync();
+        await ReadMusicalDirectionsAsync();
         return _file;
     }
 
@@ -180,5 +181,33 @@ public class Gp5FileDeserializer
         }
 
         _file.MidiChannels = midiChannels;
+    }
+
+    private async ValueTask ReadMusicalDirectionsAsync()
+    {
+        var musicalDirections = new Gp5MusicalDirections
+        {
+            Coda = await _primitivesDecoder.ReadShortAsync(),
+            DoubleCoda = await _primitivesDecoder.ReadShortAsync(),
+            Segno = await _primitivesDecoder.ReadShortAsync(),
+            SegnoSegno = await _primitivesDecoder.ReadShortAsync(),
+            Fine = await _primitivesDecoder.ReadShortAsync(),
+            DaCapo = await _primitivesDecoder.ReadShortAsync(),
+            DaCapoAlCoda = await _primitivesDecoder.ReadShortAsync(),
+            DaCapoAlDoubleCoda = await _primitivesDecoder.ReadShortAsync(),
+            DaCapoAlFine = await _primitivesDecoder.ReadShortAsync(),
+            DaSegno = await _primitivesDecoder.ReadShortAsync(),
+            DaSegnoAlCoda = await _primitivesDecoder.ReadShortAsync(),
+            DaSegnoAlDoubleCoda = await _primitivesDecoder.ReadShortAsync(),
+            DaSegnoAlFine = await _primitivesDecoder.ReadShortAsync(),
+            DaSegnoSegno = await _primitivesDecoder.ReadShortAsync(),
+            DaSegnoSegnoAlCoda = await _primitivesDecoder.ReadShortAsync(),
+            DaSegnoSegnoAlDoubleCoda = await _primitivesDecoder.ReadShortAsync(),
+            DaSegnoSegnoAlFine = await _primitivesDecoder.ReadShortAsync(),
+            DaCoda = await _primitivesDecoder.ReadShortAsync(),
+            DaDoubleCoda = await _primitivesDecoder.ReadShortAsync()
+        };
+
+        _file.MusicalDirections = musicalDirections;
     }
 }
