@@ -9,4 +9,5 @@ public class Gp5File
     public Gp5PageSetup PageSetup { get; set; }
     public Gp5Tempo Tempo { get; set; }
     public Gp5HeaderKeySignature KeySignature { get; set; }
+    public Gp5MidiChannel[] MidiChannels { get; set; }
 }

@@ -30,6 +30,7 @@ public class Gp5FileDeserializer
         await ReadPageSetupAsync();
         await ReadHeaderTempoAsync();
         await ReadHeaderKeySignatureAsync();
+        await ReadMidiChannelsAsync();
         return _file;
     }
 
@@ -156,5 +157,28 @@ public class Gp5FileDeserializer
         };
 
         _file.KeySignature = keySignature;
+    }
+
+    private async ValueTask ReadMidiChannelsAsync()
+    {
+        const int midiChannelsCount = 64;
+        var midiChannels = new Gp5MidiChannel[midiChannelsCount];
+        for (var i = 0; i < midiChannels.Length; i++)
+        {
+            midiChannels[i] = new Gp5MidiChannel
+            {
+                Instrument = await _primitivesDecoder.ReadIntAsync(),
+                Volume = await _primitivesDecoder.ReadSignedByteAsync(),
+                Balance = await _primitivesDecoder.ReadSignedByteAsync(),
+                Chorus = await _primitivesDecoder.ReadSignedByteAsync(),
+                Reverb = await _primitivesDecoder.ReadSignedByteAsync(),
+                Phaser = await _primitivesDecoder.ReadSignedByteAsync(),
+                Tremolo = await _primitivesDecoder.ReadSignedByteAsync(),
+                Blank1 = await _primitivesDecoder.ReadSignedByteAsync(),
+                Blank2 = await _primitivesDecoder.ReadSignedByteAsync()
+            };
+        }
+
+        _file.MidiChannels = midiChannels;
     }
 }
