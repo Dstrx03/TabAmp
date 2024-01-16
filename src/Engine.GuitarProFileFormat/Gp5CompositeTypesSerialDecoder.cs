@@ -17,41 +17,34 @@ internal class Gp5CompositeTypesSerialDecoder
         _primitivesDecoder = primitivesDecoder;
     }
 
-    public async ValueTask<string> ReadStringAsync(int length, int? size = null)
-    {
-        var buffer = await _fileReader.ReadBytesAsync(length);
-        SkipStringTrailingBytes(length, size ?? length);
-        return Encoding.UTF8.GetString(buffer);
-
-        // TODO: fix ampersand characters are being decoded as \u0026
-    }
-
-    private void SkipStringTrailingBytes(int length, int size)
-    {
-        var trailingBytesCount = size - length;
-        if (trailingBytesCount > 0)
-            _fileReader.SkipBytes(trailingBytesCount);
-        else if (trailingBytesCount < 0)
-            // TODO: more specific exception type
-            throw new InvalidOperationException("String size cannot be less than length.");
-    }
-
-    public async ValueTask<string> ReadStringOfByteLengthAsync(int? size = null)
+    public async ValueTask<string> ReadByteStringAsync()
     {
         var length = await _primitivesDecoder.ReadByteAsync();
-        return await ReadStringAsync(length, size);
+        return await ReadStringAsync(length);
     }
 
-    public async ValueTask<string> ReadStringOfByteLengthIntSizeAsync()
-    {
-        var size = await _primitivesDecoder.ReadIntZeroBasedAsync();
-        return await ReadStringOfByteLengthAsync(size);
-    }
-
-    public async ValueTask<string> ReadStringOfIntLengthAsync()
+    public async ValueTask<string> ReadIntStringAsync()
     {
         var length = await _primitivesDecoder.ReadIntAsync();
         return await ReadStringAsync(length);
+    }
+
+    public async ValueTask<string> ReadIntByteStringAsync()
+    {
+        var size = await _primitivesDecoder.ReadIntAsync();
+        var length = await _primitivesDecoder.ReadByteAsync();
+
+        // TODO: more specific exception type, message, design
+        if (size - 1 != length)
+            throw new InvalidOperationException($"TODO: {size}:{length}:{_fileReader.Position}");
+
+        return await ReadStringAsync(length);
+    }
+
+    private async ValueTask<string> ReadStringAsync(int length)
+    {
+        var buffer = await _fileReader.ReadBytesAsync(length);
+        return Encoding.UTF8.GetString(buffer);
     }
 
     public async ValueTask<Gp5RseEqualizer> ReadRseEqualizerAsync(int bandsCount)

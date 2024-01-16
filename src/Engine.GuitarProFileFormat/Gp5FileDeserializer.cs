@@ -40,8 +40,12 @@ public class Gp5FileDeserializer
 
     private async ValueTask ReadVersionAsync()
     {
+        // TODO: naming in this method requires refactoing
         const int versionStringSize = 30;
-        var versionString = await _compositeTypesDecoder.ReadStringOfByteLengthAsync(versionStringSize);
+        var versionString = await _compositeTypesDecoder.ReadByteStringAsync();
+
+        var delta = versionStringSize - versionString.Length;
+        _fileReader.SkipBytes(delta);
 
         _file.Version = versionString;
 
@@ -55,21 +59,21 @@ public class Gp5FileDeserializer
     {
         var scoreInformation = new Gp5ScoreInformation
         {
-            Title = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync(),
-            Subtitle = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync(),
-            Artist = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync(),
-            Album = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync(),
-            Words = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync(),
-            Music = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync(),
-            Copyright = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync(),
-            Tab = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync(),
-            Instructions = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync(),
+            Title = await _compositeTypesDecoder.ReadIntByteStringAsync(),
+            Subtitle = await _compositeTypesDecoder.ReadIntByteStringAsync(),
+            Artist = await _compositeTypesDecoder.ReadIntByteStringAsync(),
+            Album = await _compositeTypesDecoder.ReadIntByteStringAsync(),
+            Words = await _compositeTypesDecoder.ReadIntByteStringAsync(),
+            Music = await _compositeTypesDecoder.ReadIntByteStringAsync(),
+            Copyright = await _compositeTypesDecoder.ReadIntByteStringAsync(),
+            Tab = await _compositeTypesDecoder.ReadIntByteStringAsync(),
+            Instructions = await _compositeTypesDecoder.ReadIntByteStringAsync(),
             Notice = new string[await _primitivesDecoder.ReadIntAsync()]
         };
 
         for (var i = 0; i < scoreInformation.Notice.Length; i++)
         {
-            var noticeLine = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync();
+            var noticeLine = await _compositeTypesDecoder.ReadIntByteStringAsync();
             scoreInformation.Notice[i] = noticeLine;
         }
 
@@ -90,7 +94,7 @@ public class Gp5FileDeserializer
             lyrics.Lines[i] = new Gp5LyricsLine
             {
                 StartFromBar = await _primitivesDecoder.ReadIntAsync(),
-                Lyrics = await _compositeTypesDecoder.ReadStringOfIntLengthAsync()
+                Lyrics = await _compositeTypesDecoder.ReadIntStringAsync()
             };
         }
 
@@ -122,16 +126,16 @@ public class Gp5FileDeserializer
             MarginBottom = await _primitivesDecoder.ReadIntAsync(),
             ScoreSizeProportion = await _primitivesDecoder.ReadIntAsync(),
             HeaderAndFooter = (Gp5PageSetup.HeaderAndFooterFlags)await _primitivesDecoder.ReadShortAsync(),
-            Title = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync(),
-            Subtitle = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync(),
-            Artist = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync(),
-            Album = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync(),
-            Words = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync(),
-            Music = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync(),
-            WordsAndMusic = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync(),
-            CopyrightFirstLine = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync(),
-            CopyrightSecondLine = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync(),
-            PageNumber = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync()
+            Title = await _compositeTypesDecoder.ReadIntByteStringAsync(),
+            Subtitle = await _compositeTypesDecoder.ReadIntByteStringAsync(),
+            Artist = await _compositeTypesDecoder.ReadIntByteStringAsync(),
+            Album = await _compositeTypesDecoder.ReadIntByteStringAsync(),
+            Words = await _compositeTypesDecoder.ReadIntByteStringAsync(),
+            Music = await _compositeTypesDecoder.ReadIntByteStringAsync(),
+            WordsAndMusic = await _compositeTypesDecoder.ReadIntByteStringAsync(),
+            CopyrightFirstLine = await _compositeTypesDecoder.ReadIntByteStringAsync(),
+            CopyrightSecondLine = await _compositeTypesDecoder.ReadIntByteStringAsync(),
+            PageNumber = await _compositeTypesDecoder.ReadIntByteStringAsync()
         };
 
         _file.PageSetup = pageSetup;
@@ -141,7 +145,7 @@ public class Gp5FileDeserializer
     {
         var tempo = new Gp5Tempo
         {
-            WordIndication = await _compositeTypesDecoder.ReadStringOfByteLengthIntSizeAsync(),
+            WordIndication = await _compositeTypesDecoder.ReadIntByteStringAsync(),
             BeatsPerMinute = await _primitivesDecoder.ReadIntAsync(),
             HideBeatsPerMinute = await _primitivesDecoder.ReadBoolAsync()
         };
