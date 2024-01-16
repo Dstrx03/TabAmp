@@ -31,12 +31,14 @@ internal class Gp5CompositeTypesSerialDecoder
 
     public async ValueTask<string> ReadIntByteStringAsync()
     {
-        var size = await _primitivesDecoder.ReadIntAsync();
+        const int lengthPrefixSize = Gp5PrimitivesSerialDecoder.ByteSize;
+
+        var maxLength = await _primitivesDecoder.ReadIntAsync();
         var length = await _primitivesDecoder.ReadByteAsync();
 
-        // TODO: more specific exception type, message, design
-        if (size - 1 != length)
-            throw new InvalidOperationException($"TODO: {size}:{length}:{_fileReader.Position}");
+        // TODO: more specific exception type, message
+        if (length + lengthPrefixSize != maxLength)
+            throw new InvalidOperationException($"{length}+{lengthPrefixSize}!={maxLength} p={_fileReader.Position}");
 
         return await ReadStringAsync(length);
     }
@@ -50,7 +52,7 @@ internal class Gp5CompositeTypesSerialDecoder
     public async ValueTask<Gp5RseEqualizer> ReadRseEqualizerAsync(int bandsCount)
     {
         var bands = new sbyte[bandsCount];
-        for (var i = 0; i < bandsCount; i++)
+        for (var i = 0; i < bands.Length; i++)
         {
             bands[i] = await _primitivesDecoder.ReadSignedByteAsync();
         }

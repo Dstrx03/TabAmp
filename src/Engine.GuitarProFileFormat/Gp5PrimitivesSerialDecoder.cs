@@ -6,13 +6,13 @@ namespace TabAmp.Engine.GuitarProFileFormat;
 
 internal class Gp5PrimitivesSerialDecoder
 {
-    private const int ByteSize = 1;
-    private const int SignedByteSize = 1;
-    private const int BoolSize = 1;
-    private const int ShortSize = 2;
-    private const int IntSize = 4;
-    private const int FloatSize = 4;
-    private const int DoubleSize = 8;
+    public const int ByteSize = 1;
+    public const int SignedByteSize = 1;
+    public const int BoolSize = 1;
+    public const int ShortSize = 2;
+    public const int IntSize = 4;
+    public const int FloatSize = 4;
+    public const int DoubleSize = 8;
 
     private readonly ISerialAsynchronousFileReader _fileReader;
 
@@ -51,7 +51,7 @@ internal class Gp5PrimitivesSerialDecoder
         return BinaryPrimitives.ReadInt32LittleEndian(buffer);
     }
 
-    public async ValueTask<int> ReadIntZeroBasedAsync() => 
+    public async ValueTask<int> ReadIntZeroBasedAsync() =>
         await ReadIntAsync() - 1;
 
     public async ValueTask<float> ReadFloatAsync()
