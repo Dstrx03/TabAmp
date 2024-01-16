@@ -40,12 +40,8 @@ public class Gp5FileDeserializer
 
     private async ValueTask ReadVersionAsync()
     {
-        // TODO: naming in this method requires refactoing
-        const int versionStringSize = 30;
-        var versionString = await _compositeTypesDecoder.ReadByteStringAsync();
-
-        var delta = versionStringSize - versionString.Length;
-        _fileReader.SkipBytes(delta);
+        const int versionStringMaxLength = 30;
+        var versionString = await _compositeTypesDecoder.ReadByteStringAsync(versionStringMaxLength);
 
         _file.Version = versionString;
 

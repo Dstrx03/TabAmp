@@ -9,5 +9,5 @@ public interface ISerialAsynchronousFileReader : IDisposable
     long Position { get; }
 
     ValueTask<byte[]> ReadBytesAsync(int count);
-    void SkipBytes(int count);
+    ValueTask SkipBytesAsync(int count);
 }

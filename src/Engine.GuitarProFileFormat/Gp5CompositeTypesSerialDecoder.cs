@@ -17,10 +17,19 @@ internal class Gp5CompositeTypesSerialDecoder
         _primitivesDecoder = primitivesDecoder;
     }
 
-    public async ValueTask<string> ReadByteStringAsync()
+    public async ValueTask<string> ReadByteStringAsync(int maxLength)
     {
         var length = await _primitivesDecoder.ReadByteAsync();
-        return await ReadStringAsync(length);
+        var decodedString = await ReadStringAsync(length);
+
+        var trailingBytesCount = maxLength - length;
+        if (trailingBytesCount < 0)
+            // TODO: more specific exception type, message
+            throw new InvalidOperationException($"{maxLength}-{length}<0 P={_fileReader.Position}");
+        else
+            await _fileReader.SkipBytesAsync(trailingBytesCount);
+
+        return decodedString;
     }
 
     public async ValueTask<string> ReadIntStringAsync()
@@ -36,9 +45,9 @@ internal class Gp5CompositeTypesSerialDecoder
         var maxLength = await _primitivesDecoder.ReadIntAsync();
         var length = await _primitivesDecoder.ReadByteAsync();
 
-        // TODO: more specific exception type, message
         if (length + lengthPrefixSize != maxLength)
-            throw new InvalidOperationException($"{length}+{lengthPrefixSize}!={maxLength} p={_fileReader.Position}");
+            // TODO: more specific exception type, message
+            throw new InvalidOperationException($"{length}+{lengthPrefixSize}!={maxLength} P={_fileReader.Position}");
 
         return await ReadStringAsync(length);
     }

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace TabAmp.Engine.GuitarProFileFormat.FileReader;
@@ -28,8 +29,14 @@ public class PocSerialAsynchronousFileReader : ISerialAsynchronousFileReader
         return buffer;
     }
 
-    public void SkipBytes(int count) =>
-        _fileStream.Position += count;
+    public async ValueTask SkipBytesAsync(int count)
+    {
+        var skippedBytes = await ReadBytesAsync(count);
+        Console.WriteLine($"Skipped {count} bytes from {Position - count} to {Position - 1} inclusive: {string.Join(",", skippedBytes)}");
+
+        // TODO: implement production grade tracking of skipped information
+        //_fileStream.Position += count;
+    }
 
     public void Dispose() =>
         _fileStream?.Dispose();
