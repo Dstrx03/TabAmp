@@ -35,6 +35,7 @@ public class Gp5FileDeserializer
         await ReadRseMasterEffectReverbAsync();
         await ReadMeasuresCountAsync();
         await ReadTracksCountAsync();
+        await ReadMeasureHeadersAsync();
         return _file;
     }
 
@@ -233,5 +234,32 @@ public class Gp5FileDeserializer
         var tracksCount = await _primitivesDecoder.ReadIntAsync();
 
         _file.TracksCount = tracksCount;
+    }
+
+    private async ValueTask ReadMeasureHeadersAsync()
+    {
+        var measureHeaders = new Gp5MeasureHeader[_file.MeasuresCount];
+
+        for (var i = 0; i < measureHeaders.Length; i++)
+        {
+            var header = new Gp5MeasureHeader
+            {
+                Flags = (Gp5MeasureHeader.TodoFlags)await _primitivesDecoder.ReadByteAsync()
+            };
+
+            if (header.Flags.HasFlag(Gp5MeasureHeader.TodoFlags.TimeSignature))
+                header.TimeSignature = await _compositeTypesDecoder.ReadTimeSignatureAsync();
+
+            if (header.Flags.HasFlag(Gp5MeasureHeader.TodoFlags.RepeatClose))
+                header.RepeatClose = await _primitivesDecoder.ReadByteAsync();
+
+            if (header.Flags.HasFlag(Gp5MeasureHeader.TodoFlags.Marker))
+                header.Marker = await _compositeTypesDecoder.ReadMarkerAsync();
+
+            measureHeaders[i] = header;
+            break;//TODO: remove
+        }
+
+        _file.MeasureHeaders = measureHeaders;
     }
 }

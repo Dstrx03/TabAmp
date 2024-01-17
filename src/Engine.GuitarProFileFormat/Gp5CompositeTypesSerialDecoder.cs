@@ -23,11 +23,11 @@ internal class Gp5CompositeTypesSerialDecoder
         var decodedString = await ReadStringAsync(length);
 
         var trailingBytesCount = maxLength - length;
-        if (trailingBytesCount < 0)
+        if (trailingBytesCount > 0)
+            await _fileReader.SkipBytesAsync(trailingBytesCount);
+        else if (trailingBytesCount < 0)
             // TODO: more specific exception type, message
             throw new InvalidOperationException($"{maxLength}-{length}<0 P={_fileReader.Position}");
-        else
-            await _fileReader.SkipBytesAsync(trailingBytesCount);
 
         return decodedString;
     }
@@ -72,6 +72,35 @@ internal class Gp5CompositeTypesSerialDecoder
         {
             Bands = bands,
             GainPreFader = gainPreFader
+        };
+    }
+
+    public async ValueTask<Gp5TimeSignature> ReadTimeSignatureAsync()
+    {
+        return new Gp5TimeSignature
+        {
+            Numerator = await _primitivesDecoder.ReadByteAsync(),
+            Denominator = await _primitivesDecoder.ReadByteAsync()
+        };
+    }
+
+    public async ValueTask<Gp5Marker> ReadMarkerAsync()
+    {
+        return new Gp5Marker
+        {
+            Name = await ReadIntByteStringAsync(),
+            Color = await ReadColorAsync()
+        };
+    }
+
+    public async ValueTask<Gp5Color> ReadColorAsync()
+    {
+        return new Gp5Color
+        {
+            Red = await _primitivesDecoder.ReadByteAsync(),
+            Green = await _primitivesDecoder.ReadByteAsync(),
+            Blue = await _primitivesDecoder.ReadByteAsync(),
+            Alpha = await _primitivesDecoder.ReadByteAsync()
         };
     }
 }

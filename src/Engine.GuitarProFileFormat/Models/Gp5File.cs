@@ -13,4 +13,5 @@ public class Gp5File
     public Gp5MusicalDirections MusicalDirections { get; set; }
     public int MeasuresCount { get; set; }
     public int TracksCount { get; set; }
+    public Gp5MeasureHeader[] MeasureHeaders { get; set; }
 }
