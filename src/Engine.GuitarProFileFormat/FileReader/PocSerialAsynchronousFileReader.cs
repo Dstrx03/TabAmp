@@ -38,6 +38,11 @@ public class PocSerialAsynchronousFileReader : ISerialAsynchronousFileReader
         //_fileStream.Position += count;
     }
 
-    public void Dispose() =>
+    public void Dispose()
+    {
+        Console.WriteLine($"Disposing POC file reader, read {Position} of {Length} bytes");
+        // TODO: implement production grade tracking
+
         _fileStream?.Dispose();
+    }
 }
