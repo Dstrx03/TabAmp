@@ -239,25 +239,9 @@ public class Gp5FileDeserializer
     private async ValueTask ReadMeasureHeadersAsync()
     {
         var measureHeaders = new Gp5MeasureHeader[_file.MeasuresCount];
-
         for (var i = 0; i < measureHeaders.Length; i++)
         {
-            var header = new Gp5MeasureHeader
-            {
-                Flags = (Gp5MeasureHeader.TodoFlags)await _primitivesDecoder.ReadByteAsync()
-            };
-
-            if (header.Flags.HasFlag(Gp5MeasureHeader.TodoFlags.TimeSignature))
-                header.TimeSignature = await _compositeTypesDecoder.ReadTimeSignatureAsync();
-
-            if (header.Flags.HasFlag(Gp5MeasureHeader.TodoFlags.RepeatClose))
-                header.RepeatClose = await _primitivesDecoder.ReadByteAsync();
-
-            if (header.Flags.HasFlag(Gp5MeasureHeader.TodoFlags.Marker))
-                header.Marker = await _compositeTypesDecoder.ReadMarkerAsync();
-
-            measureHeaders[i] = header;
-            break;//TODO: remove
+            measureHeaders[i] = await _compositeTypesDecoder.ReadMeasureHeaderAsync(isFirst: i == 0);
         }
 
         _file.MeasureHeaders = measureHeaders;

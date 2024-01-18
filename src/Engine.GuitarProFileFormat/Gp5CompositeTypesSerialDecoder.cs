@@ -75,12 +75,15 @@ internal class Gp5CompositeTypesSerialDecoder
         };
     }
 
-    public async ValueTask<Gp5TimeSignature> ReadTimeSignatureAsync()
+    public async ValueTask<Gp5TimeSignature> ReadTimeSignatureAsync(bool hasNumerator, bool hasDenominator)
     {
+        if (!hasNumerator && !hasDenominator)
+            return null;
+
         return new Gp5TimeSignature
         {
-            Numerator = await _primitivesDecoder.ReadByteAsync(),
-            Denominator = await _primitivesDecoder.ReadByteAsync()
+            Numerator = hasNumerator ? await _primitivesDecoder.ReadByteAsync() : null,
+            Denominator = hasDenominator ? await _primitivesDecoder.ReadByteAsync() : null
         };
     }
 
@@ -101,6 +104,54 @@ internal class Gp5CompositeTypesSerialDecoder
             Green = await _primitivesDecoder.ReadByteAsync(),
             Blue = await _primitivesDecoder.ReadByteAsync(),
             Alpha = await _primitivesDecoder.ReadByteAsync()
+        };
+    }
+
+    public async ValueTask<Gp5MeasureHeader> ReadMeasureHeaderAsync(bool isFirst)
+    {
+        var measureHeader = new Gp5MeasureHeader();
+
+        if (!isFirst)
+            measureHeader.FirstBlankTodo = await _primitivesDecoder.ReadByteAsync();
+
+        var flags = (Gp5MeasureHeader.SomeFlags)await _primitivesDecoder.ReadByteAsync();
+        measureHeader.Flags = flags;
+
+        var hasNumerator = flags.HasFlag(Gp5MeasureHeader.SomeFlags.TimeSignatureNumerator);
+        var hasDenominator = flags.HasFlag(Gp5MeasureHeader.SomeFlags.TimeSignatureDenominator);
+        var repeatAltTodo = flags.HasFlag(Gp5MeasureHeader.SomeFlags.RepeatAltTodo);
+
+        measureHeader.TimeSignature = await ReadTimeSignatureAsync(hasNumerator: hasNumerator, hasDenominator: hasDenominator);
+
+        if (flags.HasFlag(Gp5MeasureHeader.SomeFlags.RepeatClose))
+            measureHeader.RepeatCount = await _primitivesDecoder.ReadByteAsync();
+
+        if (flags.HasFlag(Gp5MeasureHeader.SomeFlags.Marker))
+            measureHeader.Marker = await ReadMarkerAsync();
+
+        if (flags.HasFlag(Gp5MeasureHeader.SomeFlags.KeySignature))
+            measureHeader.KeySignature = await ReadKeySignatureAsync();
+
+        if (repeatAltTodo)
+            measureHeader.RepeatAltTodo = await _primitivesDecoder.ReadByteAsync();
+
+        if (hasNumerator || hasDenominator)
+            measureHeader.TimeSignature.BeamsTodo = await _fileReader.ReadBytesAsync(4);
+
+        if (!repeatAltTodo)
+            measureHeader.SecondBlankTodo = await _primitivesDecoder.ReadByteAsync();
+
+        measureHeader.TripletFeel = await _primitivesDecoder.ReadByteAsync();
+
+        return measureHeader;
+    }
+
+    public async ValueTask<Gp5KeySignature> ReadKeySignatureAsync()
+    {
+        return new Gp5KeySignature
+        {
+            Key = await _primitivesDecoder.ReadSignedByteAsync(),
+            IsMinorKey = await _primitivesDecoder.ReadBoolAsync()
         };
     }
 }
