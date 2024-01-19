@@ -79,21 +79,15 @@ public class Gp5FileDeserializer
 
     private async ValueTask ReadLyricsAsync()
     {
-        const int lyricsLinesCount = 5;
         var lyrics = new Gp5Lyrics
         {
             ApplyToTrack = await _primitivesDecoder.ReadIntAsync(),
-            Lines = new Gp5LyricsLine[lyricsLinesCount]
+            FirstLine = await _compositeTypesDecoder.ReadLyricsLineAsync(),
+            SecondLine = await _compositeTypesDecoder.ReadLyricsLineAsync(),
+            ThirdLine = await _compositeTypesDecoder.ReadLyricsLineAsync(),
+            FourthLine = await _compositeTypesDecoder.ReadLyricsLineAsync(),
+            FifthLine = await _compositeTypesDecoder.ReadLyricsLineAsync()
         };
-
-        for (var i = 0; i < lyrics.Lines.Length; i++)
-        {
-            lyrics.Lines[i] = new Gp5LyricsLine
-            {
-                StartFromBar = await _primitivesDecoder.ReadIntAsync(),
-                Lyrics = await _compositeTypesDecoder.ReadIntStringAsync()
-            };
-        }
 
         _file.Lyrics = lyrics;
     }
