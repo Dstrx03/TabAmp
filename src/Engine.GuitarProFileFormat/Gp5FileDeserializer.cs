@@ -98,7 +98,7 @@ public class Gp5FileDeserializer
         var masterEffect = new Gp5RseMasterEffect
         {
             Volume = await _primitivesDecoder.ReadIntAsync(),
-            _A01 = await _primitivesDecoder.ReadIntAsync(),
+            UNKN_A01 = await _primitivesDecoder.ReadIntAsync(),
             Equalizer = await _compositeTypesDecoder.ReadRseEqualizerAsync(rseMasterEffectEqualizerBandsCount)
         };
 
@@ -116,7 +116,7 @@ public class Gp5FileDeserializer
             MarginTop = await _primitivesDecoder.ReadIntAsync(),
             MarginBottom = await _primitivesDecoder.ReadIntAsync(),
             ScoreSizeProportion = await _primitivesDecoder.ReadIntAsync(),
-            HeaderAndFooter = (Gp5PageSetup.HeaderAndFooterFlags)await _primitivesDecoder.ReadShortAsync(),
+            HeaderAndFooterFlags = (Gp5PageSetup.HeaderAndFooter)await _primitivesDecoder.ReadShortAsync(),
             Title = await _compositeTypesDecoder.ReadIntByteStringAsync(),
             Subtitle = await _compositeTypesDecoder.ReadIntByteStringAsync(),
             Artist = await _compositeTypesDecoder.ReadIntByteStringAsync(),
@@ -149,9 +149,9 @@ public class Gp5FileDeserializer
         var keySignature = new Gp5HeaderKeySignature
         {
             Key = await _primitivesDecoder.ReadSignedByteAsync(),
-            _A01 = await _primitivesDecoder.ReadSignedByteAsync(),
-            _A02 = await _primitivesDecoder.ReadSignedByteAsync(),
-            _A03 = await _primitivesDecoder.ReadSignedByteAsync(),
+            UNKN_A01 = await _primitivesDecoder.ReadSignedByteAsync(),
+            UNKN_A02 = await _primitivesDecoder.ReadSignedByteAsync(),
+            UNKN_A03 = await _primitivesDecoder.ReadSignedByteAsync(),
             Octave = await _primitivesDecoder.ReadSignedByteAsync()
         };
 

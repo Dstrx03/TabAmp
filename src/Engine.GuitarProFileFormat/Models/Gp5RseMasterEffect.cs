@@ -7,7 +7,7 @@ public class Gp5RseMasterEffect
     public int Reverb { get; set; }
 
 
-    #region Unknown Properties
-    public int _A01 { get; set; }
+    #region Undetermined Data
+    public int UNKN_A01 { get; set; }
     #endregion
 }

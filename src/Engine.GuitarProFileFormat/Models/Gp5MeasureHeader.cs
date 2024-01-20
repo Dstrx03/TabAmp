@@ -4,19 +4,22 @@ namespace TabAmp.Engine.GuitarProFileFormat.Models;
 
 public class Gp5MeasureHeader
 {
-    public byte? FirstBlankTodo { get; set; }// TODO: name
-    public MeasureHeaderFlags Flags { get; set; }// TODO: flags naming convention
+    public Primary PrimaryFlags { get; set; }
     public Gp5TimeSignature TimeSignature { get; set; }
     public byte? RepeatCount { get; set; }
     public Gp5Marker Marker { get; set; }
     public Gp5KeySignature KeySignature { get; set; }
-    public AlternateEndingsFlags? AlternateEndings { get; set; }
-    public byte? SecondBlankTodo { get; set; }// TODO: name
+    public AlternateEndings? AlternateEndingsFlags { get; set; }
     public byte TripletFeel { get; set; }
 
 
+    #region Undetermined Data
+    public byte? CTRL_A01 { get; set; }
+    public byte? CTRL_B01 { get; set; }
+    #endregion
+
     [Flags]
-    public enum MeasureHeaderFlags : byte
+    public enum Primary : byte
     {
         HasTimeSignatureNumerator = 0x01,
         HasTimeSignatureDenominator = 0x02,
@@ -29,7 +32,7 @@ public class Gp5MeasureHeader
     }
 
     [Flags]
-    public enum AlternateEndingsFlags : byte
+    public enum AlternateEndings : byte
     {
         Ending1 = 0x01,
         Ending2 = 0x02,

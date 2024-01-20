@@ -14,7 +14,7 @@ public class Gp5PageSetup
 
     public int ScoreSizeProportion { get; set; }
 
-    public HeaderAndFooterFlags HeaderAndFooter { get; set; }
+    public HeaderAndFooter HeaderAndFooterFlags { get; set; }
     public string Title { get; set; }
     public string Subtitle { get; set; }
     public string Artist { get; set; }
@@ -28,7 +28,7 @@ public class Gp5PageSetup
 
 
     [Flags]
-    public enum HeaderAndFooterFlags : short
+    public enum HeaderAndFooter : short
     {
         DisplayTitle = 0x001,
         DisplaySubtitle = 0x002,

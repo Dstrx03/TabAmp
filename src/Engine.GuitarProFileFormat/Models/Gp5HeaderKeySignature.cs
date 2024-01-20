@@ -6,9 +6,9 @@ public class Gp5HeaderKeySignature
     public sbyte Octave { get; set; }
 
 
-    #region Unknown Properties
-    public sbyte _A01 { get; set; }
-    public sbyte _A02 { get; set; }
-    public sbyte _A03 { get; set; }
+    #region Undetermined Data
+    public sbyte UNKN_A01 { get; set; }
+    public sbyte UNKN_A02 { get; set; }
+    public sbyte UNKN_A03 { get; set; }
     #endregion
 }
