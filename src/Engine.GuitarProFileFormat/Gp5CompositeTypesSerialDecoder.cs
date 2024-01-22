@@ -120,13 +120,11 @@ internal class Gp5CompositeTypesSerialDecoder
 
     public async ValueTask<Gp5MeasureHeader> ReadMeasureHeaderAsync(bool isFirst)
     {
-        var measureHeader = new Gp5MeasureHeader();
-
-        if (!isFirst)
-            measureHeader.CTRL_A01 = await _primitivesDecoder.ReadByteAsync();
-
-        measureHeader.PrimaryFlags = (Gp5MeasureHeader.Primary)await _primitivesDecoder.ReadByteAsync();
-        var primaryFlags = measureHeader.PrimaryFlags;
+        var primaryFlags = (Gp5MeasureHeader.Primary)await _primitivesDecoder.ReadByteAsync();
+        var measureHeader = new Gp5MeasureHeader
+        {
+            PrimaryFlags = primaryFlags
+        };
 
         var hasNumerator = primaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasTimeSignatureNumerator);
         var hasDenominator = primaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasTimeSignatureDenominator);
@@ -159,9 +157,10 @@ internal class Gp5CompositeTypesSerialDecoder
         }
 
         if (!primaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasAlternateEndings))
-            measureHeader.CTRL_B01 = await _primitivesDecoder.ReadByteAsync();
+            measureHeader._A01 = await _primitivesDecoder.ReadByteAsync();
 
         measureHeader.TripletFeel = await _primitivesDecoder.ReadByteAsync();
+        measureHeader._B01 = await _primitivesDecoder.ReadByteAsync();
 
         return measureHeader;
     }

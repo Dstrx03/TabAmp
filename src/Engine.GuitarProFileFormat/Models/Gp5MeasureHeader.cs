@@ -13,9 +13,9 @@ public class Gp5MeasureHeader
     public byte TripletFeel { get; set; }
 
 
-    #region Undetermined Data
-    public byte? CTRL_A01 { get; set; }
-    public byte? CTRL_B01 { get; set; }
+    #region Unknown & Anonymous data
+    public byte? _A01 { get; set; }
+    public byte? _B01 { get; set; }
     #endregion
 
     [Flags]

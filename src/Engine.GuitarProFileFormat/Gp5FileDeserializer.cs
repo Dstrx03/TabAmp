@@ -98,7 +98,7 @@ public class Gp5FileDeserializer
         var masterEffect = new Gp5RseMasterEffect
         {
             Volume = await _primitivesDecoder.ReadIntAsync(),
-            UNKN_A01 = await _primitivesDecoder.ReadIntAsync(),
+            _A01 = await _primitivesDecoder.ReadIntAsync(),
             Equalizer = await _compositeTypesDecoder.ReadRseEqualizerAsync(rseMasterEffectEqualizerBandsCount)
         };
 
@@ -149,9 +149,9 @@ public class Gp5FileDeserializer
         var keySignature = new Gp5HeaderKeySignature
         {
             Key = await _primitivesDecoder.ReadSignedByteAsync(),
-            UNKN_A01 = await _primitivesDecoder.ReadSignedByteAsync(),
-            UNKN_A02 = await _primitivesDecoder.ReadSignedByteAsync(),
-            UNKN_A03 = await _primitivesDecoder.ReadSignedByteAsync(),
+            _A01 = await _primitivesDecoder.ReadSignedByteAsync(),
+            _A02 = await _primitivesDecoder.ReadSignedByteAsync(),
+            _A03 = await _primitivesDecoder.ReadSignedByteAsync(),
             Octave = await _primitivesDecoder.ReadSignedByteAsync()
         };
 
@@ -173,8 +173,8 @@ public class Gp5FileDeserializer
                 Reverb = await _primitivesDecoder.ReadByteAsync(),
                 Phaser = await _primitivesDecoder.ReadByteAsync(),
                 Tremolo = await _primitivesDecoder.ReadByteAsync(),
-                Blank1 = await _primitivesDecoder.ReadByteAsync(),
-                Blank2 = await _primitivesDecoder.ReadByteAsync()
+                _A01 = await _primitivesDecoder.ReadByteAsync(),
+                _A02 = await _primitivesDecoder.ReadByteAsync()
             };
         }
 

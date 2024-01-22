@@ -10,6 +10,10 @@ public class Gp5MidiChannel
     public byte Phaser { get; set; }
     public byte Tremolo { get; set; }
 
-    public byte Blank1 { get; set; }
-    public byte Blank2 { get; set; }
+
+
+    #region Unknown & Anonymous data
+    public byte _A01 { get; set; }
+    public byte _A02 { get; set; }
+    #endregion
 }
