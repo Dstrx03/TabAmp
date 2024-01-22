@@ -139,24 +139,25 @@ internal class Gp5CompositeTypesSerialDecoder
         if (primaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasKeySignature))
             measureHeader.KeySignature = await ReadKeySignatureAsync();
 
-        if (!isFirst)
+        var hasAlternateEndings = primaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasAlternateEndings);
+        if (isFirst)
         {
-            if (primaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasAlternateEndings))
-                measureHeader.AlternateEndingsFlags = (Gp5MeasureHeader.AlternateEndings)await _primitivesDecoder.ReadByteAsync();
-
             if (measureHeader.TimeSignature is not null)
                 measureHeader.TimeSignature.BeamGroups = await ReadTimeSignatureBeamGroupsAsync();
+
+            if (hasAlternateEndings)
+                measureHeader.AlternateEndingsFlags = (Gp5MeasureHeader.AlternateEndings)await _primitivesDecoder.ReadByteAsync();
         }
         else
         {
+            if (hasAlternateEndings)
+                measureHeader.AlternateEndingsFlags = (Gp5MeasureHeader.AlternateEndings)await _primitivesDecoder.ReadByteAsync();
+
             if (measureHeader.TimeSignature is not null)
                 measureHeader.TimeSignature.BeamGroups = await ReadTimeSignatureBeamGroupsAsync();
-
-            if (primaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasAlternateEndings))
-                measureHeader.AlternateEndingsFlags = (Gp5MeasureHeader.AlternateEndings)await _primitivesDecoder.ReadByteAsync();
         }
 
-        if (!primaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasAlternateEndings))
+        if (!hasAlternateEndings)
             measureHeader._A01 = await _primitivesDecoder.ReadByteAsync();
 
         measureHeader.TripletFeel = await _primitivesDecoder.ReadByteAsync();
