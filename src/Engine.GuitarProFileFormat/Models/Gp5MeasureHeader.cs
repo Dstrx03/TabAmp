@@ -9,14 +9,10 @@ public class Gp5MeasureHeader
     public byte? RepeatCount { get; set; }
     public Gp5Marker Marker { get; set; }
     public Gp5KeySignature KeySignature { get; set; }
-    public AlternateEndings? AlternateEndingsFlags { get; set; }
+    public AlternateEndings AlternateEndingsFlags { get; set; }
     public byte TripletFeel { get; set; }
+    public byte EndOfObjectSeparator { get; set; }
 
-
-    #region Unknown & Anonymous data
-    public byte? _A01 { get; set; }
-    public byte? _B01 { get; set; }
-    #endregion
 
     [Flags]
     public enum Primary : byte

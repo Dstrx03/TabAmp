@@ -159,10 +159,10 @@ internal class Gp5CompositeTypesSerialDecoder
         }
 
         if (!hasAlternateEndings)
-            measureHeader._A01 = await _primitivesDecoder.ReadByteAsync();
+            measureHeader.AlternateEndingsFlags = (Gp5MeasureHeader.AlternateEndings)await _primitivesDecoder.ReadByteAsync();
 
         measureHeader.TripletFeel = await _primitivesDecoder.ReadByteAsync();
-        measureHeader._B01 = await _primitivesDecoder.ReadByteAsync();
+        measureHeader.EndOfObjectSeparator = await _primitivesDecoder.ReadByteAsync();
 
         return measureHeader;
     }
