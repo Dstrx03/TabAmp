@@ -128,6 +128,7 @@ internal class Gp5CompositeTypesSerialDecoder
 
         var hasNumerator = primaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasTimeSignatureNumerator);
         var hasDenominator = primaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasTimeSignatureDenominator);
+        var hasBeamGroups = hasNumerator || hasDenominator;
         measureHeader.TimeSignature = await ReadTimeSignatureAsync(hasNumerator: hasNumerator, hasDenominator: hasDenominator);
 
         if (primaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasRepeatClose))
@@ -142,7 +143,7 @@ internal class Gp5CompositeTypesSerialDecoder
         var hasAlternateEndings = primaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasAlternateEndings);
         if (isFirst)
         {
-            if (measureHeader.TimeSignature is not null)
+            if (hasBeamGroups)
                 measureHeader.TimeSignature.BeamGroups = await ReadTimeSignatureBeamGroupsAsync();
 
             if (hasAlternateEndings)
@@ -153,7 +154,7 @@ internal class Gp5CompositeTypesSerialDecoder
             if (hasAlternateEndings)
                 measureHeader.AlternateEndingsFlags = (Gp5MeasureHeader.AlternateEndings)await _primitivesDecoder.ReadByteAsync();
 
-            if (measureHeader.TimeSignature is not null)
+            if (hasBeamGroups)
                 measureHeader.TimeSignature.BeamGroups = await ReadTimeSignatureBeamGroupsAsync();
         }
 
