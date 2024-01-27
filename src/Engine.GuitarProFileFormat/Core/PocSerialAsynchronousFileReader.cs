@@ -2,7 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 
-namespace TabAmp.Engine.GuitarProFileFormat.FileReader;
+namespace TabAmp.Engine.GuitarProFileFormat.Core;
 
 public class PocSerialAsynchronousFileReader : ISerialAsynchronousFileReader
 {

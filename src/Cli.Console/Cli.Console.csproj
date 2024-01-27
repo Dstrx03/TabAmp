@@ -10,7 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Engine.Core.Score\Engine.Core.Score.csproj" />
     <ProjectReference Include="..\Engine.GuitarProFileFormat\Engine.GuitarProFileFormat.csproj" />
   </ItemGroup>
 

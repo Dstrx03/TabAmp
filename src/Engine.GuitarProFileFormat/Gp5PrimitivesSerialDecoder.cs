@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Buffers.Binary;
 using System.Threading.Tasks;
-using TabAmp.Engine.GuitarProFileFormat.FileReader;
+using TabAmp.Engine.GuitarProFileFormat.Core;
 
 namespace TabAmp.Engine.GuitarProFileFormat;
 

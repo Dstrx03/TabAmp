@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Threading.Tasks;
 using TabAmp.Engine.GuitarProFileFormat;
-using TabAmp.Engine.GuitarProFileFormat.FileReader;
+using TabAmp.Engine.GuitarProFileFormat.Core;
 
 namespace TabAmp.Cli.Console;
 

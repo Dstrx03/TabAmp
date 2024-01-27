@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace TabAmp.Engine.GuitarProFileFormat.FileReader;
+namespace TabAmp.Engine.GuitarProFileFormat.Core;
 
 public interface ISerialAsynchronousFileReader : IDisposable
 {

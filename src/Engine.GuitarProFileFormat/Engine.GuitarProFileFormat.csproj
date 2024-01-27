@@ -8,4 +8,8 @@
     <RootNamespace>$(AssemblyName)</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Serialization\" />
+  </ItemGroup>
+
 </Project>
