@@ -4,7 +4,7 @@ using TabAmp.Engine.GuitarProFileFormat.Models;
 
 namespace TabAmp.Engine.GuitarProFileFormat;
 
-public class Gp5FileDeserializer
+internal class Gp5FileDeserializer
 {
     private readonly ISerialAsynchronousFileReader _fileReader;
     private readonly Gp5PrimitivesSerialDecoder _primitivesDecoder;

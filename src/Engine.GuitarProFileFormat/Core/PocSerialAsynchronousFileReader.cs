@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace TabAmp.Engine.GuitarProFileFormat.Core;
 
-public class PocSerialAsynchronousFileReader : ISerialAsynchronousFileReader
+internal class PocSerialAsynchronousFileReader : ISerialAsynchronousFileReader
 {
     private readonly FileStream _fileStream;
 

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace TabAmp.Engine.GuitarProFileFormat.Core;
 
-public interface ISerialAsynchronousFileReader : IDisposable
+internal interface ISerialAsynchronousFileReader : IDisposable
 {
     long Length { get; }
     long Position { get; }
