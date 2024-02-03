@@ -7,7 +7,8 @@ public static class DependencyInjection
     public static IServiceCollection AddEngineCore(this IServiceCollection services)
     {
         services.AddTransient<IFileSerializationService, FileSerializationService>()
-            .AddScoped<FileSerializationContext>();
+            .AddScoped<FileSerializationContext>()
+            .AddScoped<IFileDeserializer, AFileDeserializer>();
 
         return services;
     }
