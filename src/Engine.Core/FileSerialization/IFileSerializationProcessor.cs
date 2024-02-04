@@ -7,7 +7,7 @@ internal interface IFileSerializationProcessor
 {
     protected FileSerializationContext Context { get; }
 
-    public async Task ProcessAsync()
+    protected async Task ProcessAsync()
     {
         Context.ProcessingStarted();
         await ProcessTodoAsync();
@@ -17,29 +17,48 @@ internal interface IFileSerializationProcessor
     protected Task ProcessTodoAsync();
 }
 
-internal interface IFileDeserializer : IFileSerializationProcessor
+internal interface IFileDeserializer<TFileData> : IFileSerializationProcessor
 {
+    async Task DeserializeAsync()
+    {
+        await ProcessAsync();
+        Context.CommitSuccess(GetFileData);
+    }
+
+    TFileData GetFileData();
 }
 
 
 
-internal class AFileDeserializer : IFileDeserializer
+internal abstract class AFileSerializationProcessor : IFileSerializationProcessor
 {
-    private readonly FileSerializationContext _context;
+    protected readonly FileSerializationContext _context;
 
-    public AFileDeserializer(FileSerializationContext context)
+    protected AFileSerializationProcessor(FileSerializationContext context)
     {
         _context = context;
     }
 
     FileSerializationContext IFileSerializationProcessor.Context => _context;
 
-    async Task IFileSerializationProcessor.ProcessTodoAsync()
+    public async Task ProcessTodoAsync()
     {
         Console.WriteLine($"Start {nameof(AFileDeserializer)}");
-        await Task.Delay(5000, _context.CancellationToken.Value);
+        await Task.Delay(5, _context.CancellationToken.Value);
         Console.WriteLine($"End   {nameof(AFileDeserializer)}");
-        await Task.Delay(5000, _context.CancellationToken.Value);
+        await Task.Delay(5, _context.CancellationToken.Value);
         Console.WriteLine($"FilePath:{_context.FilePath}");
     }
+}
+
+internal class AFileDeserializer : AFileSerializationProcessor, IFileDeserializer<object>
+{
+    private object _data;
+
+    public AFileDeserializer(FileSerializationContext context) : base(context)
+    {
+        _data = new();
+    }
+
+    public object GetFileData() => _data;
 }

@@ -17,10 +17,10 @@ internal sealed class FileSerializationService : IFileSerializationService
         using var scope = _serviceScopeFactory.CreateScope();
 
         var context = scope.ServiceProvider.GetRequiredService<FileSerializationContext>();
-        var deserializer = scope.ServiceProvider.GetRequiredService<IFileDeserializer>();
+        var deserializer = scope.ServiceProvider.GetRequiredService<IFileDeserializer<TFileData>>();
 
         context.Initialize(path, cancellationToken);
-        await deserializer.ProcessAsync();
+        await deserializer.DeserializeAsync();
 
         throw new NotImplementedException();
     }

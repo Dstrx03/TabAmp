@@ -18,7 +18,7 @@ internal sealed class FileSerializationContext
     public void Initialize(string filePath, CancellationToken cancellationToken)
     {
         if (string.IsNullOrEmpty(filePath) || string.IsNullOrWhiteSpace(filePath))
-            throw new ArgumentException("Cannot be null or empty.", nameof(filePath));
+            throw new ArgumentException("Value cannot be null or empty.", nameof(filePath));
 
         var action = () =>
         {
@@ -35,6 +35,18 @@ internal sealed class FileSerializationContext
     public void ProcessingCompleted() =>
         ValidateThenSetStatus(CycleStatus.ProcessingCompleted);
 
+    public void CommitSuccess<TFileData>(Func<TFileData> fileDataFunc)
+    {
+        var action = () =>
+        {
+            var fileData = fileDataFunc();
+            if (fileData is null)
+                throw new ArgumentNullException(nameof(fileData));
+        };
+
+        ValidateThenSetStatus(action, CycleStatus.SuccessCommitted);
+    }
+
     private void ValidateThenSetStatus(CycleStatus value) =>
         ValidateThenSetStatus(null, value);
 
@@ -49,13 +61,13 @@ internal sealed class FileSerializationContext
         Status = value;
     }
 
-
     public enum CycleStatus
     {
         None,
         Created,
         Initialized,
         ProcessingStarted,
-        ProcessingCompleted
+        ProcessingCompleted,
+        SuccessCommitted
     }
 }

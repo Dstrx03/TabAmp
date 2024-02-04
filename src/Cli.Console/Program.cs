@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System.Threading;
 using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization;
 
@@ -13,13 +12,7 @@ internal class Program
             .AddEngineCore()
             .BuildServiceProvider();
 
-        var cts = new CancellationTokenSource();
         var fileSerializationService = serviceProvider.GetRequiredService<IFileSerializationService>();
-        var task = fileSerializationService.ReadFileAsync<object>("sample.gp5", cts.Token);
-
-        await Task.Delay(1000);
-        cts.Cancel();
-
-        await task;
+        var data = await fileSerializationService.ReadFileAsync<object>("sample.gp5");
     }
 }

@@ -8,7 +8,7 @@ public static class DependencyInjection
     {
         services.AddTransient<IFileSerializationService, FileSerializationService>()
             .AddScoped<FileSerializationContext>()
-            .AddScoped<IFileDeserializer, AFileDeserializer>();
+            .AddScoped<IFileDeserializer<object>, AFileDeserializer>();
 
         return services;
     }
