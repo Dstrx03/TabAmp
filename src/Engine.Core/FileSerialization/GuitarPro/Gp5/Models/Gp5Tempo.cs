@@ -1,6 +1,6 @@
-﻿namespace TabAmp.Engine.GuitarProFileFormat.Models;
+﻿namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 
-public class Gp5Tempo
+internal class Gp5Tempo
 {
     public string WordIndication { get; set; }
     public int BeatsPerMinute { get; set; }

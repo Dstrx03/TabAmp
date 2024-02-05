@@ -1,6 +1,6 @@
-﻿namespace TabAmp.Engine.GuitarProFileFormat.Models;
+﻿namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 
-public class Gp5TimeSignature
+internal class Gp5TimeSignature
 {
     public byte? Numerator { get; set; }
     public byte? Denominator { get; set; }

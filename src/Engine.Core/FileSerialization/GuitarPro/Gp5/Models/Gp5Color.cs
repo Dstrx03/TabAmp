@@ -1,6 +1,6 @@
-﻿namespace TabAmp.Engine.GuitarProFileFormat.Models;
+﻿namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 
-public class Gp5Color
+internal class Gp5Color
 {
     public byte Red { get; set; }
     public byte Green { get; set; }

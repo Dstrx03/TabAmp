@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Buffers.Binary;
 using System.Threading.Tasks;
-using TabAmp.Engine.GuitarProFileFormat.Core;
+using TabAmp.Engine.Core.FileSerialization.Common.SerialFileReader;
 
-namespace TabAmp.Engine.GuitarProFileFormat;
+namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5;
 
 internal class Gp5PrimitivesSerialDecoder
 {
@@ -13,9 +13,9 @@ internal class Gp5PrimitivesSerialDecoder
     public const int FloatSize = 4;
     public const int DoubleSize = 8;
 
-    private readonly ISerialAsynchronousFileReader _fileReader;
+    private readonly ISerialFileReader _fileReader;
 
-    public Gp5PrimitivesSerialDecoder(ISerialAsynchronousFileReader fileReader)
+    public Gp5PrimitivesSerialDecoder(ISerialFileReader fileReader)
     {
         _fileReader = fileReader;
     }

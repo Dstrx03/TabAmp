@@ -1,6 +1,6 @@
-﻿namespace TabAmp.Engine.GuitarProFileFormat.Models;
+﻿namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 
-public class Gp5Lyrics
+internal class Gp5Lyrics
 {
     public int ApplyToTrack { get; set; }
     public Gp5LyricsLine FirstLine { get; set; }

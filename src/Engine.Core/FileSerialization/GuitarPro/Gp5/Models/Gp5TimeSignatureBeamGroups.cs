@@ -1,6 +1,6 @@
-﻿namespace TabAmp.Engine.GuitarProFileFormat.Models;
+﻿namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 
-public class Gp5TimeSignatureBeamGroups
+internal class Gp5TimeSignatureBeamGroups
 {
     public byte FirstSpan { get; set; }
     public byte SecondSpan { get; set; }

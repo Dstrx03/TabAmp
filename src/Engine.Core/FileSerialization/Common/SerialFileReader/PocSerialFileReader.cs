@@ -1,22 +1,24 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using TabAmp.Engine.Core.FileSerialization.Common.Context;
 
-namespace TabAmp.Engine.GuitarProFileFormat.Core;
+namespace TabAmp.Engine.Core.FileSerialization.Common.SerialFileReader;
 
-internal class PocSerialAsynchronousFileReader : ISerialAsynchronousFileReader
+internal sealed class PocSerialFileReader : ISerialFileReader
 {
     private readonly FileStream _fileStream;
+    private readonly FileSerializationContext _context;
 
-    public PocSerialAsynchronousFileReader(string filePath, FileStreamOptions options = null)
+    public PocSerialFileReader(FileSerializationContext context)
     {
-        options ??= new FileStreamOptions
+        var options = new FileStreamOptions
         {
             Options = FileOptions.Asynchronous,
-            //BufferSize = 0,
             Share = FileShare.None
         };
-        _fileStream = File.Open(filePath, options);
+        _fileStream = File.Open(context.FilePath, options);
+        _context = context;
     }
 
     public long Length => _fileStream.Length;
@@ -25,7 +27,7 @@ internal class PocSerialAsynchronousFileReader : ISerialAsynchronousFileReader
     public async ValueTask<byte[]> ReadBytesAsync(int count)
     {
         var buffer = new byte[count];
-        await _fileStream.ReadAsync(buffer, default);
+        await _fileStream.ReadAsync(buffer, _context.CancellationToken);
         return buffer;
     }
 

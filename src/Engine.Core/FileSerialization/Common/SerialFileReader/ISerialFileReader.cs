@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace TabAmp.Engine.GuitarProFileFormat.Core;
+namespace TabAmp.Engine.Core.FileSerialization.Common.SerialFileReader;
 
-internal interface ISerialAsynchronousFileReader : IDisposable
+internal interface ISerialFileReader : IDisposable
 {
     long Length { get; }
     long Position { get; }

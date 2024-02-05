@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization;
+using TabAmp.Engine.Core.Score;
 
 namespace TabAmp.Cli.Console;
 
@@ -13,6 +14,6 @@ internal class Program
             .BuildServiceProvider();
 
         var fileSerializationService = serviceProvider.GetRequiredService<IFileSerializationService>();
-        var data = await fileSerializationService.ReadFileAsync<object>("sample.gp5");
+        var file = await fileSerializationService.ReadFileAsync<Gp5Score>("sample.gp5");
     }
 }

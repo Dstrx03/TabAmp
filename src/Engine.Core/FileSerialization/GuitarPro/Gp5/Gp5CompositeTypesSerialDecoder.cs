@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Text;
 using System.Threading.Tasks;
-using TabAmp.Engine.GuitarProFileFormat.Core;
-using TabAmp.Engine.GuitarProFileFormat.Models;
+using TabAmp.Engine.Core.FileSerialization.Common.SerialFileReader;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 
-namespace TabAmp.Engine.GuitarProFileFormat;
+namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5;
 
 internal class Gp5CompositeTypesSerialDecoder
 {
-    private readonly ISerialAsynchronousFileReader _fileReader;
+    private readonly ISerialFileReader _fileReader;
     private readonly Gp5PrimitivesSerialDecoder _primitivesDecoder;
 
-    public Gp5CompositeTypesSerialDecoder(ISerialAsynchronousFileReader fileReader, Gp5PrimitivesSerialDecoder primitivesDecoder)
+    public Gp5CompositeTypesSerialDecoder(ISerialFileReader fileReader, Gp5PrimitivesSerialDecoder primitivesDecoder)
     {
         _fileReader = fileReader;
         _primitivesDecoder = primitivesDecoder;

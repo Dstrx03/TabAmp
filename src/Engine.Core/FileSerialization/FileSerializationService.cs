@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
+using TabAmp.Engine.Core.FileSerialization.Common.Context;
+using TabAmp.Engine.Core.FileSerialization.Common.Processor;
 
 namespace TabAmp.Engine.Core.FileSerialization;
 
@@ -12,16 +13,14 @@ internal sealed class FileSerializationService : IFileSerializationService
     public FileSerializationService(IServiceScopeFactory serviceScopeFactory) =>
         _serviceScopeFactory = serviceScopeFactory;
 
-    public async Task<TFileData> ReadFileAsync<TFileData>(string path, CancellationToken cancellationToken = default)
+    public async Task<T> ReadFileAsync<T>(string filePath, CancellationToken cancellationToken = default)
     {
         using var scope = _serviceScopeFactory.CreateScope();
 
         var context = scope.ServiceProvider.GetRequiredService<FileSerializationContext>();
-        var deserializer = scope.ServiceProvider.GetRequiredService<IFileDeserializer<TFileData>>();
+        context.Foo(filePath, cancellationToken);
 
-        context.Initialize(path, cancellationToken);
-        await deserializer.DeserializeAsync();
-
-        throw new NotImplementedException();
+        var deserializer = scope.ServiceProvider.GetRequiredService<IFileDeserializer<T>>();
+        return await deserializer.DeserializeAsync();
     }
 }

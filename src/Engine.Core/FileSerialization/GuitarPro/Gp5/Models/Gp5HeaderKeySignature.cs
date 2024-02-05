@@ -1,6 +1,6 @@
-﻿namespace TabAmp.Engine.GuitarProFileFormat.Models;
+﻿namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 
-public class Gp5HeaderKeySignature
+internal class Gp5HeaderKeySignature
 {
     public sbyte Key { get; set; }
     public sbyte Octave { get; set; }

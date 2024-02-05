@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace TabAmp.Engine.GuitarProFileFormat.Models;
+namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 
-public class Gp5MeasureHeader
+internal class Gp5MeasureHeader
 {
     public Primary PrimaryFlags { get; set; }
     public Gp5TimeSignature TimeSignature { get; set; }

@@ -1,6 +1,6 @@
-﻿namespace TabAmp.Engine.GuitarProFileFormat.Models;
+﻿namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 
-public class Gp5MidiChannel
+internal class Gp5MidiChannel
 {
     public int Instrument { get; set; }
     public byte Volume { get; set; }

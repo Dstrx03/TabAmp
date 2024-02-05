@@ -1,6 +1,6 @@
-﻿namespace TabAmp.Engine.GuitarProFileFormat.Models;
+﻿namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 
-public class Gp5ScoreInformation
+internal class Gp5ScoreInformation
 {
     public string Title { get; set; }
     public string Subtitle { get; set; }

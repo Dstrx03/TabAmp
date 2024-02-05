@@ -1,27 +1,30 @@
-﻿using System.Threading.Tasks;
-using TabAmp.Engine.GuitarProFileFormat.Core;
-using TabAmp.Engine.GuitarProFileFormat.Models;
+﻿using System;
+using System.Text.Json;
+using System.Threading.Tasks;
+using TabAmp.Engine.Core.FileSerialization.Common.Processor;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
+using TabAmp.Engine.Core.Score;
 
-namespace TabAmp.Engine.GuitarProFileFormat;
+namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5;
 
-internal class Gp5FileDeserializer
+internal sealed class Gp5FileDeserializer : IFileDeserializer<Gp5Score>
 {
-    private readonly ISerialAsynchronousFileReader _fileReader;
     private readonly Gp5PrimitivesSerialDecoder _primitivesDecoder;
     private readonly Gp5CompositeTypesSerialDecoder _compositeTypesDecoder;
 
     private readonly Gp5File _file;
 
-    public Gp5FileDeserializer(ISerialAsynchronousFileReader fileReader)
+    public Gp5FileDeserializer(Gp5PrimitivesSerialDecoder primitivesDecoder, Gp5CompositeTypesSerialDecoder compositeTypesDecoder)
     {
-        _fileReader = fileReader;
-        _primitivesDecoder = new Gp5PrimitivesSerialDecoder(fileReader);
-        _compositeTypesDecoder = new Gp5CompositeTypesSerialDecoder(fileReader, _primitivesDecoder);
+        _primitivesDecoder = primitivesDecoder;
+        _compositeTypesDecoder = compositeTypesDecoder;
 
         _file = new Gp5File();
     }
 
-    public async Task<Gp5File> DeserializeAsync()
+    public string SupportedFileExtensions => throw new System.NotImplementedException();
+
+    public async Task<Gp5Score> DeserializeAsync()
     {
         await ReadVersionAsync();
         await ReadScoreInformationAsync();
@@ -36,7 +39,10 @@ internal class Gp5FileDeserializer
         await ReadMeasuresCountAsync();
         await ReadTracksCountAsync();
         await ReadMeasureHeadersAsync();
-        return _file;
+
+        Console.WriteLine(JsonSerializer.Serialize(_file, new JsonSerializerOptions { WriteIndented = true }));
+
+        return null;
     }
 
     private async ValueTask ReadVersionAsync()

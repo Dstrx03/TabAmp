@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace TabAmp.Engine.GuitarProFileFormat.Models;
+namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 
-public class Gp5PageSetup
+internal class Gp5PageSetup
 {
     public int Width { get; set; }
     public int Height { get; set; }

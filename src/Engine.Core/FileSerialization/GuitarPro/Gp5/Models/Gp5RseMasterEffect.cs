@@ -1,6 +1,6 @@
-﻿namespace TabAmp.Engine.GuitarProFileFormat.Models;
+﻿namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 
-public class Gp5RseMasterEffect
+internal class Gp5RseMasterEffect
 {
     public int Volume { get; set; }
     public Gp5RseEqualizer Equalizer { get; set; }
