@@ -1,56 +1,79 @@
 ﻿using System;
 using System.Text.Json;
 using System.Threading.Tasks;
-using TabAmp.Engine.Core.FileSerialization.Common.Processor;
+using TabAmp.Engine.Core.FileSerialization.Common.Components.Processor;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 using TabAmp.Engine.Core.Score;
 
-namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5;
+namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 
-internal sealed class Gp5FileDeserializer : IFileDeserializer<Gp5Score>
+internal sealed class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeserializer<Gp5Score>
 {
     private readonly Gp5PrimitivesSerialDecoder _primitivesDecoder;
     private readonly Gp5CompositeTypesSerialDecoder _compositeTypesDecoder;
-
-    private readonly Gp5File _file;
 
     public Gp5FileDeserializer(Gp5PrimitivesSerialDecoder primitivesDecoder, Gp5CompositeTypesSerialDecoder compositeTypesDecoder)
     {
         _primitivesDecoder = primitivesDecoder;
         _compositeTypesDecoder = compositeTypesDecoder;
-
-        _file = new Gp5File();
     }
-
-    public string SupportedFileExtensions => throw new System.NotImplementedException();
 
     public async Task<Gp5Score> DeserializeAsync()
     {
-        await ReadVersionAsync();
-        await ReadScoreInformationAsync();
-        await ReadLyricsAsync();
-        await ReadRseMasterEffectAsync();
-        await ReadPageSetupAsync();
-        await ReadHeaderTempoAsync();
-        await ReadHeaderKeySignatureAsync();
-        await ReadMidiChannelsAsync();
-        await ReadMusicalDirectionsAsync();
-        await ReadRseMasterEffectReverbAsync();
-        await ReadMeasuresCountAsync();
-        await ReadTracksCountAsync();
-        await ReadMeasureHeadersAsync();
+        _file = new Gp5File();
+        await ProcessAsync();
 
         Console.WriteLine(JsonSerializer.Serialize(_file, new JsonSerializerOptions { WriteIndented = true }));
 
-        return null;
+        return new Gp5Score();
     }
 
-    private async ValueTask ReadVersionAsync()
+    protected override async ValueTask NextVersionAsync() =>
+        _file.Version = await ReadVersionAsync();
+
+    protected override async ValueTask NextScoreInformationAsync() =>
+        _file.ScoreInformation = await ReadScoreInformationAsync();
+
+    protected override async ValueTask NextLyricsAsync() =>
+        _file.Lyrics = await ReadLyricsAsync();
+
+    protected override async ValueTask NextRseMasterEffectAsync() =>
+        _file.RseMasterEffect = await ReadRseMasterEffectAsync();
+
+    protected override async ValueTask NextPageSetupAsync() =>
+        _file.PageSetup = await ReadPageSetupAsync();
+
+    protected override async ValueTask NextHeaderTempoAsync() =>
+        _file.Tempo = await ReadHeaderTempoAsync();
+
+    protected override async ValueTask NextHeaderKeySignatureAsync() =>
+        _file.KeySignature = await ReadHeaderKeySignatureAsync();
+
+    protected override async ValueTask NextMidiChannelsAsync() =>
+        _file.MidiChannels = await ReadMidiChannelsAsync();
+
+    protected override async ValueTask NextMusicalDirectionsAsync() =>
+        _file.MusicalDirections = await ReadMusicalDirectionsAsync();
+
+    protected override async ValueTask NextRseMasterEffectReverbAsync() =>
+        _file.RseMasterEffect.Reverb = await _primitivesDecoder.ReadIntAsync();
+
+    protected override async ValueTask NextMeasuresCountAsync() =>
+        _file.MeasuresCount = await _primitivesDecoder.ReadIntAsync();
+
+    protected override async ValueTask NextTracksCountAsync() =>
+        _file.TracksCount = await _primitivesDecoder.ReadIntAsync();
+
+    protected override async ValueTask NextMeasureHeadersAsync() =>
+        _file.MeasureHeaders = await ReadMeasureHeadersAsync();
+
+
+    private async ValueTask<string> ReadVersionAsync()
     {
         const int versionStringMaxLength = 30;
         var versionString = await _compositeTypesDecoder.ReadByteStringAsync(versionStringMaxLength);
 
-        _file.Version = versionString;
+        return versionString;
 
         // TODO:
         // "version" data is stored in size of 30 bytes, the actual version string is 24 characters long
@@ -58,7 +81,7 @@ internal sealed class Gp5FileDeserializer : IFileDeserializer<Gp5Score>
         // does that 30 bytes is actually a "header" of guitar pro file?
     }
 
-    private async ValueTask ReadScoreInformationAsync()
+    private async ValueTask<Gp5ScoreInformation> ReadScoreInformationAsync()
     {
         var scoreInformation = new Gp5ScoreInformation
         {
@@ -80,10 +103,10 @@ internal sealed class Gp5FileDeserializer : IFileDeserializer<Gp5Score>
             scoreInformation.Notice[i] = noticeLine;
         }
 
-        _file.ScoreInformation = scoreInformation;
+        return scoreInformation;
     }
 
-    private async ValueTask ReadLyricsAsync()
+    private async ValueTask<Gp5Lyrics> ReadLyricsAsync()
     {
         var lyrics = new Gp5Lyrics
         {
@@ -95,10 +118,10 @@ internal sealed class Gp5FileDeserializer : IFileDeserializer<Gp5Score>
             FifthLine = await _compositeTypesDecoder.ReadLyricsLineAsync()
         };
 
-        _file.Lyrics = lyrics;
+        return lyrics;
     }
 
-    private async ValueTask ReadRseMasterEffectAsync()
+    private async ValueTask<Gp5RseMasterEffect> ReadRseMasterEffectAsync()
     {
         const int rseMasterEffectEqualizerBandsCount = 10;
         var masterEffect = new Gp5RseMasterEffect
@@ -108,10 +131,10 @@ internal sealed class Gp5FileDeserializer : IFileDeserializer<Gp5Score>
             Equalizer = await _compositeTypesDecoder.ReadRseEqualizerAsync(rseMasterEffectEqualizerBandsCount)
         };
 
-        _file.RseMasterEffect = masterEffect;
+        return masterEffect;
     }
 
-    private async ValueTask ReadPageSetupAsync()
+    private async ValueTask<Gp5PageSetup> ReadPageSetupAsync()
     {
         var pageSetup = new Gp5PageSetup
         {
@@ -135,10 +158,10 @@ internal sealed class Gp5FileDeserializer : IFileDeserializer<Gp5Score>
             PageNumber = await _compositeTypesDecoder.ReadIntByteStringAsync()
         };
 
-        _file.PageSetup = pageSetup;
+        return pageSetup;
     }
 
-    private async ValueTask ReadHeaderTempoAsync()
+    private async ValueTask<Gp5Tempo> ReadHeaderTempoAsync()
     {
         var tempo = new Gp5Tempo
         {
@@ -147,10 +170,10 @@ internal sealed class Gp5FileDeserializer : IFileDeserializer<Gp5Score>
             HideBeatsPerMinute = await _primitivesDecoder.ReadBoolAsync()
         };
 
-        _file.Tempo = tempo;
+        return tempo;
     }
 
-    private async ValueTask ReadHeaderKeySignatureAsync()
+    private async ValueTask<Gp5HeaderKeySignature> ReadHeaderKeySignatureAsync()
     {
         var keySignature = new Gp5HeaderKeySignature
         {
@@ -161,10 +184,10 @@ internal sealed class Gp5FileDeserializer : IFileDeserializer<Gp5Score>
             Octave = await _primitivesDecoder.ReadSignedByteAsync()
         };
 
-        _file.KeySignature = keySignature;
+        return keySignature;
     }
 
-    private async ValueTask ReadMidiChannelsAsync()
+    private async ValueTask<Gp5MidiChannel[]> ReadMidiChannelsAsync()
     {
         const int midiChannelsCount = 64;
         var midiChannels = new Gp5MidiChannel[midiChannelsCount];
@@ -184,10 +207,10 @@ internal sealed class Gp5FileDeserializer : IFileDeserializer<Gp5Score>
             };
         }
 
-        _file.MidiChannels = midiChannels;
+        return midiChannels;
     }
 
-    private async ValueTask ReadMusicalDirectionsAsync()
+    private async ValueTask<Gp5MusicalDirections> ReadMusicalDirectionsAsync()
     {
         var musicalDirections = new Gp5MusicalDirections
         {
@@ -212,31 +235,10 @@ internal sealed class Gp5FileDeserializer : IFileDeserializer<Gp5Score>
             DaDoubleCoda = await _primitivesDecoder.ReadShortAsync()
         };
 
-        _file.MusicalDirections = musicalDirections;
+        return musicalDirections;
     }
 
-    private async ValueTask ReadRseMasterEffectReverbAsync()
-    {
-        var reverb = await _primitivesDecoder.ReadIntAsync();
-
-        _file.RseMasterEffect.Reverb = reverb;
-    }
-
-    private async ValueTask ReadMeasuresCountAsync()
-    {
-        var measuresCount = await _primitivesDecoder.ReadIntAsync();
-
-        _file.MeasuresCount = measuresCount;
-    }
-
-    private async ValueTask ReadTracksCountAsync()
-    {
-        var tracksCount = await _primitivesDecoder.ReadIntAsync();
-
-        _file.TracksCount = tracksCount;
-    }
-
-    private async ValueTask ReadMeasureHeadersAsync()
+    private async ValueTask<Gp5MeasureHeader[]> ReadMeasureHeadersAsync()
     {
         var measureHeaders = new Gp5MeasureHeader[_file.MeasuresCount];
         for (var i = 0; i < measureHeaders.Length; i++)
@@ -244,6 +246,6 @@ internal sealed class Gp5FileDeserializer : IFileDeserializer<Gp5Score>
             measureHeaders[i] = await _compositeTypesDecoder.ReadMeasureHeaderAsync(isFirst: i == 0);
         }
 
-        _file.MeasureHeaders = measureHeaders;
+        return measureHeaders;
     }
 }

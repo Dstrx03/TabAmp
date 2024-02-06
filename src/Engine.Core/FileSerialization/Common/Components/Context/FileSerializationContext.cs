@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace TabAmp.Engine.Core.FileSerialization.Common.Context;
+namespace TabAmp.Engine.Core.FileSerialization.Common.Components.Context;
 
 internal sealed class FileSerializationContext
 {
@@ -20,7 +20,7 @@ internal sealed class FileSerializationContext
     private A Bar<A>(A? field) where A : class =>
         field ?? throw CreateException();
 
-    private A Bar<A>(Nullable<A> field) where A : struct =>
+    private A Bar<A>(A? field) where A : struct =>
         field ?? throw CreateException();
 
     private InvalidOperationException CreateException() =>

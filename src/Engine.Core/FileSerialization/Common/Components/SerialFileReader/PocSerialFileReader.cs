@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-using TabAmp.Engine.Core.FileSerialization.Common.Context;
+using TabAmp.Engine.Core.FileSerialization.Common.Components.Context;
 
-namespace TabAmp.Engine.Core.FileSerialization.Common.SerialFileReader;
+namespace TabAmp.Engine.Core.FileSerialization.Common.Components.SerialFileReader;
 
 internal sealed class PocSerialFileReader : ISerialFileReader
 {

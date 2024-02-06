@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Threading;
 using System.Threading.Tasks;
-using TabAmp.Engine.Core.FileSerialization.Common.Context;
-using TabAmp.Engine.Core.FileSerialization.Common.Processor;
+using TabAmp.Engine.Core.FileSerialization.Common.Components.Context;
+using TabAmp.Engine.Core.FileSerialization.Common.Components.Processor;
 
 namespace TabAmp.Engine.Core.FileSerialization;
 

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Text;
 using System.Threading.Tasks;
-using TabAmp.Engine.Core.FileSerialization.Common.SerialFileReader;
+using TabAmp.Engine.Core.FileSerialization.Common.Components.SerialFileReader;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 
-namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5;
+namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 
 internal class Gp5CompositeTypesSerialDecoder
 {

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Buffers.Binary;
 using System.Threading.Tasks;
-using TabAmp.Engine.Core.FileSerialization.Common.SerialFileReader;
+using TabAmp.Engine.Core.FileSerialization.Common.Components.SerialFileReader;
 
-namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5;
+namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 
 internal class Gp5PrimitivesSerialDecoder
 {
