@@ -41,7 +41,15 @@ internal abstract class Gp5FileSerializationProcessor : IFileSerializationProces
 
     protected abstract ValueTask NextHeaderKeySignatureAsync();
 
-    protected abstract ValueTask NextMidiChannelsAsync();
+    protected virtual async ValueTask NextMidiChannelsAsync()
+    {
+        for (var index = 0; index < _file.MidiChannels.Length; index++)
+        {
+            await NextMidiChannelAsync(index);
+        }
+    }
+
+    protected abstract ValueTask NextMidiChannelAsync(int index);
 
     protected abstract ValueTask NextMusicalDirectionsAsync();
 
@@ -51,5 +59,13 @@ internal abstract class Gp5FileSerializationProcessor : IFileSerializationProces
 
     protected abstract ValueTask NextTracksCountAsync();
 
-    protected abstract ValueTask NextMeasureHeadersAsync();
+    protected virtual async ValueTask NextMeasureHeadersAsync()
+    {
+        for (var index = 0; index < _file.MeasureHeaders.Length; index++)
+        {
+            await NextMeasureHeaderAsync(index);
+        }
+    }
+
+    protected abstract ValueTask NextMeasureHeaderAsync(int index);
 }
