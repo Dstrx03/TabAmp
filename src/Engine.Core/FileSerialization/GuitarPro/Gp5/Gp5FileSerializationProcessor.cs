@@ -6,12 +6,14 @@ namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5;
 
 internal abstract class Gp5FileSerializationProcessor : IFileSerializationProcessor
 {
-    protected Gp5File _file;
-
     public string SupportedFileExtensions => ".gp5";
 
-    protected async Task ProcessAsync()
+    protected Gp5File File { get; private set; }
+
+    protected async Task ProcessAsync(Gp5File? file = null)
     {
+        File = file ?? new();
+
         await NextVersionAsync();
         await NextScoreInformationAsync();
         await NextLyricsAsync();
@@ -43,7 +45,7 @@ internal abstract class Gp5FileSerializationProcessor : IFileSerializationProces
 
     protected virtual async ValueTask NextMidiChannelsAsync()
     {
-        for (var index = 0; index < _file.MidiChannels.Length; index++)
+        for (var index = 0; index < File.MidiChannels.Length; index++)
         {
             await NextMidiChannelAsync(index);
         }
@@ -61,7 +63,7 @@ internal abstract class Gp5FileSerializationProcessor : IFileSerializationProces
 
     protected virtual async ValueTask NextMeasureHeadersAsync()
     {
-        for (var index = 0; index < _file.MeasureHeaders.Length; index++)
+        for (var index = 0; index < File.MeasureHeaders.Length; index++)
         {
             await NextMeasureHeaderAsync(index);
         }

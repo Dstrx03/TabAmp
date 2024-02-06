@@ -20,63 +20,64 @@ internal sealed class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFile
 
     public async Task<Gp5Score> DeserializeAsync()
     {
-        _file = new Gp5File();
         await ProcessAsync();
-
-        Console.WriteLine(JsonSerializer.Serialize(_file, new JsonSerializerOptions { WriteIndented = true }));
-
+        PrintDeserializedFileJson();
         return new Gp5Score();
     }
 
+    [Obsolete("Temporary runtime testing")]
+    private void PrintDeserializedFileJson() =>
+        Console.WriteLine(JsonSerializer.Serialize(File, new JsonSerializerOptions { WriteIndented = true }));
+
     protected override async ValueTask NextVersionAsync() =>
-        _file.Version = await _compositeTypesDecoder.ReadVersionAsync();
+        File.Version = await _compositeTypesDecoder.ReadVersionAsync();
 
     protected override async ValueTask NextScoreInformationAsync() =>
-        _file.ScoreInformation = await _compositeTypesDecoder.ReadScoreInformationAsync();
+        File.ScoreInformation = await _compositeTypesDecoder.ReadScoreInformationAsync();
 
     protected override async ValueTask NextLyricsAsync() =>
-        _file.Lyrics = await _compositeTypesDecoder.ReadLyricsAsync();
+        File.Lyrics = await _compositeTypesDecoder.ReadLyricsAsync();
 
     protected override async ValueTask NextRseMasterEffectAsync() =>
-        _file.RseMasterEffect = await _compositeTypesDecoder.ReadRseMasterEffectAsync();
+        File.RseMasterEffect = await _compositeTypesDecoder.ReadRseMasterEffectAsync();
 
     protected override async ValueTask NextPageSetupAsync() =>
-        _file.PageSetup = await _compositeTypesDecoder.ReadPageSetupAsync();
+        File.PageSetup = await _compositeTypesDecoder.ReadPageSetupAsync();
 
     protected override async ValueTask NextHeaderTempoAsync() =>
-        _file.Tempo = await _compositeTypesDecoder.ReadHeaderTempoAsync();
+        File.Tempo = await _compositeTypesDecoder.ReadHeaderTempoAsync();
 
     protected override async ValueTask NextHeaderKeySignatureAsync() =>
-        _file.KeySignature = await _compositeTypesDecoder.ReadHeaderKeySignatureAsync();
+        File.KeySignature = await _compositeTypesDecoder.ReadHeaderKeySignatureAsync();
 
     protected sealed override ValueTask NextMidiChannelsAsync()
     {
         const int midiChannelsCount = 64;
-        _file.MidiChannels = new Gp5MidiChannel[midiChannelsCount];
+        File.MidiChannels = new Gp5MidiChannel[midiChannelsCount];
         return base.NextMidiChannelsAsync();
     }
 
     protected override async ValueTask NextMidiChannelAsync(int index) =>
-        _file.MidiChannels[index] = await _compositeTypesDecoder.ReadMidiChannelAsync();
+        File.MidiChannels[index] = await _compositeTypesDecoder.ReadMidiChannelAsync();
 
     protected override async ValueTask NextMusicalDirectionsAsync() =>
-        _file.MusicalDirections = await _compositeTypesDecoder.ReadMusicalDirectionsAsync();
+        File.MusicalDirections = await _compositeTypesDecoder.ReadMusicalDirectionsAsync();
 
     protected override async ValueTask NextRseMasterEffectReverbAsync() =>
-        _file.RseMasterEffect.Reverb = await _primitivesDecoder.ReadIntAsync();
+        File.RseMasterEffect.Reverb = await _primitivesDecoder.ReadIntAsync();
 
     protected override async ValueTask NextMeasuresCountAsync() =>
-        _file.MeasuresCount = await _primitivesDecoder.ReadIntAsync();
+        File.MeasuresCount = await _primitivesDecoder.ReadIntAsync();
 
     protected override async ValueTask NextTracksCountAsync() =>
-        _file.TracksCount = await _primitivesDecoder.ReadIntAsync();
+        File.TracksCount = await _primitivesDecoder.ReadIntAsync();
 
     protected sealed override ValueTask NextMeasureHeadersAsync()
     {
-        _file.MeasureHeaders = new Gp5MeasureHeader[_file.MeasuresCount];
+        File.MeasureHeaders = new Gp5MeasureHeader[File.MeasuresCount];
         return base.NextMeasureHeadersAsync();
     }
 
     protected override async ValueTask NextMeasureHeaderAsync(int index) =>
-        _file.MeasureHeaders[index] = await _compositeTypesDecoder.ReadMeasureHeaderAsync(isFirst: index == 0);
+        File.MeasureHeaders[index] = await _compositeTypesDecoder.ReadMeasureHeaderAsync(isFirst: index == 0);
 }
