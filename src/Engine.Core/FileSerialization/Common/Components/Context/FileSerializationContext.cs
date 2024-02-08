@@ -1,28 +1,12 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 
 namespace TabAmp.Engine.Core.FileSerialization.Common.Components.Context;
 
-internal sealed class FileSerializationContext
+internal partial class FileSerializationContextBuilder
 {
-    private string? _filePath;
-    private CancellationToken? _cancellationToken;
-
-    public string FilePath => Bar(_filePath);
-    public CancellationToken CancellationToken => Bar(_cancellationToken);
-
-    public void Foo(string filePath, CancellationToken cancellationToken)
+    private class FileSerializationContext : IFileSerializationContext
     {
-        _filePath = filePath;
-        _cancellationToken = cancellationToken;
+        public string FilePath { get; set; }
+        public CancellationToken CancellationToken { get; set; }
     }
-
-    private A Bar<A>(A? field) where A : class =>
-        field ?? throw CreateException();
-
-    private A Bar<A>(A? field) where A : struct =>
-        field ?? throw CreateException();
-
-    private InvalidOperationException CreateException() =>
-        new InvalidOperationException("Cannot get property.");
 }

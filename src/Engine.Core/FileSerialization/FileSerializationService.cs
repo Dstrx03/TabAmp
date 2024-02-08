@@ -17,8 +17,8 @@ internal sealed class FileSerializationService : IFileSerializationService
     {
         using var scope = _serviceScopeFactory.CreateScope();
 
-        var context = scope.ServiceProvider.GetRequiredService<FileSerializationContext>();
-        context.Foo(filePath, cancellationToken);
+        var contextBuilder = scope.ServiceProvider.GetRequiredService<FileSerializationContextBuilder>();
+        contextBuilder.BuildContext(filePath, cancellationToken);
 
         var deserializer = scope.ServiceProvider.GetRequiredService<IFileDeserializer<T>>();
         return await deserializer.DeserializeAsync();

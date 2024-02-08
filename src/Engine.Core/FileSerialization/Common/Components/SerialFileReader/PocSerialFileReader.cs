@@ -8,9 +8,9 @@ namespace TabAmp.Engine.Core.FileSerialization.Common.Components.SerialFileReade
 internal sealed class PocSerialFileReader : ISerialFileReader
 {
     private readonly FileStream _fileStream;
-    private readonly FileSerializationContext _context;
+    private readonly IFileSerializationContext _context;
 
-    public PocSerialFileReader(FileSerializationContext context)
+    public PocSerialFileReader(IFileSerializationContext context)
     {
         var options = new FileStreamOptions
         {
