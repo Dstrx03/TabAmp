@@ -36,9 +36,9 @@ namespace TabAmp.Engine.Core.FileSerialization.Common.Components.Context
         {
             public static IServiceCollection AddFileSerializationContext(IServiceCollection services)
             {
-                services.AddScoped<FileSerializationContext>()
+                services.AddScoped<ScopedFileSerializationContext>()
                     .AddScoped<FileSerializationContextBuilder>()
-                    .AddScoped<IFileSerializationContext>(x => x.GetRequiredService<FileSerializationContextBuilder>().GetContext());
+                    .AddScoped<FileSerializationContext>(x => x.GetRequiredService<FileSerializationContextBuilder>().Context);
 
                 return services;
             }

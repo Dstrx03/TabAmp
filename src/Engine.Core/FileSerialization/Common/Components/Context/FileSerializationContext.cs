@@ -2,11 +2,10 @@
 
 namespace TabAmp.Engine.Core.FileSerialization.Common.Components.Context;
 
-internal partial class FileSerializationContextBuilder
+internal abstract class FileSerializationContext
 {
-    private class FileSerializationContext : IFileSerializationContext
-    {
-        public string FilePath { get; set; }
-        public CancellationToken CancellationToken { get; set; }
-    }
+    internal FileSerializationContext() { }
+
+    public string FilePath { get; protected set; }
+    public CancellationToken CancellationToken { get; protected set; }
 }

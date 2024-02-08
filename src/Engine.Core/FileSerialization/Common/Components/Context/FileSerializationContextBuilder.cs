@@ -6,31 +6,25 @@ namespace TabAmp.Engine.Core.FileSerialization.Common.Components.Context;
 
 internal sealed partial class FileSerializationContextBuilder
 {
-    private readonly FileSerializationContext _context;
+    private readonly ScopedFileSerializationContext _context;
 
     public FileSerializationContextBuilder(IServiceProvider serviceProvider) =>
-        _context = serviceProvider.GetRequiredService<FileSerializationContext>();
+        _context = serviceProvider.GetRequiredService<ScopedFileSerializationContext>();
 
-    public bool IsContextBuilt { get; private set; }
+    public FileSerializationContext Context => !IsContextBuilt
+        ? throw new InvalidOperationException($"Cannot provide not built '{typeof(ScopedFileSerializationContext)}'.")
+        : _context;
 
-    public IFileSerializationContext GetContext()
-    {
-        if (!IsContextBuilt)
-            throw new InvalidOperationException($"Cannot provide not built '{typeof(FileSerializationContext)}'.");
-        return _context;
-    }
+    public bool IsContextBuilt => _context.IsContextBuilt;
 
     public void BuildContext(string filePath, CancellationToken cancellationToken)
     {
         if (IsContextBuilt)
-            throw new InvalidOperationException($"Cannot build '{typeof(FileSerializationContext)}', it's already built for its scope.");
-        SetContextData(filePath, cancellationToken);
-        IsContextBuilt = true;
+            throw new InvalidOperationException($"Cannot build '{typeof(ScopedFileSerializationContext)}', it's already built for its scope.");
+
+        _context.SetContextData(filePath, cancellationToken);
+        _context.SetContextBuilt();
     }
 
-    private void SetContextData(string filePath, CancellationToken cancellationToken)
-    {
-        _context.FilePath = filePath;
-        _context.CancellationToken = cancellationToken;
-    }
+
 }
