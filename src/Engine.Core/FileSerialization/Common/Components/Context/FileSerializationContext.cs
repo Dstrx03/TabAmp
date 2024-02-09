@@ -6,6 +6,6 @@ internal abstract class FileSerializationContext
 {
     internal FileSerializationContext() { }
 
-    public string FilePath { get; protected set; }
-    public CancellationToken CancellationToken { get; protected set; }
+    public string FilePath { get; init; }
+    public CancellationToken CancellationToken { get; init; }
 }

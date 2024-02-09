@@ -1,29 +1,30 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using System;
 using System.Threading;
 
 namespace TabAmp.Engine.Core.FileSerialization.Common.Components.Context;
 
 internal sealed partial class FileSerializationContextBuilder
 {
-    private readonly ScopedFileSerializationContext _context;
+    private ScopedFileSerializationContext _context;
 
-    public FileSerializationContextBuilder(IServiceProvider serviceProvider) =>
-        _context = serviceProvider.GetRequiredService<ScopedFileSerializationContext>();
+    public FileSerializationContextBuilder(IServiceProvider serviceProvider)
+    {
+    }
 
-    public FileSerializationContext Context => !IsContextBuilt
+    public FileSerializationContext Context => _context is null
         ? throw new InvalidOperationException($"Cannot provide not built '{typeof(ScopedFileSerializationContext)}'.")
         : _context;
 
-    public bool IsContextBuilt => _context.IsContextBuilt;
-
     public void BuildContext(string filePath, CancellationToken cancellationToken)
     {
-        if (IsContextBuilt)
+        if (_context is not null)
             throw new InvalidOperationException($"Cannot build '{typeof(ScopedFileSerializationContext)}', it's already built for its scope.");
 
-        _context.SetContextData(filePath, cancellationToken);
-        _context.SetContextBuilt();
+        _context = new ScopedFileSerializationContext
+        {
+            FilePath = filePath,
+            CancellationToken = cancellationToken
+        };
     }
 
 

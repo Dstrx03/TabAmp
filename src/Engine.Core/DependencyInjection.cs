@@ -34,14 +34,7 @@ namespace TabAmp.Engine.Core.FileSerialization.Common.Components.Context
     {
         internal static class DependencyInjection
         {
-            public static IServiceCollection AddFileSerializationContext(IServiceCollection services)
-            {
-                services.AddScoped<ScopedFileSerializationContext>()
-                    .AddScoped<FileSerializationContextBuilder>()
-                    .AddScoped<FileSerializationContext>(x => x.GetRequiredService<FileSerializationContextBuilder>().Context);
-
-                return services;
-            }
+            public static IServiceCollection AddFileSerializationContext(IServiceCollection services) => services.AddScoped<FileSerializationContextBuilder>().AddScoped<FileSerializationContext>(x => x.GetRequiredService<FileSerializationContextBuilder>().Context);
         }
     }
 }
