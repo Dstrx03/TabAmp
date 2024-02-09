@@ -11,7 +11,7 @@ internal class Program
     {
         using var serviceProvider = new ServiceCollection()
             .AddEngineCore()
-            .BuildServiceProvider();
+            .BuildServiceProvider(validateScopes: true);
 
         var fileSerializationService = serviceProvider.GetRequiredService<IFileSerializationService>();
         var file = await fileSerializationService.ReadFileAsync<Gp5Score>("sample.gp5");
