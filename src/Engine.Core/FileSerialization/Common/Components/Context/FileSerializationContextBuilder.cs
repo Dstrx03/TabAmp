@@ -7,18 +7,28 @@ internal sealed partial class FileSerializationContextBuilder
 {
     private ScopedFileSerializationContext _context;
 
-    public FileSerializationContextBuilder(IServiceProvider serviceProvider)
+    public bool IsConstructed { get; private set; }
+
+    public FileSerializationContext GetConstructedContext()
     {
+        if (!IsConstructed)
+            throw new InvalidOperationException($"{nameof(FileSerializationContext)} is not constructed.");
+        return _context;
     }
 
-    public FileSerializationContext Context => _context is null
-        ? throw new InvalidOperationException($"Cannot provide not built '{typeof(ScopedFileSerializationContext)}'.")
-        : _context;
-
-    public void BuildContext(string filePath, CancellationToken cancellationToken)
+    public void ConstructContext(string filePath, CancellationToken cancellationToken)
     {
-        if (_context is not null)
-            throw new InvalidOperationException($"Cannot build '{typeof(ScopedFileSerializationContext)}', it's already built for its scope.");
+        if (IsConstructed)
+            throw new InvalidOperationException($"{nameof(FileSerializationContext)} is already constructed.");
+
+        CreateContext(filePath, cancellationToken);
+        IsConstructed = true;
+    }
+
+    private void CreateContext(string filePath, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrEmpty(filePath) || string.IsNullOrWhiteSpace(filePath))
+            throw new ArgumentNullException(nameof(filePath));
 
         _context = new ScopedFileSerializationContext
         {
@@ -27,5 +37,7 @@ internal sealed partial class FileSerializationContextBuilder
         };
     }
 
-
+    private class ScopedFileSerializationContext : FileSerializationContext
+    {
+    }
 }
