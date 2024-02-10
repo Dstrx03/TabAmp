@@ -11,6 +11,7 @@ internal class Gp5MeasureHeader
     public Gp5KeySignature KeySignature { get; set; }
     public AlternateEndings AlternateEndingsFlags { get; set; }
     public byte TripletFeel { get; set; }
+
     public byte EndOfObjectSeparator { get; set; }
 
 

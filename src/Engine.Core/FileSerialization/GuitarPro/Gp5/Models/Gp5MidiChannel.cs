@@ -11,7 +11,6 @@ internal class Gp5MidiChannel
     public byte Tremolo { get; set; }
 
 
-
     #region Unknown & Anonymous data
     public byte _A01 { get; set; }
     public byte _A02 { get; set; }
