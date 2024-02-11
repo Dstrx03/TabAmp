@@ -10,135 +10,6 @@ internal class Gp5CompositeTypesDeserializer
     public Gp5CompositeTypesDeserializer(Gp5GeneralTypesDeserializer deserializer) =>
         _deserializer = deserializer;
 
-    // TODO: refactoring
-
-    public async ValueTask<Gp5RseEqualizer> ReadRseEqualizerAsync(int bandsCount)
-    {
-        var bands = new sbyte[bandsCount];
-        for (var i = 0; i < bands.Length; i++)
-        {
-            bands[i] = await _deserializer.ReadSignedByteAsync();
-        }
-
-        var gainPreFader = await _deserializer.ReadSignedByteAsync();
-
-        return new Gp5RseEqualizer
-        {
-            Bands = bands,
-            GainPreFader = gainPreFader
-        };
-    }
-
-    public async ValueTask<Gp5TimeSignature> ReadTimeSignatureAsync(bool hasNumerator, bool hasDenominator)
-    {
-        if (!hasNumerator && !hasDenominator)
-            return null;
-
-        return new Gp5TimeSignature
-        {
-            Numerator = hasNumerator ? await _deserializer.ReadByteAsync() : null,
-            Denominator = hasDenominator ? await _deserializer.ReadByteAsync() : null
-        };
-    }
-
-    public async ValueTask<Gp5TimeSignatureBeamGroups> ReadTimeSignatureBeamGroupsAsync()
-    {
-        return new Gp5TimeSignatureBeamGroups
-        {
-            FirstSpan = await _deserializer.ReadByteAsync(),
-            SecondSpan = await _deserializer.ReadByteAsync(),
-            ThirdSpan = await _deserializer.ReadByteAsync(),
-            FourthSpan = await _deserializer.ReadByteAsync()
-        };
-    }
-
-    public async ValueTask<Gp5Marker> ReadMarkerAsync()
-    {
-        return new Gp5Marker
-        {
-            Name = await _deserializer.ReadIntByteStringAsync(),
-            Color = await ReadColorAsync()
-        };
-    }
-
-    public async ValueTask<Gp5Color> ReadColorAsync()
-    {
-        return new Gp5Color
-        {
-            Red = await _deserializer.ReadByteAsync(),
-            Green = await _deserializer.ReadByteAsync(),
-            Blue = await _deserializer.ReadByteAsync(),
-            Alpha = await _deserializer.ReadByteAsync()
-        };
-    }
-
-    public async ValueTask<Gp5MeasureHeader> ReadMeasureHeaderAsync(bool isFirst)
-    {
-        var primaryFlags = (Gp5MeasureHeader.Primary)await _deserializer.ReadByteAsync();
-        var measureHeader = new Gp5MeasureHeader
-        {
-            PrimaryFlags = primaryFlags
-        };
-
-        var hasNumerator = primaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasTimeSignatureNumerator);
-        var hasDenominator = primaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasTimeSignatureDenominator);
-        var hasBeamGroups = hasNumerator || hasDenominator;
-        measureHeader.TimeSignature = await ReadTimeSignatureAsync(hasNumerator: hasNumerator, hasDenominator: hasDenominator);
-
-        if (primaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasRepeatClose))
-            measureHeader.RepeatCount = await _deserializer.ReadByteAsync();
-
-        if (primaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasMarker))
-            measureHeader.Marker = await ReadMarkerAsync();
-
-        if (primaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasKeySignature))
-            measureHeader.KeySignature = await ReadKeySignatureAsync();
-
-        var hasAlternateEndings = primaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasAlternateEndings);
-        if (isFirst)
-        {
-            if (hasBeamGroups)
-                measureHeader.TimeSignature.BeamGroups = await ReadTimeSignatureBeamGroupsAsync();
-
-            if (hasAlternateEndings)
-                measureHeader.AlternateEndingsFlags = (Gp5MeasureHeader.AlternateEndings)await _deserializer.ReadByteAsync();
-        }
-        else
-        {
-            if (hasAlternateEndings)
-                measureHeader.AlternateEndingsFlags = (Gp5MeasureHeader.AlternateEndings)await _deserializer.ReadByteAsync();
-
-            if (hasBeamGroups)
-                measureHeader.TimeSignature.BeamGroups = await ReadTimeSignatureBeamGroupsAsync();
-        }
-
-        if (!hasAlternateEndings)
-            measureHeader.AlternateEndingsFlags = (Gp5MeasureHeader.AlternateEndings)await _deserializer.ReadByteAsync();
-
-        measureHeader.TripletFeel = await _deserializer.ReadByteAsync();
-        measureHeader.EndOfObjectSeparator = await _deserializer.ReadByteAsync();
-
-        return measureHeader;
-    }
-
-    public async ValueTask<Gp5KeySignature> ReadKeySignatureAsync()
-    {
-        return new Gp5KeySignature
-        {
-            Key = await _deserializer.ReadSignedByteAsync(),
-            IsMinorKey = await _deserializer.ReadBoolAsync()
-        };
-    }
-
-    public async ValueTask<Gp5LyricsLine> ReadLyricsLineAsync()
-    {
-        return new Gp5LyricsLine
-        {
-            StartFromBar = await _deserializer.ReadIntAsync(),
-            Lyrics = await _deserializer.ReadIntStringAsync()
-        };
-    }
-
     public async ValueTask<string> ReadVersionAsync()
     {
         const int versionStringMaxLength = 30;
@@ -190,6 +61,15 @@ internal class Gp5CompositeTypesDeserializer
         };
 
         return lyrics;
+    }
+
+    public async ValueTask<Gp5LyricsLine> ReadLyricsLineAsync()
+    {
+        return new Gp5LyricsLine
+        {
+            StartFromBar = await _deserializer.ReadIntAsync(),
+            Lyrics = await _deserializer.ReadIntStringAsync()
+        };
     }
 
     public async ValueTask<Gp5RseMasterEffect> ReadRseMasterEffectAsync()
@@ -312,4 +192,122 @@ internal class Gp5CompositeTypesDeserializer
 
     public ValueTask<int> ReadTracksCountAsync() =>
         _deserializer.ReadIntAsync();
+
+    public async ValueTask<Gp5MeasureHeader> ReadMeasureHeaderAsync(bool isFirst)
+    {
+        var primaryFlags = (Gp5MeasureHeader.Primary)await _deserializer.ReadByteAsync();
+        var measureHeader = new Gp5MeasureHeader
+        {
+            PrimaryFlags = primaryFlags
+        };
+
+        var hasNumerator = primaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasTimeSignatureNumerator);
+        var hasDenominator = primaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasTimeSignatureDenominator);
+        var hasBeamGroups = hasNumerator || hasDenominator;
+        measureHeader.TimeSignature = await ReadTimeSignatureAsync(hasNumerator: hasNumerator, hasDenominator: hasDenominator);
+
+        if (primaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasRepeatClose))
+            measureHeader.RepeatCount = await _deserializer.ReadByteAsync();
+
+        if (primaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasMarker))
+            measureHeader.Marker = await ReadMarkerAsync();
+
+        if (primaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasKeySignature))
+            measureHeader.KeySignature = await ReadKeySignatureAsync();
+
+        var hasAlternateEndings = primaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasAlternateEndings);
+        if (isFirst)
+        {
+            if (hasBeamGroups)
+                measureHeader.TimeSignature.BeamGroups = await ReadTimeSignatureBeamGroupsAsync();
+
+            if (hasAlternateEndings)
+                measureHeader.AlternateEndingsFlags = (Gp5MeasureHeader.AlternateEndings)await _deserializer.ReadByteAsync();
+        }
+        else
+        {
+            if (hasAlternateEndings)
+                measureHeader.AlternateEndingsFlags = (Gp5MeasureHeader.AlternateEndings)await _deserializer.ReadByteAsync();
+
+            if (hasBeamGroups)
+                measureHeader.TimeSignature.BeamGroups = await ReadTimeSignatureBeamGroupsAsync();
+        }
+
+        if (!hasAlternateEndings)
+            measureHeader.AlternateEndingsFlags = (Gp5MeasureHeader.AlternateEndings)await _deserializer.ReadByteAsync();
+
+        measureHeader.TripletFeel = await _deserializer.ReadByteAsync();
+        measureHeader.EndOfObjectSeparator = await _deserializer.ReadByteAsync();
+
+        return measureHeader;
+    }
+
+    public async ValueTask<Gp5KeySignature> ReadKeySignatureAsync()
+    {
+        return new Gp5KeySignature
+        {
+            Key = await _deserializer.ReadSignedByteAsync(),
+            IsMinorKey = await _deserializer.ReadBoolAsync()
+        };
+    }
+
+    public async ValueTask<Gp5TimeSignature> ReadTimeSignatureAsync(bool hasNumerator, bool hasDenominator)
+    {
+        if (!hasNumerator && !hasDenominator)
+            return null;
+
+        return new Gp5TimeSignature
+        {
+            Numerator = hasNumerator ? await _deserializer.ReadByteAsync() : null,
+            Denominator = hasDenominator ? await _deserializer.ReadByteAsync() : null
+        };
+    }
+
+    public async ValueTask<Gp5TimeSignatureBeamGroups> ReadTimeSignatureBeamGroupsAsync()
+    {
+        return new Gp5TimeSignatureBeamGroups
+        {
+            FirstSpan = await _deserializer.ReadByteAsync(),
+            SecondSpan = await _deserializer.ReadByteAsync(),
+            ThirdSpan = await _deserializer.ReadByteAsync(),
+            FourthSpan = await _deserializer.ReadByteAsync()
+        };
+    }
+
+    public async ValueTask<Gp5Marker> ReadMarkerAsync()
+    {
+        return new Gp5Marker
+        {
+            Name = await _deserializer.ReadIntByteStringAsync(),
+            Color = await ReadColorAsync()
+        };
+    }
+
+    public async ValueTask<Gp5RseEqualizer> ReadRseEqualizerAsync(int bandsCount)
+    {
+        var bands = new sbyte[bandsCount];
+        for (var i = 0; i < bands.Length; i++)
+        {
+            bands[i] = await _deserializer.ReadSignedByteAsync();
+        }
+
+        var gainPreFader = await _deserializer.ReadSignedByteAsync();
+
+        return new Gp5RseEqualizer
+        {
+            Bands = bands,
+            GainPreFader = gainPreFader
+        };
+    }
+
+    public async ValueTask<Gp5Color> ReadColorAsync()
+    {
+        return new Gp5Color
+        {
+            Red = await _deserializer.ReadByteAsync(),
+            Green = await _deserializer.ReadByteAsync(),
+            Blue = await _deserializer.ReadByteAsync(),
+            Alpha = await _deserializer.ReadByteAsync()
+        };
+    }
 }
