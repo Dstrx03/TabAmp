@@ -48,8 +48,7 @@ internal sealed class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFile
 
     protected sealed override ValueTask NextMidiChannelsAsync()
     {
-        const int midiChannelsCount = 64;
-        File.MidiChannels = new Gp5MidiChannel[midiChannelsCount];
+        File.MidiChannels = new Gp5MidiChannel[Gp5File.MidiChannelsCount];
         return base.NextMidiChannelsAsync();
     }
 

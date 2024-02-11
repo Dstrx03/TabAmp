@@ -2,6 +2,9 @@
 
 internal class Gp5File
 {
+    public const int VersionStringMaxLength = 30;
+    public const int MidiChannelsCount = 64;
+
     public string Version { get; set; }
     public Gp5ScoreInformation ScoreInformation { get; set; }
     public Gp5Lyrics Lyrics { get; set; }

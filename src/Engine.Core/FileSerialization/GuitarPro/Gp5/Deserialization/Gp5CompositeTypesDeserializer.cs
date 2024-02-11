@@ -10,12 +10,9 @@ internal class Gp5CompositeTypesDeserializer
     public Gp5CompositeTypesDeserializer(Gp5GeneralTypesDeserializer deserializer) =>
         _deserializer = deserializer;
 
-    public async ValueTask<string> ReadVersionAsync()
+    public ValueTask<string> ReadVersionAsync()
     {
-        const int versionStringMaxLength = 30;
-        var versionString = await _deserializer.ReadByteStringAsync(versionStringMaxLength);
-
-        return versionString;
+        return _deserializer.ReadByteStringAsync(Gp5File.VersionStringMaxLength);
 
         // TODO:
         // "version" data is stored in size of 30 bytes, the actual version string is 24 characters long
@@ -72,12 +69,11 @@ internal class Gp5CompositeTypesDeserializer
 
     public async ValueTask<Gp5RseMasterEffect> ReadRseMasterEffectAsync()
     {
-        const int rseMasterEffectEqualizerBandsCount = 10;
         return new Gp5RseMasterEffect
         {
             Volume = await _deserializer.ReadIntAsync(),
             _A01 = await _deserializer.ReadIntAsync(),
-            Equalizer = await ReadRseEqualizerAsync(rseMasterEffectEqualizerBandsCount)
+            Equalizer = await ReadRseEqualizerAsync(Gp5RseMasterEffect.EqualizerBandsCount)
         };
     }
 

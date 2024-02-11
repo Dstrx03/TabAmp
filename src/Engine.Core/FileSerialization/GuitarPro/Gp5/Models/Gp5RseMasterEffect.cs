@@ -2,6 +2,8 @@
 
 internal class Gp5RseMasterEffect
 {
+    public const int EqualizerBandsCount = 10;
+
     public int Volume { get; set; }
     public Gp5RseEqualizer Equalizer { get; set; }
     public int Reverb { get; set; }
