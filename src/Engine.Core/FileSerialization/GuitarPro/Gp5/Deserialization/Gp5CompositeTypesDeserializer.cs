@@ -3,11 +3,11 @@ using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 
-internal class Gp5CompositeTypesSerialDecoder
+internal class Gp5CompositeTypesDeserializer
 {
     private readonly Gp5GeneralTypesDeserializer _deserializer;
 
-    public Gp5CompositeTypesSerialDecoder(Gp5GeneralTypesDeserializer deserializer) =>
+    public Gp5CompositeTypesDeserializer(Gp5GeneralTypesDeserializer deserializer) =>
         _deserializer = deserializer;
 
     // TODO: refactoring
