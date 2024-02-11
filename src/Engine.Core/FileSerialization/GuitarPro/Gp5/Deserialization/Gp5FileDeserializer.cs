@@ -9,14 +9,10 @@ namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 
 internal sealed class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeserializer<Gp5Score>
 {
-    private readonly Gp5PrimitivesSerialDecoder _primitivesDecoder;
     private readonly Gp5CompositeTypesSerialDecoder _compositeTypesDecoder;
 
-    public Gp5FileDeserializer(Gp5PrimitivesSerialDecoder primitivesDecoder, Gp5CompositeTypesSerialDecoder compositeTypesDecoder)
-    {
-        _primitivesDecoder = primitivesDecoder;
+    public Gp5FileDeserializer(Gp5CompositeTypesSerialDecoder compositeTypesDecoder) =>
         _compositeTypesDecoder = compositeTypesDecoder;
-    }
 
     public async Task<Gp5Score> DeserializeAsync()
     {
@@ -64,13 +60,13 @@ internal sealed class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFile
         File.MusicalDirections = await _compositeTypesDecoder.ReadMusicalDirectionsAsync();
 
     protected override async ValueTask NextRseMasterEffectReverbAsync() =>
-        File.RseMasterEffect.Reverb = await _primitivesDecoder.ReadIntAsync();
+        File.RseMasterEffect.Reverb = await _compositeTypesDecoder.ReadRseMasterEffectReverbAsync();
 
     protected override async ValueTask NextMeasuresCountAsync() =>
-        File.MeasuresCount = await _primitivesDecoder.ReadIntAsync();
+        File.MeasuresCount = await _compositeTypesDecoder.ReadMeasuresCountAsync();
 
     protected override async ValueTask NextTracksCountAsync() =>
-        File.TracksCount = await _primitivesDecoder.ReadIntAsync();
+        File.TracksCount = await _compositeTypesDecoder.ReadTracksCountAsync();
 
     protected sealed override ValueTask NextMeasureHeadersAsync()
     {

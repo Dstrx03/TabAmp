@@ -1,72 +1,26 @@
-﻿using System;
-using System.Text;
-using System.Threading.Tasks;
-using TabAmp.Engine.Core.FileSerialization.Common.Components.SerialFileReader;
+﻿using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 
 internal class Gp5CompositeTypesSerialDecoder
 {
-    private readonly ISerialFileReader _fileReader;
-    private readonly Gp5PrimitivesSerialDecoder _primitivesDecoder;
+    private readonly Gp5GeneralTypesDeserializer _deserializer;
 
-    public Gp5CompositeTypesSerialDecoder(ISerialFileReader fileReader, Gp5PrimitivesSerialDecoder primitivesDecoder)
-    {
-        _fileReader = fileReader;
-        _primitivesDecoder = primitivesDecoder;
-    }
+    public Gp5CompositeTypesSerialDecoder(Gp5GeneralTypesDeserializer deserializer) =>
+        _deserializer = deserializer;
 
-    public async ValueTask<string> ReadByteStringAsync(int maxLength)
-    {
-        var length = await _primitivesDecoder.ReadByteAsync();
-        var decodedString = await ReadStringAsync(length);
-
-        var trailingBytesCount = maxLength - length;
-        if (trailingBytesCount > 0)
-            await _fileReader.SkipBytesAsync(trailingBytesCount);
-        else if (trailingBytesCount < 0)
-            // TODO: more specific exception type, message
-            throw new InvalidOperationException($"{maxLength}-{length}<0 P={_fileReader.Position}");
-
-        return decodedString;
-    }
-
-    public async ValueTask<string> ReadIntStringAsync()
-    {
-        var length = await _primitivesDecoder.ReadIntAsync();
-        return await ReadStringAsync(length);
-    }
-
-    public async ValueTask<string> ReadIntByteStringAsync()
-    {
-        const int lengthPrefixSize = Gp5PrimitivesSerialDecoder.ByteSize;
-
-        var maxLength = await _primitivesDecoder.ReadIntAsync();
-        var length = await _primitivesDecoder.ReadByteAsync();
-
-        if (length + lengthPrefixSize != maxLength)
-            // TODO: more specific exception type, message
-            throw new InvalidOperationException($"{length}+{lengthPrefixSize}!={maxLength} P={_fileReader.Position}");
-
-        return await ReadStringAsync(length);
-    }
-
-    private async ValueTask<string> ReadStringAsync(int length)
-    {
-        var buffer = await _fileReader.ReadBytesAsync(length);
-        return Encoding.UTF8.GetString(buffer);
-    }
+    // TODO: refactoring
 
     public async ValueTask<Gp5RseEqualizer> ReadRseEqualizerAsync(int bandsCount)
     {
         var bands = new sbyte[bandsCount];
         for (var i = 0; i < bands.Length; i++)
         {
-            bands[i] = await _primitivesDecoder.ReadSignedByteAsync();
+            bands[i] = await _deserializer.ReadSignedByteAsync();
         }
 
-        var gainPreFader = await _primitivesDecoder.ReadSignedByteAsync();
+        var gainPreFader = await _deserializer.ReadSignedByteAsync();
 
         return new Gp5RseEqualizer
         {
@@ -82,8 +36,8 @@ internal class Gp5CompositeTypesSerialDecoder
 
         return new Gp5TimeSignature
         {
-            Numerator = hasNumerator ? await _primitivesDecoder.ReadByteAsync() : null,
-            Denominator = hasDenominator ? await _primitivesDecoder.ReadByteAsync() : null
+            Numerator = hasNumerator ? await _deserializer.ReadByteAsync() : null,
+            Denominator = hasDenominator ? await _deserializer.ReadByteAsync() : null
         };
     }
 
@@ -91,10 +45,10 @@ internal class Gp5CompositeTypesSerialDecoder
     {
         return new Gp5TimeSignatureBeamGroups
         {
-            FirstSpan = await _primitivesDecoder.ReadByteAsync(),
-            SecondSpan = await _primitivesDecoder.ReadByteAsync(),
-            ThirdSpan = await _primitivesDecoder.ReadByteAsync(),
-            FourthSpan = await _primitivesDecoder.ReadByteAsync()
+            FirstSpan = await _deserializer.ReadByteAsync(),
+            SecondSpan = await _deserializer.ReadByteAsync(),
+            ThirdSpan = await _deserializer.ReadByteAsync(),
+            FourthSpan = await _deserializer.ReadByteAsync()
         };
     }
 
@@ -102,7 +56,7 @@ internal class Gp5CompositeTypesSerialDecoder
     {
         return new Gp5Marker
         {
-            Name = await ReadIntByteStringAsync(),
+            Name = await _deserializer.ReadIntByteStringAsync(),
             Color = await ReadColorAsync()
         };
     }
@@ -111,16 +65,16 @@ internal class Gp5CompositeTypesSerialDecoder
     {
         return new Gp5Color
         {
-            Red = await _primitivesDecoder.ReadByteAsync(),
-            Green = await _primitivesDecoder.ReadByteAsync(),
-            Blue = await _primitivesDecoder.ReadByteAsync(),
-            Alpha = await _primitivesDecoder.ReadByteAsync()
+            Red = await _deserializer.ReadByteAsync(),
+            Green = await _deserializer.ReadByteAsync(),
+            Blue = await _deserializer.ReadByteAsync(),
+            Alpha = await _deserializer.ReadByteAsync()
         };
     }
 
     public async ValueTask<Gp5MeasureHeader> ReadMeasureHeaderAsync(bool isFirst)
     {
-        var primaryFlags = (Gp5MeasureHeader.Primary)await _primitivesDecoder.ReadByteAsync();
+        var primaryFlags = (Gp5MeasureHeader.Primary)await _deserializer.ReadByteAsync();
         var measureHeader = new Gp5MeasureHeader
         {
             PrimaryFlags = primaryFlags
@@ -132,7 +86,7 @@ internal class Gp5CompositeTypesSerialDecoder
         measureHeader.TimeSignature = await ReadTimeSignatureAsync(hasNumerator: hasNumerator, hasDenominator: hasDenominator);
 
         if (primaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasRepeatClose))
-            measureHeader.RepeatCount = await _primitivesDecoder.ReadByteAsync();
+            measureHeader.RepeatCount = await _deserializer.ReadByteAsync();
 
         if (primaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasMarker))
             measureHeader.Marker = await ReadMarkerAsync();
@@ -147,22 +101,22 @@ internal class Gp5CompositeTypesSerialDecoder
                 measureHeader.TimeSignature.BeamGroups = await ReadTimeSignatureBeamGroupsAsync();
 
             if (hasAlternateEndings)
-                measureHeader.AlternateEndingsFlags = (Gp5MeasureHeader.AlternateEndings)await _primitivesDecoder.ReadByteAsync();
+                measureHeader.AlternateEndingsFlags = (Gp5MeasureHeader.AlternateEndings)await _deserializer.ReadByteAsync();
         }
         else
         {
             if (hasAlternateEndings)
-                measureHeader.AlternateEndingsFlags = (Gp5MeasureHeader.AlternateEndings)await _primitivesDecoder.ReadByteAsync();
+                measureHeader.AlternateEndingsFlags = (Gp5MeasureHeader.AlternateEndings)await _deserializer.ReadByteAsync();
 
             if (hasBeamGroups)
                 measureHeader.TimeSignature.BeamGroups = await ReadTimeSignatureBeamGroupsAsync();
         }
 
         if (!hasAlternateEndings)
-            measureHeader.AlternateEndingsFlags = (Gp5MeasureHeader.AlternateEndings)await _primitivesDecoder.ReadByteAsync();
+            measureHeader.AlternateEndingsFlags = (Gp5MeasureHeader.AlternateEndings)await _deserializer.ReadByteAsync();
 
-        measureHeader.TripletFeel = await _primitivesDecoder.ReadByteAsync();
-        measureHeader.EndOfObjectSeparator = await _primitivesDecoder.ReadByteAsync();
+        measureHeader.TripletFeel = await _deserializer.ReadByteAsync();
+        measureHeader.EndOfObjectSeparator = await _deserializer.ReadByteAsync();
 
         return measureHeader;
     }
@@ -171,8 +125,8 @@ internal class Gp5CompositeTypesSerialDecoder
     {
         return new Gp5KeySignature
         {
-            Key = await _primitivesDecoder.ReadSignedByteAsync(),
-            IsMinorKey = await _primitivesDecoder.ReadBoolAsync()
+            Key = await _deserializer.ReadSignedByteAsync(),
+            IsMinorKey = await _deserializer.ReadBoolAsync()
         };
     }
 
@@ -180,15 +134,15 @@ internal class Gp5CompositeTypesSerialDecoder
     {
         return new Gp5LyricsLine
         {
-            StartFromBar = await _primitivesDecoder.ReadIntAsync(),
-            Lyrics = await ReadIntStringAsync()
+            StartFromBar = await _deserializer.ReadIntAsync(),
+            Lyrics = await _deserializer.ReadIntStringAsync()
         };
     }
 
     public async ValueTask<string> ReadVersionAsync()
     {
         const int versionStringMaxLength = 30;
-        var versionString = await ReadByteStringAsync(versionStringMaxLength);
+        var versionString = await _deserializer.ReadByteStringAsync(versionStringMaxLength);
 
         return versionString;
 
@@ -202,21 +156,21 @@ internal class Gp5CompositeTypesSerialDecoder
     {
         var scoreInformation = new Gp5ScoreInformation
         {
-            Title = await ReadIntByteStringAsync(),
-            Subtitle = await ReadIntByteStringAsync(),
-            Artist = await ReadIntByteStringAsync(),
-            Album = await ReadIntByteStringAsync(),
-            Words = await ReadIntByteStringAsync(),
-            Music = await ReadIntByteStringAsync(),
-            Copyright = await ReadIntByteStringAsync(),
-            Tab = await ReadIntByteStringAsync(),
-            Instructions = await ReadIntByteStringAsync(),
-            Notice = new string[await _primitivesDecoder.ReadIntAsync()]
+            Title = await _deserializer.ReadIntByteStringAsync(),
+            Subtitle = await _deserializer.ReadIntByteStringAsync(),
+            Artist = await _deserializer.ReadIntByteStringAsync(),
+            Album = await _deserializer.ReadIntByteStringAsync(),
+            Words = await _deserializer.ReadIntByteStringAsync(),
+            Music = await _deserializer.ReadIntByteStringAsync(),
+            Copyright = await _deserializer.ReadIntByteStringAsync(),
+            Tab = await _deserializer.ReadIntByteStringAsync(),
+            Instructions = await _deserializer.ReadIntByteStringAsync(),
+            Notice = new string[await _deserializer.ReadIntAsync()]
         };
 
         for (var i = 0; i < scoreInformation.Notice.Length; i++)
         {
-            var noticeLine = await ReadIntByteStringAsync();
+            var noticeLine = await _deserializer.ReadIntByteStringAsync();
             scoreInformation.Notice[i] = noticeLine;
         }
 
@@ -227,7 +181,7 @@ internal class Gp5CompositeTypesSerialDecoder
     {
         var lyrics = new Gp5Lyrics
         {
-            ApplyToTrack = await _primitivesDecoder.ReadIntAsync(),
+            ApplyToTrack = await _deserializer.ReadIntAsync(),
             FirstLine = await ReadLyricsLineAsync(),
             SecondLine = await ReadLyricsLineAsync(),
             ThirdLine = await ReadLyricsLineAsync(),
@@ -243,8 +197,8 @@ internal class Gp5CompositeTypesSerialDecoder
         const int rseMasterEffectEqualizerBandsCount = 10;
         var masterEffect = new Gp5RseMasterEffect
         {
-            Volume = await _primitivesDecoder.ReadIntAsync(),
-            _A01 = await _primitivesDecoder.ReadIntAsync(),
+            Volume = await _deserializer.ReadIntAsync(),
+            _A01 = await _deserializer.ReadIntAsync(),
             Equalizer = await ReadRseEqualizerAsync(rseMasterEffectEqualizerBandsCount)
         };
 
@@ -255,24 +209,24 @@ internal class Gp5CompositeTypesSerialDecoder
     {
         var pageSetup = new Gp5PageSetup
         {
-            Width = await _primitivesDecoder.ReadIntAsync(),
-            Height = await _primitivesDecoder.ReadIntAsync(),
-            MarginLeft = await _primitivesDecoder.ReadIntAsync(),
-            MarginRight = await _primitivesDecoder.ReadIntAsync(),
-            MarginTop = await _primitivesDecoder.ReadIntAsync(),
-            MarginBottom = await _primitivesDecoder.ReadIntAsync(),
-            ScoreSizeProportion = await _primitivesDecoder.ReadIntAsync(),
-            HeaderAndFooterFlags = (Gp5PageSetup.HeaderAndFooter)await _primitivesDecoder.ReadShortAsync(),
-            Title = await ReadIntByteStringAsync(),
-            Subtitle = await ReadIntByteStringAsync(),
-            Artist = await ReadIntByteStringAsync(),
-            Album = await ReadIntByteStringAsync(),
-            Words = await ReadIntByteStringAsync(),
-            Music = await ReadIntByteStringAsync(),
-            WordsAndMusic = await ReadIntByteStringAsync(),
-            CopyrightFirstLine = await ReadIntByteStringAsync(),
-            CopyrightSecondLine = await ReadIntByteStringAsync(),
-            PageNumber = await ReadIntByteStringAsync()
+            Width = await _deserializer.ReadIntAsync(),
+            Height = await _deserializer.ReadIntAsync(),
+            MarginLeft = await _deserializer.ReadIntAsync(),
+            MarginRight = await _deserializer.ReadIntAsync(),
+            MarginTop = await _deserializer.ReadIntAsync(),
+            MarginBottom = await _deserializer.ReadIntAsync(),
+            ScoreSizeProportion = await _deserializer.ReadIntAsync(),
+            HeaderAndFooterFlags = (Gp5PageSetup.HeaderAndFooter)await _deserializer.ReadShortAsync(),
+            Title = await _deserializer.ReadIntByteStringAsync(),
+            Subtitle = await _deserializer.ReadIntByteStringAsync(),
+            Artist = await _deserializer.ReadIntByteStringAsync(),
+            Album = await _deserializer.ReadIntByteStringAsync(),
+            Words = await _deserializer.ReadIntByteStringAsync(),
+            Music = await _deserializer.ReadIntByteStringAsync(),
+            WordsAndMusic = await _deserializer.ReadIntByteStringAsync(),
+            CopyrightFirstLine = await _deserializer.ReadIntByteStringAsync(),
+            CopyrightSecondLine = await _deserializer.ReadIntByteStringAsync(),
+            PageNumber = await _deserializer.ReadIntByteStringAsync()
         };
 
         return pageSetup;
@@ -282,9 +236,9 @@ internal class Gp5CompositeTypesSerialDecoder
     {
         var tempo = new Gp5Tempo
         {
-            WordIndication = await ReadIntByteStringAsync(),
-            BeatsPerMinute = await _primitivesDecoder.ReadIntAsync(),
-            HideBeatsPerMinute = await _primitivesDecoder.ReadBoolAsync()
+            WordIndication = await _deserializer.ReadIntByteStringAsync(),
+            BeatsPerMinute = await _deserializer.ReadIntAsync(),
+            HideBeatsPerMinute = await _deserializer.ReadBoolAsync()
         };
 
         return tempo;
@@ -294,11 +248,11 @@ internal class Gp5CompositeTypesSerialDecoder
     {
         var keySignature = new Gp5HeaderKeySignature
         {
-            Key = await _primitivesDecoder.ReadSignedByteAsync(),
-            _A01 = await _primitivesDecoder.ReadSignedByteAsync(),
-            _A02 = await _primitivesDecoder.ReadSignedByteAsync(),
-            _A03 = await _primitivesDecoder.ReadSignedByteAsync(),
-            Octave = await _primitivesDecoder.ReadSignedByteAsync()
+            Key = await _deserializer.ReadSignedByteAsync(),
+            _A01 = await _deserializer.ReadSignedByteAsync(),
+            _A02 = await _deserializer.ReadSignedByteAsync(),
+            _A03 = await _deserializer.ReadSignedByteAsync(),
+            Octave = await _deserializer.ReadSignedByteAsync()
         };
 
         return keySignature;
@@ -308,15 +262,15 @@ internal class Gp5CompositeTypesSerialDecoder
     {
         var midiChannel = new Gp5MidiChannel
         {
-            Instrument = await _primitivesDecoder.ReadIntAsync(),
-            Volume = await _primitivesDecoder.ReadByteAsync(),
-            Balance = await _primitivesDecoder.ReadByteAsync(),
-            Chorus = await _primitivesDecoder.ReadByteAsync(),
-            Reverb = await _primitivesDecoder.ReadByteAsync(),
-            Phaser = await _primitivesDecoder.ReadByteAsync(),
-            Tremolo = await _primitivesDecoder.ReadByteAsync(),
-            _A01 = await _primitivesDecoder.ReadByteAsync(),
-            _A02 = await _primitivesDecoder.ReadByteAsync()
+            Instrument = await _deserializer.ReadIntAsync(),
+            Volume = await _deserializer.ReadByteAsync(),
+            Balance = await _deserializer.ReadByteAsync(),
+            Chorus = await _deserializer.ReadByteAsync(),
+            Reverb = await _deserializer.ReadByteAsync(),
+            Phaser = await _deserializer.ReadByteAsync(),
+            Tremolo = await _deserializer.ReadByteAsync(),
+            _A01 = await _deserializer.ReadByteAsync(),
+            _A02 = await _deserializer.ReadByteAsync()
         };
 
         return midiChannel;
@@ -326,27 +280,36 @@ internal class Gp5CompositeTypesSerialDecoder
     {
         var musicalDirections = new Gp5MusicalDirections
         {
-            Coda = await _primitivesDecoder.ReadShortAsync(),
-            DoubleCoda = await _primitivesDecoder.ReadShortAsync(),
-            Segno = await _primitivesDecoder.ReadShortAsync(),
-            SegnoSegno = await _primitivesDecoder.ReadShortAsync(),
-            Fine = await _primitivesDecoder.ReadShortAsync(),
-            DaCapo = await _primitivesDecoder.ReadShortAsync(),
-            DaCapoAlCoda = await _primitivesDecoder.ReadShortAsync(),
-            DaCapoAlDoubleCoda = await _primitivesDecoder.ReadShortAsync(),
-            DaCapoAlFine = await _primitivesDecoder.ReadShortAsync(),
-            DaSegno = await _primitivesDecoder.ReadShortAsync(),
-            DaSegnoAlCoda = await _primitivesDecoder.ReadShortAsync(),
-            DaSegnoAlDoubleCoda = await _primitivesDecoder.ReadShortAsync(),
-            DaSegnoAlFine = await _primitivesDecoder.ReadShortAsync(),
-            DaSegnoSegno = await _primitivesDecoder.ReadShortAsync(),
-            DaSegnoSegnoAlCoda = await _primitivesDecoder.ReadShortAsync(),
-            DaSegnoSegnoAlDoubleCoda = await _primitivesDecoder.ReadShortAsync(),
-            DaSegnoSegnoAlFine = await _primitivesDecoder.ReadShortAsync(),
-            DaCoda = await _primitivesDecoder.ReadShortAsync(),
-            DaDoubleCoda = await _primitivesDecoder.ReadShortAsync()
+            Coda = await _deserializer.ReadShortAsync(),
+            DoubleCoda = await _deserializer.ReadShortAsync(),
+            Segno = await _deserializer.ReadShortAsync(),
+            SegnoSegno = await _deserializer.ReadShortAsync(),
+            Fine = await _deserializer.ReadShortAsync(),
+            DaCapo = await _deserializer.ReadShortAsync(),
+            DaCapoAlCoda = await _deserializer.ReadShortAsync(),
+            DaCapoAlDoubleCoda = await _deserializer.ReadShortAsync(),
+            DaCapoAlFine = await _deserializer.ReadShortAsync(),
+            DaSegno = await _deserializer.ReadShortAsync(),
+            DaSegnoAlCoda = await _deserializer.ReadShortAsync(),
+            DaSegnoAlDoubleCoda = await _deserializer.ReadShortAsync(),
+            DaSegnoAlFine = await _deserializer.ReadShortAsync(),
+            DaSegnoSegno = await _deserializer.ReadShortAsync(),
+            DaSegnoSegnoAlCoda = await _deserializer.ReadShortAsync(),
+            DaSegnoSegnoAlDoubleCoda = await _deserializer.ReadShortAsync(),
+            DaSegnoSegnoAlFine = await _deserializer.ReadShortAsync(),
+            DaCoda = await _deserializer.ReadShortAsync(),
+            DaDoubleCoda = await _deserializer.ReadShortAsync()
         };
 
         return musicalDirections;
     }
+
+    public ValueTask<int> ReadRseMasterEffectReverbAsync() =>
+        _deserializer.ReadIntAsync();
+
+    public ValueTask<int> ReadMeasuresCountAsync() =>
+        _deserializer.ReadIntAsync();
+
+    public ValueTask<int> ReadTracksCountAsync() =>
+        _deserializer.ReadIntAsync();
 }
