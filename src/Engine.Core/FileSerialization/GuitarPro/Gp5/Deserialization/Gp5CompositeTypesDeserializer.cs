@@ -50,7 +50,7 @@ internal class Gp5CompositeTypesDeserializer
 
     public async ValueTask<Gp5Lyrics> ReadLyricsAsync()
     {
-        var lyrics = new Gp5Lyrics
+        return new Gp5Lyrics
         {
             ApplyToTrack = await _deserializer.ReadIntAsync(),
             FirstLine = await ReadLyricsLineAsync(),
@@ -59,8 +59,6 @@ internal class Gp5CompositeTypesDeserializer
             FourthLine = await ReadLyricsLineAsync(),
             FifthLine = await ReadLyricsLineAsync()
         };
-
-        return lyrics;
     }
 
     public async ValueTask<Gp5LyricsLine> ReadLyricsLineAsync()
@@ -75,19 +73,17 @@ internal class Gp5CompositeTypesDeserializer
     public async ValueTask<Gp5RseMasterEffect> ReadRseMasterEffectAsync()
     {
         const int rseMasterEffectEqualizerBandsCount = 10;
-        var masterEffect = new Gp5RseMasterEffect
+        return new Gp5RseMasterEffect
         {
             Volume = await _deserializer.ReadIntAsync(),
             _A01 = await _deserializer.ReadIntAsync(),
             Equalizer = await ReadRseEqualizerAsync(rseMasterEffectEqualizerBandsCount)
         };
-
-        return masterEffect;
     }
 
     public async ValueTask<Gp5PageSetup> ReadPageSetupAsync()
     {
-        var pageSetup = new Gp5PageSetup
+        return new Gp5PageSetup
         {
             Width = await _deserializer.ReadIntAsync(),
             Height = await _deserializer.ReadIntAsync(),
@@ -108,25 +104,21 @@ internal class Gp5CompositeTypesDeserializer
             CopyrightSecondLine = await _deserializer.ReadIntByteStringAsync(),
             PageNumber = await _deserializer.ReadIntByteStringAsync()
         };
-
-        return pageSetup;
     }
 
     public async ValueTask<Gp5Tempo> ReadHeaderTempoAsync()
     {
-        var tempo = new Gp5Tempo
+        return new Gp5Tempo
         {
             WordIndication = await _deserializer.ReadIntByteStringAsync(),
             BeatsPerMinute = await _deserializer.ReadIntAsync(),
             HideBeatsPerMinute = await _deserializer.ReadBoolAsync()
         };
-
-        return tempo;
     }
 
     public async ValueTask<Gp5HeaderKeySignature> ReadHeaderKeySignatureAsync()
     {
-        var keySignature = new Gp5HeaderKeySignature
+        return new Gp5HeaderKeySignature
         {
             Key = await _deserializer.ReadSignedByteAsync(),
             _A01 = await _deserializer.ReadSignedByteAsync(),
@@ -134,13 +126,11 @@ internal class Gp5CompositeTypesDeserializer
             _A03 = await _deserializer.ReadSignedByteAsync(),
             Octave = await _deserializer.ReadSignedByteAsync()
         };
-
-        return keySignature;
     }
 
     public async ValueTask<Gp5MidiChannel> ReadMidiChannelAsync()
     {
-        var midiChannel = new Gp5MidiChannel
+        return new Gp5MidiChannel
         {
             Instrument = await _deserializer.ReadIntAsync(),
             Volume = await _deserializer.ReadByteAsync(),
@@ -152,13 +142,11 @@ internal class Gp5CompositeTypesDeserializer
             _A01 = await _deserializer.ReadByteAsync(),
             _A02 = await _deserializer.ReadByteAsync()
         };
-
-        return midiChannel;
     }
 
     public async ValueTask<Gp5MusicalDirections> ReadMusicalDirectionsAsync()
     {
-        var musicalDirections = new Gp5MusicalDirections
+        return new Gp5MusicalDirections
         {
             Coda = await _deserializer.ReadShortAsync(),
             DoubleCoda = await _deserializer.ReadShortAsync(),
@@ -180,8 +168,6 @@ internal class Gp5CompositeTypesDeserializer
             DaCoda = await _deserializer.ReadShortAsync(),
             DaDoubleCoda = await _deserializer.ReadShortAsync()
         };
-
-        return musicalDirections;
     }
 
     public ValueTask<int> ReadRseMasterEffectReverbAsync() =>
