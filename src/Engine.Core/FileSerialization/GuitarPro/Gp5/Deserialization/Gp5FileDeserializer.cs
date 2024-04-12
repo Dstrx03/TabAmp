@@ -7,7 +7,7 @@ using TabAmp.Engine.Core.Score;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 
-internal sealed class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeserializer<Gp5Score>
+internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeserializer<Gp5Score>
 {
     private readonly IGp5FileReader _reader;
 
@@ -46,7 +46,7 @@ internal sealed class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFile
     protected override async ValueTask NextHeaderKeySignatureAsync() =>
         File.KeySignature = await _reader.ReadHeaderKeySignatureAsync();
 
-    protected sealed override ValueTask NextMidiChannelsAsync()
+    protected override ValueTask NextMidiChannelsAsync()
     {
         File.MidiChannels = new Gp5MidiChannel[Gp5File.MidiChannelsCount];
         return base.NextMidiChannelsAsync();
@@ -67,7 +67,7 @@ internal sealed class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFile
     protected override async ValueTask NextTracksCountAsync() =>
         File.TracksCount = await _reader.ReadTracksCountAsync();
 
-    protected sealed override ValueTask NextMeasureHeadersAsync()
+    protected override ValueTask NextMeasureHeadersAsync()
     {
         File.MeasureHeaders = new Gp5MeasureHeader[File.MeasuresCount];
         return base.NextMeasureHeadersAsync();

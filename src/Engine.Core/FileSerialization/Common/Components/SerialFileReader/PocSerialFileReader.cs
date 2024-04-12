@@ -5,7 +5,7 @@ using TabAmp.Engine.Core.FileSerialization.Common.Components.Context;
 
 namespace TabAmp.Engine.Core.FileSerialization.Common.Components.SerialFileReader;
 
-internal sealed class PocSerialFileReader : ISerialFileReader
+internal class PocSerialFileReader : ISerialFileReader
 {
     private readonly FileStream _fileStream;
     private readonly FileSerializationContext _context;

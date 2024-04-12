@@ -3,7 +3,7 @@ using System.Threading;
 
 namespace TabAmp.Engine.Core.FileSerialization.Common.Components.Context;
 
-internal sealed partial class FileSerializationContextBuilder
+internal partial class FileSerializationContextBuilder
 {
     private ScopedFileSerializationContext _context;
 
@@ -13,6 +13,7 @@ internal sealed partial class FileSerializationContextBuilder
     {
         if (!IsConstructed)
             throw new InvalidOperationException($"{nameof(FileSerializationContext)} is not constructed.");
+
         return _context;
     }
 

@@ -6,7 +6,7 @@ using TabAmp.Engine.Core.FileSerialization.Common.Components.Processor;
 
 namespace TabAmp.Engine.Core.FileSerialization;
 
-internal sealed class FileSerializationService : IFileSerializationService
+internal class FileSerializationService : IFileSerializationService
 {
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
