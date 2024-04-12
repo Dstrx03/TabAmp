@@ -16,8 +16,7 @@ public static class DependencyInjection
             .AddScoped<ISerialFileReader, PocSerialFileReader>();
 
         services.AddScoped<IFileDeserializer<Gp5Score>, Gp5FileDeserializer>()
-            .AddScoped<Gp5GeneralTypesDeserializer>()
-            .AddScoped<Gp5CompositeTypesDeserializer>();
+            .AddScoped<IGp5FileReader, Gp5FileReader>();
 
         return services;
     }
