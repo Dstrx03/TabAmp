@@ -14,6 +14,7 @@ internal class Gp5FileReader
     public Gp5FileReader(ISerialFileReader fileReader) =>
         _fileReader = fileReader;
 
+    #region Composite types
     public virtual ValueTask<string> ReadVersionAsync()
     {
         return ReadByteStringAsync(Gp5File.VersionStringMaxLength);
@@ -296,9 +297,9 @@ internal class Gp5FileReader
             Alpha = await ReadByteAsync()
         };
     }
+    #endregion
 
-
-    #region String
+    #region String types
     protected virtual async ValueTask<string> ReadStringAsync(int length)
     {
         var buffer = await _fileReader.ReadBytesAsync(length);
@@ -339,7 +340,7 @@ internal class Gp5FileReader
     }
     #endregion
 
-    #region Binary Primitives
+    #region Value types
     // TODO: move consts to more appropriate place(s)
     private const int ByteSize = 1;
     private const int ShortSize = 2;
