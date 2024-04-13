@@ -7,111 +7,14 @@ using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 
-internal class Gp5FileReader : IGp5FileReader
+internal class Gp5FileReader
 {
     private readonly ISerialFileReader _fileReader;
-
-    private const int ByteSize = 1;
-    private const int ShortSize = 2;
-    private const int IntSize = 4;
-    private const int FloatSize = 4;
-    private const int DoubleSize = 8;
-
-    private const int ByteStringLengthPrefixSize = ByteSize;
-
-    private const byte BoolFalseValue = 0;
-    private const byte BoolTrueValue = 1;
 
     public Gp5FileReader(ISerialFileReader fileReader) =>
         _fileReader = fileReader;
 
-    public async ValueTask<byte> ReadByteAsync()
-    {
-        var buffer = await _fileReader.ReadBytesAsync(ByteSize);
-        return buffer[0];
-    }
-
-    public async ValueTask<sbyte> ReadSignedByteAsync()
-    {
-        var byteValue = await ReadByteAsync();
-        return (sbyte)byteValue;
-    }
-
-    public async ValueTask<bool> ReadBoolAsync()
-    {
-        var byteValue = await ReadByteAsync();
-
-        if (byteValue != BoolFalseValue && byteValue != BoolTrueValue)
-            // TODO: more specific exception type, message
-            throw new InvalidOperationException($"{byteValue}!=0<>1 P={_fileReader.Position}");
-
-        return byteValue == BoolTrueValue;
-    }
-
-    public async ValueTask<short> ReadShortAsync()
-    {
-        var buffer = await _fileReader.ReadBytesAsync(ShortSize);
-        return BinaryPrimitives.ReadInt16LittleEndian(buffer);
-    }
-
-    public async ValueTask<int> ReadIntAsync()
-    {
-        var buffer = await _fileReader.ReadBytesAsync(IntSize);
-        return BinaryPrimitives.ReadInt32LittleEndian(buffer);
-    }
-
-    public async ValueTask<float> ReadFloatAsync()
-    {
-        var buffer = await _fileReader.ReadBytesAsync(FloatSize);
-        return BinaryPrimitives.ReadSingleLittleEndian(buffer);
-    }
-
-    public async ValueTask<double> ReadDoubleAsync()
-    {
-        var buffer = await _fileReader.ReadBytesAsync(DoubleSize);
-        return BinaryPrimitives.ReadDoubleLittleEndian(buffer);
-    }
-
-    public async ValueTask<string> ReadStringAsync(int length)
-    {
-        var buffer = await _fileReader.ReadBytesAsync(length);
-        return Encoding.UTF8.GetString(buffer);
-    }
-
-    public async ValueTask<string> ReadByteStringAsync(int maxLength)
-    {
-        var length = await ReadByteAsync();
-        var decodedString = await ReadStringAsync(length);
-
-        var trailingBytesCount = maxLength - length;
-        if (trailingBytesCount > 0)
-            await _fileReader.SkipBytesAsync(trailingBytesCount);
-        else if (trailingBytesCount < 0)
-            // TODO: more specific exception type, message
-            throw new InvalidOperationException($"{maxLength}-{length}<0 P={_fileReader.Position}");
-
-        return decodedString;
-    }
-
-    public async ValueTask<string> ReadIntStringAsync()
-    {
-        var length = await ReadIntAsync();
-        return await ReadStringAsync(length);
-    }
-
-    public async ValueTask<string> ReadIntByteStringAsync()
-    {
-        var maxLength = await ReadIntAsync();
-        var length = await ReadByteAsync();
-
-        if (length + ByteStringLengthPrefixSize != maxLength)
-            // TODO: more specific exception type, message
-            throw new InvalidOperationException($"{length}+{ByteStringLengthPrefixSize}!={maxLength} P={_fileReader.Position}");
-
-        return await ReadStringAsync(length);
-    }
-
-    public ValueTask<string> ReadVersionAsync()
+    public virtual ValueTask<string> ReadVersionAsync()
     {
         return ReadByteStringAsync(Gp5File.VersionStringMaxLength);
 
@@ -121,7 +24,7 @@ internal class Gp5FileReader : IGp5FileReader
         // does that 30 bytes is actually a "header" of guitar pro file?
     }
 
-    public async ValueTask<Gp5ScoreInformation> ReadScoreInformationAsync()
+    public virtual async ValueTask<Gp5ScoreInformation> ReadScoreInformationAsync()
     {
         var scoreInformation = new Gp5ScoreInformation
         {
@@ -146,7 +49,7 @@ internal class Gp5FileReader : IGp5FileReader
         return scoreInformation;
     }
 
-    public async ValueTask<Gp5Lyrics> ReadLyricsAsync()
+    public virtual async ValueTask<Gp5Lyrics> ReadLyricsAsync()
     {
         return new Gp5Lyrics
         {
@@ -159,16 +62,7 @@ internal class Gp5FileReader : IGp5FileReader
         };
     }
 
-    public async ValueTask<Gp5LyricsLine> ReadLyricsLineAsync()
-    {
-        return new Gp5LyricsLine
-        {
-            StartFromBar = await ReadIntAsync(),
-            Lyrics = await ReadIntStringAsync()
-        };
-    }
-
-    public async ValueTask<Gp5RseMasterEffect> ReadRseMasterEffectAsync()
+    public virtual async ValueTask<Gp5RseMasterEffect> ReadRseMasterEffectAsync()
     {
         return new Gp5RseMasterEffect
         {
@@ -178,7 +72,7 @@ internal class Gp5FileReader : IGp5FileReader
         };
     }
 
-    public async ValueTask<Gp5PageSetup> ReadPageSetupAsync()
+    public virtual async ValueTask<Gp5PageSetup> ReadPageSetupAsync()
     {
         return new Gp5PageSetup
         {
@@ -203,7 +97,7 @@ internal class Gp5FileReader : IGp5FileReader
         };
     }
 
-    public async ValueTask<Gp5Tempo> ReadHeaderTempoAsync()
+    public virtual async ValueTask<Gp5Tempo> ReadHeaderTempoAsync()
     {
         return new Gp5Tempo
         {
@@ -213,7 +107,7 @@ internal class Gp5FileReader : IGp5FileReader
         };
     }
 
-    public async ValueTask<Gp5HeaderKeySignature> ReadHeaderKeySignatureAsync()
+    public virtual async ValueTask<Gp5HeaderKeySignature> ReadHeaderKeySignatureAsync()
     {
         return new Gp5HeaderKeySignature
         {
@@ -225,7 +119,7 @@ internal class Gp5FileReader : IGp5FileReader
         };
     }
 
-    public async ValueTask<Gp5MidiChannel> ReadMidiChannelAsync()
+    public virtual async ValueTask<Gp5MidiChannel> ReadMidiChannelAsync()
     {
         return new Gp5MidiChannel
         {
@@ -241,7 +135,7 @@ internal class Gp5FileReader : IGp5FileReader
         };
     }
 
-    public async ValueTask<Gp5MusicalDirections> ReadMusicalDirectionsAsync()
+    public virtual async ValueTask<Gp5MusicalDirections> ReadMusicalDirectionsAsync()
     {
         return new Gp5MusicalDirections
         {
@@ -267,13 +161,16 @@ internal class Gp5FileReader : IGp5FileReader
         };
     }
 
-    public ValueTask<int> ReadRseMasterEffectReverbAsync() => ReadIntAsync();
+    public virtual ValueTask<int> ReadRseMasterEffectReverbAsync() =>
+        ReadIntAsync();
 
-    public ValueTask<int> ReadMeasuresCountAsync() => ReadIntAsync();
+    public virtual ValueTask<int> ReadMeasuresCountAsync() =>
+        ReadIntAsync();
 
-    public ValueTask<int> ReadTracksCountAsync() => ReadIntAsync();
+    public virtual ValueTask<int> ReadTracksCountAsync() =>
+        ReadIntAsync();
 
-    public async ValueTask<Gp5MeasureHeader> ReadMeasureHeaderAsync(bool isFirst)
+    public virtual async ValueTask<Gp5MeasureHeader> ReadMeasureHeaderAsync(bool isFirst)
     {
         var primaryFlags = (Gp5MeasureHeader.Primary)await ReadByteAsync();
         var measureHeader = new Gp5MeasureHeader
@@ -322,7 +219,16 @@ internal class Gp5FileReader : IGp5FileReader
         return measureHeader;
     }
 
-    public async ValueTask<Gp5KeySignature> ReadKeySignatureAsync()
+    protected virtual async ValueTask<Gp5LyricsLine> ReadLyricsLineAsync()
+    {
+        return new Gp5LyricsLine
+        {
+            StartFromBar = await ReadIntAsync(),
+            Lyrics = await ReadIntStringAsync()
+        };
+    }
+
+    protected virtual async ValueTask<Gp5KeySignature> ReadKeySignatureAsync()
     {
         return new Gp5KeySignature
         {
@@ -331,7 +237,7 @@ internal class Gp5FileReader : IGp5FileReader
         };
     }
 
-    public async ValueTask<Gp5TimeSignature> ReadTimeSignatureAsync(bool hasNumerator, bool hasDenominator)
+    protected virtual async ValueTask<Gp5TimeSignature> ReadTimeSignatureAsync(bool hasNumerator, bool hasDenominator)
     {
         if (!hasNumerator && !hasDenominator)
             return null;
@@ -343,7 +249,7 @@ internal class Gp5FileReader : IGp5FileReader
         };
     }
 
-    public async ValueTask<Gp5TimeSignatureBeamGroups> ReadTimeSignatureBeamGroupsAsync()
+    protected virtual async ValueTask<Gp5TimeSignatureBeamGroups> ReadTimeSignatureBeamGroupsAsync()
     {
         return new Gp5TimeSignatureBeamGroups
         {
@@ -354,7 +260,7 @@ internal class Gp5FileReader : IGp5FileReader
         };
     }
 
-    public async ValueTask<Gp5Marker> ReadMarkerAsync()
+    protected virtual async ValueTask<Gp5Marker> ReadMarkerAsync()
     {
         return new Gp5Marker
         {
@@ -363,7 +269,7 @@ internal class Gp5FileReader : IGp5FileReader
         };
     }
 
-    public async ValueTask<Gp5RseEqualizer> ReadRseEqualizerAsync(int bandsCount)
+    protected virtual async ValueTask<Gp5RseEqualizer> ReadRseEqualizerAsync(int bandsCount)
     {
         var bands = new sbyte[bandsCount];
         for (var i = 0; i < bands.Length; i++)
@@ -380,7 +286,7 @@ internal class Gp5FileReader : IGp5FileReader
         };
     }
 
-    public async ValueTask<Gp5Color> ReadColorAsync()
+    protected virtual async ValueTask<Gp5Color> ReadColorAsync()
     {
         return new Gp5Color
         {
@@ -390,4 +296,107 @@ internal class Gp5FileReader : IGp5FileReader
             Alpha = await ReadByteAsync()
         };
     }
+
+
+    #region String
+    protected virtual async ValueTask<string> ReadStringAsync(int length)
+    {
+        var buffer = await _fileReader.ReadBytesAsync(length);
+        return Encoding.UTF8.GetString(buffer);
+    }
+
+    protected virtual async ValueTask<string> ReadByteStringAsync(int maxLength)
+    {
+        var length = await ReadByteAsync();
+        var decodedString = await ReadStringAsync(length);
+
+        var trailingBytesCount = maxLength - length;
+        if (trailingBytesCount > 0)
+            await _fileReader.SkipBytesAsync(trailingBytesCount);
+        else if (trailingBytesCount < 0)
+            // TODO: more specific exception type, message
+            throw new InvalidOperationException($"{maxLength}-{length}<0 P={_fileReader.Position}");
+
+        return decodedString;
+    }
+
+    protected virtual async ValueTask<string> ReadIntStringAsync()
+    {
+        var length = await ReadIntAsync();
+        return await ReadStringAsync(length);
+    }
+
+    protected virtual async ValueTask<string> ReadIntByteStringAsync()
+    {
+        var maxLength = await ReadIntAsync();
+        var length = await ReadByteAsync();
+
+        if (length + ByteStringLengthPrefixSize != maxLength)
+            // TODO: more specific exception type, message
+            throw new InvalidOperationException($"{length}+{ByteStringLengthPrefixSize}!={maxLength} P={_fileReader.Position}");
+
+        return await ReadStringAsync(length);
+    }
+    #endregion
+
+    #region Binary Primitives
+    // TODO: move consts to more appropriate place(s)
+    private const int ByteSize = 1;
+    private const int ShortSize = 2;
+    private const int IntSize = 4;
+    private const int FloatSize = 4;
+    private const int DoubleSize = 8;
+
+    private const int ByteStringLengthPrefixSize = ByteSize;
+
+    private const byte BoolFalseValue = 0;
+    private const byte BoolTrueValue = 1;
+
+    protected virtual async ValueTask<byte> ReadByteAsync()
+    {
+        var buffer = await _fileReader.ReadBytesAsync(ByteSize);
+        return buffer[0];
+    }
+
+    protected virtual async ValueTask<sbyte> ReadSignedByteAsync()
+    {
+        var byteValue = await ReadByteAsync();
+        return (sbyte)byteValue;
+    }
+
+    protected virtual async ValueTask<bool> ReadBoolAsync()
+    {
+        var byteValue = await ReadByteAsync();
+
+        if (byteValue != BoolFalseValue && byteValue != BoolTrueValue)
+            // TODO: more specific exception type, message
+            throw new InvalidOperationException($"{byteValue}!=0<>1 P={_fileReader.Position}");
+
+        return byteValue == BoolTrueValue;
+    }
+
+    protected virtual async ValueTask<short> ReadShortAsync()
+    {
+        var buffer = await _fileReader.ReadBytesAsync(ShortSize);
+        return BinaryPrimitives.ReadInt16LittleEndian(buffer);
+    }
+
+    protected virtual async ValueTask<int> ReadIntAsync()
+    {
+        var buffer = await _fileReader.ReadBytesAsync(IntSize);
+        return BinaryPrimitives.ReadInt32LittleEndian(buffer);
+    }
+
+    protected virtual async ValueTask<float> ReadFloatAsync()
+    {
+        var buffer = await _fileReader.ReadBytesAsync(FloatSize);
+        return BinaryPrimitives.ReadSingleLittleEndian(buffer);
+    }
+
+    protected virtual async ValueTask<double> ReadDoubleAsync()
+    {
+        var buffer = await _fileReader.ReadBytesAsync(DoubleSize);
+        return BinaryPrimitives.ReadDoubleLittleEndian(buffer);
+    }
+    #endregion
 }
