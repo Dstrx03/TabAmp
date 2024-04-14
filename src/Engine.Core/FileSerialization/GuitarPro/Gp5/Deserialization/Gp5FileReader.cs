@@ -363,13 +363,6 @@ internal class Gp5FileReader
     {
         var byteValue = await ReadByteAsync();
         return new Gp5Boolean(byteValue);
-
-        // TODO: move to appropriate level
-        /*if (byteValue != BoolFalseValue && byteValue != BoolTrueValue)
-            // TODO: more specific exception type, message
-            throw new InvalidOperationException($"{byteValue}!=0<>1 P={_fileReader.Position}");
-
-        return byteValue == BoolTrueValue;*/
     }
 
     protected virtual async ValueTask<short> ReadShortAsync()
