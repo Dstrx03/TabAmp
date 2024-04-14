@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.SerialFileReader;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Wrappers;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 
@@ -14,7 +15,6 @@ internal class Gp5FileReader
     public Gp5FileReader(ISerialFileReader fileReader) =>
         _fileReader = fileReader;
 
-    #region Composite types
     public virtual ValueTask<string> ReadVersionAsync()
     {
         return ReadByteStringAsync(Gp5File.VersionStringMaxLength);
@@ -104,7 +104,7 @@ internal class Gp5FileReader
         {
             WordIndication = await ReadIntByteStringAsync(),
             BeatsPerMinute = await ReadIntAsync(),
-            HideBeatsPerMinute = await ReadBoolAsync()
+            HideBeatsPerMinute = await ReadBooleanAsync()
         };
     }
 
@@ -234,7 +234,7 @@ internal class Gp5FileReader
         return new Gp5KeySignature
         {
             Key = await ReadSignedByteAsync(),
-            IsMinorKey = await ReadBoolAsync()
+            IsMinorKey = await ReadBooleanAsync()
         };
     }
 
@@ -297,9 +297,7 @@ internal class Gp5FileReader
             Alpha = await ReadByteAsync()
         };
     }
-    #endregion
 
-    #region String types
     protected virtual async ValueTask<string> ReadStringAsync(int length)
     {
         var buffer = await _fileReader.ReadBytesAsync(length);
@@ -338,9 +336,7 @@ internal class Gp5FileReader
 
         return await ReadStringAsync(length);
     }
-    #endregion
 
-    #region Value types
     // TODO: move consts to more appropriate place(s)
     private const int ByteSize = 1;
     private const int ShortSize = 2;
@@ -349,9 +345,7 @@ internal class Gp5FileReader
     private const int DoubleSize = 8;
 
     private const int ByteStringLengthPrefixSize = ByteSize;
-
-    private const byte BoolFalseValue = 0;
-    private const byte BoolTrueValue = 1;
+    // TODO: move consts to more appropriate place(s)
 
     protected virtual async ValueTask<byte> ReadByteAsync()
     {
@@ -365,15 +359,17 @@ internal class Gp5FileReader
         return (sbyte)byteValue;
     }
 
-    protected virtual async ValueTask<bool> ReadBoolAsync()
+    protected virtual async ValueTask<Gp5Boolean> ReadBooleanAsync()
     {
         var byteValue = await ReadByteAsync();
+        return new Gp5Boolean(byteValue);
 
-        if (byteValue != BoolFalseValue && byteValue != BoolTrueValue)
+        // TODO: move to appropriate level
+        /*if (byteValue != BoolFalseValue && byteValue != BoolTrueValue)
             // TODO: more specific exception type, message
             throw new InvalidOperationException($"{byteValue}!=0<>1 P={_fileReader.Position}");
 
-        return byteValue == BoolTrueValue;
+        return byteValue == BoolTrueValue;*/
     }
 
     protected virtual async ValueTask<short> ReadShortAsync()
@@ -399,5 +395,4 @@ internal class Gp5FileReader
         var buffer = await _fileReader.ReadBytesAsync(DoubleSize);
         return BinaryPrimitives.ReadDoubleLittleEndian(buffer);
     }
-    #endregion
 }
