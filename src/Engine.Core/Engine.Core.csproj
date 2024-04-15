@@ -16,4 +16,8 @@
     <ProjectReference Include="..\Engine.Core.Score\Engine.Core.Score.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="FileSerialization\Common\Exceptions\" />
+  </ItemGroup>
+
 </Project>
