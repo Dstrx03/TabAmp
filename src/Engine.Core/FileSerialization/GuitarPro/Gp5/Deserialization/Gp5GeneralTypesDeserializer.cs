@@ -3,6 +3,7 @@ using System.Buffers.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.SerialFileReader;
+using TabAmp.Engine.Core.FileSerialization.Common.Exceptions;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 
@@ -15,8 +16,6 @@ internal class Gp5GeneralTypesDeserializer
     private const int IntSize = 4;
     private const int FloatSize = 4;
     private const int DoubleSize = 8;
-
-    private const int ByteStringLengthPrefixSize = ByteSize;
 
     private const byte BoolFalseValue = 0;
     private const byte BoolTrueValue = 1;
@@ -40,9 +39,9 @@ internal class Gp5GeneralTypesDeserializer
     {
         var byteValue = await ReadByteAsync();
 
-        if (byteValue != BoolFalseValue && byteValue != BoolTrueValue)
-            // TODO: more specific exception type, message
-            throw new InvalidOperationException($"{byteValue}!=0<>1 P={_fileReader.Position}");
+        if (byteValue is not BoolFalseValue and not BoolTrueValue)
+            // TODO: message
+            throw new FileSerializationIntegrityException($"{byteValue}!=0<>1 P={_fileReader.Position}");
 
         return byteValue == BoolTrueValue;
     }
@@ -86,8 +85,8 @@ internal class Gp5GeneralTypesDeserializer
         if (trailingBytesCount > 0)
             await _fileReader.SkipBytesAsync(trailingBytesCount);
         else if (trailingBytesCount < 0)
-            // TODO: more specific exception type, message
-            throw new InvalidOperationException($"{maxLength}-{length}<0 P={_fileReader.Position}");
+            // TODO: message
+            throw new FileSerializationIntegrityException($"{maxLength}-{length}<0 P={_fileReader.Position}");
 
         return decodedString;
     }
@@ -103,9 +102,9 @@ internal class Gp5GeneralTypesDeserializer
         var maxLength = await ReadIntAsync();
         var length = await ReadByteAsync();
 
-        if (length + ByteStringLengthPrefixSize != maxLength)
-            // TODO: more specific exception type, message
-            throw new InvalidOperationException($"{length}+{ByteStringLengthPrefixSize}!={maxLength} P={_fileReader.Position}");
+        if (length + ByteSize != maxLength)
+            // TODO: message
+            throw new FileSerializationIntegrityException($"{length}+{ByteSize}!={maxLength} P={_fileReader.Position}");
 
         return await ReadStringAsync(length);
     }
