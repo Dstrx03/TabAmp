@@ -1,5 +1,4 @@
-﻿using System;
-using System.Buffers.Binary;
+﻿using System.Buffers.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.SerialFileReader;
@@ -7,7 +6,7 @@ using TabAmp.Engine.Core.FileSerialization.Common.Exceptions;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 
-internal class Gp5GeneralTypesDeserializer
+internal class Gp5TypesReader
 {
     private readonly ISerialFileReader _fileReader;
 
@@ -20,7 +19,7 @@ internal class Gp5GeneralTypesDeserializer
     private const byte BoolFalseValue = 0;
     private const byte BoolTrueValue = 1;
 
-    public Gp5GeneralTypesDeserializer(ISerialFileReader fileReader) =>
+    public Gp5TypesReader(ISerialFileReader fileReader) =>
         _fileReader = fileReader;
 
     public async ValueTask<byte> ReadByteAsync()
