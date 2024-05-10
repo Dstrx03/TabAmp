@@ -6,7 +6,7 @@ using TabAmp.Engine.Core.FileSerialization.Common.Exceptions;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 
-internal class Gp5TypesReader
+internal class Gp5TypesReader_deprecated
 {
     private readonly ISerialFileReader _fileReader;
 
@@ -19,7 +19,7 @@ internal class Gp5TypesReader
     private const byte BoolFalseValue = 0;
     private const byte BoolTrueValue = 1;
 
-    public Gp5TypesReader(ISerialFileReader fileReader) =>
+    public Gp5TypesReader_deprecated(ISerialFileReader fileReader) =>
         _fileReader = fileReader;
 
     public async ValueTask<byte> ReadByteAsync()
