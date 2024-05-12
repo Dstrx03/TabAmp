@@ -9,9 +9,9 @@ namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 
 internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeserializer<Gp5Score>
 {
-    private readonly Gp5FileReader_deprecated _reader;
+    private readonly IGp5TodoReader _reader;
 
-    public Gp5FileDeserializer(Gp5FileReader_deprecated reader) =>
+    public Gp5FileDeserializer(IGp5TodoReader reader) =>
         _reader = reader;
 
     public async Task<Gp5Score> DeserializeAsync()

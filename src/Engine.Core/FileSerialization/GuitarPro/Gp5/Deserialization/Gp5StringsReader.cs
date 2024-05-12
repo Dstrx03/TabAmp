@@ -8,17 +8,17 @@ namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 internal class Gp5StringsReader : IGp5StringsReader
 {
     private readonly ISerialFileReader _fileReader;
-    private readonly IGp5BinaryPrimitivesReader _binaryPrimitivesReader;
+    private readonly IGp5BinaryPrimitivesReader _primitivesReader;
 
-    public Gp5StringsReader(ISerialFileReader fileReader, IGp5BinaryPrimitivesReader binaryPrimitivesReader)
+    public Gp5StringsReader(ISerialFileReader fileReader, IGp5BinaryPrimitivesReader primitivesReader)
     {
         _fileReader = fileReader;
-        _binaryPrimitivesReader = binaryPrimitivesReader;
+        _primitivesReader = primitivesReader;
     }
 
     public async ValueTask<string> ReadByteStringAsync(int maxLength)
     {
-        var length = await _binaryPrimitivesReader.ReadByteAsync();
+        var length = await _primitivesReader.ReadByteAsync();
         var decodedString = await ReadStringAsync(length);
 
         var trailingBytesCount = maxLength - length;
@@ -33,14 +33,14 @@ internal class Gp5StringsReader : IGp5StringsReader
 
     public async ValueTask<string> ReadIntStringAsync()
     {
-        var length = await _binaryPrimitivesReader.ReadIntAsync();
+        var length = await _primitivesReader.ReadIntAsync();
         return await ReadStringAsync(length);
     }
 
     public async ValueTask<string> ReadIntByteStringAsync()
     {
-        var maxLength = await _binaryPrimitivesReader.ReadIntAsync();
-        var length = await _binaryPrimitivesReader.ReadByteAsync();
+        var maxLength = await _primitivesReader.ReadIntAsync();
+        var length = await _primitivesReader.ReadByteAsync();
 
         const int ByteSize = 1;
         if (length + ByteSize != maxLength)
