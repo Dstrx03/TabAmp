@@ -61,6 +61,15 @@ internal class Gp5TodoReader : IGp5TodoReader
         };
     }
 
+    private async ValueTask<Gp5LyricsLine> ReadLyricsLineAsync()
+    {
+        return new Gp5LyricsLine
+        {
+            StartFromBar = await _primitivesReader.ReadIntAsync(),
+            Lyrics = await _stringsReader.ReadIntStringAsync()
+        };
+    }
+
     public async ValueTask<Gp5RseMasterEffect> ReadRseMasterEffectAsync()
     {
         return new Gp5RseMasterEffect

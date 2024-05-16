@@ -10,15 +10,6 @@ internal class Gp5FileReader_deprecated
     public Gp5FileReader_deprecated(Gp5TypesReader_deprecated reader) =>
         _reader = reader;
 
-    public async ValueTask<Gp5LyricsLine> ReadLyricsLineAsync()
-    {
-        return new Gp5LyricsLine
-        {
-            StartFromBar = await _reader.ReadIntAsync(),
-            Lyrics = await _reader.ReadIntStringAsync()
-        };
-    }
-
     public async ValueTask<Gp5RseEqualizer> ReadRseEqualizerAsync(int bandsCount)
     {
         var bands = new sbyte[bandsCount];
