@@ -8,13 +8,15 @@ internal class Gp5TodoReader : IGp5TodoReader
     private readonly IGp5BinaryPrimitivesReader _primitivesReader;
     private readonly IGp5StringsReader _stringsReader;
     private readonly IGp5RseEqualizerReader _rseEqualizerReader;
+    private readonly IGp5ColorReader _colorReader;
 
-    public Gp5TodoReader(IGp5BinaryPrimitivesReader primitivesReader, IGp5StringsReader stringsReader, 
-        IGp5RseEqualizerReader rseEqualizerReader)
+    public Gp5TodoReader(IGp5BinaryPrimitivesReader primitivesReader, IGp5StringsReader stringsReader,
+        IGp5RseEqualizerReader rseEqualizerReader, IGp5ColorReader colorReader)
     {
         _primitivesReader = primitivesReader;
         _stringsReader = stringsReader;
         _rseEqualizerReader = rseEqualizerReader;
+        _colorReader = colorReader;
     }
 
     public ValueTask<string> ReadVersionAsync()
@@ -267,7 +269,7 @@ internal class Gp5TodoReader : IGp5TodoReader
         return new Gp5Marker
         {
             Name = await _stringsReader.ReadIntByteStringAsync(),
-            Color = await ReadColorAsync()
+            Color = await _colorReader.ReadColorAsync()
         };
     }
 }
