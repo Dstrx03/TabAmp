@@ -18,7 +18,9 @@ public static class DependencyInjection
         services.AddScoped<IFileDeserializer<Gp5Score>, Gp5FileDeserializer>()
             .AddScoped<IGp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReader>()
             .AddScoped<IGp5StringsReader, Gp5StringsReader>()
-            .AddScoped<IGp5TodoReader, Gp5TodoReader>();
+            .AddScoped<IGp5TodoReader, Gp5TodoReader>()
+            .AddScoped<IGp5RseEqualizerReader, Gp5RseEqualizerReader>()
+            .AddScoped<IGp5ColorReader, Gp5ColorReader>();
 
         return services;
     }
