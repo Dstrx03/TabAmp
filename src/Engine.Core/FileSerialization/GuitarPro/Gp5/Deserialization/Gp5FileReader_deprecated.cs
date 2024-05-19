@@ -10,23 +10,6 @@ internal class Gp5FileReader_deprecated
     public Gp5FileReader_deprecated(Gp5TypesReader_deprecated reader) =>
         _reader = reader;
 
-    public async ValueTask<Gp5RseEqualizer> ReadRseEqualizerAsync(int bandsCount)
-    {
-        var bands = new sbyte[bandsCount];
-        for (var i = 0; i < bands.Length; i++)
-        {
-            bands[i] = await _reader.ReadSignedByteAsync();
-        }
-
-        var gainPreFader = await _reader.ReadSignedByteAsync();
-
-        return new Gp5RseEqualizer
-        {
-            Bands = bands,
-            GainPreFader = gainPreFader
-        };
-    }
-
     public async ValueTask<Gp5Color> ReadColorAsync()
     {
         return new Gp5Color

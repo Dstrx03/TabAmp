@@ -7,11 +7,14 @@ internal class Gp5TodoReader : IGp5TodoReader
 {
     private readonly IGp5BinaryPrimitivesReader _primitivesReader;
     private readonly IGp5StringsReader _stringsReader;
+    private readonly IGp5RseEqualizerReader _rseEqualizerReader;
 
-    public Gp5TodoReader(IGp5BinaryPrimitivesReader primitivesReader, IGp5StringsReader stringsReader)
+    public Gp5TodoReader(IGp5BinaryPrimitivesReader primitivesReader, IGp5StringsReader stringsReader, 
+        IGp5RseEqualizerReader rseEqualizerReader)
     {
         _primitivesReader = primitivesReader;
         _stringsReader = stringsReader;
+        _rseEqualizerReader = rseEqualizerReader;
     }
 
     public ValueTask<string> ReadVersionAsync()
@@ -76,7 +79,7 @@ internal class Gp5TodoReader : IGp5TodoReader
         {
             Volume = await _primitivesReader.ReadIntAsync(),
             _A01 = await _primitivesReader.ReadIntAsync(),
-            Equalizer = await ReadRseEqualizerAsync(Gp5RseMasterEffect.EqualizerBandsCount)
+            Equalizer = await _rseEqualizerReader.ReadRseEqualizerAsync(Gp5RseMasterEffect.EqualizerBandsCount)
         };
     }
 
