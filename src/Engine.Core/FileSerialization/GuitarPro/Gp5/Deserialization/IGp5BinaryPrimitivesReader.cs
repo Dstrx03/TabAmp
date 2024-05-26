@@ -10,5 +10,5 @@ internal interface IGp5BinaryPrimitivesReader
     ValueTask<int> ReadIntAsync();
     ValueTask<float> ReadFloatAsync();
     ValueTask<double> ReadDoubleAsync();
-    ValueTask<bool> ReadBoolAsync();
+    ValueTask<Gp5Bool> ReadBoolAsync();
 }
