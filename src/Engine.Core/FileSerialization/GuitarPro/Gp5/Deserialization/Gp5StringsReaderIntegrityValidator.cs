@@ -24,8 +24,14 @@ internal class Gp5StringsReaderIntegrityValidator : IGp5StringsReader
     public ValueTask<string> ReadIntStringAsync() =>
         _stringsReader.ReadIntStringAsync();
 
-    public async ValueTask<string> ReadIntByteStringAsync()
+    public async ValueTask<Gp5IntByteString> ReadIntByteStringAsync()
     {
-        return await _stringsReader.ReadIntByteStringAsync();
+        var stringValue = await _stringsReader.ReadIntByteStringAsync();
+
+        if (stringValue.DecodedString.Length + Gp5IntByteString.LengthByteSize != stringValue.MaxLength)
+            // TODO: message
+            throw new FileSerializationIntegrityException($"{stringValue.DecodedString.Length}+{Gp5IntByteString.LengthByteSize}!={stringValue.MaxLength} P=~");
+
+        return stringValue;
     }
 }

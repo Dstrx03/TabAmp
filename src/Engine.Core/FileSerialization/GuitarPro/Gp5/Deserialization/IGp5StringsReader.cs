@@ -6,5 +6,5 @@ internal interface IGp5StringsReader
 {
     ValueTask<Gp5ByteString> ReadByteStringAsync(int maxLength);
     ValueTask<string> ReadIntStringAsync();
-    ValueTask<string> ReadIntByteStringAsync();
+    ValueTask<Gp5IntByteString> ReadIntByteStringAsync();
 }
