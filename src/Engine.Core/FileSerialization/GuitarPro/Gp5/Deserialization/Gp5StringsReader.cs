@@ -16,19 +16,16 @@ internal class Gp5StringsReader : IGp5StringsReader
         _primitivesReader = primitivesReader;
     }
 
-    public async ValueTask<string> ReadByteStringAsync(int maxLength)
+    public async ValueTask<Gp5ByteString> ReadByteStringAsync(int maxLength)
     {
         var length = await _primitivesReader.ReadByteAsync();
         var decodedString = await ReadStringAsync(length);
 
-        var trailingBytesCount = maxLength - length;
-        if (trailingBytesCount > 0)
-            await _fileReader.SkipBytesAsync(trailingBytesCount);
-        else if (trailingBytesCount < 0)
-            // TODO: message
-            throw new FileSerializationIntegrityException($"{maxLength}-{length}<0 P={_fileReader.Position}");
+        var stringValue = new Gp5ByteString(decodedString, maxLength);
+        if (stringValue.TrailingBytesCount > 0)
+            await _fileReader.SkipBytesAsync(stringValue.TrailingBytesCount);
 
-        return decodedString;
+        return stringValue;
     }
 
     public async ValueTask<string> ReadIntStringAsync()

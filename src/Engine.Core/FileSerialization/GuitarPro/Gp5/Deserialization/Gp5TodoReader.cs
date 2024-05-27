@@ -19,7 +19,7 @@ internal class Gp5TodoReader : IGp5TodoReader
         _colorReader = colorReader;
     }
 
-    public ValueTask<string> ReadVersionAsync()
+    public ValueTask<Gp5ByteString> ReadVersionAsync()
     {
         return _stringsReader.ReadByteStringAsync(Gp5File.VersionStringMaxLength);
 

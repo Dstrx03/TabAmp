@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using TabAmp.Engine.Core.FileSerialization.Common.Exceptions;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 
@@ -9,15 +10,19 @@ internal class Gp5StringsReaderIntegrityValidator : IGp5StringsReader
     public Gp5StringsReaderIntegrityValidator(IGp5StringsReader stringsReader) =>
         _stringsReader = stringsReader;
 
-    public async ValueTask<string> ReadByteStringAsync(int maxLength)
+    public async ValueTask<Gp5ByteString> ReadByteStringAsync(int maxLength)
     {
-        return await _stringsReader.ReadByteStringAsync(maxLength);
+        var stringValue = await _stringsReader.ReadByteStringAsync(maxLength);
+
+        if (stringValue.TrailingBytesCount < 0)
+            // TODO: message
+            throw new FileSerializationIntegrityException($"{maxLength}-{stringValue.DecodedString.Length}<0 P=~");
+
+        return stringValue;
     }
 
-    public async ValueTask<string> ReadIntStringAsync()
-    {
-        return await _stringsReader.ReadIntStringAsync();
-    }
+    public ValueTask<string> ReadIntStringAsync() =>
+        _stringsReader.ReadIntStringAsync();
 
     public async ValueTask<string> ReadIntByteStringAsync()
     {

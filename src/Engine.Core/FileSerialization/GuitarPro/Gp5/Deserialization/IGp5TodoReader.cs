@@ -5,7 +5,7 @@ namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 
 internal interface IGp5TodoReader
 {
-    ValueTask<string> ReadVersionAsync();
+    ValueTask<Gp5ByteString> ReadVersionAsync();
     ValueTask<Gp5ScoreInformation> ReadScoreInformationAsync();
     ValueTask<Gp5Lyrics> ReadLyricsAsync();
     ValueTask<Gp5RseMasterEffect> ReadRseMasterEffectAsync();
