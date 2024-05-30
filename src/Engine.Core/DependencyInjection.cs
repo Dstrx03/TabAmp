@@ -21,8 +21,7 @@ public static class DependencyInjection
             .AddScoped<IGp5BinaryPrimitivesReader>(x => new Gp5BinaryPrimitivesReaderIntegrityValidator(x.GetRequiredService<Gp5BinaryPrimitivesReader>()))
             .AddScoped<IGp5StringsReader>(x => new Gp5StringsReaderIntegrityValidator(x.GetRequiredService<Gp5StringsReader>()))
             .AddScoped<IGp5TodoReader, Gp5TodoReader>()
-            .AddScoped<IGp5RseEqualizerReader, Gp5RseEqualizerReader>()
-            .AddScoped<IGp5ColorReader, Gp5ColorReader>();
+            .AddScoped<IGp5RseEqualizerReader, Gp5RseEqualizerReader>();
 
         return services;
     }

@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.Common.Exceptions;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 
@@ -37,5 +38,16 @@ internal class Gp5BinaryPrimitivesReaderIntegrityValidator : IGp5BinaryPrimitive
             throw new FileSerializationIntegrityException($"{boolValue.ByteValue}!=0<>1 P=~");
 
         return boolValue;
+    }
+
+    public async ValueTask<Gp5Color> ReadColorAsync()
+    {
+        var colorValue = await _primitivesReader.ReadColorAsync();
+
+        if (colorValue._A01 != 0)
+            // TODO: message
+            throw new FileSerializationIntegrityException($"{colorValue._A01}!=0 P=~");
+
+        return colorValue;
     }
 }

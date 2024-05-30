@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 
@@ -11,4 +12,5 @@ internal interface IGp5BinaryPrimitivesReader
     ValueTask<float> ReadFloatAsync();
     ValueTask<double> ReadDoubleAsync();
     ValueTask<Gp5Bool> ReadBoolAsync();
+    ValueTask<Gp5Color> ReadColorAsync();
 }
