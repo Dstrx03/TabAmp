@@ -1,7 +1,6 @@
 ﻿using System.Buffers.Binary;
 using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.SerialFileReader;
-using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 
@@ -51,11 +50,8 @@ internal class Gp5BinaryPrimitivesReader : IGp5BinaryPrimitivesReader
     public async ValueTask<Gp5Bool> ReadBoolAsync() =>
         (Gp5Bool)await ReadByteValueAsync();
 
-    public async ValueTask<Gp5Color> ReadColorAsync()
-    {
-        var buffer = await _fileReader.ReadBytesAsync(IntSize);
-        return new Gp5Color(buffer);
-    }
+    public async ValueTask<Gp5Color> ReadColorAsync() =>
+        (Gp5Color)await _fileReader.ReadBytesAsync(IntSize);
 
     private async ValueTask<byte> ReadByteValueAsync()
     {

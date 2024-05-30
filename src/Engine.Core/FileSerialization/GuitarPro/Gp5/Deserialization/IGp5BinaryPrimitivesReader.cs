@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 

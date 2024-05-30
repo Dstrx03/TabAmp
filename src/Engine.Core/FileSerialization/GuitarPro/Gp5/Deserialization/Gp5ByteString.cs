@@ -11,5 +11,7 @@ internal readonly struct Gp5ByteString
         TrailingBytesCount = maxLength - decodedString.Length;
     }
 
-    public static implicit operator string(Gp5ByteString stringValue) => stringValue.DecodedString;
+    public override string ToString() => DecodedString;
+
+    public static implicit operator string(Gp5ByteString stringValue) => stringValue.ToString();
 }

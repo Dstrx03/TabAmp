@@ -1,4 +1,4 @@
-﻿namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
+﻿namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 
 internal readonly struct Gp5Color
 {
@@ -14,7 +14,11 @@ internal readonly struct Gp5Color
         _A01 = buffer[3];
     }
 
-    public static implicit operator int(Gp5Color colorValue) => (colorValue.Red << 16) | (colorValue.Green << 8) | (colorValue.Blue);
+    public int ToRgbInt() => Red << 16 | Green << 8 | Blue;
+
+    public static implicit operator int(Gp5Color colorValue) => colorValue.ToRgbInt();
+
+    public static explicit operator Gp5Color(byte[] buffer) => new(buffer);
 
 
     #region Unknown & Anonymous data

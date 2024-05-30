@@ -28,6 +28,7 @@ internal class Gp5StringsReaderIntegrityValidator : IGp5StringsReader
     {
         var stringValue = await _stringsReader.ReadIntByteStringAsync();
 
+        // TOOD: move "size" calculation in wrapper?
         if (stringValue.DecodedString.Length + Gp5IntByteString.LengthByteSize != stringValue.MaxLength)
             // TODO: message
             throw new FileSerializationIntegrityException($"{stringValue.DecodedString.Length}+{Gp5IntByteString.LengthByteSize}!={stringValue.MaxLength} P=~");

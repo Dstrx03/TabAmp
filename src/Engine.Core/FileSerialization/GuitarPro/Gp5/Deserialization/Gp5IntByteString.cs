@@ -13,5 +13,7 @@ internal readonly struct Gp5IntByteString
         MaxLength = maxLength;
     }
 
-    public static implicit operator string(Gp5IntByteString stringValue) => stringValue.DecodedString;
+    public override string ToString() => DecodedString;
+
+    public static implicit operator string(Gp5IntByteString stringValue) => stringValue.ToString();
 }
