@@ -35,11 +35,11 @@ internal class Gp5StringsReader : IGp5StringsReader
 
     public async ValueTask<Gp5IntByteString> ReadIntByteStringAsync()
     {
-        var maxLength = await _primitivesReader.ReadIntAsync();
+        var size = await _primitivesReader.ReadIntAsync();
         var length = await _primitivesReader.ReadByteAsync();
         var decodedString = await ReadStringAsync(length);
 
-        return new Gp5IntByteString(decodedString, maxLength);
+        return new Gp5IntByteString(decodedString, size);
     }
 
     private async ValueTask<string> ReadStringAsync(int length)

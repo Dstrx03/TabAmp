@@ -41,12 +41,12 @@ internal class Gp5BinaryPrimitivesReaderIntegrityValidator : IGp5BinaryPrimitive
 
     public async ValueTask<Gp5Color> ReadColorAsync()
     {
-        var colorValue = await _primitivesReader.ReadColorAsync();
+        var color = await _primitivesReader.ReadColorAsync();
 
-        if (colorValue._A01 != 0)
+        if (color._A01 != 0)
             // TODO: message
-            throw new FileSerializationIntegrityException($"{colorValue._A01}!=0 P=~");
+            throw new FileSerializationIntegrityException($"{color._A01}!=0 P=~");
 
-        return colorValue;
+        return color;
     }
 }

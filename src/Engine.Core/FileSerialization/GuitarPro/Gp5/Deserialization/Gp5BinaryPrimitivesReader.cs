@@ -13,6 +13,7 @@ internal class Gp5BinaryPrimitivesReader : IGp5BinaryPrimitivesReader
     private const int IntSize = 4;
     private const int FloatSize = 4;
     private const int DoubleSize = 8;
+    private const int ColorSize = 4;
 
     public Gp5BinaryPrimitivesReader(ISerialFileReader fileReader) =>
         _fileReader = fileReader;
@@ -51,7 +52,7 @@ internal class Gp5BinaryPrimitivesReader : IGp5BinaryPrimitivesReader
         (Gp5Bool)await ReadByteValueAsync();
 
     public async ValueTask<Gp5Color> ReadColorAsync() =>
-        (Gp5Color)await _fileReader.ReadBytesAsync(IntSize);
+        (Gp5Color)await _fileReader.ReadBytesAsync(ColorSize);
 
     private async ValueTask<byte> ReadByteValueAsync()
     {

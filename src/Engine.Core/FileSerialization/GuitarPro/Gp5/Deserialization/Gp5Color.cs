@@ -16,7 +16,7 @@ internal readonly struct Gp5Color
 
     public int ToRgbInt() => Red << 16 | Green << 8 | Blue;
 
-    public static implicit operator int(Gp5Color colorValue) => colorValue.ToRgbInt();
+    public static implicit operator int(Gp5Color color) => color.ToRgbInt();
 
     public static explicit operator Gp5Color(byte[] buffer) => new(buffer);
 

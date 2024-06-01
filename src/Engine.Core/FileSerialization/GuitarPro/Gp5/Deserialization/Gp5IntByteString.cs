@@ -2,18 +2,17 @@
 
 internal readonly struct Gp5IntByteString
 {
-    public const int LengthByteSize = 1;
+    private const int LengthSize = 1;
 
     public string DecodedString { get; }
-    public int MaxLength { get; }
+    public int Size { get; }
+    public int MaxLength => Size - LengthSize;
 
-    public Gp5IntByteString(string decodedString, int maxLength)
+    public Gp5IntByteString(string decodedString, int size)
     {
         DecodedString = decodedString;
-        MaxLength = maxLength;
+        Size = size;
     }
 
-    public override string ToString() => DecodedString;
-
-    public static implicit operator string(Gp5IntByteString stringValue) => stringValue.ToString();
+    public static implicit operator string(Gp5IntByteString stringValue) => stringValue.DecodedString;
 }
