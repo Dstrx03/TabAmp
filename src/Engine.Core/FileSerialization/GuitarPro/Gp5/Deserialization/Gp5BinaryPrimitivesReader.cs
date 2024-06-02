@@ -1,6 +1,7 @@
 ﻿using System.Buffers.Binary;
 using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.SerialFileReader;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.BinaryPrimitives;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 

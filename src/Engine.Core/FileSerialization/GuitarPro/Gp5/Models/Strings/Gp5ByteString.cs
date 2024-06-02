@@ -1,4 +1,4 @@
-﻿namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
+﻿namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Strings;
 
 internal readonly struct Gp5ByteString
 {

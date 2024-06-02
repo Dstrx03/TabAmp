@@ -1,4 +1,4 @@
-﻿namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
+﻿namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.BinaryPrimitives;
 
 internal readonly struct Gp5Color
 {
