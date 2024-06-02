@@ -33,8 +33,16 @@ internal class Gp5TodoReaderIntegrityValidator : IGp5TodoReader
     public ValueTask<Gp5HeaderKeySignature> ReadHeaderKeySignatureAsync() =>
         _reader.ReadHeaderKeySignatureAsync();
 
-    public ValueTask<Gp5MidiChannel> ReadMidiChannelAsync() =>
-        _reader.ReadMidiChannelAsync();
+    public async ValueTask<Gp5MidiChannel> ReadMidiChannelAsync()
+    {
+        var midiChannel = await _reader.ReadMidiChannelAsync();
+
+        if (midiChannel._A01 != 0 || midiChannel._A02 != 0)
+            // TODO: message
+            throw new FileSerializationIntegrityException($"midiChannel _A01,_A02 expected to be 0: _A01={midiChannel._A01}, _A02={midiChannel._A02}");
+
+        return midiChannel;
+    }
 
     public ValueTask<Gp5MusicalDirections> ReadMusicalDirectionsAsync() =>
         _reader.ReadMusicalDirectionsAsync();
@@ -57,13 +65,25 @@ internal class Gp5TodoReaderIntegrityValidator : IGp5TodoReader
     {
         var tracksCount = await _reader.ReadTracksCountAsync();
 
-        if(tracksCount < 1 || tracksCount > 127)
+        if (tracksCount < 1 || tracksCount > 127)
             // TODO: message
             throw new FileSerializationIntegrityException($"tracksCount out of valid range: tracksCount={tracksCount}");
 
         return tracksCount;
     }
 
-    public ValueTask<Gp5MeasureHeader> ReadMeasureHeaderAsync(bool isFirst) =>
-        _reader.ReadMeasureHeaderAsync(isFirst);
+    public async ValueTask<Gp5MeasureHeader> ReadMeasureHeaderAsync(bool isFirst)
+    {
+        var measureHeader = await _reader.ReadMeasureHeaderAsync(isFirst);
+
+        if (measureHeader.EndOfObjectSeparator != 0)
+            // TODO: message
+            throw new FileSerializationIntegrityException($"EndOfObjectSeparator expected to be 0: EndOfObjectSeparator={measureHeader.EndOfObjectSeparator}");
+
+        if (!measureHeader.PrimaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasAlternateEndings) && measureHeader.AlternateEndingsFlags != 0)
+            // TODO: message
+            throw new FileSerializationIntegrityException($"AlternateEndingsFlags expected to be 0 due to measure has no laternate endings: AlternateEndingsFlags={measureHeader.AlternateEndingsFlags}");
+
+        return measureHeader;
+    }
 }

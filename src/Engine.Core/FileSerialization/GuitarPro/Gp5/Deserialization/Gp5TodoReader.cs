@@ -18,15 +18,8 @@ internal class Gp5TodoReader : IGp5TodoReader
         _rseEqualizerReader = rseEqualizerReader;
     }
 
-    public ValueTask<Gp5ByteString> ReadVersionAsync()
-    {
-        return _stringsReader.ReadByteStringAsync(Gp5File.VersionStringMaxLength);
-
-        // TODO:
-        // "version" data is stored in size of 30 bytes, the actual version string is 24 characters long
-        // remaining 6 bytes seems to have some arbitrary data - it may be not just trailing string bytes
-        // does that 30 bytes is actually a "header" of guitar pro file?
-    }
+    public ValueTask<Gp5ByteString> ReadVersionAsync() =>
+        _stringsReader.ReadByteStringAsync(Gp5File.VersionStringMaxLength);
 
     public async ValueTask<Gp5ScoreInformation> ReadScoreInformationAsync()
     {
