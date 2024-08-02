@@ -13,13 +13,13 @@ internal class Gp5StringsReaderIntegrityValidator : IGp5StringsReader
 
     public async ValueTask<Gp5ByteString> ReadByteStringAsync(int maxLength)
     {
-        var stringValue = await _stringsReader.ReadByteStringAsync(maxLength);
+        var stringWrapper = await _stringsReader.ReadByteStringAsync(maxLength);
 
-        if (stringValue.TrailingBytesCount < 0)
+        if (stringWrapper.TrailingBytesCount < 0)
             // TODO: message
-            throw new FileSerializationIntegrityException($"{maxLength}-{stringValue.DecodedString.Length}<0 P=~");
+            throw new FileSerializationIntegrityException($"{maxLength}-{stringWrapper.DecodedString.Length}<0 P=~");
 
-        return stringValue;
+        return stringWrapper;
     }
 
     public ValueTask<string> ReadIntStringAsync() =>
@@ -27,12 +27,12 @@ internal class Gp5StringsReaderIntegrityValidator : IGp5StringsReader
 
     public async ValueTask<Gp5IntByteString> ReadIntByteStringAsync()
     {
-        var stringValue = await _stringsReader.ReadIntByteStringAsync();
+        var stringWrapper = await _stringsReader.ReadIntByteStringAsync();
 
-        if (stringValue.DecodedString.Length != stringValue.MaxLength)
+        if (stringWrapper.DecodedString.Length != stringWrapper.MaxLength)
             // TODO: message
-            throw new FileSerializationIntegrityException($"{stringValue.DecodedString.Length}+1!={stringValue.Size} P=~");
+            throw new FileSerializationIntegrityException($"{stringWrapper.DecodedString.Length}+1!={stringWrapper.Size} P=~");
 
-        return stringValue;
+        return stringWrapper;
     }
 }

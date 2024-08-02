@@ -14,5 +14,5 @@ internal readonly struct Gp5IntByteString
         Size = size;
     }
 
-    public static implicit operator string(Gp5IntByteString stringValue) => stringValue.DecodedString;
+    public static implicit operator string(Gp5IntByteString stringWrapper) => stringWrapper.DecodedString;
 }

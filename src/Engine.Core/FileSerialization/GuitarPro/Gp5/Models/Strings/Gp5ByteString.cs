@@ -3,13 +3,14 @@
 internal readonly struct Gp5ByteString
 {
     public string DecodedString { get; }
-    public int TrailingBytesCount { get; }
+    public int MaxLength { get; }
+    public int TrailingBytesCount => MaxLength - DecodedString.Length;
 
     public Gp5ByteString(string decodedString, int maxLength)
     {
         DecodedString = decodedString;
-        TrailingBytesCount = maxLength - decodedString.Length;
+        MaxLength = maxLength;
     }
 
-    public static implicit operator string(Gp5ByteString stringValue) => stringValue.DecodedString;
+    public static implicit operator string(Gp5ByteString stringWrapper) => stringWrapper.DecodedString;
 }

@@ -31,23 +31,23 @@ internal class Gp5BinaryPrimitivesReaderIntegrityValidator : IGp5BinaryPrimitive
 
     public async ValueTask<Gp5Bool> ReadBoolAsync()
     {
-        var boolValue = await _primitivesReader.ReadBoolAsync();
+        var boolWrapper = await _primitivesReader.ReadBoolAsync();
 
-        if (boolValue.ByteValue is not Gp5Bool.FalseValue and not Gp5Bool.TrueValue)
+        if (boolWrapper.ByteValue is not Gp5Bool.FalseValue and not Gp5Bool.TrueValue)
             // TODO: message
-            throw new FileSerializationIntegrityException($"{boolValue.ByteValue}!=0<>1 P=~");
+            throw new FileSerializationIntegrityException($"{boolWrapper.ByteValue}!=0<>1 P=~");
 
-        return boolValue;
+        return boolWrapper;
     }
 
     public async ValueTask<Gp5Color> ReadColorAsync()
     {
-        var color = await _primitivesReader.ReadColorAsync();
+        var colorWrapper = await _primitivesReader.ReadColorAsync();
 
-        if (color._A01 != 0)
+        if (colorWrapper._A01 != 0)
             // TODO: message
-            throw new FileSerializationIntegrityException($"{color._A01}!=0 P=~");
+            throw new FileSerializationIntegrityException($"{colorWrapper._A01}!=0 P=~");
 
-        return color;
+        return colorWrapper;
     }
 }

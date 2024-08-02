@@ -6,13 +6,12 @@ internal readonly struct Gp5Bool
     public const byte TrueValue = 1;
 
     public byte ByteValue { get; }
+    public bool BoolValue => ByteValue == TrueValue;
 
     public Gp5Bool(byte byteValue) =>
         ByteValue = byteValue;
 
-    public bool ToBool() => ByteValue == TrueValue;
-
-    public static implicit operator bool(Gp5Bool boolValue) => boolValue.ToBool();
+    public static implicit operator bool(Gp5Bool boolWrapper) => boolWrapper.BoolValue;
 
     public static explicit operator Gp5Bool(byte byteValue) => new(byteValue);
 }
