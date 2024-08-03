@@ -24,8 +24,7 @@ internal abstract class Gp5FileSerializationProcessor : IFileSerializationProces
         await NextMidiChannelsAsync();
         await NextMusicalDirectionsAsync();
         await NextRseMasterEffectReverbAsync();
-        await NextMeasuresCountAsync();
-        await NextTracksCountAsync();
+        await NextMeasuresAndTracksCountAsync();
         await NextMeasureHeadersAsync();
     }
 
@@ -43,7 +42,7 @@ internal abstract class Gp5FileSerializationProcessor : IFileSerializationProces
 
     protected abstract ValueTask NextHeaderKeySignatureAsync();
 
-    protected virtual async ValueTask NextMidiChannelsAsync()
+    private async ValueTask NextMidiChannelsAsync()
     {
         for (var index = 0; index < File.MidiChannels.Length; index++)
         {
@@ -57,11 +56,9 @@ internal abstract class Gp5FileSerializationProcessor : IFileSerializationProces
 
     protected abstract ValueTask NextRseMasterEffectReverbAsync();
 
-    protected abstract ValueTask NextMeasuresCountAsync();
+    protected abstract ValueTask NextMeasuresAndTracksCountAsync();
 
-    protected abstract ValueTask NextTracksCountAsync();
-
-    protected virtual async ValueTask NextMeasureHeadersAsync()
+    private async ValueTask NextMeasureHeadersAsync()
     {
         for (var index = 0; index < File.MeasureHeaders.Length; index++)
         {

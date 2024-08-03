@@ -46,12 +46,6 @@ internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeseria
     protected override async ValueTask NextHeaderKeySignatureAsync() =>
         File.KeySignature = await _reader.ReadHeaderKeySignatureAsync();
 
-    protected override ValueTask NextMidiChannelsAsync()
-    {
-        File.MidiChannels = new Gp5MidiChannel[Gp5File.MidiChannelsCount];
-        return base.NextMidiChannelsAsync();
-    }
-
     protected override async ValueTask NextMidiChannelAsync(int index) =>
         File.MidiChannels[index] = await _reader.ReadMidiChannelAsync();
 
@@ -61,16 +55,12 @@ internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeseria
     protected override async ValueTask NextRseMasterEffectReverbAsync() =>
         File.RseMasterEffect.Reverb = await _reader.ReadRseMasterEffectReverbAsync();
 
-    protected override async ValueTask NextMeasuresCountAsync() =>
-        File.MeasuresCount = await _reader.ReadMeasuresCountAsync();
-
-    protected override async ValueTask NextTracksCountAsync() =>
-        File.TracksCount = await _reader.ReadTracksCountAsync();
-
-    protected override ValueTask NextMeasureHeadersAsync()
+    protected override async ValueTask NextMeasuresAndTracksCountAsync()
     {
-        File.MeasureHeaders = new Gp5MeasureHeader[File.MeasuresCount];
-        return base.NextMeasureHeadersAsync();
+        var (measuresCount, tracksCount) = await _reader.ReadMeasuresAndTracksCountAsync();
+
+        File.MeasureHeaders = new Gp5MeasureHeader[measuresCount];
+        File.Tracks = new object[tracksCount];
     }
 
     protected override async ValueTask NextMeasureHeaderAsync(int index) =>

@@ -16,7 +16,6 @@ internal interface IGp5TodoReader
     ValueTask<Gp5MidiChannel> ReadMidiChannelAsync();
     ValueTask<Gp5MusicalDirections> ReadMusicalDirectionsAsync();
     ValueTask<int> ReadRseMasterEffectReverbAsync();
-    ValueTask<int> ReadMeasuresCountAsync();
-    ValueTask<int> ReadTracksCountAsync();
+    ValueTask<(int measuresCount, int tracksCount)> ReadMeasuresAndTracksCountAsync();
     ValueTask<Gp5MeasureHeader> ReadMeasureHeaderAsync(bool isFirst);
 }
