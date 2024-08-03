@@ -11,7 +11,11 @@ internal readonly struct Gp5Bool
     public Gp5Bool(byte byteValue) =>
         ByteValue = byteValue;
 
+    public Gp5Bool(bool boolValue) =>
+        ByteValue = boolValue ? TrueValue : FalseValue;
+
     public static implicit operator bool(Gp5Bool boolWrapper) => boolWrapper.BoolValue;
 
     public static explicit operator Gp5Bool(byte byteValue) => new(byteValue);
+    public static explicit operator Gp5Bool(bool boolValue) => new(boolValue);
 }

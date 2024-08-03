@@ -17,7 +17,7 @@ internal class Gp5StringsReaderIntegrityValidator : IGp5StringsReader
 
         if (stringWrapper.TrailingBytesCount < 0)
             // TODO: message
-            throw new FileSerializationIntegrityException($"{maxLength}-{stringWrapper.DecodedString.Length}<0 P=~");
+            throw new FileSerializationIntegrityException($"{maxLength}-{stringWrapper.Length}<0 P=~");
 
         return stringWrapper;
     }
@@ -29,9 +29,9 @@ internal class Gp5StringsReaderIntegrityValidator : IGp5StringsReader
     {
         var stringWrapper = await _stringsReader.ReadIntByteStringAsync();
 
-        if (stringWrapper.DecodedString.Length != stringWrapper.MaxLength)
+        if (stringWrapper.Length != stringWrapper.MaxLength)
             // TODO: message
-            throw new FileSerializationIntegrityException($"{stringWrapper.DecodedString.Length}+1!={stringWrapper.Size} P=~");
+            throw new FileSerializationIntegrityException($"{stringWrapper.Length}+1!={stringWrapper.Size} P=~");
 
         return stringWrapper;
     }

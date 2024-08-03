@@ -15,9 +15,18 @@ internal readonly struct Gp5Color
         _A01 = buffer[3];
     }
 
+    public Gp5Color(int rgbInt)
+    {
+        Red = (byte)((rgbInt >> 16) & 0xFF);
+        Green = (byte)((rgbInt >> 8) & 0xFF);
+        Blue = (byte)(rgbInt & 0xFF);
+        _A01 = 0;
+    }
+
     public static implicit operator int(Gp5Color colorWrapper) => colorWrapper.RgbInt;
 
     public static explicit operator Gp5Color(byte[] buffer) => new(buffer);
+    public static explicit operator Gp5Color(int rgbInt) => new(rgbInt);
 
 
     #region Unknown & Anonymous data
