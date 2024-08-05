@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Text.Json;
+using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Strings;
 
@@ -264,6 +267,28 @@ internal class Gp5TodoReader : IGp5TodoReader
 
     public async ValueTask<Gp5Track> ReadTrackAsync()
     {
-        return new Gp5Track();
+        var track = new Gp5Track()
+        {
+            PrimaryFlags = (Gp5Track.Primary)await _primitivesReader.ReadByteAsync(),
+            Name = await _stringsReader.ReadByteStringAsync(Gp5Track.NameStringMaxLength)
+        };
+
+        var stringsCount = await _primitivesReader.ReadIntAsync();
+        var stringsTunings = new List<int>();
+        for (var j = 0; j < 7; j++)
+        {
+            var stringTuning = await _primitivesReader.ReadIntAsync();
+            stringsTunings.Add(stringTuning);
+        }
+
+        var port = await _primitivesReader.ReadIntAsync();
+        var channelIndex = await _primitivesReader.ReadIntAsync();
+        var effectChannel = await _primitivesReader.ReadIntAsync();
+        var fretCount = await _primitivesReader.ReadIntAsync();
+        var offset = await _primitivesReader.ReadIntAsync();
+        var color = await _primitivesReader.ReadColorAsync();
+
+        Console.WriteLine(JsonSerializer.Serialize(track, new JsonSerializerOptions { WriteIndented = true }));
+        return track;
     }
 }
