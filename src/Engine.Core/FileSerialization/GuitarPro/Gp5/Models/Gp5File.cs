@@ -15,5 +15,5 @@ internal class Gp5File
     public Gp5MidiChannel[] MidiChannels { get; set; } = new Gp5MidiChannel[MidiChannelsCount];
     public Gp5MusicalDirections MusicalDirections { get; set; }
     public Gp5MeasureHeader[] MeasureHeaders { get; set; }
-    public object[] Tracks { get; set; }
+    public Gp5Track[] Tracks { get; set; }
 }

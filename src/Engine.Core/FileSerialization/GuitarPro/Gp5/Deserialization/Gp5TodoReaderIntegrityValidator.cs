@@ -79,4 +79,7 @@ internal class Gp5TodoReaderIntegrityValidator : IGp5TodoReader
 
         return measureHeader;
     }
+
+    public ValueTask<Gp5Track> ReadTrackAsync() =>
+        _reader.ReadTrackAsync();
 }

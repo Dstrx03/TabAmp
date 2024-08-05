@@ -60,9 +60,12 @@ internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeseria
         var (measuresCount, tracksCount) = await _reader.ReadMeasuresAndTracksCountAsync();
 
         File.MeasureHeaders = new Gp5MeasureHeader[measuresCount];
-        File.Tracks = new object[tracksCount];
+        File.Tracks = new Gp5Track[tracksCount];
     }
 
     protected override async ValueTask NextMeasureHeaderAsync(int index) =>
         File.MeasureHeaders[index] = await _reader.ReadMeasureHeaderAsync(isFirst: index == 0);
+
+    protected override async ValueTask NextTrackAsync(int index) =>
+        File.Tracks[index] = await _reader.ReadTrackAsync();
 }

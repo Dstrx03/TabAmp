@@ -18,4 +18,5 @@ internal interface IGp5TodoReader
     ValueTask<int> ReadRseMasterEffectReverbAsync();
     ValueTask<(int measuresCount, int tracksCount)> ReadMeasuresAndTracksCountAsync();
     ValueTask<Gp5MeasureHeader> ReadMeasureHeaderAsync(bool isFirst);
+    ValueTask<Gp5Track> ReadTrackAsync();
 }

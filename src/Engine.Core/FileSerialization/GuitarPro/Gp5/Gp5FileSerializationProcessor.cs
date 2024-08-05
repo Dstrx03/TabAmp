@@ -26,6 +26,7 @@ internal abstract class Gp5FileSerializationProcessor : IFileSerializationProces
         await NextRseMasterEffectReverbAsync();
         await NextMeasuresAndTracksCountAsync();
         await NextMeasureHeadersAsync();
+        await NextTracksAsync();
     }
 
     protected abstract ValueTask NextVersionAsync();
@@ -67,4 +68,14 @@ internal abstract class Gp5FileSerializationProcessor : IFileSerializationProces
     }
 
     protected abstract ValueTask NextMeasureHeaderAsync(int index);
+
+    private async ValueTask NextTracksAsync()
+    {
+        for (var index = 0; index < File.Tracks.Length; index++)
+        {
+            await NextTrackAsync(index);
+        }
+    }
+
+    protected abstract ValueTask NextTrackAsync(int index);
 }
