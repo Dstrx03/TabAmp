@@ -17,12 +17,14 @@ internal class Gp5Track
     public int MainChannel { get; set; }
     public int EffectChannel { get; set; }
     public int FretsCount { get; set; }
+    public int CapoFret { get; set; }
+    public int Color { get; set; }
 
 
     [Flags]
     public enum Primary : byte
     {
-        // TODO: correct names
+        // TODO: names that make sense
         IsPercussionTrack = 0x01,
         Is12StringedGuitarTrack = 0x02,
         IsBanjoTrack = 0x04,

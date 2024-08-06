@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection.PortableExecutable;
 using System.Text.Json;
 using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
@@ -282,9 +283,35 @@ internal class Gp5TodoReader : IGp5TodoReader
         track.MainChannel = await _primitivesReader.ReadIntAsync();
         track.EffectChannel = await _primitivesReader.ReadIntAsync();
         track.FretsCount = await _primitivesReader.ReadIntAsync();
+        track.CapoFret = await _primitivesReader.ReadIntAsync();
+        track.Color = await _primitivesReader.ReadColorAsync();
 
-        var offset = await _primitivesReader.ReadIntAsync();
-        var color = await _primitivesReader.ReadColorAsync();
+
+
+
+        var Flags2 = await _primitivesReader.ReadShortAsync();
+
+        var AutoAccentuation = await _primitivesReader.ReadByteAsync();
+        var Bank = await _primitivesReader.ReadByteAsync();
+
+        var TrackRSEHumanize = await _primitivesReader.ReadByteAsync();
+        var Unknown1 = await _primitivesReader.ReadIntAsync();
+        var Unknown2 = await _primitivesReader.ReadIntAsync();
+        var Unknown3 = await _primitivesReader.ReadIntAsync();
+        var Unknown4 = await _primitivesReader.ReadIntAsync();
+        var Unknown5 = await _primitivesReader.ReadIntAsync();
+        var Unknown6 = await _primitivesReader.ReadIntAsync();
+
+        var Instrument = await _primitivesReader.ReadIntAsync();
+        var Unknown8 = await _primitivesReader.ReadIntAsync();
+        var SoundBank = await _primitivesReader.ReadIntAsync();
+        var EffectNumber = await _primitivesReader.ReadIntAsync();
+
+        const int eqCount = 3;
+        var eq = await _rseEqualizerReader.ReadRseEqualizerAsync(eqCount);
+
+        var Effect = await _stringsReader.ReadIntByteStringAsync();
+        var EffectCategory = await _stringsReader.ReadIntByteStringAsync();
 
         Console.WriteLine(JsonSerializer.Serialize(track, new JsonSerializerOptions { WriteIndented = true }));
         return track;
