@@ -1,7 +1,4 @@
-﻿using System;
-using System.Reflection.PortableExecutable;
-using System.Text.Json;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Strings;
 
@@ -312,8 +309,6 @@ internal class Gp5TodoReader : IGp5TodoReader
 
         var Effect = await _stringsReader.ReadIntByteStringAsync();
         var EffectCategory = await _stringsReader.ReadIntByteStringAsync();
-
-        Console.WriteLine(JsonSerializer.Serialize(track, new JsonSerializerOptions { WriteIndented = true }));
         return track;
     }
 }

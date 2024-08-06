@@ -11,7 +11,7 @@ internal class Gp5Track
     public string Name { get; set; }
 
     public int StringsCount_TODO { get; set; }
-    public int?[] StringsTunings_TODO { get; } = new int?[TODO_TUNINGS_STRINGS];
+    public int[] StringsTunings_TODO { get; } = new int[TODO_TUNINGS_STRINGS];
 
     public int Port { get; set; }
     public int MainChannel { get; set; }
