@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
@@ -273,18 +272,17 @@ internal class Gp5TodoReader : IGp5TodoReader
             Name = await _stringsReader.ReadByteStringAsync(Gp5Track.NameStringMaxLength)
         };
 
-        var stringsCount = await _primitivesReader.ReadIntAsync();
-        var stringsTunings = new List<int>();
-        for (var j = 0; j < 7; j++)
+        track.StringsCount_TODO = await _primitivesReader.ReadIntAsync();
+        for (var i = 0; i < track.StringsTunings_TODO.Length; i++)
         {
-            var stringTuning = await _primitivesReader.ReadIntAsync();
-            stringsTunings.Add(stringTuning);
+            track.StringsTunings_TODO[i] = await _primitivesReader.ReadIntAsync();
         }
 
-        var port = await _primitivesReader.ReadIntAsync();
-        var channelIndex = await _primitivesReader.ReadIntAsync();
-        var effectChannel = await _primitivesReader.ReadIntAsync();
-        var fretCount = await _primitivesReader.ReadIntAsync();
+        track.Port = await _primitivesReader.ReadIntAsync();
+        track.MainChannel = await _primitivesReader.ReadIntAsync();
+        track.EffectChannel = await _primitivesReader.ReadIntAsync();
+        track.FretsCount = await _primitivesReader.ReadIntAsync();
+
         var offset = await _primitivesReader.ReadIntAsync();
         var color = await _primitivesReader.ReadColorAsync();
 
