@@ -6,7 +6,7 @@ internal class Gp5Track
 {
     public const int NameMaxLength = 40;
     public const int StringsTuningLength = 7;
-    public const int EqualizerBandsCount = 3;
+    public const int RseEqualizerBandsCount = 3;
 
     public Primary PrimaryFlags { get; set; }
     public string Name { get; set; }
@@ -19,9 +19,9 @@ internal class Gp5Track
     public int CapoFret { get; set; }
     public int Color { get; set; }
     public Secondary SecondaryFlags { get; set; }
-    public byte AutoAccentuation_TODO { get; set; }
-    public byte Bank_TODO { get; set; }
-    public byte TrackRSEHumanize_TODO { get; set; }
+    public byte RseAutoAccentuation { get; set; }
+    public byte MidiBank { get; set; }
+    public byte RseHumanPlaying { get; set; }
     public int Unknown1_TODO { get; set; }
     public int Unknown2_TODO { get; set; }
     public int Unknown3_TODO { get; set; }
@@ -32,8 +32,8 @@ internal class Gp5Track
     public int Unknown8_TODO { get; set; }
     public int SoundBank_TODO { get; set; }
     public int EffectNumber_TODO { get; set; }
-    public Gp5RseEqualizer Equalizer { get; set; }
-    public string Effect_TODO { get; set; }
+    public Gp5RseEqualizer RseEqualizer { get; set; }
+    public string RseEffect { get; set; }
     public string EffectCategory_TODO { get; set; }
 
 

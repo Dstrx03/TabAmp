@@ -267,10 +267,10 @@ internal class Gp5TodoReader : IGp5TodoReader
         var track = new Gp5Track
         {
             PrimaryFlags = (Gp5Track.Primary)await _primitivesReader.ReadByteAsync(),
-            Name = await _stringsReader.ReadByteStringAsync(Gp5Track.NameMaxLength)
+            Name = await _stringsReader.ReadByteStringAsync(Gp5Track.NameMaxLength),
+            StringsCount = await _primitivesReader.ReadIntAsync()
         };
 
-        track.StringsCount = await _primitivesReader.ReadIntAsync();
         for (var i = 0; i < track.StringsTuning.Length; i++)
         {
             track.StringsTuning[i] = await _primitivesReader.ReadIntAsync();
@@ -279,29 +279,30 @@ internal class Gp5TodoReader : IGp5TodoReader
         track.Port = await _primitivesReader.ReadIntAsync();
         track.MainChannel = await _primitivesReader.ReadIntAsync();
         track.EffectChannel = await _primitivesReader.ReadIntAsync();
-
         track.FretsCount = await _primitivesReader.ReadIntAsync();
         track.CapoFret = await _primitivesReader.ReadIntAsync();
-
         track.Color = await _primitivesReader.ReadColorAsync();
-
         track.SecondaryFlags = (Gp5Track.Secondary)await _primitivesReader.ReadShortAsync();
+        track.RseAutoAccentuation = await _primitivesReader.ReadByteAsync();
+        track.MidiBank = await _primitivesReader.ReadByteAsync();
+        track.RseHumanPlaying = await _primitivesReader.ReadByteAsync();
 
-        track.AutoAccentuation_TODO = await _primitivesReader.ReadByteAsync();
-        track.Bank_TODO = await _primitivesReader.ReadByteAsync();
-        track.TrackRSEHumanize_TODO = await _primitivesReader.ReadByteAsync();
         track.Unknown1_TODO = await _primitivesReader.ReadIntAsync();
         track.Unknown2_TODO = await _primitivesReader.ReadIntAsync();
         track.Unknown3_TODO = await _primitivesReader.ReadIntAsync();
         track.Unknown4_TODO = await _primitivesReader.ReadIntAsync();
         track.Unknown5_TODO = await _primitivesReader.ReadIntAsync();
         track.Unknown6_TODO = await _primitivesReader.ReadIntAsync();
+
         track.Instrument_TODO = await _primitivesReader.ReadIntAsync();
         track.Unknown8_TODO = await _primitivesReader.ReadIntAsync();
         track.SoundBank_TODO = await _primitivesReader.ReadIntAsync();
         track.EffectNumber_TODO = await _primitivesReader.ReadIntAsync();
-        track.Equalizer = await _rseEqualizerReader.ReadRseEqualizerAsync(Gp5Track.EqualizerBandsCount);
-        track.Effect_TODO = await _stringsReader.ReadIntByteStringAsync();
+
+        track.RseEqualizer = await _rseEqualizerReader.ReadRseEqualizerAsync(Gp5Track.RseEqualizerBandsCount);
+        track.RseEffect = await _stringsReader.ReadIntByteStringAsync();
+
+
         track.EffectCategory_TODO = await _stringsReader.ReadIntByteStringAsync();
 
         return track;
