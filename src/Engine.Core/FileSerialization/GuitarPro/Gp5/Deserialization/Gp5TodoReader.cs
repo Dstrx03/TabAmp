@@ -19,7 +19,7 @@ internal class Gp5TodoReader : IGp5TodoReader
     }
 
     public ValueTask<Gp5ByteString> ReadVersionAsync() =>
-        _stringsReader.ReadByteStringAsync(Gp5File.VersionStringMaxLength);
+        _stringsReader.ReadByteStringAsync(Gp5File.VersionMaxLength);
 
     public async ValueTask<Gp5ScoreInformation> ReadScoreInformationAsync()
     {
@@ -264,51 +264,46 @@ internal class Gp5TodoReader : IGp5TodoReader
 
     public async ValueTask<Gp5Track> ReadTrackAsync()
     {
-        var track = new Gp5Track()
+        var track = new Gp5Track
         {
             PrimaryFlags = (Gp5Track.Primary)await _primitivesReader.ReadByteAsync(),
-            Name = await _stringsReader.ReadByteStringAsync(Gp5Track.NameStringMaxLength)
+            Name = await _stringsReader.ReadByteStringAsync(Gp5Track.NameMaxLength)
         };
 
-        track.StringsCount_TODO = await _primitivesReader.ReadIntAsync();
-        for (var i = 0; i < track.StringsTunings_TODO.Length; i++)
+        track.StringsCount = await _primitivesReader.ReadIntAsync();
+        for (var i = 0; i < track.StringsTuning.Length; i++)
         {
-            track.StringsTunings_TODO[i] = await _primitivesReader.ReadIntAsync();
+            track.StringsTuning[i] = await _primitivesReader.ReadIntAsync();
         }
 
         track.Port = await _primitivesReader.ReadIntAsync();
         track.MainChannel = await _primitivesReader.ReadIntAsync();
         track.EffectChannel = await _primitivesReader.ReadIntAsync();
+
         track.FretsCount = await _primitivesReader.ReadIntAsync();
         track.CapoFret = await _primitivesReader.ReadIntAsync();
+
         track.Color = await _primitivesReader.ReadColorAsync();
 
+        track.SecondaryFlags = (Gp5Track.Secondary)await _primitivesReader.ReadShortAsync();
 
+        track.AutoAccentuation_TODO = await _primitivesReader.ReadByteAsync();
+        track.Bank_TODO = await _primitivesReader.ReadByteAsync();
+        track.TrackRSEHumanize_TODO = await _primitivesReader.ReadByteAsync();
+        track.Unknown1_TODO = await _primitivesReader.ReadIntAsync();
+        track.Unknown2_TODO = await _primitivesReader.ReadIntAsync();
+        track.Unknown3_TODO = await _primitivesReader.ReadIntAsync();
+        track.Unknown4_TODO = await _primitivesReader.ReadIntAsync();
+        track.Unknown5_TODO = await _primitivesReader.ReadIntAsync();
+        track.Unknown6_TODO = await _primitivesReader.ReadIntAsync();
+        track.Instrument_TODO = await _primitivesReader.ReadIntAsync();
+        track.Unknown8_TODO = await _primitivesReader.ReadIntAsync();
+        track.SoundBank_TODO = await _primitivesReader.ReadIntAsync();
+        track.EffectNumber_TODO = await _primitivesReader.ReadIntAsync();
+        track.Equalizer = await _rseEqualizerReader.ReadRseEqualizerAsync(Gp5Track.EqualizerBandsCount);
+        track.Effect_TODO = await _stringsReader.ReadIntByteStringAsync();
+        track.EffectCategory_TODO = await _stringsReader.ReadIntByteStringAsync();
 
-
-        var Flags2 = await _primitivesReader.ReadShortAsync();
-
-        var AutoAccentuation = await _primitivesReader.ReadByteAsync();
-        var Bank = await _primitivesReader.ReadByteAsync();
-
-        var TrackRSEHumanize = await _primitivesReader.ReadByteAsync();
-        var Unknown1 = await _primitivesReader.ReadIntAsync();
-        var Unknown2 = await _primitivesReader.ReadIntAsync();
-        var Unknown3 = await _primitivesReader.ReadIntAsync();
-        var Unknown4 = await _primitivesReader.ReadIntAsync();
-        var Unknown5 = await _primitivesReader.ReadIntAsync();
-        var Unknown6 = await _primitivesReader.ReadIntAsync();
-
-        var Instrument = await _primitivesReader.ReadIntAsync();
-        var Unknown8 = await _primitivesReader.ReadIntAsync();
-        var SoundBank = await _primitivesReader.ReadIntAsync();
-        var EffectNumber = await _primitivesReader.ReadIntAsync();
-
-        const int eqCount = 3;
-        var eq = await _rseEqualizerReader.ReadRseEqualizerAsync(eqCount);
-
-        var Effect = await _stringsReader.ReadIntByteStringAsync();
-        var EffectCategory = await _stringsReader.ReadIntByteStringAsync();
         return track;
     }
 }

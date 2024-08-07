@@ -2,8 +2,8 @@
 
 internal class Gp5File
 {
-    public const int VersionStringMaxLength = 30;
-    public const int MidiChannelsCount = 64;
+    public const int VersionMaxLength = 30;
+    public const int MidiChannelsLength = 64;
 
     public string Version { get; set; }
     public Gp5ScoreInformation ScoreInformation { get; set; }
@@ -12,7 +12,7 @@ internal class Gp5File
     public Gp5PageSetup PageSetup { get; set; }
     public Gp5Tempo Tempo { get; set; }
     public Gp5HeaderKeySignature KeySignature { get; set; }
-    public Gp5MidiChannel[] MidiChannels { get; } = new Gp5MidiChannel[MidiChannelsCount];
+    public Gp5MidiChannel[] MidiChannels { get; } = new Gp5MidiChannel[MidiChannelsLength];
     public Gp5MusicalDirections MusicalDirections { get; set; }
     public Gp5MeasureHeader[] MeasureHeaders { get; set; }
     public Gp5Track[] Tracks { get; set; }
