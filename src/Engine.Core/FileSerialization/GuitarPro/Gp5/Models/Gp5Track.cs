@@ -22,12 +22,6 @@ internal class Gp5Track
     public byte RseAutoAccentuation { get; set; }
     public byte MidiBank { get; set; }
     public byte RseHumanPlaying { get; set; }
-    public int Unknown1_TODO { get; set; }
-    public int Unknown2_TODO { get; set; }
-    public int Unknown3_TODO { get; set; }
-    public int Unknown4_TODO { get; set; }
-    public int Unknown5_TODO { get; set; }
-    public int Unknown6_TODO { get; set; }
     public int Instrument_TODO { get; set; }
     public int Unknown8_TODO { get; set; }
     public int RseSoundBank { get; set; }
@@ -68,4 +62,21 @@ internal class Gp5Track
         AutoBrush = 0x0400,
         ExtendRhythmic = 0x0800
     }
+
+    #region Unknown & Anonymous data
+    public int _A01 { get; set; }
+    public int _A02 { get; set; }
+    public int _A03 { get; set; }
+    public byte _A04 { get; set; }
+    public byte _A05 { get; set; }
+    public byte _A06 { get; set; }
+    public byte _A07 { get; set; }
+    public byte _A08 { get; set; }
+    public byte _A09 { get; set; }
+    public byte _A10 { get; set; }
+    public byte _A11 { get; set; }
+    public byte _A12 { get; set; }
+    public byte _A13 { get; set; }
+    public short _A14 { get; set; }
+    #endregion
 }

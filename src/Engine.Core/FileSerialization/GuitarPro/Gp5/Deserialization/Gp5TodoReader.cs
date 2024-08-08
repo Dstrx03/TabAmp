@@ -287,12 +287,20 @@ internal class Gp5TodoReader : IGp5TodoReader
         track.MidiBank = await _primitivesReader.ReadByteAsync();
         track.RseHumanPlaying = await _primitivesReader.ReadByteAsync();
 
-        track.Unknown1_TODO = await _primitivesReader.ReadIntAsync();
-        track.Unknown2_TODO = await _primitivesReader.ReadIntAsync();
-        track.Unknown3_TODO = await _primitivesReader.ReadIntAsync();
-        track.Unknown4_TODO = await _primitivesReader.ReadIntAsync();
-        track.Unknown5_TODO = await _primitivesReader.ReadIntAsync();
-        track.Unknown6_TODO = await _primitivesReader.ReadIntAsync();
+        track._A01 = await _primitivesReader.ReadIntAsync();
+        track._A02 = await _primitivesReader.ReadIntAsync();
+        track._A03 = await _primitivesReader.ReadIntAsync();
+        track._A04 = await _primitivesReader.ReadByteAsync();
+        track._A05 = await _primitivesReader.ReadByteAsync();
+        track._A06 = await _primitivesReader.ReadByteAsync();
+        track._A07 = await _primitivesReader.ReadByteAsync();
+        track._A08 = await _primitivesReader.ReadByteAsync();
+        track._A09 = await _primitivesReader.ReadByteAsync();
+        track._A10 = await _primitivesReader.ReadByteAsync();
+        track._A11 = await _primitivesReader.ReadByteAsync();
+        track._A12 = await _primitivesReader.ReadByteAsync();
+        track._A13 = await _primitivesReader.ReadByteAsync();
+        track._A14 = await _primitivesReader.ReadShortAsync();
 
         track.Instrument_TODO = await _primitivesReader.ReadIntAsync();
         track.Unknown8_TODO = await _primitivesReader.ReadIntAsync();
