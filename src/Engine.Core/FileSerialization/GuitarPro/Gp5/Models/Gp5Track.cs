@@ -22,10 +22,8 @@ internal class Gp5Track
     public byte RseAutoAccentuation { get; set; }
     public byte MidiBank { get; set; }
     public byte RseHumanPlaying { get; set; }
-    public int Instrument_TODO { get; set; }
-    public int Unknown8_TODO { get; set; }
+    public int Instrument { get; set; }
     public int RseSoundBank { get; set; }
-    public int EffectNumber_TODO { get; set; }
     public Gp5RseEqualizer RseEqualizer { get; set; }
     public string RseEffectName { get; set; }
     public string RseEffectCategoryName { get; set; }
@@ -78,5 +76,7 @@ internal class Gp5Track
     public byte _A12 { get; set; }
     public byte _A13 { get; set; }
     public short _A14 { get; set; }
+    public int _B01 { get; set; }
+    public int _C01 { get; set; }
     #endregion
 }
