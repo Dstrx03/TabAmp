@@ -30,11 +30,11 @@ internal class Gp5Track
     public int Unknown6_TODO { get; set; }
     public int Instrument_TODO { get; set; }
     public int Unknown8_TODO { get; set; }
-    public int SoundBank_TODO { get; set; }
+    public int RseSoundBank { get; set; }
     public int EffectNumber_TODO { get; set; }
     public Gp5RseEqualizer RseEqualizer { get; set; }
-    public string RseEffect { get; set; }
-    public string EffectCategory_TODO { get; set; }
+    public string RseEffectName { get; set; }
+    public string RseEffectCategoryName { get; set; }
 
 
     [Flags]

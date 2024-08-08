@@ -296,14 +296,14 @@ internal class Gp5TodoReader : IGp5TodoReader
 
         track.Instrument_TODO = await _primitivesReader.ReadIntAsync();
         track.Unknown8_TODO = await _primitivesReader.ReadIntAsync();
-        track.SoundBank_TODO = await _primitivesReader.ReadIntAsync();
+
+        track.RseSoundBank = await _primitivesReader.ReadIntAsync();
+
         track.EffectNumber_TODO = await _primitivesReader.ReadIntAsync();
 
         track.RseEqualizer = await _rseEqualizerReader.ReadRseEqualizerAsync(Gp5Track.RseEqualizerBandsCount);
-        track.RseEffect = await _stringsReader.ReadIntByteStringAsync();
-
-
-        track.EffectCategory_TODO = await _stringsReader.ReadIntByteStringAsync();
+        track.RseEffectName = await _stringsReader.ReadIntByteStringAsync();
+        track.RseEffectCategoryName = await _stringsReader.ReadIntByteStringAsync();
 
         return track;
     }
