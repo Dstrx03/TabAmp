@@ -65,18 +65,18 @@ internal class Gp5Track
     public int _A01 { get; set; }
     public int _A02 { get; set; }
     public int _A03 { get; set; }
-    public byte _A04 { get; set; }
-    public byte _A05 { get; set; }
-    public byte _A06 { get; set; }
-    public byte _A07 { get; set; }
-    public byte _A08 { get; set; }
-    public byte _A09 { get; set; }
-    public byte _A10 { get; set; }
-    public byte _A11 { get; set; }
-    public byte _A12 { get; set; }
-    public byte _A13 { get; set; }
-    public short _A14 { get; set; }
-    public int _B01 { get; set; }
-    public int _C01 { get; set; }
+    public byte _B01 { get; set; }
+    public byte _B02 { get; set; }
+    public byte _B03 { get; set; }
+    public byte _B04 { get; set; }
+    public byte _B05 { get; set; }
+    public byte _B06 { get; set; }
+    public byte _B07 { get; set; }
+    public byte _B08 { get; set; }
+    public byte _B09 { get; set; }
+    public byte _B10 { get; set; }
+    public short _C01 { get; set; }
+    public int _D01 { get; set; }
+    public int _E01 { get; set; }
     #endregion
 }

@@ -290,25 +290,27 @@ internal class Gp5TodoReader : IGp5TodoReader
         track._A01 = await _primitivesReader.ReadIntAsync();
         track._A02 = await _primitivesReader.ReadIntAsync();
         track._A03 = await _primitivesReader.ReadIntAsync();
-        track._A04 = await _primitivesReader.ReadByteAsync();
-        track._A05 = await _primitivesReader.ReadByteAsync();
-        track._A06 = await _primitivesReader.ReadByteAsync();
-        track._A07 = await _primitivesReader.ReadByteAsync();
-        track._A08 = await _primitivesReader.ReadByteAsync();
-        track._A09 = await _primitivesReader.ReadByteAsync();
-        track._A10 = await _primitivesReader.ReadByteAsync();
-        track._A11 = await _primitivesReader.ReadByteAsync();
-        track._A12 = await _primitivesReader.ReadByteAsync();
-        track._A13 = await _primitivesReader.ReadByteAsync();
-        track._A14 = await _primitivesReader.ReadShortAsync();
+
+        track._B01 = await _primitivesReader.ReadByteAsync();
+        track._B02 = await _primitivesReader.ReadByteAsync();
+        track._B03 = await _primitivesReader.ReadByteAsync();
+        track._B04 = await _primitivesReader.ReadByteAsync();
+        track._B05 = await _primitivesReader.ReadByteAsync();
+        track._B06 = await _primitivesReader.ReadByteAsync();
+        track._B07 = await _primitivesReader.ReadByteAsync();
+        track._B08 = await _primitivesReader.ReadByteAsync();
+        track._B09 = await _primitivesReader.ReadByteAsync();
+        track._B10 = await _primitivesReader.ReadByteAsync();
+
+        track._C01 = await _primitivesReader.ReadShortAsync();
 
         track.Instrument = await _primitivesReader.ReadIntAsync();
 
-        track._B01 = await _primitivesReader.ReadIntAsync();
+        track._D01 = await _primitivesReader.ReadIntAsync();
 
         track.RseSoundBank = await _primitivesReader.ReadIntAsync();
 
-        track._C01 = await _primitivesReader.ReadIntAsync();
+        track._E01 = await _primitivesReader.ReadIntAsync();
 
         track.RseEqualizer = await _rseEqualizerReader.ReadRseEqualizerAsync(Gp5Track.RseEqualizerBandsCount);
         track.RseEffectName = await _stringsReader.ReadIntByteStringAsync();

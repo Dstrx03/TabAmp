@@ -75,11 +75,51 @@ internal class Gp5TodoReaderIntegrityValidator : IGp5TodoReader
 
         if (!measureHeader.PrimaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasAlternateEndings) && measureHeader.AlternateEndingsFlags != 0)
             // TODO: message
-            throw new FileSerializationIntegrityException($"AlternateEndingsFlags expected to be 0 due to measure has no laternate endings: AlternateEndingsFlags={measureHeader.AlternateEndingsFlags}");
+            throw new FileSerializationIntegrityException($"AlternateEndingsFlags expected to be 0 due to measure has no alternate endings: AlternateEndingsFlags={measureHeader.AlternateEndingsFlags}");
 
         return measureHeader;
     }
 
-    public ValueTask<Gp5Track> ReadTrackAsync() =>
-        _reader.ReadTrackAsync();
+    public async ValueTask<Gp5Track> ReadTrackAsync()
+    {
+        var track = await _reader.ReadTrackAsync();
+
+        if (track.StringsCount >= 6 && (track._A01 != 0 || track._A02 != 0))
+        {
+            // TODO: message
+            throw new FileSerializationIntegrityException($"A1/2 expected to be 0 ({track.StringsCount} strings): _A01={track._A01}, _A02={track._A02}");
+        }
+        else if (track.StringsCount < 6 && (track._A01 != 12 || track._A02 != 12))
+        {
+            // TODO: message
+            throw new FileSerializationIntegrityException($"A1/2 expected to be 12 ({track.StringsCount} strings): _A01={track._A01}, _A02={track._A02}");
+        }
+
+        if (track._A03 != 100)
+            // TODO: message
+            throw new FileSerializationIntegrityException($"A3 expected to be 100: _A03={track._A03}");
+
+        if (track._B01 != 1 ||
+            track._B02 != 2 ||
+            track._B03 != 3 ||
+            track._B04 != 4 ||
+            track._B05 != 5 ||
+            track._B06 != 6 ||
+            track._B07 != 7 ||
+            track._B08 != 8 ||
+            track._B09 != 9 ||
+            track._B10 != 10)
+            // TODO: message
+            throw new FileSerializationIntegrityException($"B expected to be 1,2,3,4,5,6,7,8,9,10: sequence={string.Join(",", track._B01, track._B02, track._B03, track._B04, track._B05, track._B06, track._B07, track._B08, track._B09, track._B10)}");
+
+        if (track._C01 != 1023)
+            // TODO: message
+            throw new FileSerializationIntegrityException($"C expected to be 1023: _C01={track._C01}");
+
+        if (track._E01 != -1)
+            // TODO: message
+            throw new FileSerializationIntegrityException($"E expected to be -1: _E01={track._E01}");
+
+        return track;
+    }
 }
