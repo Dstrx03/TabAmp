@@ -21,8 +21,16 @@ internal class Gp5TodoReaderIntegrityValidator : IGp5TodoReader
     public ValueTask<Gp5Lyrics> ReadLyricsAsync() =>
         _reader.ReadLyricsAsync();
 
-    public ValueTask<Gp5RseMasterEffect> ReadRseMasterEffectAsync() =>
-        _reader.ReadRseMasterEffectAsync();
+    public async ValueTask<Gp5RseMasterEffect> ReadRseMasterEffectAsync()
+    {
+        var rseMasterEffect = await _reader.ReadRseMasterEffectAsync();
+
+        if (rseMasterEffect._A01 != 0)
+            // TODO: message
+            throw new FileSerializationIntegrityException($"expected to be 0: _A01={rseMasterEffect._A01}");
+
+        return rseMasterEffect;
+    }
 
     public ValueTask<Gp5PageSetup> ReadPageSetupAsync() =>
         _reader.ReadPageSetupAsync();
@@ -30,8 +38,29 @@ internal class Gp5TodoReaderIntegrityValidator : IGp5TodoReader
     public ValueTask<Gp5Tempo> ReadHeaderTempoAsync() =>
         _reader.ReadHeaderTempoAsync();
 
-    public ValueTask<Gp5HeaderKeySignature> ReadHeaderKeySignatureAsync() =>
-        _reader.ReadHeaderKeySignatureAsync();
+    public async ValueTask<Gp5HeaderKeySignature> ReadHeaderKeySignatureAsync()
+    {
+        var keySignature = await _reader.ReadHeaderKeySignatureAsync();
+
+        if (keySignature.Octave != 0)
+            // TODO: message
+            throw new FileSerializationIntegrityException($"expected to be 0: Octave={keySignature.Octave}");
+
+        if (keySignature.Key >= 0)
+        {
+            if (keySignature._A01 != 0 || keySignature._A02 != 0 || keySignature._A03 != 0)
+                // TODO: message
+                throw new FileSerializationIntegrityException($"expected to be 0: _A01={keySignature._A01}, _A02={keySignature._A02}, _A03={keySignature._A03}, ");
+        }
+        else
+        {
+            if (keySignature._A01 != -1 || keySignature._A02 != -1 || keySignature._A03 != -1)
+                // TODO: message
+                throw new FileSerializationIntegrityException($"expected to be -1: _A01={keySignature._A01}, _A02={keySignature._A02}, _A03={keySignature._A03}, ");
+        }
+
+        return keySignature;
+    }
 
     public async ValueTask<Gp5MidiChannel> ReadMidiChannelAsync()
     {
