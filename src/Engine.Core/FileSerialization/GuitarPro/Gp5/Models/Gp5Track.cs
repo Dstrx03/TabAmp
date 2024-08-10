@@ -33,32 +33,32 @@ internal class Gp5Track
     public enum Primary : byte
     {
         // TODO: names that make sense
-        IsPercussionTrack = 0x01,
-        Is12StringedGuitarTrack = 0x02,
-        IsBanjoTrack = 0x04,
-        IsVisible = 0x08,
-        IsSolo = 0x10,
-        IsMute = 0x20,
-        UseRSE = 0x40,
-        IndicateTuning = 0x80
+        IsPercussionTrack_TODO = 0x01,
+        Is12StringedGuitarTrack_TODO = 0x02,
+        IsBanjoTrack_TODO = 0x04,
+        IsVisible_TODO = 0x08,
+        IsSolo_TODO = 0x10,
+        IsMute_TODO = 0x20,
+        UseRSE_TODO = 0x40,
+        IndicateTuning_TODO = 0x80
     }
 
     [Flags]
     public enum Secondary : short
     {
         // TODO: names that make sense
-        Tablature = 0x0001,
-        Notation = 0x0002,
-        DiagramsAreBelow = 0x0004,
-        ShowRhythm = 0x0008,
-        ForceHorizontal = 0x0010,
-        ForceChannels = 0x0020,
-        DiagramList = 0x0040,
-        DiagramsInScore = 0x0080,
-        Unknown0 = 0x0100,
-        AutoLetRing = 0x0200,
-        AutoBrush = 0x0400,
-        ExtendRhythmic = 0x0800
+        Tablature_TODO = 0x0001,
+        Notation_TODO = 0x0002,
+        DiagramsAreBelow_TODO = 0x0004,
+        ShowRhythm_TODO = 0x0008,
+        ForceHorizontal_TODO = 0x0010,
+        ForceChannels_TODO = 0x0020,
+        DiagramList_TODO = 0x0040,
+        DiagramsInScore_TODO = 0x0080,
+        Unknown0_TODO = 0x0100,
+        AutoLetRing_TODO = 0x0200,
+        AutoBrush_TODO = 0x0400,
+        ExtendRhythmic_TODO = 0x0800
     }
 
     #region Unknown & Anonymous data
