@@ -39,7 +39,7 @@ internal class Gp5Track
         IsVisible_TODO = 0x08,
         IsSolo_TODO = 0x10,
         IsMute_TODO = 0x20,
-        UseRSE_TODO = 0x40,
+        UseRse = 0x40,
         IndicateTuning_TODO = 0x80
     }
 

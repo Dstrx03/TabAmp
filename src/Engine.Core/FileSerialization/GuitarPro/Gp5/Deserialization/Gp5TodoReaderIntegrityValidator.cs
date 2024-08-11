@@ -151,7 +151,7 @@ internal class Gp5TodoReaderIntegrityValidator : IGp5TodoReader
 
         if (track.Instrument == -1)
         {
-            if (track.PrimaryFlags.HasFlag(Gp5Track.Primary.UseRSE_TODO) ||
+            if (track.PrimaryFlags.HasFlag(Gp5Track.Primary.UseRse) ||
                 track.RseSoundBank != -1 || track._D01 != -1 ||
                 track.RseEffectName.Length != 0 || track.RseEffectCategoryName.Length != 0)
                 // TODO: message

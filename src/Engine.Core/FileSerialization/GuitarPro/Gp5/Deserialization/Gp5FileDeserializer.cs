@@ -18,12 +18,20 @@ internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeseria
     {
         await ProcessAsync();
         PrintDeserializedFileJson();
+        PrintDeserializedTracks();
         return new Gp5Score();
     }
 
     [Obsolete("Temporary runtime testing")]
     private void PrintDeserializedFileJson() =>
         Console.WriteLine(JsonSerializer.Serialize(File, new JsonSerializerOptions { WriteIndented = true }));
+
+    [Obsolete("Temporary runtime testing")]
+    private void PrintDeserializedTracks()
+    {
+        foreach (var track in File.Tracks)
+            Console.WriteLine($"******* {track.Name} *******\n\tp={track.PrimaryFlags}\n\ts={track.SecondaryFlags}\n");
+    }
 
     protected override async ValueTask NextVersionAsync() =>
         File.Version = await _reader.ReadVersionAsync();
