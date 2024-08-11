@@ -149,6 +149,45 @@ internal class Gp5TodoReaderIntegrityValidator : IGp5TodoReader
             // TODO: message
             throw new FileSerializationIntegrityException($"E expected to be -1: _E01={track._E01}");
 
-        return track;
+        if (track.Instrument == -1)
+        {
+            if (track.PrimaryFlags.HasFlag(Gp5Track.Primary.UseRSE_TODO) ||
+                track.RseSoundBank != -1 || track._D01 != -1 ||
+                track.RseEffectName.Length != 0 || track.RseEffectCategoryName.Length != 0)
+                // TODO: message
+                throw new FileSerializationIntegrityException($"RSE props expected to be -1: Instrument={track.Instrument}, RseSoundBank={track.RseSoundBank}, _D01={track._D01}, RseEffectName={track.RseEffectName}, RseEffectCategoryName={track.RseEffectCategoryName},");
+
+            return track;
+        }
+
+        if (track.Instrument == 128)
+        {
+            if (track._D01 != 0)
+                // TODO: message
+                throw new FileSerializationIntegrityException($"_D01 expected to be 0: Instrument={track.Instrument}, _D01={track._D01},");
+
+            return track;
+        }
+
+        if (track.Instrument == 24 || track.Instrument == 25 || track.Instrument == 26 || track.Instrument == 27)
+        {
+            if (track._D01 != 1)
+                // TODO: message
+                throw new FileSerializationIntegrityException($"_D01 expected to be 1: Instrument={track.Instrument}, _D01={track._D01},");
+
+            return track;
+        }
+
+        if (track.Instrument == 33 || track.Instrument == 34 || track.Instrument == 36)
+        {
+            if (track._D01 != 2)
+                // TODO: message
+                throw new FileSerializationIntegrityException($"_D01 expected to be 2: Instrument={track.Instrument}, _D01={track._D01},");
+
+            return track;
+        }
+
+        // TODO: message
+        throw new FileSerializationIntegrityException($"Instrument expected to be -1,128,24,25,26,27,33,34,36: Instrument={track.Instrument}, _D01={track._D01},");
     }
 }
