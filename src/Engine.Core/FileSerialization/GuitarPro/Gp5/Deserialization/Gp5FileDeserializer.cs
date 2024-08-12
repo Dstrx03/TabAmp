@@ -29,8 +29,23 @@ internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeseria
     [Obsolete("Temporary runtime testing")]
     private void PrintDeserializedTracks()
     {
+        var index = 0;
         foreach (var track in File.Tracks)
-            Console.WriteLine($"******* {track.Name} *******\n\tp={track.PrimaryFlags}\n\ts={track.SecondaryFlags}\n");
+        {
+            var defColor = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine($"******* {track.Name} [#{index + 1}] *******");
+            Console.ForegroundColor = defColor;
+            Console.WriteLine($"\tp={track.PrimaryFlags}\n\ts={track.SecondaryFlags}");
+            /*if (!track.PrimaryFlags.HasFlag(Gp5Track.Primary._A01))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"\t[{track.Name}] is \"invisible\"?");
+                Console.ForegroundColor = defColor;
+            }*/
+            Console.Write("\n");
+            index++;
+        }
     }
 
     protected override async ValueTask NextVersionAsync() =>

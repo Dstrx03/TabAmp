@@ -113,6 +113,10 @@ internal class Gp5TodoReaderIntegrityValidator : IGp5TodoReader
     {
         var track = await _reader.ReadTrackAsync();
 
+        if (!track.PrimaryFlags.HasFlag(Gp5Track.Primary._A01))
+            // TODO: message
+            throw new FileSerializationIntegrityException("expected Primary._A01");
+
         if (track.StringsCount >= 6 && (track._A01 != 0 || track._A02 != 0))
         {
             // TODO: message
@@ -128,6 +132,8 @@ internal class Gp5TodoReaderIntegrityValidator : IGp5TodoReader
             // TODO: message
             throw new FileSerializationIntegrityException($"A3 expected to be 100: _A03={track._A03}");
 
+        // TODO: figure out validation for B & C
+        /*
         if (track._B01 != 1 ||
             track._B02 != 2 ||
             track._B03 != 3 ||
@@ -144,6 +150,7 @@ internal class Gp5TodoReaderIntegrityValidator : IGp5TodoReader
         if (track._C01 != 1023)
             // TODO: message
             throw new FileSerializationIntegrityException($"C expected to be 1023: _C01={track._C01}");
+        */
 
         if (track._E01 != -1)
             // TODO: message

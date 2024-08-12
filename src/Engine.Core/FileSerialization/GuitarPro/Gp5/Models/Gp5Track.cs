@@ -32,15 +32,14 @@ internal class Gp5Track
     [Flags]
     public enum Primary : byte
     {
-        // TODO: names that make sense
-        IsPercussionTrack_TODO = 0x01,
-        Is12StringedGuitarTrack_TODO = 0x02,
-        IsBanjoTrack_TODO = 0x04,
-        IsVisible_TODO = 0x08,
-        IsSolo_TODO = 0x10,
-        IsMute_TODO = 0x20,
+        PercussionTypeTrack = 0x01,// TODO: consistent naming
+        Simulate12StringedGuitar = 0x02,
+        ParticularForBanjo5thString = 0x04,
+        _A01 = 0x08,
+        Solo = 0x10,
+        Mute = 0x20,
         UseRse = 0x40,
-        IndicateTuning_TODO = 0x80
+        IndicateTuningOnTheScore = 0x80
     }
 
     [Flags]
