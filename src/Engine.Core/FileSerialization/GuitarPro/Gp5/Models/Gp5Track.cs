@@ -32,7 +32,7 @@ internal class Gp5Track
     [Flags]
     public enum Primary : byte
     {
-        PercussionTypeTrack = 0x01,// TODO: consistent naming
+        PercussionTrack = 0x01,// TODO: consistent naming 
         Simulate12StringedGuitar = 0x02,
         ParticularForBanjo5thString = 0x04,
         _A01 = 0x08,
@@ -54,7 +54,7 @@ internal class Gp5Track
         ForceChannels_TODO = 0x0020,
         DiagramList_TODO = 0x0040,
         DiagramsInScore_TODO = 0x0080,
-        Unknown0_TODO = 0x0100,
+        InstrumentTrack = 0x0100,// TODO: consistent naming
         AutoLetRing_TODO = 0x0200,
         AutoBrush_TODO = 0x0400,
         ExtendRhythmic_TODO = 0x0800

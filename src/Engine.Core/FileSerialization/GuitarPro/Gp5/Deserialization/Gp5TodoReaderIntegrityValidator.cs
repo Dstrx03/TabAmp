@@ -117,6 +117,11 @@ internal class Gp5TodoReaderIntegrityValidator : IGp5TodoReader
             // TODO: message
             throw new FileSerializationIntegrityException("expected Primary._A01");
 
+        if (track.PrimaryFlags.HasFlag(Gp5Track.Primary.PercussionTrack) ==
+            track.SecondaryFlags.HasFlag(Gp5Track.Secondary.InstrumentTrack))
+            // TODO: message
+            throw new FileSerializationIntegrityException($"expected to have consistent track type: instrument:{track.SecondaryFlags.HasFlag(Gp5Track.Secondary.InstrumentTrack)}, percussion:{track.PrimaryFlags.HasFlag(Gp5Track.Primary.PercussionTrack)}");
+
         if (track.StringsCount >= 6 && (track._A01 != 0 || track._A02 != 0))
         {
             // TODO: message
