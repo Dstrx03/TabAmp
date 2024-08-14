@@ -15,8 +15,8 @@ internal class Gp5Track
     public int Port { get; set; }
     public int MainChannel { get; set; }
     public int EffectChannel { get; set; }
-    public int FretsCount { get; set; }
-    public int CapoFret { get; set; }
+    public int FretsCount { get; set; }// TODO: frets?
+    public int CapoFret { get; set; }// TODO: capo position?
     public int Color { get; set; }
     public Secondary SecondaryFlags { get; set; }
     public byte RseAutoAccentuation { get; set; }
@@ -46,10 +46,10 @@ internal class Gp5Track
     public enum Secondary : short
     {
         // TODO: names that make sense
-        Tablature_TODO = 0x0001,
-        Notation_TODO = 0x0002,
+        Tablature = 0x0001,//ready
+        StandardNotation = 0x0002,//ready
         DiagramsAreBelow_TODO = 0x0004,
-        ShowRhythm_TODO = 0x0008,
+        ShowRhythmWithTab = 0x0008,//ready
         ForceHorizontal_TODO = 0x0010,
         ForceChannels_TODO = 0x0020,
         DiagramList_TODO = 0x0040,
