@@ -280,7 +280,7 @@ internal class Gp5TodoReader : IGp5TodoReader
         track.MainChannel = await _primitivesReader.ReadIntAsync();
         track.EffectChannel = await _primitivesReader.ReadIntAsync();
         track.FretsCount = await _primitivesReader.ReadIntAsync();
-        track.CapoFret = await _primitivesReader.ReadIntAsync();
+        track.CapoPosition = await _primitivesReader.ReadIntAsync();
         track.Color = await _primitivesReader.ReadColorAsync();
         track.SecondaryFlags = (Gp5Track.Secondary)await _primitivesReader.ReadShortAsync();
         track.RseAutoAccentuation = await _primitivesReader.ReadByteAsync();
@@ -304,7 +304,7 @@ internal class Gp5TodoReader : IGp5TodoReader
 
         track._C01 = await _primitivesReader.ReadShortAsync();
 
-        track.Instrument = await _primitivesReader.ReadIntAsync();
+        track.RseInstrument = await _primitivesReader.ReadIntAsync();
 
         track._D01 = await _primitivesReader.ReadIntAsync();
 

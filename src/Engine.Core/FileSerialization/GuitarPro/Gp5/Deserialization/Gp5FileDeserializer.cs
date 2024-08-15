@@ -18,35 +18,12 @@ internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeseria
     {
         await ProcessAsync();
         PrintDeserializedFileJson();
-        PrintDeserializedTracks();
         return new Gp5Score();
     }
 
     [Obsolete("Temporary runtime testing")]
     private void PrintDeserializedFileJson() =>
         Console.WriteLine(JsonSerializer.Serialize(File, new JsonSerializerOptions { WriteIndented = true }));
-
-    [Obsolete("Temporary runtime testing")]
-    private void PrintDeserializedTracks()
-    {
-        var index = 0;
-        foreach (var track in File.Tracks)
-        {
-            var defColor = Console.ForegroundColor;
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine($"******* {track.Name} [#{index + 1}] *******");
-            Console.ForegroundColor = defColor;
-            Console.WriteLine($"\tp={track.PrimaryFlags}\n\ts={track.SecondaryFlags}");
-            /*if (!track.PrimaryFlags.HasFlag(Gp5Track.Primary._A01))
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"\t[{track.Name}] is \"invisible\"?");
-                Console.ForegroundColor = defColor;
-            }*/
-            Console.Write("\n");
-            index++;
-        }
-    }
 
     protected override async ValueTask NextVersionAsync() =>
         File.Version = await _reader.ReadVersionAsync();

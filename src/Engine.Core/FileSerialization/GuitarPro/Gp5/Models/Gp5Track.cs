@@ -16,13 +16,13 @@ internal class Gp5Track
     public int MainChannel { get; set; }
     public int EffectChannel { get; set; }
     public int FretsCount { get; set; }// TODO: Fret number?
-    public int CapoFret { get; set; }// TODO: Capo position?
+    public int CapoPosition { get; set; }
     public int Color { get; set; }
     public Secondary SecondaryFlags { get; set; }
     public byte RseAutoAccentuation { get; set; }
     public byte MidiBank { get; set; }
     public byte RseHumanPlaying { get; set; }
-    public int Instrument { get; set; }
+    public int RseInstrument { get; set; }
     public int RseSoundBank { get; set; }
     public Gp5RseEqualizer RseEqualizer { get; set; }
     public string RseEffectName { get; set; }
