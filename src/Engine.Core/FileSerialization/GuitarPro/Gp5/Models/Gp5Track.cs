@@ -15,8 +15,8 @@ internal class Gp5Track
     public int Port { get; set; }
     public int MainChannel { get; set; }
     public int EffectChannel { get; set; }
-    public int FretsCount { get; set; }// TODO: frets?
-    public int CapoFret { get; set; }// TODO: capo position?
+    public int FretsCount { get; set; }// TODO: Fret number?
+    public int CapoFret { get; set; }// TODO: Capo position?
     public int Color { get; set; }
     public Secondary SecondaryFlags { get; set; }
     public byte RseAutoAccentuation { get; set; }
@@ -32,7 +32,7 @@ internal class Gp5Track
     [Flags]
     public enum Primary : byte
     {
-        PercussionTrack = 0x01,// TODO: consistent naming 
+        TrackTypePercussion = 0x01,
         Simulate12StringedGuitar = 0x02,
         ParticularForBanjo5thString = 0x04,
         _A01 = 0x08,
@@ -45,19 +45,18 @@ internal class Gp5Track
     [Flags]
     public enum Secondary : short
     {
-        // TODO: names that make sense
-        Tablature = 0x0001,//ready
-        StandardNotation = 0x0002,//ready
-        DiagramsAreBelow_TODO = 0x0004,
-        ShowRhythmWithTab = 0x0008,//ready
-        ForceHorizontal_TODO = 0x0010,
-        ForceChannels_TODO = 0x0020,
-        DiagramList_TODO = 0x0040,
-        DiagramsInScore_TODO = 0x0080,
-        InstrumentTrack = 0x0100,// TODO: consistent naming
-        AutoLetRing_TODO = 0x0200,
-        AutoBrush_TODO = 0x0400,
-        ExtendRhythmic_TODO = 0x0800
+        Tablature = 0x0001,
+        StandardNotation = 0x0002,
+        DiagramsChordsBelowTheStandardNotation = 0x0004,
+        ShowRhythmWithTab = 0x0008,
+        ForceHorizontalBeams = 0x0010,
+        ForceChannels11To16 = 0x0020,
+        DiagramsListOnTopOfTheScore = 0x0040,
+        DiagramsInTheScore = 0x0080,
+        TrackTypeInstrument = 0x0100,
+        AutoLetRing = 0x0200,
+        AutoBrush = 0x0400,
+        ExtendRhythmicInsideTheTab = 0x0800
     }
 
     #region Unknown & Anonymous data
