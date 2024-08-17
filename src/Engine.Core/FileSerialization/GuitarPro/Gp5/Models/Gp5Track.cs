@@ -11,7 +11,7 @@ internal class Gp5Track
     public Primary PrimaryFlags { get; set; }
     public string Name { get; set; }
     public int StringsCount { get; set; }
-    public int[] StringsTuning { get; } = new int[StringsTuningLength];
+    public int[] StringsTuning { get; set; }
     public int Port { get; set; }
     public int MainChannel { get; set; }
     public int EffectChannel { get; set; }
