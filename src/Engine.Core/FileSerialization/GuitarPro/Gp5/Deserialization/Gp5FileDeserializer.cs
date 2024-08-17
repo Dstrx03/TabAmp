@@ -46,6 +46,12 @@ internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeseria
     protected override async ValueTask NextHeaderKeySignatureAsync() =>
         File.KeySignature = await _reader.ReadHeaderKeySignatureAsync();
 
+    protected override ValueTask NextMidiChannelsAsync()
+    {
+        File.MidiChannels = new Gp5MidiChannel[Gp5File.MidiChannelsLength];
+        return base.NextMidiChannelsAsync();
+    }
+
     protected override async ValueTask NextMidiChannelAsync(int index) =>
         File.MidiChannels[index] = await _reader.ReadMidiChannelAsync();
 

@@ -43,7 +43,7 @@ internal abstract class Gp5FileSerializationProcessor : IFileSerializationProces
 
     protected abstract ValueTask NextHeaderKeySignatureAsync();
 
-    private async ValueTask NextMidiChannelsAsync()
+    protected virtual async ValueTask NextMidiChannelsAsync()
     {
         for (var index = 0; index < File.MidiChannels.Length; index++)
         {
