@@ -186,7 +186,7 @@ internal class Gp5TodoReader : IGp5TodoReader
         measureHeader.TimeSignature = await ReadTimeSignatureAsync(hasNumerator: hasNumerator, hasDenominator: hasDenominator);
 
         if (primaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasRepeatClose))
-            measureHeader.RepeatCount = await _primitivesReader.ReadByteAsync();
+            measureHeader.RepeatsCount = await _primitivesReader.ReadByteAsync();
 
         if (primaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasMarker))
             measureHeader.Marker = await ReadMarkerAsync();

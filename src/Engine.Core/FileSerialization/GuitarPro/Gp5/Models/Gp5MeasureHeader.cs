@@ -6,7 +6,7 @@ internal class Gp5MeasureHeader
 {
     public Primary PrimaryFlags { get; set; }
     public Gp5TimeSignature TimeSignature { get; set; }
-    public byte? RepeatCount { get; set; }
+    public byte? RepeatsCount { get; set; }
     public Gp5Marker Marker { get; set; }
     public Gp5KeySignature KeySignature { get; set; }
     public AlternateEndings AlternateEndingsFlags { get; set; }

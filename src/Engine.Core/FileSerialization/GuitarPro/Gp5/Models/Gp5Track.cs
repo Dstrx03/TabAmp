@@ -15,7 +15,7 @@ internal class Gp5Track
     public int Port { get; set; }
     public int MainChannel { get; set; }
     public int EffectChannel { get; set; }
-    public int FretsCount { get; set; }// TODO: Fret number?
+    public int FretsCount { get; set; }
     public int CapoPosition { get; set; }
     public int Color { get; set; }
     public Secondary SecondaryFlags { get; set; }
