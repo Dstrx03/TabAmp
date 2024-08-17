@@ -36,8 +36,8 @@ internal class Gp5Track
         Simulate12StringedGuitar = 0x02,
         ParticularForBanjo5thString = 0x04,
         _A01 = 0x08,
-        Solo = 0x10,
-        Mute = 0x20,
+        TrackMixSolo = 0x10,
+        TrackMixMute = 0x20,
         UseRse = 0x40,
         IndicateTuningOnTheScore = 0x80
     }
@@ -45,8 +45,8 @@ internal class Gp5Track
     [Flags]
     public enum Secondary : short
     {
-        Tablature = 0x0001,
-        StandardNotation = 0x0002,
+        DisplayTablature = 0x0001,
+        DisplayStandardNotation = 0x0002,
         DiagramsChordsBelowTheStandardNotation = 0x0004,
         ShowRhythmWithTab = 0x0008,
         ForceHorizontalBeams = 0x0010,
