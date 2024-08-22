@@ -137,10 +137,10 @@ internal class Gp5TodoReaderIntegrityValidator : IGp5TodoReader
             // TODO: message
             throw new FileSerializationIntegrityException($"A3 expected to be 100: _A03={track._A03}");
 
-        short decodedBValue = (short)(track._B01 * -1099 + track._B02 * -1 + track._B03 * -1 + track._B04 * -1 + track._B05 * -1 + track._B06 * 1 + track._B07 * 49 + track._B08 * 1 + track._B09 * 1 + track._B10 * 177);
+        var decodedBValue = track._B01 * -1099 + track._B02 * -1 + track._B03 * -1 + track._B04 * -1 + track._B05 * -1 + track._B06 * 1 + track._B07 * 49 + track._B08 * 1 + track._B09 * 1 + track._B10 * 177;
         if (decodedBValue != track._C01)
             // TODO: message
-            throw new FileSerializationIntegrityException($"todo");
+            throw new FileSerializationIntegrityException($"B expected to be valid sequence: sequence={string.Join(",", track._B01, track._B02, track._B03, track._B04, track._B05, track._B06, track._B07, track._B08, track._B09, track._B10)}, _C01={track._C01}, decodedBValue={decodedBValue}");
 
         if (track.SecondaryFlags.HasFlag(Gp5Track.Secondary.DisplayTablature) &&
             track.SecondaryFlags.HasFlag(Gp5Track.Secondary.DisplayStandardNotation) &&
