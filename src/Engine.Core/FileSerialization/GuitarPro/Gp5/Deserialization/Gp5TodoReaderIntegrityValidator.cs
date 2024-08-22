@@ -137,62 +137,31 @@ internal class Gp5TodoReaderIntegrityValidator : IGp5TodoReader
             // TODO: message
             throw new FileSerializationIntegrityException($"A3 expected to be 100: _A03={track._A03}");
 
-        if (track.SecondaryFlags.HasFlag(Gp5Track.Secondary.DisplayTablature | Gp5Track.Secondary.DisplayStandardNotation))
-        {
-            if (track._B01 != 1 ||
-                track._B02 != 2 ||
-                track._B03 != 3 ||
-                track._B04 != 4 ||
-                track._B05 != 5 ||
-                track._B06 != 6 ||
-                track._B07 != 7 ||
-                track._B08 != 8 ||
-                track._B09 != 9 ||
-                track._B10 != 10)
-                // TODO: message
-                throw new FileSerializationIntegrityException($"B expected to be 1,2,3,4,5,6,7,8,9,10: sequence={string.Join(",", track._B01, track._B02, track._B03, track._B04, track._B05, track._B06, track._B07, track._B08, track._B09, track._B10)}");
+        short decodedBValue = (short)(track._B01 * -1099 + track._B02 * -1 + track._B03 * -1 + track._B04 * -1 + track._B05 * -1 + track._B06 * 1 + track._B07 * 49 + track._B08 * 1 + track._B09 * 1 + track._B10 * 177);
+        if (decodedBValue != track._C01)
+            // TODO: message
+            throw new FileSerializationIntegrityException($"todo");
 
-            if (track._C01 != 1023)
-                // TODO: message
-                throw new FileSerializationIntegrityException($"C expected to be 1023: _C01={track._C01}");
+        if (track.SecondaryFlags.HasFlag(Gp5Track.Secondary.DisplayTablature) &&
+            track.SecondaryFlags.HasFlag(Gp5Track.Secondary.DisplayStandardNotation) &&
+            track._C01 != 1023)
+        {
+            // TODO: message
+            throw new FileSerializationIntegrityException($"C expected to be 1023: _C01={track._C01}");
         }
-        else if (track.SecondaryFlags.HasFlag(Gp5Track.Secondary.DisplayTablature))
+        else if (track.SecondaryFlags.HasFlag(Gp5Track.Secondary.DisplayTablature) &&
+            !track.SecondaryFlags.HasFlag(Gp5Track.Secondary.DisplayStandardNotation) &&
+            track._C01 != 991)
         {
-            if (track._B01 != 1 ||
-                track._B02 != 2 ||
-                track._B03 != 3 ||
-                track._B04 != 4 ||
-                track._B05 != 5 ||
-                track._B06 != 6 ||
-                track._B07 != 10 ||
-                track._B08 != 7 ||
-                track._B09 != 8 ||
-                track._B10 != 9)
-                // TODO: message
-                throw new FileSerializationIntegrityException($"B expected to be 1,2,3,4,5,6,10,7,8,9: sequence={string.Join(",", track._B01, track._B02, track._B03, track._B04, track._B05, track._B06, track._B07, track._B08, track._B09, track._B10)}");
-
-            if (track._C01 != 991)
-                // TODO: message
-                throw new FileSerializationIntegrityException($"C expected to be 991: _C01={track._C01}");
+            // TODO: message
+            throw new FileSerializationIntegrityException($"C expected to be 991: _C01={track._C01}");
         }
-        else if (track.SecondaryFlags.HasFlag(Gp5Track.Secondary.DisplayStandardNotation))
+        else if (!track.SecondaryFlags.HasFlag(Gp5Track.Secondary.DisplayTablature) &&
+            track.SecondaryFlags.HasFlag(Gp5Track.Secondary.DisplayStandardNotation) &&
+            track._C01 != 767)
         {
-            if (track._B01 != 1 ||
-                track._B02 != 2 ||
-                track._B03 != 3 ||
-                track._B04 != 4 ||
-                track._B05 != 5 ||
-                track._B06 != 7 ||
-                track._B07 != 9 ||
-                track._B08 != 6 ||
-                track._B09 != 10 ||
-                track._B10 != 8)
-                // TODO: message
-                throw new FileSerializationIntegrityException($"B expected to be 1,2,3,4,5,7,9,6,10,8: sequence={string.Join(",", track._B01, track._B02, track._B03, track._B04, track._B05, track._B06, track._B07, track._B08, track._B09, track._B10)}");
-
-            if (track._C01 != 767)
-                // TODO: message
-                throw new FileSerializationIntegrityException($"C expected to be 767: _C01={track._C01}");
+            // TODO: message
+            throw new FileSerializationIntegrityException($"C expected to be 767: _C01={track._C01}");
         }
 
         if (track._E01 != -1)
