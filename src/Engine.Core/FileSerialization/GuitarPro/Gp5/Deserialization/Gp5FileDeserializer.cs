@@ -25,17 +25,6 @@ internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeseria
     private void PrintDeserializedFileJson()
     {
         Console.WriteLine(JsonSerializer.Serialize(File, new JsonSerializerOptions { WriteIndented = true }));
-
-        Console.WriteLine("Tracks:\n");
-        var trackNumber = 1;
-        foreach (var track in File.Tracks)
-        {
-            Console.WriteLine($"[{trackNumber}] {track.Name}");
-            Console.WriteLine($"\tP: {track.PrimaryFlags}");
-            Console.WriteLine($"\tS: {track.SecondaryFlags}");
-            Console.WriteLine();
-            trackNumber++;
-        }
     }
 
     protected override async ValueTask NextVersionAsync() =>
@@ -80,6 +69,7 @@ internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeseria
 
         File.MeasureHeaders = new Gp5MeasureHeader[measuresCount];
         File.Tracks = new Gp5Track[tracksCount];
+        File.Measures = new Gp5Measure[1];
     }
 
     protected override async ValueTask NextMeasureHeaderAsync(int index) =>
@@ -87,4 +77,7 @@ internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeseria
 
     protected override async ValueTask NextTrackAsync(int index) =>
         File.Tracks[index] = await _reader.ReadTrackAsync();
+
+    protected override async ValueTask NextMeasureAsync(int index) =>
+        File.Measures[index] = await _reader.ReadMeasureAsync();
 }

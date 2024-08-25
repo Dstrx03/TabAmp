@@ -314,4 +314,12 @@ internal class Gp5TodoReader : IGp5TodoReader
 
         return stringsTuning;
     }
+
+    public async ValueTask<Gp5Measure> ReadMeasureAsync()
+    {
+        return new Gp5Measure
+        {
+            Beats = new object[await _primitivesReader.ReadIntAsync()]
+        };
+    }
 }
