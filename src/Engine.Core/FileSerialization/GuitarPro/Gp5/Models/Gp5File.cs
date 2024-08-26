@@ -16,5 +16,4 @@ internal class Gp5File
     public Gp5MusicalDirections MusicalDirections { get; set; }
     public Gp5MeasureHeader[] MeasureHeaders { get; set; }
     public Gp5Track[] Tracks { get; set; }
-    public Gp5Measure[] Measures { get; set; }
 }
