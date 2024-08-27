@@ -5,10 +5,10 @@ namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 internal class Gp5MeasureHeader
 {
     public Primary PrimaryFlags { get; set; }
-    public Gp5TimeSignature TimeSignature { get; set; }
+    public Gp5TimeSignature? TimeSignature { get; set; }
     public byte? RepeatsCount { get; set; }
-    public Gp5Marker Marker { get; set; }
-    public Gp5KeySignature KeySignature { get; set; }
+    public Gp5Marker? Marker { get; set; }
+    public Gp5KeySignature? KeySignature { get; set; }
     public AlternateEndings AlternateEndingsFlags { get; set; }
     public byte TripletFeel { get; set; }
 
@@ -16,7 +16,7 @@ internal class Gp5MeasureHeader
     [Flags]
     public enum Primary : byte
     {
-        HasTimeSignatureNumerator = 0x01,
+        HasTimeSignature = 0x01,
         HasTimeSignatureDenominator = 0x02,
         HasRepeatOpen = 0x04,
         HasRepeatClose = 0x08,

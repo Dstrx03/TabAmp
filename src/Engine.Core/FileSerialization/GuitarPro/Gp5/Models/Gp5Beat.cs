@@ -7,10 +7,10 @@ internal class Gp5Beat
     public Primary PrimaryFlags { get; set; }
     public byte? Status_TODO { get; set; }
     public sbyte Duration_TODO { get; set; }
-    public object Chord_TODO { get; set; }
+    public object? Chord_TODO { get; set; }
     public string? Text_TODO { get; set; }
-    public object Effect_TODO { get; set; }
-    public object MixTable_TODO { get; set; }
+    public object? Effect_TODO { get; set; }
+    public object? MixTable_TODO { get; set; }
 
 
     [Flags]

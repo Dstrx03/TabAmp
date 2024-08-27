@@ -181,10 +181,11 @@ internal class Gp5TodoReader : IGp5TodoReader
             PrimaryFlags = primaryFlags
         };
 
-        var hasNumerator = primaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasTimeSignatureNumerator);
+        var hasTimeSignature = primaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasTimeSignature);
         var hasDenominator = primaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasTimeSignatureDenominator);
-        var hasBeamGroups = hasNumerator || hasDenominator;
-        measureHeader.TimeSignature = await ReadTimeSignatureAsync(hasNumerator: hasNumerator, hasDenominator: hasDenominator);
+
+        if (hasTimeSignature)
+            measureHeader.TimeSignature = await ReadTimeSignatureAsync(hasDenominator);
 
         if (primaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasRepeatClose))
             measureHeader.RepeatsCount = await _primitivesReader.ReadByteAsync();
@@ -198,7 +199,7 @@ internal class Gp5TodoReader : IGp5TodoReader
         var hasAlternateEndings = primaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasAlternateEndings);
         if (isFirst)
         {
-            if (hasBeamGroups)
+            if (hasTimeSignature)
                 measureHeader.TimeSignature.BeamGroups = await ReadTimeSignatureBeamGroupsAsync();
 
             if (hasAlternateEndings)
@@ -209,7 +210,7 @@ internal class Gp5TodoReader : IGp5TodoReader
             if (hasAlternateEndings)
                 measureHeader.AlternateEndingsFlags = (Gp5MeasureHeader.AlternateEndings)await _primitivesReader.ReadByteAsync();
 
-            if (hasBeamGroups)
+            if (hasTimeSignature)
                 measureHeader.TimeSignature.BeamGroups = await ReadTimeSignatureBeamGroupsAsync();
         }
 
@@ -230,14 +231,11 @@ internal class Gp5TodoReader : IGp5TodoReader
         };
     }
 
-    private async ValueTask<Gp5TimeSignature> ReadTimeSignatureAsync(bool hasNumerator, bool hasDenominator)
+    private async ValueTask<Gp5TimeSignature> ReadTimeSignatureAsync(bool hasDenominator)
     {
-        if (!hasNumerator && !hasDenominator)
-            return null;
-
         return new Gp5TimeSignature
         {
-            Numerator = hasNumerator ? await _primitivesReader.ReadByteAsync() : null,
+            Numerator = await _primitivesReader.ReadByteAsync(),
             Denominator = hasDenominator ? await _primitivesReader.ReadByteAsync() : null
         };
     }
