@@ -209,4 +209,15 @@ internal class Gp5TodoReaderIntegrityValidator : IGp5TodoReader
         // TODO: message
         throw new FileSerializationIntegrityException($"Instrument expected to be -1,128,24,25,26,27,33,34,36: Instrument={track.RseInstrument}, _D01={track._D01},");
     }
+
+    public async ValueTask<int> ReadMeasureBeatsCountAsync()
+    {
+        var beatsCount = await _reader.ReadMeasureBeatsCountAsync();
+
+        if (beatsCount < 0 || beatsCount > 1)
+            // TODO: message
+            throw new FileSerializationIntegrityException($"beatsCount out of valid range: beatsCount={beatsCount}");
+
+        return beatsCount;
+    }
 }

@@ -85,11 +85,11 @@ internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeseria
 
     protected override async ValueTask NextMeasureBeatsCountAsync(int measureIndex)
     {
-        var val = 0; // TODO: reading
-        if (val == 0)
+        var beatsCount = await _reader.ReadMeasureBeatsCountAsync();
+        if (beatsCount == 0)
             return;
 
-        File.Beats[measureIndex] = new Gp5Beat[val];
+        File.Beats[measureIndex] = new Gp5Beat[beatsCount];
     }
 
     protected override async ValueTask NextBeatAsync(int beatIndex, int measureIndex)
