@@ -16,7 +16,7 @@ internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeseria
 
     public async Task<Gp5Score> DeserializeAsync()
     {
-        await ProcessAsync();
+        await ProcessAsync(new());
         PrintDeserializedFileJson();
         return new Gp5Score();
     }

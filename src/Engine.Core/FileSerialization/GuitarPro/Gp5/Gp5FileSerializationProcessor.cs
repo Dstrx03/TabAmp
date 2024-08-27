@@ -10,9 +10,9 @@ internal abstract class Gp5FileSerializationProcessor : IFileSerializationProces
 
     protected Gp5File File { get; private set; }
 
-    protected async Task ProcessAsync(Gp5File? file = null)
+    protected async Task ProcessAsync(Gp5File file)
     {
-        File = file ?? new();
+        File = file;
 
         await NextVersionAsync();
         await NextScoreInformationAsync();
