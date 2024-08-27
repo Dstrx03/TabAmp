@@ -98,10 +98,6 @@ internal class Gp5TodoReaderIntegrityValidator : IGp5TodoReader
     {
         var measureHeader = await _reader.ReadMeasureHeaderAsync(isFirst);
 
-        if (measureHeader.EndOfObjectSeparator != 0)
-            // TODO: message
-            throw new FileSerializationIntegrityException($"EndOfObjectSeparator expected to be 0: EndOfObjectSeparator={measureHeader.EndOfObjectSeparator}");
-
         if (!measureHeader.PrimaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasAlternateEndings) && measureHeader.AlternateEndingsFlags != 0)
             // TODO: message
             throw new FileSerializationIntegrityException($"AlternateEndingsFlags expected to be 0 due to measure has no alternate endings: AlternateEndingsFlags={measureHeader.AlternateEndingsFlags}");
@@ -214,10 +210,24 @@ internal class Gp5TodoReaderIntegrityValidator : IGp5TodoReader
     {
         var beatsCount = await _reader.ReadMeasureBeatsCountAsync();
 
-        if (beatsCount < 0 || beatsCount > 1)
+        if (beatsCount < 1 || beatsCount > 127)
             // TODO: message
             throw new FileSerializationIntegrityException($"beatsCount out of valid range: beatsCount={beatsCount}");
 
         return beatsCount;
+    }
+
+    public ValueTask<Gp5Beat> ReadBeatAsync() =>
+        _reader.ReadBeatAsync();
+
+    public async ValueTask<byte> ReadPaddingAsync()
+    {
+        var padding = await _reader.ReadPaddingAsync();
+
+        if (padding != 0)
+            // TODO: message
+            throw new FileSerializationIntegrityException($"padding expected to be 0: padding={padding}");
+
+        return padding;
     }
 }

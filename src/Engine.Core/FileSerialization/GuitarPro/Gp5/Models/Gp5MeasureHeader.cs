@@ -12,8 +12,6 @@ internal class Gp5MeasureHeader
     public AlternateEndings AlternateEndingsFlags { get; set; }
     public byte TripletFeel { get; set; }
 
-    public byte EndOfObjectSeparator { get; set; }
-
 
     [Flags]
     public enum Primary : byte

@@ -216,7 +216,6 @@ internal class Gp5TodoReader : IGp5TodoReader
             measureHeader.AlternateEndingsFlags = (Gp5MeasureHeader.AlternateEndings)await _primitivesReader.ReadByteAsync();
 
         measureHeader.TripletFeel = await _primitivesReader.ReadByteAsync();
-        measureHeader.EndOfObjectSeparator = await _primitivesReader.ReadByteAsync();
 
         return measureHeader;
     }
@@ -317,4 +316,16 @@ internal class Gp5TodoReader : IGp5TodoReader
 
     public ValueTask<int> ReadMeasureBeatsCountAsync() =>
         _primitivesReader.ReadIntAsync();
+
+    public async ValueTask<Gp5Beat> ReadBeatAsync()
+    {
+        var beat = new Gp5Beat();
+
+        var flags = await _primitivesReader.ReadByteAsync();
+
+        return beat;
+    }
+
+    public ValueTask<byte> ReadPaddingAsync() =>
+        _primitivesReader.ReadByteAsync();
 }

@@ -20,4 +20,6 @@ internal interface IGp5TodoReader
     ValueTask<Gp5MeasureHeader> ReadMeasureHeaderAsync(bool isFirst);
     ValueTask<Gp5Track> ReadTrackAsync();
     ValueTask<int> ReadMeasureBeatsCountAsync();
+    ValueTask<Gp5Beat> ReadBeatAsync();
+    ValueTask<byte> ReadPaddingAsync();
 }
