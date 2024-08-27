@@ -83,7 +83,7 @@ internal abstract class Gp5FileSerializationProcessor : IFileSerializationProces
 
     protected abstract ValueTask NextTrackAsync(int index);
 
-    protected virtual async ValueTask NextMeasuresAsync()
+    private async ValueTask NextMeasuresAsync()
     {
         for (var measureIndex = 0; measureIndex < File.Beats.Length; measureIndex++)
         {

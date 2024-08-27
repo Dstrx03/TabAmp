@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Strings;
 
@@ -319,9 +320,50 @@ internal class Gp5TodoReader : IGp5TodoReader
 
     public async ValueTask<Gp5Beat> ReadBeatAsync()
     {
-        var beat = new Gp5Beat();
+        var primaryFlags = (Gp5Beat.Primary)await _primitivesReader.ReadByteAsync();
+        var beat = new Gp5Beat()
+        {
+            PrimaryFlags = primaryFlags,
+        };
 
-        var flags = await _primitivesReader.ReadByteAsync();
+        if (primaryFlags.HasFlag(Gp5Beat.Primary.Status_TODO))
+            beat.Status_TODO = await _primitivesReader.ReadByteAsync();
+
+        beat.Duration_TODO = await _primitivesReader.ReadSignedByteAsync();
+
+        if (primaryFlags.HasFlag(Gp5Beat.Primary.Chord_TODO))
+        {
+            beat.Chord_TODO = null;
+            throw new NotImplementedException("TODO: read chord");
+        }
+
+        if (primaryFlags.HasFlag(Gp5Beat.Primary.Text_TODO))
+            beat.Text_TODO = await _stringsReader.ReadIntByteStringAsync();
+
+        if (primaryFlags.HasFlag(Gp5Beat.Primary.Effect_TODO))
+        {
+            beat.Effect_TODO = null;
+            throw new NotImplementedException("TODO: read effect");
+        }
+
+        if (primaryFlags.HasFlag(Gp5Beat.Primary.MixTable_TODO))
+        {
+            beat.MixTable_TODO = null;
+            throw new NotImplementedException("TODO: read mix table");
+        }
+
+        // TODO: research
+        var notesFlags = await _primitivesReader.ReadByteAsync();
+        var notesFlagsEnum = (Gp5Beat.NotesStrings_Todo)notesFlags;
+        Console.WriteLine($"notesFlags={notesFlags}: {notesFlagsEnum}");
+        for (var i = 0; i < 7; i++)
+        {
+            var stringNumber = i + 1;
+            if ((notesFlags & 1 << (7 - stringNumber)) > 0)
+            {
+                Console.WriteLine($"stringNumber={stringNumber} - has note?");
+            }
+        }
 
         return beat;
     }

@@ -69,6 +69,7 @@ internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeseria
 
         File.MeasureHeaders = new Gp5MeasureHeader[measuresCount];
         File.Tracks = new Gp5Track[tracksCount];
+        File.Beats = new Gp5Beat[/*measuresCount * tracksCount*/1][];
     }
 
     protected override async ValueTask NextMeasureHeaderAsync(int index) =>
@@ -76,12 +77,6 @@ internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeseria
 
     protected override async ValueTask NextTrackAsync(int index) =>
         File.Tracks[index] = await _reader.ReadTrackAsync();
-
-    protected override ValueTask NextMeasuresAsync()
-    {
-        File.Beats = new Gp5Beat[/*File.MeasureHeaders.Length * File.Tracks.Length*/1][];
-        return base.NextMeasuresAsync();
-    }
 
     protected override async ValueTask NextMeasureBeatsCountAsync(int measureIndex) =>
         File.Beats[measureIndex] = new Gp5Beat[await _reader.ReadMeasureBeatsCountAsync()];
