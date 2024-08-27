@@ -25,17 +25,6 @@ internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeseria
     private void PrintDeserializedFileJson()
     {
         Console.WriteLine(JsonSerializer.Serialize(File, new JsonSerializerOptions { WriteIndented = true }));
-
-        Console.WriteLine("Tracks:\n");
-        var trackNumber = 1;
-        foreach (var track in File.Tracks)
-        {
-            Console.WriteLine($"[{trackNumber}] {track.Name}");
-            Console.WriteLine($"\tP: {track.PrimaryFlags}");
-            Console.WriteLine($"\tS: {track.SecondaryFlags}");
-            Console.WriteLine();
-            trackNumber++;
-        }
     }
 
     protected override async ValueTask NextVersionAsync() =>
@@ -87,4 +76,24 @@ internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeseria
 
     protected override async ValueTask NextTrackAsync(int index) =>
         File.Tracks[index] = await _reader.ReadTrackAsync();
+
+    protected override ValueTask NextMeasuresAsync()
+    {
+        File.Beats = new Gp5Beat[/*File.MeasureHeaders.Length * File.Tracks.Length*/1][];
+        return base.NextMeasuresAsync();
+    }
+
+    protected override async ValueTask NextMeasureBeatsCountAsync(int measureIndex)
+    {
+        var val = 0; // TODO: reading
+        if (val == 0)
+            return;
+
+        File.Beats[measureIndex] = new Gp5Beat[val];
+    }
+
+    protected override async ValueTask NextBeatAsync(int beatIndex, int measureIndex)
+    {
+        File.Beats[measureIndex][beatIndex] = null; // TODO: reading
+    }
 }
