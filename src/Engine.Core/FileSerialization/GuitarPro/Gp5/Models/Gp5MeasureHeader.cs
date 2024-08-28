@@ -38,4 +38,8 @@ internal class Gp5MeasureHeader
         Ending7 = 0x40,
         Ending8 = 0x80
     }
+
+    #region Unknown & Anonymous data
+    public byte _A01 { get; set; }
+    #endregion
 }

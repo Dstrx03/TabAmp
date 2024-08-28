@@ -19,7 +19,7 @@ internal interface IGp5TodoReader
     ValueTask<(int measuresCount, int tracksCount)> ReadMeasuresAndTracksCountAsync();
     ValueTask<Gp5MeasureHeader> ReadMeasureHeaderAsync(bool isFirst);
     ValueTask<Gp5Track> ReadTrackAsync();
+    ValueTask<byte> ReadMeasureBreakLineAsync();
     ValueTask<int> ReadMeasureBeatsCountAsync();
     ValueTask<Gp5Beat> ReadBeatAsync();
-    ValueTask<byte> ReadPaddingAsync();
 }

@@ -65,7 +65,6 @@ internal abstract class Gp5FileSerializationProcessor : IFileSerializationProces
         for (var index = 0; index < File.MeasureHeaders.Length; index++)
         {
             await NextMeasureHeaderAsync(index);
-            await NextPaddingAsync();
         }
     }
 
@@ -77,19 +76,32 @@ internal abstract class Gp5FileSerializationProcessor : IFileSerializationProces
         {
             await NextTrackAsync(index);
         }
-
-        await NextPaddingAsync();
     }
 
     protected abstract ValueTask NextTrackAsync(int index);
 
     private async ValueTask NextMeasuresAsync()
     {
-        for (var measureIndex = 0; measureIndex < File.Beats.Length; measureIndex++)
+        for (var measureIndex = 0; measureIndex < File.MeasureBreakLines.Length; measureIndex++)
         {
-            await NextMeasureAsync(measureIndex);
+            await NextSuperMeasureAsync(measureIndex);
         }
     }
+
+    private async ValueTask NextSuperMeasureAsync(int measureIndex)
+    {
+        await NextMeasureBreakLineAsync(measureIndex);
+        await NextLeadMeasureAsync(measureIndex);
+        await NextBassMeasureAsync(measureIndex);
+    }
+
+    protected abstract ValueTask NextMeasureBreakLineAsync(int measureIndex);
+
+    private ValueTask NextLeadMeasureAsync(int measureIndex) =>
+        NextMeasureAsync(measureIndex * 2);
+
+    private ValueTask NextBassMeasureAsync(int measureIndex) =>
+        NextMeasureAsync(measureIndex * 2 + 1);
 
     private async ValueTask NextMeasureAsync(int measureIndex)
     {
@@ -108,6 +120,4 @@ internal abstract class Gp5FileSerializationProcessor : IFileSerializationProces
     }
 
     protected abstract ValueTask NextBeatAsync(int measureIndex, int beatIndex);
-
-    protected abstract ValueTask NextPaddingAsync();
 }

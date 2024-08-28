@@ -218,6 +218,7 @@ internal class Gp5TodoReader : IGp5TodoReader
             measureHeader.AlternateEndingsFlags = (Gp5MeasureHeader.AlternateEndings)await _primitivesReader.ReadByteAsync();
 
         measureHeader.TripletFeel = await _primitivesReader.ReadByteAsync();
+        measureHeader._A01 = await _primitivesReader.ReadByteAsync();
 
         return measureHeader;
     }
@@ -313,6 +314,9 @@ internal class Gp5TodoReader : IGp5TodoReader
         return stringsTuning;
     }
 
+    public ValueTask<byte> ReadMeasureBreakLineAsync() =>
+        _primitivesReader.ReadByteAsync();
+
     public ValueTask<int> ReadMeasureBeatsCountAsync() =>
         _primitivesReader.ReadIntAsync();
 
@@ -352,7 +356,7 @@ internal class Gp5TodoReader : IGp5TodoReader
 
         // TODO: research
         var notesFlags = await _primitivesReader.ReadByteAsync();
-        var notesFlagsEnum = (Gp5Beat.NotesStrings_Todo)notesFlags;
+        /*var notesFlagsEnum = (Gp5Beat.NotesStrings_Todo)notesFlags;
         Console.WriteLine($"notesFlags={notesFlags}: {notesFlagsEnum}");
         for (var i = 0; i < 7; i++)
         {
@@ -361,11 +365,14 @@ internal class Gp5TodoReader : IGp5TodoReader
             {
                 Console.WriteLine($"stringNumber={stringNumber} - has note?");
             }
-        }
+        }*/
+        // TODO: research
+
+        beat.SecondaryFlags = (Gp5Beat.Secondary)await _primitivesReader.ReadShortAsync();
+
+        if (beat.SecondaryFlags.HasFlag(Gp5Beat.Secondary._TODO))
+            beat.TODO = await _primitivesReader.ReadByteAsync();
 
         return beat;
     }
-
-    public ValueTask<byte> ReadPaddingAsync() =>
-        _primitivesReader.ReadByteAsync();
 }

@@ -98,6 +98,10 @@ internal class Gp5TodoReaderIntegrityValidator : IGp5TodoReader
     {
         var measureHeader = await _reader.ReadMeasureHeaderAsync(isFirst);
 
+        if (measureHeader._A01 != 0)
+            // TODO: message
+            throw new FileSerializationIntegrityException($"measure header _A01 expected to be 0: _A01={measureHeader._A01}");
+
         if (!measureHeader.PrimaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasAlternateEndings) && measureHeader.AlternateEndingsFlags != 0)
             // TODO: message
             throw new FileSerializationIntegrityException($"AlternateEndingsFlags expected to be 0 due to measure has no alternate endings: AlternateEndingsFlags={measureHeader.AlternateEndingsFlags}");
@@ -206,6 +210,9 @@ internal class Gp5TodoReaderIntegrityValidator : IGp5TodoReader
         throw new FileSerializationIntegrityException($"Instrument expected to be -1,128,24,25,26,27,33,34,36: Instrument={track.RseInstrument}, _D01={track._D01},");
     }
 
+    public ValueTask<byte> ReadMeasureBreakLineAsync() =>
+        _reader.ReadMeasureBreakLineAsync();
+
     public async ValueTask<int> ReadMeasureBeatsCountAsync()
     {
         var beatsCount = await _reader.ReadMeasureBeatsCountAsync();
@@ -219,15 +226,4 @@ internal class Gp5TodoReaderIntegrityValidator : IGp5TodoReader
 
     public ValueTask<Gp5Beat> ReadBeatAsync() =>
         _reader.ReadBeatAsync();
-
-    public async ValueTask<byte> ReadPaddingAsync()
-    {
-        var padding = await _reader.ReadPaddingAsync();
-
-        if (padding != 0)
-            // TODO: message
-            throw new FileSerializationIntegrityException($"padding expected to be 0: padding={padding}");
-
-        return padding;
-    }
 }

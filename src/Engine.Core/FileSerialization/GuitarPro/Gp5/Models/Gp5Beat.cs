@@ -11,6 +11,8 @@ internal class Gp5Beat
     public string? Text_TODO { get; set; }
     public object? Effect_TODO { get; set; }
     public object? MixTable_TODO { get; set; }
+    public Secondary SecondaryFlags { get; set; }
+    public byte? TODO { get; set; }
 
 
     [Flags]
@@ -24,6 +26,14 @@ internal class Gp5Beat
     }
 
     [Flags]
+    public enum Secondary : short
+    {
+        _TODO = 0x0800
+    }
+
+
+    // TODO: research
+    [Flags]
     public enum NotesStrings_Todo : byte
     {
         Sev = 0x01,
@@ -34,4 +44,5 @@ internal class Gp5Beat
         Sec = 0x20,
         Fir = 0x40
     }
+    // TODO: research
 }
