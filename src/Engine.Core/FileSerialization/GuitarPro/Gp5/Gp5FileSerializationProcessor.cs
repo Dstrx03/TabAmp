@@ -84,24 +84,27 @@ internal abstract class Gp5FileSerializationProcessor : IFileSerializationProces
     {
         for (var measureIndex = 0; measureIndex < File.MeasureBreakLines.Length; measureIndex++)
         {
-            await NextSuperMeasureAsync(measureIndex);
+            await NextCompositeMeasureAsync(measureIndex);
         }
     }
 
-    private async ValueTask NextSuperMeasureAsync(int measureIndex)
+    private async ValueTask NextCompositeMeasureAsync(int measureIndex)
     {
         await NextMeasureBreakLineAsync(measureIndex);
-        await NextLeadMeasureAsync(measureIndex);
-        await NextBassMeasureAsync(measureIndex);
+        await NextLeadComponentMeasureAsync(measureIndex);
+        await NextBassComponentMeasureAsync(measureIndex);
     }
 
     protected abstract ValueTask NextMeasureBreakLineAsync(int measureIndex);
 
-    private ValueTask NextLeadMeasureAsync(int measureIndex) =>
-        NextMeasureAsync(measureIndex * 2);
+    private ValueTask NextLeadComponentMeasureAsync(int measureIndex) =>
+        NextMeasureAsync(CalculateComponentMeasureIndex(measureIndex, componentOffset: 0));
 
-    private ValueTask NextBassMeasureAsync(int measureIndex) =>
-        NextMeasureAsync(measureIndex * 2 + 1);
+    private ValueTask NextBassComponentMeasureAsync(int measureIndex) =>
+        NextMeasureAsync(CalculateComponentMeasureIndex(measureIndex, componentOffset: 1));
+
+    private int CalculateComponentMeasureIndex(int measureIndex, int componentOffset) =>
+        (measureIndex * 2) + componentOffset;
 
     private async ValueTask NextMeasureAsync(int measureIndex)
     {
@@ -113,7 +116,7 @@ internal abstract class Gp5FileSerializationProcessor : IFileSerializationProces
 
     private async ValueTask NextBeatsAsync(int measureIndex)
     {
-        for (var beatIndex = 0; beatIndex < File.Beats[measureIndex].Length; beatIndex++)
+        for (var beatIndex = 0; beatIndex < File.MeasureBeats[measureIndex].Length; beatIndex++)
         {
             await NextBeatAsync(measureIndex: measureIndex, beatIndex: beatIndex);
         }

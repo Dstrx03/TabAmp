@@ -79,19 +79,19 @@ internal class Gp5TodoReaderIntegrityValidator : IGp5TodoReader
     public ValueTask<int> ReadRseMasterEffectReverbAsync() =>
         _reader.ReadRseMasterEffectReverbAsync();
 
-    public async ValueTask<(int measuresCount, int tracksCount)> ReadMeasuresAndTracksCountAsync()
+    public async ValueTask<(int measureHeadersCount, int tracksCount)> ReadMeasuresAndTracksCountAsync()
     {
-        var (measuresCount, tracksCount) = await _reader.ReadMeasuresAndTracksCountAsync();
+        var (measureHeadersCount, tracksCount) = await _reader.ReadMeasuresAndTracksCountAsync();
 
-        if (measuresCount < 1 || measuresCount > 2048)
+        if (measureHeadersCount < 1 || measureHeadersCount > 2048)
             // TODO: message
-            throw new FileSerializationIntegrityException($"measuresCount out of valid range: measuresCount={measuresCount}");
+            throw new FileSerializationIntegrityException($"measureHeadersCount out of valid range: measureHeadersCount={measureHeadersCount}");
 
         if (tracksCount < 1 || tracksCount > 127)
             // TODO: message
             throw new FileSerializationIntegrityException($"tracksCount out of valid range: tracksCount={tracksCount}");
 
-        return (measuresCount, tracksCount);
+        return (measureHeadersCount, tracksCount);
     }
 
     public async ValueTask<Gp5MeasureHeader> ReadMeasureHeaderAsync(bool isFirst)

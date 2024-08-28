@@ -65,13 +65,13 @@ internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeseria
 
     protected override async ValueTask NextMeasuresAndTracksCountAsync()
     {
-        var (measuresCount, tracksCount) = await _reader.ReadMeasuresAndTracksCountAsync();
-        File.MeasureHeaders = new Gp5MeasureHeader[measuresCount];
+        var (measureHeadersCount, tracksCount) = await _reader.ReadMeasuresAndTracksCountAsync();
+        File.MeasureHeaders = new Gp5MeasureHeader[measureHeadersCount];
         File.Tracks = new Gp5Track[tracksCount];
 
-        var measuresTotalCount = measuresCount * tracksCount;
-        File.MeasureBreakLines = new byte[measuresTotalCount];
-        File.Beats = new Gp5Beat[measuresTotalCount * 2][];
+        var measuresCount = measureHeadersCount * tracksCount;
+        File.MeasureBreakLines = new byte[measuresCount];
+        File.MeasureBeats = new Gp5Beat[measuresCount * 2][];
     }
 
     protected override async ValueTask NextMeasureHeaderAsync(int index) =>
@@ -84,8 +84,8 @@ internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeseria
         File.MeasureBreakLines[measureIndex] = await _reader.ReadMeasureBreakLineAsync();
 
     protected override async ValueTask NextMeasureBeatsCountAsync(int measureIndex) =>
-        File.Beats[measureIndex] = new Gp5Beat[await _reader.ReadMeasureBeatsCountAsync()];
+        File.MeasureBeats[measureIndex] = new Gp5Beat[await _reader.ReadMeasureBeatsCountAsync()];
 
     protected override async ValueTask NextBeatAsync(int measureIndex, int beatIndex) =>
-        File.Beats[measureIndex][beatIndex] = await _reader.ReadBeatAsync();
+        File.MeasureBeats[measureIndex][beatIndex] = await _reader.ReadBeatAsync();
 }
