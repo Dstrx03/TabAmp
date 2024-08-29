@@ -200,7 +200,7 @@ internal class Gp5TodoReader : IGp5TodoReader
         if (isFirst)
         {
             if (hasTimeSignature)
-                measureHeader.TimeSignature.BeamGroups = await ReadTimeSignatureBeamGroupsAsync();
+                measureHeader.TimeSignature!.BeamGroups = await ReadTimeSignatureBeamGroupsAsync();
 
             if (hasAlternateEndings)
                 measureHeader.AlternateEndingsFlags = (Gp5MeasureHeader.AlternateEndings)await _primitivesReader.ReadByteAsync();
@@ -211,7 +211,7 @@ internal class Gp5TodoReader : IGp5TodoReader
                 measureHeader.AlternateEndingsFlags = (Gp5MeasureHeader.AlternateEndings)await _primitivesReader.ReadByteAsync();
 
             if (hasTimeSignature)
-                measureHeader.TimeSignature.BeamGroups = await ReadTimeSignatureBeamGroupsAsync();
+                measureHeader.TimeSignature!.BeamGroups = await ReadTimeSignatureBeamGroupsAsync();
         }
 
         if (!hasAlternateEndings)
