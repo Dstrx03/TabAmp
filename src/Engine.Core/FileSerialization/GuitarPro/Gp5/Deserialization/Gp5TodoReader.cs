@@ -339,8 +339,8 @@ internal class Gp5TodoReader : IGp5TodoReader
             throw new NotImplementedException("TODO: read chord");
         }
 
-        if (primaryFlags.HasFlag(Gp5Beat.Primary.Text_TODO))
-            beat.Text_TODO = await _stringsReader.ReadIntByteStringAsync();
+        if (primaryFlags.HasFlag(Gp5Beat.Primary.HasText))
+            beat.Text = await _stringsReader.ReadIntByteStringAsync();
 
         if (primaryFlags.HasFlag(Gp5Beat.Primary.Effect_TODO))
         {
@@ -354,9 +354,11 @@ internal class Gp5TodoReader : IGp5TodoReader
             throw new NotImplementedException("TODO: read mix table");
         }
 
+        beat.NotesStringsFlags_TODO = (Gp5Beat.NotesStrings_Todo)await _primitivesReader.ReadByteAsync();
+
         // TODO: research
-        var notesFlags = await _primitivesReader.ReadByteAsync();
-        /*var notesFlagsEnum = (Gp5Beat.NotesStrings_Todo)notesFlags;
+        //byte notesFlags = beat.NotesStringsFlags_TODO;
+        /*var notesFlagsEnum = beat.NotesStringsFlags_TODO;
         Console.WriteLine($"notesFlags={notesFlags}: {notesFlagsEnum}");
         for (var i = 0; i < 7; i++)
         {
@@ -370,8 +372,11 @@ internal class Gp5TodoReader : IGp5TodoReader
 
         beat.SecondaryFlags = (Gp5Beat.Secondary)await _primitivesReader.ReadShortAsync();
 
-        if (beat.SecondaryFlags.HasFlag(Gp5Beat.Secondary._TODO))
+        if (beat.SecondaryFlags.HasFlag(Gp5Beat.Secondary.TODO))
+        {
             beat.TODO = await _primitivesReader.ReadByteAsync();
+            throw new NotImplementedException($"TODO: research unknown flag and data, value={beat.TODO}");
+        }
 
         return beat;
     }
