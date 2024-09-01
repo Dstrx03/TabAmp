@@ -24,7 +24,7 @@ internal abstract class Gp5FileSerializationProcessor : IFileSerializationProces
         await NextMidiChannelsAsync();
         await NextMusicalDirectionsAsync();
         await NextRseMasterEffectReverbAsync();
-        await NextMeasuresAndTracksCountAsync();
+        await NextMeasureHeadersAndTracksCountAsync();
         await NextMeasureHeadersAsync();
         await NextTracksAsync();
         await NextMeasuresAsync();
@@ -58,7 +58,7 @@ internal abstract class Gp5FileSerializationProcessor : IFileSerializationProces
 
     protected abstract ValueTask NextRseMasterEffectReverbAsync();
 
-    protected abstract ValueTask NextMeasuresAndTracksCountAsync();
+    protected abstract ValueTask NextMeasureHeadersAndTracksCountAsync();
 
     private async ValueTask NextMeasureHeadersAsync()
     {

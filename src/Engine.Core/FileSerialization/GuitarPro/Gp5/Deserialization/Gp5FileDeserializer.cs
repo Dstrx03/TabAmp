@@ -63,9 +63,9 @@ internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeseria
     protected override async ValueTask NextRseMasterEffectReverbAsync() =>
         File.RseMasterEffect.Reverb = await _reader.ReadRseMasterEffectReverbAsync();
 
-    protected override async ValueTask NextMeasuresAndTracksCountAsync()
+    protected override async ValueTask NextMeasureHeadersAndTracksCountAsync()
     {
-        var (measureHeadersCount, tracksCount) = await _reader.ReadMeasuresAndTracksCountAsync();
+        var (measureHeadersCount, tracksCount) = await _reader.ReadMeasureHeadersAndTracksCountAsync();
         File.MeasureHeaders = new Gp5MeasureHeader[measureHeadersCount];
         File.Tracks = new Gp5Track[tracksCount];
 

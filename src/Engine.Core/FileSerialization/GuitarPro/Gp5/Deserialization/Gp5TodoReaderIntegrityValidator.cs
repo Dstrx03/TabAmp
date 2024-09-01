@@ -79,9 +79,9 @@ internal class Gp5TodoReaderIntegrityValidator : IGp5TodoReader
     public ValueTask<int> ReadRseMasterEffectReverbAsync() =>
         _reader.ReadRseMasterEffectReverbAsync();
 
-    public async ValueTask<(int measureHeadersCount, int tracksCount)> ReadMeasuresAndTracksCountAsync()
+    public async ValueTask<(int measureHeadersCount, int tracksCount)> ReadMeasureHeadersAndTracksCountAsync()
     {
-        var (measureHeadersCount, tracksCount) = await _reader.ReadMeasuresAndTracksCountAsync();
+        var (measureHeadersCount, tracksCount) = await _reader.ReadMeasureHeadersAndTracksCountAsync();
 
         if (measureHeadersCount < 1 || measureHeadersCount > 2048)
             // TODO: message

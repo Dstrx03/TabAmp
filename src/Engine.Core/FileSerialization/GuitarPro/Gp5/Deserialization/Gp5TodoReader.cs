@@ -170,7 +170,7 @@ internal class Gp5TodoReader : IGp5TodoReader
     public ValueTask<int> ReadRseMasterEffectReverbAsync() =>
         _primitivesReader.ReadIntAsync();
 
-    public async ValueTask<(int measureHeadersCount, int tracksCount)> ReadMeasuresAndTracksCountAsync() =>
+    public async ValueTask<(int measureHeadersCount, int tracksCount)> ReadMeasureHeadersAndTracksCountAsync() =>
         (measureHeadersCount: await _primitivesReader.ReadIntAsync(), tracksCount: await _primitivesReader.ReadIntAsync());
 
     public async ValueTask<Gp5MeasureHeader> ReadMeasureHeaderAsync(bool isFirst)
