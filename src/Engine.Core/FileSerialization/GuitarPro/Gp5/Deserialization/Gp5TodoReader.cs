@@ -354,21 +354,25 @@ internal class Gp5TodoReader : IGp5TodoReader
             throw new NotImplementedException("TODO: read mix table");
         }
 
-        beat.NotesStringsFlags_TODO = (Gp5Beat.NotesStrings_Todo)await _primitivesReader.ReadByteAsync();
+        beat.NotesPresenceFlags = (Gp5Beat.NotesPresence)await _primitivesReader.ReadByteAsync();
 
-        // TODO: research
-        //byte notesFlags = beat.NotesStringsFlags_TODO;
-        /*var notesFlagsEnum = beat.NotesStringsFlags_TODO;
-        Console.WriteLine($"notesFlags={notesFlags}: {notesFlagsEnum}");
-        for (var i = 0; i < 7; i++)
+        var notesCount =
+            Convert.ToByte(beat.NotesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasFirstStringNote)) +
+            Convert.ToByte(beat.NotesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasSecondStringNote)) +
+            Convert.ToByte(beat.NotesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasThirdStringNote)) +
+            Convert.ToByte(beat.NotesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasFourthStringNote)) +
+            Convert.ToByte(beat.NotesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasFifthStringNote)) +
+            Convert.ToByte(beat.NotesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasSixthStringNote)) +
+            Convert.ToByte(beat.NotesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasSeventhStringNote));
+
+        if (notesCount > 0)
         {
-            var stringNumber = i + 1;
-            if ((notesFlags & 1 << (7 - stringNumber)) > 0)
+            beat.Notes = new Gp5Note[notesCount];
+            for (var i = 0; i < beat.Notes.Length; i++)
             {
-                Console.WriteLine($"stringNumber={stringNumber} - has note?");
+                beat.Notes[i] = await ReadNoteAsync();
             }
-        }*/
-        // TODO: research
+        }
 
         beat.SecondaryFlags = (Gp5Beat.Secondary)await _primitivesReader.ReadShortAsync();
 
@@ -379,5 +383,11 @@ internal class Gp5TodoReader : IGp5TodoReader
         }
 
         return beat;
+    }
+
+    private async ValueTask<Gp5Note> ReadNoteAsync()
+    {
+        throw new NotImplementedException("TODO: read note");
+        return new Gp5Note();
     }
 }

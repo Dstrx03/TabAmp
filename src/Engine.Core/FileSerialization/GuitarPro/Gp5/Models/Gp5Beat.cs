@@ -11,7 +11,8 @@ internal class Gp5Beat
     public string? Text { get; set; }
     public object? Effect_TODO { get; set; }
     public object? MixTable_TODO { get; set; }
-    public NotesStrings_Todo NotesStringsFlags_TODO { get; set; }
+    public NotesPresence NotesPresenceFlags { get; set; }
+    public Gp5Note[]? Notes { get; set; }
     public Secondary SecondaryFlags { get; set; }
     public byte? TODO { get; set; }
 
@@ -29,16 +30,15 @@ internal class Gp5Beat
     }
 
     [Flags]
-    public enum NotesStrings_Todo : byte
+    public enum NotesPresence : byte
     {
-        // TODO: naming
-        Sev = 0x01,
-        Six = 0x02,
-        Fiv = 0x04,
-        Fou = 0x08,
-        Thi = 0x10,
-        Sec = 0x20,
-        Fir = 0x40
+        HasSeventhStringNote = 0x01,
+        HasSixthStringNote = 0x02,
+        HasFifthStringNote = 0x04,
+        HasFourthStringNote = 0x08,
+        HasThirdStringNote = 0x10,
+        HasSecondStringNote = 0x20,
+        HasFirstStringNote = 0x40
     }
 
     [Flags]
