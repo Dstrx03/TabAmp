@@ -3,6 +3,8 @@ using TabAmp.Engine.Core.FileSerialization.Common.Components.Context;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.Processor;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.SerialFileReader;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.IntegrityValidators;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Readers;
 using TabAmp.Engine.Core.Score;
 
 namespace Microsoft.Extensions.DependencyInjection;
