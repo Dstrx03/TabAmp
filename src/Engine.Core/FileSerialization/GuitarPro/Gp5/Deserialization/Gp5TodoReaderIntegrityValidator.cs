@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.Common.Exceptions;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
-using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Strings;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Text;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 
@@ -12,7 +12,7 @@ internal class Gp5TodoReaderIntegrityValidator : IGp5TodoReader
     public Gp5TodoReaderIntegrityValidator(IGp5TodoReader reader) =>
         _reader = reader;
 
-    public ValueTask<Gp5ByteString> ReadVersionAsync() =>
+    public ValueTask<Gp5ByteText> ReadVersionAsync() =>
         _reader.ReadVersionAsync();
 
     public ValueTask<Gp5ScoreInformation> ReadScoreInformationAsync() =>

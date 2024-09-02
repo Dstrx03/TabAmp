@@ -1,46 +1,46 @@
 ﻿using System;
 using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
-using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Strings;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Text;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 
 internal class Gp5TodoReader : IGp5TodoReader
 {
     private readonly IGp5BinaryPrimitivesReader _primitivesReader;
-    private readonly IGp5StringsReader _stringsReader;
+    private readonly IGp5TextReader _textReader;
     private readonly IGp5RseEqualizerReader _rseEqualizerReader;
 
-    public Gp5TodoReader(IGp5BinaryPrimitivesReader primitivesReader, IGp5StringsReader stringsReader,
+    public Gp5TodoReader(IGp5BinaryPrimitivesReader primitivesReader, IGp5TextReader textReader,
         IGp5RseEqualizerReader rseEqualizerReader)
     {
         _primitivesReader = primitivesReader;
-        _stringsReader = stringsReader;
+        _textReader = textReader;
         _rseEqualizerReader = rseEqualizerReader;
     }
 
-    public ValueTask<Gp5ByteString> ReadVersionAsync() =>
-        _stringsReader.ReadByteStringAsync(Gp5File.VersionMaxLength);
+    public ValueTask<Gp5ByteText> ReadVersionAsync() =>
+        _textReader.ReadByteTextAsync(Gp5File.VersionMaxLength);
 
     public async ValueTask<Gp5ScoreInformation> ReadScoreInformationAsync()
     {
         var scoreInformation = new Gp5ScoreInformation
         {
-            Title = await _stringsReader.ReadIntByteStringAsync(),
-            Subtitle = await _stringsReader.ReadIntByteStringAsync(),
-            Artist = await _stringsReader.ReadIntByteStringAsync(),
-            Album = await _stringsReader.ReadIntByteStringAsync(),
-            Words = await _stringsReader.ReadIntByteStringAsync(),
-            Music = await _stringsReader.ReadIntByteStringAsync(),
-            Copyright = await _stringsReader.ReadIntByteStringAsync(),
-            Tab = await _stringsReader.ReadIntByteStringAsync(),
-            Instructions = await _stringsReader.ReadIntByteStringAsync(),
+            Title = await _textReader.ReadIntByteTextAsync(),
+            Subtitle = await _textReader.ReadIntByteTextAsync(),
+            Artist = await _textReader.ReadIntByteTextAsync(),
+            Album = await _textReader.ReadIntByteTextAsync(),
+            Words = await _textReader.ReadIntByteTextAsync(),
+            Music = await _textReader.ReadIntByteTextAsync(),
+            Copyright = await _textReader.ReadIntByteTextAsync(),
+            Tab = await _textReader.ReadIntByteTextAsync(),
+            Instructions = await _textReader.ReadIntByteTextAsync(),
             Notice = new string[await _primitivesReader.ReadIntAsync()]
         };
 
         for (var i = 0; i < scoreInformation.Notice.Length; i++)
         {
-            scoreInformation.Notice[i] = await _stringsReader.ReadIntByteStringAsync();
+            scoreInformation.Notice[i] = await _textReader.ReadIntByteTextAsync();
         }
 
         return scoreInformation;
@@ -64,7 +64,7 @@ internal class Gp5TodoReader : IGp5TodoReader
         return new Gp5LyricsLine
         {
             StartFromBar = await _primitivesReader.ReadIntAsync(),
-            Lyrics = await _stringsReader.ReadIntStringAsync()
+            Lyrics = await _textReader.ReadIntTextAsync()
         };
     }
 
@@ -90,16 +90,16 @@ internal class Gp5TodoReader : IGp5TodoReader
             MarginBottom = await _primitivesReader.ReadIntAsync(),
             ScoreSizeProportion = await _primitivesReader.ReadIntAsync(),
             HeaderAndFooterFlags = (Gp5PageSetup.HeaderAndFooter)await _primitivesReader.ReadShortAsync(),
-            Title = await _stringsReader.ReadIntByteStringAsync(),
-            Subtitle = await _stringsReader.ReadIntByteStringAsync(),
-            Artist = await _stringsReader.ReadIntByteStringAsync(),
-            Album = await _stringsReader.ReadIntByteStringAsync(),
-            Words = await _stringsReader.ReadIntByteStringAsync(),
-            Music = await _stringsReader.ReadIntByteStringAsync(),
-            WordsAndMusic = await _stringsReader.ReadIntByteStringAsync(),
-            CopyrightFirstLine = await _stringsReader.ReadIntByteStringAsync(),
-            CopyrightSecondLine = await _stringsReader.ReadIntByteStringAsync(),
-            PageNumber = await _stringsReader.ReadIntByteStringAsync()
+            Title = await _textReader.ReadIntByteTextAsync(),
+            Subtitle = await _textReader.ReadIntByteTextAsync(),
+            Artist = await _textReader.ReadIntByteTextAsync(),
+            Album = await _textReader.ReadIntByteTextAsync(),
+            Words = await _textReader.ReadIntByteTextAsync(),
+            Music = await _textReader.ReadIntByteTextAsync(),
+            WordsAndMusic = await _textReader.ReadIntByteTextAsync(),
+            CopyrightFirstLine = await _textReader.ReadIntByteTextAsync(),
+            CopyrightSecondLine = await _textReader.ReadIntByteTextAsync(),
+            PageNumber = await _textReader.ReadIntByteTextAsync()
         };
     }
 
@@ -107,7 +107,7 @@ internal class Gp5TodoReader : IGp5TodoReader
     {
         return new Gp5Tempo
         {
-            WordIndication = await _stringsReader.ReadIntByteStringAsync(),
+            WordIndication = await _textReader.ReadIntByteTextAsync(),
             BeatsPerMinute = await _primitivesReader.ReadIntAsync(),
             HideBeatsPerMinute = await _primitivesReader.ReadBoolAsync()
         };
@@ -256,7 +256,7 @@ internal class Gp5TodoReader : IGp5TodoReader
     {
         return new Gp5Marker
         {
-            Name = await _stringsReader.ReadIntByteStringAsync(),
+            Name = await _textReader.ReadIntByteTextAsync(),
             Color = await _primitivesReader.ReadColorAsync()
         };
     }
@@ -266,7 +266,7 @@ internal class Gp5TodoReader : IGp5TodoReader
         return new Gp5Track
         {
             PrimaryFlags = (Gp5Track.Primary)await _primitivesReader.ReadByteAsync(),
-            Name = await _stringsReader.ReadByteStringAsync(Gp5Track.NameMaxLength),
+            Name = await _textReader.ReadByteTextAsync(Gp5Track.NameMaxLength),
             StringsCount = await _primitivesReader.ReadIntAsync(),
             StringsTuning = await ReadStringsTuningAsync(),
             Port = await _primitivesReader.ReadIntAsync(),
@@ -298,8 +298,8 @@ internal class Gp5TodoReader : IGp5TodoReader
             RseSoundBank = await _primitivesReader.ReadIntAsync(),
             _E01 = await _primitivesReader.ReadIntAsync(),
             RseEqualizer = await _rseEqualizerReader.ReadRseEqualizerAsync(Gp5Track.RseEqualizerBandsCount),
-            RseEffectName = await _stringsReader.ReadIntByteStringAsync(),
-            RseEffectCategoryName = await _stringsReader.ReadIntByteStringAsync()
+            RseEffectName = await _textReader.ReadIntByteTextAsync(),
+            RseEffectCategoryName = await _textReader.ReadIntByteTextAsync()
         };
     }
 
@@ -340,7 +340,7 @@ internal class Gp5TodoReader : IGp5TodoReader
         }
 
         if (primaryFlags.HasFlag(Gp5Beat.Primary.HasText))
-            beat.Text = await _stringsReader.ReadIntByteStringAsync();
+            beat.Text = await _textReader.ReadIntByteTextAsync();
 
         if (primaryFlags.HasFlag(Gp5Beat.Primary.Effect_TODO))
         {

@@ -1,12 +1,12 @@
 ﻿using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
-using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Strings;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Text;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 
 internal interface IGp5TodoReader
 {
-    ValueTask<Gp5ByteString> ReadVersionAsync();
+    ValueTask<Gp5ByteText> ReadVersionAsync();
     ValueTask<Gp5ScoreInformation> ReadScoreInformationAsync();
     ValueTask<Gp5Lyrics> ReadLyricsAsync();
     ValueTask<Gp5RseMasterEffect> ReadRseMasterEffectAsync();
