@@ -6,7 +6,8 @@ internal class Gp5Beat
 {
     public Primary PrimaryFlags { get; set; }
     public byte? Status_TODO { get; set; }
-    public sbyte Duration_TODO { get; set; }
+    public sbyte Duration { get; set; }
+    public int? Tuplet { get; set; }
     public object? Chord_TODO { get; set; }
     public string? Text { get; set; }
     public object? Effect_TODO { get; set; }
@@ -20,7 +21,9 @@ internal class Gp5Beat
     [Flags]
     public enum Primary : byte
     {
+        HasDot = 0x01,
         HasText = 0x04,
+        HasTuplet = 0x20,
 
         // TODO: naming
         Status_TODO = 0x40,

@@ -331,7 +331,10 @@ internal class Gp5TodoReader : IGp5TodoReader
         if (primaryFlags.HasFlag(Gp5Beat.Primary.Status_TODO))
             beat.Status_TODO = await _primitivesReader.ReadByteAsync();
 
-        beat.Duration_TODO = await _primitivesReader.ReadSignedByteAsync();
+        beat.Duration = await _primitivesReader.ReadSignedByteAsync();
+
+        if (primaryFlags.HasFlag(Gp5Beat.Primary.HasTuplet))
+            beat.Tuplet = await _primitivesReader.ReadIntAsync();
 
         if (primaryFlags.HasFlag(Gp5Beat.Primary.Chord_TODO))
         {
