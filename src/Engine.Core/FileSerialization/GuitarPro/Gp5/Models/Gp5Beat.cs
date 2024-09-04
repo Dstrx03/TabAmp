@@ -10,7 +10,7 @@ internal class Gp5Beat
     public int? Tuplet { get; set; }
     public object? Chord_TODO { get; set; }
     public string? Text { get; set; }
-    public object? Effect_TODO { get; set; }
+    public Gp5BeatEffect? Effect { get; set; }
     public object? MixTable_TODO { get; set; }
     public NotesPresence NotesPresenceFlags { get; set; }
     public Gp5Note[]? Notes { get; set; }
@@ -23,12 +23,12 @@ internal class Gp5Beat
     {
         HasDot = 0x01,
         HasText = 0x04,
+        HasEffect = 0x08,
         HasTuplet = 0x20,
         HasStatus = 0x40,
 
         // TODO: naming
         Chord_TODO = 0x02,
-        Effect_TODO = 0x08,
         MixTable_TODO = 0x10
     }
 

@@ -323,7 +323,7 @@ internal class Gp5TodoReader : IGp5TodoReader
     public async ValueTask<Gp5Beat> ReadBeatAsync()
     {
         var primaryFlags = (Gp5Beat.Primary)await _primitivesReader.ReadByteAsync();
-        var beat = new Gp5Beat()
+        var beat = new Gp5Beat
         {
             PrimaryFlags = primaryFlags,
         };
@@ -345,11 +345,8 @@ internal class Gp5TodoReader : IGp5TodoReader
         if (primaryFlags.HasFlag(Gp5Beat.Primary.HasText))
             beat.Text = await _textReader.ReadIntByteTextAsync();
 
-        if (primaryFlags.HasFlag(Gp5Beat.Primary.Effect_TODO))
-        {
-            beat.Effect_TODO = null;
-            throw new NotImplementedException("TODO: read effect");
-        }
+        if (primaryFlags.HasFlag(Gp5Beat.Primary.HasEffect))
+            beat.Effect = await ReadBeatEffectAsync();
 
         if (primaryFlags.HasFlag(Gp5Beat.Primary.MixTable_TODO))
         {
@@ -386,6 +383,35 @@ internal class Gp5TodoReader : IGp5TodoReader
         }
 
         return beat;
+    }
+
+    private async ValueTask<Gp5BeatEffect> ReadBeatEffectAsync()
+    {
+        var beatEffect = new Gp5BeatEffect
+        {
+            PrimaryFlags = (Gp5BeatEffect.Primary)await _primitivesReader.ReadByteAsync(),
+            SecondaryFlags = (Gp5BeatEffect.Secondary)await _primitivesReader.ReadByteAsync()
+        };
+
+        if (beatEffect.PrimaryFlags.HasFlag(Gp5BeatEffect.Primary.SlapEffect_TODO))
+            beatEffect.SlapEffect_TODO = await _primitivesReader.ReadSignedByteAsync();
+
+        if (beatEffect.SecondaryFlags.HasFlag(Gp5BeatEffect.Secondary.TremoloBar_TODO))
+        {
+            beatEffect.TremoloBar_TODO = null;
+            throw new NotImplementedException("TODO: read tremolo bar");
+        }
+
+        if (beatEffect.PrimaryFlags.HasFlag(Gp5BeatEffect.Primary.Stroke_TODO))
+        {
+            beatEffect.Upstroke_TODO = await _primitivesReader.ReadSignedByteAsync();
+            beatEffect.Downstroke_TODO = await _primitivesReader.ReadSignedByteAsync();
+        }
+
+        if (beatEffect.SecondaryFlags.HasFlag(Gp5BeatEffect.Secondary.PickStroke_TODO))
+            beatEffect.PickStroke_TODO = await _primitivesReader.ReadSignedByteAsync();
+
+        return beatEffect;
     }
 
     private async ValueTask<Gp5Note> ReadNoteAsync()
