@@ -8,24 +8,26 @@ internal class Gp5BeatEffect
     public Secondary SecondaryFlags { get; set; }
     public sbyte? SlapEffect_TODO { get; set; }
     public object? TremoloBar_TODO { get; set; }
-    public sbyte? Upstroke_TODO { get; set; }
-    public sbyte? Downstroke_TODO { get; set; }
-    public sbyte? PickStroke_TODO { get; set; }
+    public sbyte? UpstrokeDuration { get; set; }
+    public sbyte? DownstrokeDuration { get; set; }
+    public sbyte? PickStroke { get; set; }
 
 
     [Flags]
     public enum Primary : byte
     {
+        HasStroke = 0x40,
+
         // TODO: naming
-        SlapEffect_TODO = 0x20,
-        Stroke_TODO = 0x40
+        SlapEffect_TODO = 0x20
     }
 
     [Flags]
     public enum Secondary : byte
     {
+        HasPickStroke = 0x02,
+
         // TODO: naming
-        PickStroke_TODO = 0x02,
         TremoloBar_TODO = 0x04
     }
 }

@@ -402,14 +402,14 @@ internal class Gp5TodoReader : IGp5TodoReader
             throw new NotImplementedException("TODO: read tremolo bar");
         }
 
-        if (beatEffect.PrimaryFlags.HasFlag(Gp5BeatEffect.Primary.Stroke_TODO))
+        if (beatEffect.PrimaryFlags.HasFlag(Gp5BeatEffect.Primary.HasStroke))
         {
-            beatEffect.Upstroke_TODO = await _primitivesReader.ReadSignedByteAsync();
-            beatEffect.Downstroke_TODO = await _primitivesReader.ReadSignedByteAsync();
+            beatEffect.UpstrokeDuration = await _primitivesReader.ReadSignedByteAsync();
+            beatEffect.DownstrokeDuration = await _primitivesReader.ReadSignedByteAsync();
         }
 
-        if (beatEffect.SecondaryFlags.HasFlag(Gp5BeatEffect.Secondary.PickStroke_TODO))
-            beatEffect.PickStroke_TODO = await _primitivesReader.ReadSignedByteAsync();
+        if (beatEffect.SecondaryFlags.HasFlag(Gp5BeatEffect.Secondary.HasPickStroke))
+            beatEffect.PickStroke = await _primitivesReader.ReadSignedByteAsync();
 
         return beatEffect;
     }
