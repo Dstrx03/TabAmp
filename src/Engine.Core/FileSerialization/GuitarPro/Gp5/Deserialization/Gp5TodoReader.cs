@@ -394,7 +394,7 @@ internal class Gp5TodoReader : IGp5TodoReader
         };
 
         if (beatEffect.PrimaryFlags.HasFlag(Gp5BeatEffect.Primary.SlapEffect_TODO))
-            beatEffect.SlapEffect_TODO = await _primitivesReader.ReadSignedByteAsync();
+            beatEffect.SlapEffect_TODO = await _primitivesReader.ReadByteAsync();
 
         if (beatEffect.SecondaryFlags.HasFlag(Gp5BeatEffect.Secondary.TremoloBar_TODO))
         {
@@ -404,12 +404,12 @@ internal class Gp5TodoReader : IGp5TodoReader
 
         if (beatEffect.PrimaryFlags.HasFlag(Gp5BeatEffect.Primary.HasStroke))
         {
-            beatEffect.UpstrokeDuration = await _primitivesReader.ReadSignedByteAsync();
-            beatEffect.DownstrokeDuration = await _primitivesReader.ReadSignedByteAsync();
+            beatEffect.UpstrokeDuration = await _primitivesReader.ReadByteAsync();
+            beatEffect.DownstrokeDuration = await _primitivesReader.ReadByteAsync();
         }
 
         if (beatEffect.SecondaryFlags.HasFlag(Gp5BeatEffect.Secondary.HasPickStroke))
-            beatEffect.PickStroke = await _primitivesReader.ReadSignedByteAsync();
+            beatEffect.PickStroke = await _primitivesReader.ReadByteAsync();
 
         return beatEffect;
     }

@@ -6,11 +6,11 @@ internal class Gp5BeatEffect
 {
     public Primary PrimaryFlags { get; set; }
     public Secondary SecondaryFlags { get; set; }
-    public sbyte? SlapEffect_TODO { get; set; }
+    public byte? SlapEffect_TODO { get; set; }
     public object? TremoloBar_TODO { get; set; }
-    public sbyte? UpstrokeDuration { get; set; }
-    public sbyte? DownstrokeDuration { get; set; }
-    public sbyte? PickStroke { get; set; }
+    public byte? UpstrokeDuration { get; set; }
+    public byte? DownstrokeDuration { get; set; }
+    public byte? PickStroke { get; set; }
 
 
     [Flags]
