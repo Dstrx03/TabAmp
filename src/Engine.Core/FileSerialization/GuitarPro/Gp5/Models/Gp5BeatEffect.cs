@@ -6,7 +6,7 @@ internal class Gp5BeatEffect
 {
     public Primary PrimaryFlags { get; set; }
     public Secondary SecondaryFlags { get; set; }
-    public byte? SlapEffect_TODO { get; set; }
+    public byte? TappingSlappingPopping { get; set; }
     public object? TremoloBar_TODO { get; set; }
     public byte? UpstrokeDuration { get; set; }
     public byte? DownstrokeDuration { get; set; }
@@ -16,10 +16,8 @@ internal class Gp5BeatEffect
     [Flags]
     public enum Primary : byte
     {
-        HasStroke = 0x40,
-
-        // TODO: naming
-        SlapEffect_TODO = 0x20
+        HasTappingSlappingPopping = 0x20,
+        HasStroke = 0x40
     }
 
     [Flags]

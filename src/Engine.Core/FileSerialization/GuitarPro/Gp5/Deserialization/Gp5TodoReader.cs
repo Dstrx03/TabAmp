@@ -393,8 +393,8 @@ internal class Gp5TodoReader : IGp5TodoReader
             SecondaryFlags = (Gp5BeatEffect.Secondary)await _primitivesReader.ReadByteAsync()
         };
 
-        if (beatEffect.PrimaryFlags.HasFlag(Gp5BeatEffect.Primary.SlapEffect_TODO))
-            beatEffect.SlapEffect_TODO = await _primitivesReader.ReadByteAsync();
+        if (beatEffect.PrimaryFlags.HasFlag(Gp5BeatEffect.Primary.HasTappingSlappingPopping))
+            beatEffect.TappingSlappingPopping = await _primitivesReader.ReadByteAsync();
 
         if (beatEffect.SecondaryFlags.HasFlag(Gp5BeatEffect.Secondary.TremoloBar_TODO))
         {
