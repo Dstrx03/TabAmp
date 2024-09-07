@@ -2,7 +2,7 @@
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 
-internal class Gp5BeatEffect
+internal class Gp5BeatEffects
 {
     public Primary PrimaryFlags { get; set; }
     public Secondary SecondaryFlags { get; set; }
