@@ -23,6 +23,7 @@ internal class Gp5BeatEffects
     [Flags]
     public enum Secondary : byte
     {
+        HasStrokeRasgueado = 0x01,
         HasPickStroke = 0x02,
 
         // TODO: naming
