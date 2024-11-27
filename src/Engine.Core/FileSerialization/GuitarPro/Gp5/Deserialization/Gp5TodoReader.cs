@@ -396,9 +396,9 @@ internal class Gp5TodoReader : IGp5TodoReader
         if (beatEffects.PrimaryFlags.HasFlag(Gp5BeatEffects.Primary.HasTappingSlappingPopping))
             beatEffects.TappingSlappingPopping = await _primitivesReader.ReadByteAsync();
 
-        if (beatEffects.SecondaryFlags.HasFlag(Gp5BeatEffects.Secondary.TremoloBar_TODO))
+        if (beatEffects.SecondaryFlags.HasFlag(Gp5BeatEffects.Secondary.HasTremoloBar))
         {
-            beatEffects.TremoloBar_TODO = null;
+            beatEffects.TremoloBar = null;
             throw new NotImplementedException("TODO: read tremolo bar");
         }
 
