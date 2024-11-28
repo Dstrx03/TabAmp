@@ -3,6 +3,6 @@
 internal class Gp5Bend
 {
     public byte Shape { get; set; }
-    public int Shift { get; set; }
-    public (int time, int shift, byte vibrato)[] Points { get; set; }
+    public int PitchShift { get; set; }
+    public (int timePosition, int pitchShift, byte vibrato)[] Points { get; set; }
 }

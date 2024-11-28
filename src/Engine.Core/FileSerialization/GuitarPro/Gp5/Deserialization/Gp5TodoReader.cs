@@ -418,17 +418,17 @@ internal class Gp5TodoReader : IGp5TodoReader
         var bend = new Gp5Bend
         {
             Shape = await _primitivesReader.ReadByteAsync(),
-            Shift = await _primitivesReader.ReadIntAsync(),
+            PitchShift = await _primitivesReader.ReadIntAsync(),
             Points = new (int, int, byte)[await _primitivesReader.ReadIntAsync()]
         };
 
         for (var i = 0; i < bend.Points.Length; i++)
         {
-            var time = await _primitivesReader.ReadIntAsync();
-            var shift = await _primitivesReader.ReadIntAsync();
+            var timePosition = await _primitivesReader.ReadIntAsync();
+            var pitchShift = await _primitivesReader.ReadIntAsync();
             var vibrato = await _primitivesReader.ReadByteAsync();
 
-            bend.Points[i] = (time, shift, vibrato);
+            bend.Points[i] = (timePosition, pitchShift, vibrato);
         }
 
         return bend;
