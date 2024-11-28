@@ -397,10 +397,7 @@ internal class Gp5TodoReader : IGp5TodoReader
             beatEffects.TappingSlappingPopping = await _primitivesReader.ReadByteAsync();
 
         if (beatEffects.SecondaryFlags.HasFlag(Gp5BeatEffects.Secondary.HasTremoloBar))
-        {
-            beatEffects.TremoloBar = null;
-            throw new NotImplementedException("TODO: read tremolo bar");
-        }
+            beatEffects.TremoloBar = await ReadBendAsync();
 
         if (beatEffects.PrimaryFlags.HasFlag(Gp5BeatEffects.Primary.HasStroke))
         {
@@ -412,6 +409,27 @@ internal class Gp5TodoReader : IGp5TodoReader
             beatEffects.PickStroke = await _primitivesReader.ReadByteAsync();
 
         return beatEffects;
+    }
+
+    private async ValueTask<Gp5Bend> ReadBendAsync()
+    {
+        var bend = new Gp5Bend
+        {
+            Shape = await _primitivesReader.ReadByteAsync(),
+            Shift = await _primitivesReader.ReadIntAsync(),
+            Points = new (int, int, byte)[await _primitivesReader.ReadIntAsync()]
+        };
+
+        for (var i = 0; i < bend.Points.Length; i++)
+        {
+            var time = await _primitivesReader.ReadIntAsync();
+            var shift = await _primitivesReader.ReadIntAsync();
+            var vibrato = await _primitivesReader.ReadByteAsync();
+
+            bend.Points[i] = (time, shift, vibrato);
+        }
+
+        return bend;
     }
 
     private async ValueTask<Gp5Note> ReadNoteAsync()

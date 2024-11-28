@@ -7,7 +7,7 @@ internal class Gp5BeatEffects
     public Primary PrimaryFlags { get; set; }
     public Secondary SecondaryFlags { get; set; }
     public byte? TappingSlappingPopping { get; set; }
-    public object? TremoloBar { get; set; }
+    public Gp5Bend? TremoloBar { get; set; }
     public byte? UpstrokeDuration { get; set; }
     public byte? DownstrokeDuration { get; set; }
     public byte? PickStroke { get; set; }
