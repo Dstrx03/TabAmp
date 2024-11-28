@@ -387,25 +387,27 @@ internal class Gp5TodoReader : IGp5TodoReader
 
     private async ValueTask<Gp5BeatEffects> ReadBeatEffectsAsync()
     {
+        var primaryFlags = (Gp5BeatEffects.Primary)await _primitivesReader.ReadByteAsync();
+        var secondaryFlags = (Gp5BeatEffects.Secondary)await _primitivesReader.ReadByteAsync();
         var beatEffects = new Gp5BeatEffects
         {
-            PrimaryFlags = (Gp5BeatEffects.Primary)await _primitivesReader.ReadByteAsync(),
-            SecondaryFlags = (Gp5BeatEffects.Secondary)await _primitivesReader.ReadByteAsync()
+            PrimaryFlags = primaryFlags,
+            SecondaryFlags = secondaryFlags
         };
 
-        if (beatEffects.PrimaryFlags.HasFlag(Gp5BeatEffects.Primary.HasTappingSlappingPopping))
+        if (primaryFlags.HasFlag(Gp5BeatEffects.Primary.HasTappingSlappingPopping))
             beatEffects.TappingSlappingPopping = await _primitivesReader.ReadByteAsync();
 
-        if (beatEffects.SecondaryFlags.HasFlag(Gp5BeatEffects.Secondary.HasTremoloBar))
+        if (secondaryFlags.HasFlag(Gp5BeatEffects.Secondary.HasTremoloBar))
             beatEffects.TremoloBar = await ReadBendAsync();
 
-        if (beatEffects.PrimaryFlags.HasFlag(Gp5BeatEffects.Primary.HasStroke))
+        if (primaryFlags.HasFlag(Gp5BeatEffects.Primary.HasStroke))
         {
             beatEffects.UpstrokeDuration = await _primitivesReader.ReadByteAsync();
             beatEffects.DownstrokeDuration = await _primitivesReader.ReadByteAsync();
         }
 
-        if (beatEffects.SecondaryFlags.HasFlag(Gp5BeatEffects.Secondary.HasPickStroke))
+        if (secondaryFlags.HasFlag(Gp5BeatEffects.Secondary.HasPickStroke))
             beatEffects.PickStroke = await _primitivesReader.ReadByteAsync();
 
         return beatEffects;
