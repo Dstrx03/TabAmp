@@ -164,6 +164,10 @@ internal class Gp5TodoReaderIntegrityValidator : IGp5TodoReader
             throw new FileSerializationIntegrityException($"C expected to be 767: _C01={track._C01}");
         }
 
+        return track;
+
+        /*
+        // TODO: moved to ReadRseInstrumentAsync() and ReadRseInstrumentEffectAsync()
         if (track._E01 != -1)
             // TODO: message
             throw new FileSerializationIntegrityException($"E expected to be -1: _E01={track._E01}");
@@ -208,6 +212,7 @@ internal class Gp5TodoReaderIntegrityValidator : IGp5TodoReader
 
         // TODO: message
         throw new FileSerializationIntegrityException($"Instrument expected to be -1,128,24,25,26,27,33,34,36: Instrument={track.RseInstrument}, _D01={track._D01},");
+        */
     }
 
     public ValueTask<byte> ReadMeasureBreakLineAsync() =>
