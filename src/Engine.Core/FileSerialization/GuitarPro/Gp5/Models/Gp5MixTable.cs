@@ -30,6 +30,13 @@ internal class Gp5MixTable
     [Flags]
     public enum Primary : byte
     {
-        // TODO: flags
+        ChangeVolumeForAllTracks = 0x01,
+        ChangeBalanceForAllTracks = 0x02,
+        ChangeChorusForAllTracks = 0x04,
+        ChangeReverbForAllTracks = 0x08,
+        ChangePhaserForAllTracks = 0x10,
+        ChangeTremoloForAllTracks = 0x20,
+        UseRse = 0x40,
+        DisplayWahWahOn = 0x80
     }
 }

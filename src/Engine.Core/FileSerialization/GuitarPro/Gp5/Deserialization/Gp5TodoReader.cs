@@ -420,27 +420,27 @@ internal class Gp5TodoReader : IGp5TodoReader
             Tempo = await ReadTempoAsync()
         };
 
-        bool HasTransition(int value) => value != -1;
+        bool HasValueChange(int value) => value != -1;
 
-        if (HasTransition(mixTable.Volume))
+        if (HasValueChange(mixTable.Volume))
             mixTable.VolumeTransition = await _primitivesReader.ReadByteAsync();
 
-        if (HasTransition(mixTable.Balance))
+        if (HasValueChange(mixTable.Balance))
             mixTable.BalanceTransition = await _primitivesReader.ReadByteAsync();
 
-        if (HasTransition(mixTable.Chorus))
+        if (HasValueChange(mixTable.Chorus))
             mixTable.ChorusTransition = await _primitivesReader.ReadByteAsync();
 
-        if (HasTransition(mixTable.Reverb))
+        if (HasValueChange(mixTable.Reverb))
             mixTable.ReverbTransition = await _primitivesReader.ReadByteAsync();
 
-        if (HasTransition(mixTable.Phaser))
+        if (HasValueChange(mixTable.Phaser))
             mixTable.PhaserTransition = await _primitivesReader.ReadByteAsync();
 
-        if (HasTransition(mixTable.Tremolo))
+        if (HasValueChange(mixTable.Tremolo))
             mixTable.TremoloTransition = await _primitivesReader.ReadByteAsync();
 
-        if (HasTransition(mixTable.Tempo.BeatsPerMinute))
+        if (HasValueChange(mixTable.Tempo.BeatsPerMinute))
         {
             mixTable.TempoTransition = await _primitivesReader.ReadByteAsync();
             mixTable.Tempo.HideBeatsPerMinute = await _primitivesReader.ReadBoolAsync();
