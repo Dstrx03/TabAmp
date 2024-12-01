@@ -8,7 +8,7 @@ internal class Gp5Beat
     public byte? Status { get; set; }
     public sbyte Duration { get; set; }
     public int? Tuplet { get; set; }
-    public object? Chord_TODO { get; set; }
+    public Gp5Chord? Chord { get; set; }
     public string? Text { get; set; }
     public Gp5BeatEffects? Effects { get; set; }
     public Gp5MixTable? MixTable { get; set; }
@@ -22,14 +22,12 @@ internal class Gp5Beat
     public enum Primary : byte
     {
         HasDot = 0x01,
+        HasChord = 0x02,
         HasText = 0x04,
         HasEffects = 0x08,
         HasMixTable = 0x10,
         HasTuplet = 0x20,
-        HasStatus = 0x40,
-
-        // TODO: naming
-        Chord_TODO = 0x02
+        HasStatus = 0x40
     }
 
     [Flags]

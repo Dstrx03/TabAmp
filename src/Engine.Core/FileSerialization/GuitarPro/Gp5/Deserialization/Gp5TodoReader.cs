@@ -339,11 +339,8 @@ internal class Gp5TodoReader : IGp5TodoReader
         if (primaryFlags.HasFlag(Gp5Beat.Primary.HasTuplet))
             beat.Tuplet = await _primitivesReader.ReadIntAsync();
 
-        if (primaryFlags.HasFlag(Gp5Beat.Primary.Chord_TODO))
-        {
-            beat.Chord_TODO = null;
-            throw new NotImplementedException("TODO: read chord");
-        }
+        if (primaryFlags.HasFlag(Gp5Beat.Primary.HasChord))
+            beat.Chord = await ReadChordAsync();
 
         if (primaryFlags.HasFlag(Gp5Beat.Primary.HasText))
             beat.Text = await _textReader.ReadIntByteTextAsync();
@@ -383,6 +380,32 @@ internal class Gp5TodoReader : IGp5TodoReader
         }
 
         return beat;
+    }
+
+    private async ValueTask<Gp5Chord> ReadChordAsync()
+    {
+        var chord = new Gp5Chord();
+
+        var isNewFormat = await _primitivesReader.ReadBoolAsync();
+        var sharp = await _primitivesReader.ReadBoolAsync();
+
+        var a1 = await _primitivesReader.ReadByteAsync();
+        var a2 = await _primitivesReader.ReadByteAsync();
+        var a3 = await _primitivesReader.ReadByteAsync();
+
+        var root = await _primitivesReader.ReadByteAsync();
+        var type = await _primitivesReader.ReadByteAsync();
+        var extension = await _primitivesReader.ReadByteAsync();
+        var bass = await _primitivesReader.ReadIntAsync();
+        var tonality = await _primitivesReader.ReadIntAsync();
+        var add = await _primitivesReader.ReadBoolAsync();
+        var name = await _textReader.ReadByteTextAsync(22);
+        var fifth = await _primitivesReader.ReadByteAsync();
+        var ninth = await _primitivesReader.ReadByteAsync();
+        var eleventh = await _primitivesReader.ReadByteAsync();
+        var firstFret = await _primitivesReader.ReadIntAsync();
+
+        return chord;
     }
 
     private async ValueTask<Gp5RseInstrument> ReadRseInstrumentAsync()
