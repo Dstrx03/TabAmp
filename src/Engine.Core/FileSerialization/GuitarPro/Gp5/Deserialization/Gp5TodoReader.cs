@@ -385,6 +385,12 @@ internal class Gp5TodoReader : IGp5TodoReader
 
     private async ValueTask<Gp5Chord> ReadChordAsync()
     {
+        // TODO: apply more transparent naming for Gp5Chord model properties
+        // TODO: apply cleaner reading code
+        // TODO: use consts
+        // TODO: manual QA
+        throw new NotImplementedException("TODO: complete chord reading.");
+
         var isNewFormat = await _primitivesReader.ReadBoolAsync();
 
         // TODO: move to the integrity validation layer
@@ -393,7 +399,7 @@ internal class Gp5TodoReader : IGp5TodoReader
 
         var chord = new Gp5Chord
         {
-            Sharp = await _primitivesReader.ReadBoolAsync(), 
+            Sharp = await _primitivesReader.ReadBoolAsync(),
             _A01 = await _primitivesReader.ReadByteAsync(),
             _A02 = await _primitivesReader.ReadByteAsync(),
             _A03 = await _primitivesReader.ReadByteAsync(),
