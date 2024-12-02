@@ -470,8 +470,8 @@ internal class Gp5TodoReader : IGp5TodoReader
     {
         return new Gp5RseInstrumentEffect
         {
-            EffectName = await _textReader.ReadIntByteTextAsync(),
-            EffectCategoryName = await _textReader.ReadIntByteTextAsync()
+            Name = await _textReader.ReadIntByteTextAsync(),
+            CategoryName = await _textReader.ReadIntByteTextAsync()
         };
     }
 

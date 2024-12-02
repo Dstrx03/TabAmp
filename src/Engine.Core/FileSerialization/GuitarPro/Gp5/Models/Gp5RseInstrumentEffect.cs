@@ -2,6 +2,6 @@
 
 internal class Gp5RseInstrumentEffect
 {
-    public string EffectName { get; set; }
-    public string EffectCategoryName { get; set; }
+    public string Name { get; set; }
+    public string CategoryName { get; set; }
 }
