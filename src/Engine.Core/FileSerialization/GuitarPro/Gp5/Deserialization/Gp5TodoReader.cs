@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using TabAmp.Engine.Core.FileSerialization.Common.Exceptions;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Text;
 
@@ -384,26 +385,66 @@ internal class Gp5TodoReader : IGp5TodoReader
 
     private async ValueTask<Gp5Chord> ReadChordAsync()
     {
-        var chord = new Gp5Chord();
-
         var isNewFormat = await _primitivesReader.ReadBoolAsync();
-        var sharp = await _primitivesReader.ReadBoolAsync();
 
-        var a1 = await _primitivesReader.ReadByteAsync();
-        var a2 = await _primitivesReader.ReadByteAsync();
-        var a3 = await _primitivesReader.ReadByteAsync();
+        // TODO: move to the integrity validation layer
+        if (!isNewFormat)
+            throw new FileSerializationIntegrityException("Expected chord to have ~new~ format.");
 
-        var root = await _primitivesReader.ReadByteAsync();
-        var type = await _primitivesReader.ReadByteAsync();
-        var extension = await _primitivesReader.ReadByteAsync();
-        var bass = await _primitivesReader.ReadIntAsync();
-        var tonality = await _primitivesReader.ReadIntAsync();
-        var add = await _primitivesReader.ReadBoolAsync();
-        var name = await _textReader.ReadByteTextAsync(22);
-        var fifth = await _primitivesReader.ReadByteAsync();
-        var ninth = await _primitivesReader.ReadByteAsync();
-        var eleventh = await _primitivesReader.ReadByteAsync();
-        var firstFret = await _primitivesReader.ReadIntAsync();
+        var chord = new Gp5Chord
+        {
+            Sharp = await _primitivesReader.ReadBoolAsync(), 
+            _A01 = await _primitivesReader.ReadByteAsync(),
+            _A02 = await _primitivesReader.ReadByteAsync(),
+            _A03 = await _primitivesReader.ReadByteAsync(),
+            Root = await _primitivesReader.ReadByteAsync(),
+            Type = await _primitivesReader.ReadByteAsync(),
+            Extension = await _primitivesReader.ReadByteAsync(),
+            Bass = await _primitivesReader.ReadIntAsync(),
+            Tonality = await _primitivesReader.ReadIntAsync(),
+            Add = await _primitivesReader.ReadBoolAsync(),
+            Name = await _textReader.ReadByteTextAsync(22),
+            FifthTonality = await _primitivesReader.ReadByteAsync(),
+            NinthTonality = await _primitivesReader.ReadByteAsync(),
+            EleventhTonality = await _primitivesReader.ReadByteAsync(),
+            Fret = await _primitivesReader.ReadIntAsync()
+        };
+
+        var frets = new int[7];
+        chord.Frets = frets;
+        for (var i = 0; i < frets.Length; i++)
+            frets[i] = await _primitivesReader.ReadIntAsync();
+
+        chord.BarresCount = await _primitivesReader.ReadByteAsync();
+
+        var barreFrets = new byte[5];
+        chord.BarreFrets = barreFrets;
+        for (var i = 0; i < barreFrets.Length; i++)
+            barreFrets[i] = await _primitivesReader.ReadByteAsync();
+
+        var barreStarts = new byte[5];
+        chord.BarreStarts = barreStarts;
+        for (var i = 0; i < barreStarts.Length; i++)
+            barreStarts[i] = await _primitivesReader.ReadByteAsync();
+
+        var barreEnds = new byte[5];
+        chord.BarreEnds = barreEnds;
+        for (var i = 0; i < barreEnds.Length; i++)
+            barreEnds[i] = await _primitivesReader.ReadByteAsync();
+
+        var omissions = new bool[7];
+        chord.Omissions = omissions;
+        for (var i = 0; i < omissions.Length; i++)
+            omissions[i] = await _primitivesReader.ReadBoolAsync();
+
+        chord._B01 = await _primitivesReader.ReadByteAsync();
+
+        var fingerings = new sbyte[7];
+        chord.Fingerings = fingerings;
+        for (var i = 0; i < fingerings.Length; i++)
+            fingerings[i] = await _primitivesReader.ReadSignedByteAsync();
+
+        chord.Show = await _primitivesReader.ReadBoolAsync();
 
         return chord;
     }
