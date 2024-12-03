@@ -576,7 +576,38 @@ internal class Gp5TodoReader : IGp5TodoReader
 
     private async ValueTask<Gp5Note> ReadNoteAsync()
     {
-        throw new NotImplementedException("TODO: read note");
-        return new Gp5Note();
+        var primaryFlags = (Gp5Note.Primary)await _primitivesReader.ReadByteAsync();
+        var note = new Gp5Note
+        {
+            PrimaryFlags = primaryFlags
+        };
+
+        if (primaryFlags.HasFlag(Gp5Note.Primary.nonEmpty_TODO))
+            note.Type_TODO = await _primitivesReader.ReadByteAsync();
+
+        if (primaryFlags.HasFlag(Gp5Note.Primary.dynamic_TODO))
+            note.Dynamic_TODO = await _primitivesReader.ReadSignedByteAsync();
+
+        if (primaryFlags.HasFlag(Gp5Note.Primary.nonEmpty_TODO))
+            note.Fret_TODO = await _primitivesReader.ReadSignedByteAsync();
+
+        if (primaryFlags.HasFlag(Gp5Note.Primary.fingering_TODO))
+        {
+            note.LeftHandFinger_TODO = await _primitivesReader.ReadSignedByteAsync();
+            note.RightHandFinger_TODO = await _primitivesReader.ReadSignedByteAsync();
+        }
+
+        if (primaryFlags.HasFlag(Gp5Note.Primary.soundDuration_TODO))
+            note.DurationPercent_TODO = await _primitivesReader.ReadDoubleAsync();
+
+        note.SecondaryFlags = (Gp5Note.Secondary)await _primitivesReader.ReadByteAsync();
+
+        if (primaryFlags.HasFlag(Gp5Note.Primary.hasEffects_TODO))
+        {
+            note.Effects_TODO = null;
+            throw new NotImplementedException("TODO: read note effects.");
+        }
+
+        return note;
     }
 }
