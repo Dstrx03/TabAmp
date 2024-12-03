@@ -45,7 +45,20 @@ internal class Gp5Beat
     [Flags]
     public enum Secondary : short
     {
-        // TODO: naming
-        TODO = 0x0800
+        // TODO: transparent naming
+        // TODO: manual QA
+        Ottava_TODO = 0x0010,
+        OttavaBassa_TODO = 0x0020,
+        Quindicesima_TODO = 0x0040,
+        QuindicesimaBassa_TODO = 0x0100,
+        BreakBeam_TODO = 0x0001,
+        ForceBeam_TODO = 0x0004,
+        ForceBracket_TODO = 0x2000,
+        BreakSecondaryTuplet_TODO = 0x1000,
+        Down_TODO = 0x0002,
+        Up_TODO = 0x0008,
+        Start_TODO = 0x0200,
+        End_TODO = 0x0400,
+        BreakSecondary_TODO = 0x0800
     }
 }

@@ -372,9 +372,11 @@ internal class Gp5TodoReader : IGp5TodoReader
             }
         }
 
+        throw new NotImplementedException("TODO: complete beat reading.");
+
         beat.SecondaryFlags = (Gp5Beat.Secondary)await _primitivesReader.ReadShortAsync();
 
-        if (beat.SecondaryFlags.HasFlag(Gp5Beat.Secondary.TODO))
+        if (beat.SecondaryFlags.HasFlag(Gp5Beat.Secondary.BreakSecondary_TODO))
         {
             beat.TODO = await _primitivesReader.ReadByteAsync();
             throw new NotImplementedException($"TODO: research unknown flag and data, value={beat.TODO}");
