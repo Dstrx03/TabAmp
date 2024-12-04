@@ -372,7 +372,7 @@ internal class Gp5TodoReader : IGp5TodoReader
             }
         }
 
-        throw new NotImplementedException("TODO: complete beat reading.");
+        // throw new NotImplementedException("TODO: complete beat reading.");
 
         beat.SecondaryFlags = (Gp5Beat.Secondary)await _primitivesReader.ReadShortAsync();
 

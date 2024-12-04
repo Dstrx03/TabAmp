@@ -19,22 +19,19 @@ internal class Gp5Note
     public enum Primary : byte
     {
         HasSoundDuration = 0x01,
+        HasHeavyAccentuatedNote = 0x02,
+        HasGhostNote = 0x04,
         HasEffects = 0x08,
         HasDynamic = 0x10,
         _A01 = 0x20,
-        HasFingering = 0x80,
-
-        // TODO: transparent naming
-        // TODO: manual QA
-        heavyAccentuatedNote_TODO = 0x02,
-        ghostNote_TODO = 0x04,
-        accentuatedNote_TODO = 0x40,
+        HasAccentuatedNote = 0x40,
+        HasFingering = 0x80
     }
 
     [Flags]
     public enum Secondary : byte
     {
-        ChangeAccidental = 0x02
+        HasChangeAccidental = 0x02
     }
 
     public string primaryFlags { get; internal set; }
