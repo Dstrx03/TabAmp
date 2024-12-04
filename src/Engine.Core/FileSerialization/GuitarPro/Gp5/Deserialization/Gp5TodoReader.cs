@@ -607,7 +607,7 @@ internal class Gp5TodoReader : IGp5TodoReader
         if (primaryFlags.HasFlag(Gp5Note.Primary.HasEffects))
             note.Effects = await ReadNoteEffectsAsync();
 
-        // TOOD: remove temp props
+        // TODO: remove temp props
         note.primaryFlags = note.PrimaryFlags.ToString();
         note.secondaryFlags = note.SecondaryFlags.ToString();
 

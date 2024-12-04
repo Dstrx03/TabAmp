@@ -34,9 +34,7 @@ internal class Gp5Note
     [Flags]
     public enum Secondary : byte
     {
-        // TODO: transparent naming
-        // TODO: manual QA
-        swapAccidentals_TODO = 0x02
+        ChangeAccidental = 0x02
     }
 
     public string primaryFlags { get; internal set; }
