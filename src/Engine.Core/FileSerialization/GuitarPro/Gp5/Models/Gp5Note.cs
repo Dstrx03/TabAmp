@@ -33,7 +33,4 @@ internal class Gp5Note
     {
         HasChangeAccidental = 0x02
     }
-
-    public string primaryFlags { get; internal set; }
-    public string secondaryFlags { get; internal set; }
 }
