@@ -557,7 +557,7 @@ internal class Gp5TodoReader : IGp5TodoReader
     {
         var bend = new Gp5Bend
         {
-            Shape = await _primitivesReader.ReadByteAsync(),
+            Type = await _primitivesReader.ReadByteAsync(),
             PitchShift = await _primitivesReader.ReadIntAsync(),
             Points = new (int, int, byte)[await _primitivesReader.ReadIntAsync()]
         };
@@ -577,37 +577,45 @@ internal class Gp5TodoReader : IGp5TodoReader
     private async ValueTask<Gp5Note> ReadNoteAsync()
     {
         var primaryFlags = (Gp5Note.Primary)await _primitivesReader.ReadByteAsync();
+
+        // TODO: move to the integrity validation layer
+        if (!primaryFlags.HasFlag(Gp5Note.Primary._A01))
+            throw new FileSerializationIntegrityException("note expected to have primary flag _A01");
+
         var note = new Gp5Note
         {
-            PrimaryFlags = primaryFlags
+            PrimaryFlags = primaryFlags,
+            Type = await _primitivesReader.ReadByteAsync()
         };
 
-        if (primaryFlags.HasFlag(Gp5Note.Primary.nonEmpty_TODO))
-            note.Type_TODO = await _primitivesReader.ReadByteAsync();
+        if (primaryFlags.HasFlag(Gp5Note.Primary.HasDynamic))
+            note.Dynamic = await _primitivesReader.ReadByteAsync();
 
-        if (primaryFlags.HasFlag(Gp5Note.Primary.dynamic_TODO))
-            note.Dynamic_TODO = await _primitivesReader.ReadSignedByteAsync();
+        note.Fret = await _primitivesReader.ReadByteAsync();
 
-        if (primaryFlags.HasFlag(Gp5Note.Primary.nonEmpty_TODO))
-            note.Fret_TODO = await _primitivesReader.ReadSignedByteAsync();
-
-        if (primaryFlags.HasFlag(Gp5Note.Primary.fingering_TODO))
+        if (primaryFlags.HasFlag(Gp5Note.Primary.HasFingering))
         {
-            note.LeftHandFinger_TODO = await _primitivesReader.ReadSignedByteAsync();
-            note.RightHandFinger_TODO = await _primitivesReader.ReadSignedByteAsync();
+            note.LeftHandFingering = await _primitivesReader.ReadSignedByteAsync();
+            note.RightHandFingering = await _primitivesReader.ReadSignedByteAsync();
         }
 
-        if (primaryFlags.HasFlag(Gp5Note.Primary.soundDuration_TODO))
-            note.DurationPercent_TODO = await _primitivesReader.ReadDoubleAsync();
+        if (primaryFlags.HasFlag(Gp5Note.Primary.HasSoundDuration))
+            note.SoundDuration = await _primitivesReader.ReadDoubleAsync();
 
         note.SecondaryFlags = (Gp5Note.Secondary)await _primitivesReader.ReadByteAsync();
 
-        if (primaryFlags.HasFlag(Gp5Note.Primary.hasEffects_TODO))
-        {
-            note.Effects_TODO = null;
-            throw new NotImplementedException("TODO: read note effects.");
-        }
+        if (primaryFlags.HasFlag(Gp5Note.Primary.HasEffects))
+            note.Effects = await ReadNoteEffectsAsync();
+
+        // TOOD: remove temp props
+        note.primaryFlags = note.PrimaryFlags.ToString();
+        note.secondaryFlags = note.SecondaryFlags.ToString();
 
         return note;
+    }
+
+    private ValueTask<Gp5NoteEffects> ReadNoteEffectsAsync()
+    {
+        throw new NotImplementedException("TODO: read note effects.");
     }
 }

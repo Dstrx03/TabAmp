@@ -5,29 +5,30 @@ namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 internal class Gp5Note
 {
     public Primary PrimaryFlags { get; set; }
-    public byte? Type_TODO { get; set; }
-    public sbyte? Dynamic_TODO { get; set; }
-    public sbyte? Fret_TODO { get; set; }
-    public sbyte? LeftHandFinger_TODO { get; set; }
-    public sbyte? RightHandFinger_TODO { get; set; }
-    public double? DurationPercent_TODO { get; set; }
+    public byte Type { get; set; }
+    public byte? Dynamic { get; set; }
+    public byte Fret { get; set; }
+    public sbyte? LeftHandFingering { get; set; }
+    public sbyte? RightHandFingering { get; set; }
+    public double? SoundDuration { get; set; }
     public Secondary SecondaryFlags { get; set; }
-    public object? Effects_TODO { get; set; }
+    public Gp5NoteEffects? Effects { get; set; }
 
 
     [Flags]
     public enum Primary : byte
     {
+        HasSoundDuration = 0x01,
+        HasEffects = 0x08,
+        HasDynamic = 0x10,
+        _A01 = 0x20,
+        HasFingering = 0x80,
+
         // TODO: transparent naming
         // TODO: manual QA
         heavyAccentuatedNote_TODO = 0x02,
         ghostNote_TODO = 0x04,
         accentuatedNote_TODO = 0x40,
-        nonEmpty_TODO = 0x20,
-        dynamic_TODO = 0x10,
-        fingering_TODO = 0x80,
-        soundDuration_TODO = 0x01,
-        hasEffects_TODO = 0x08
     }
 
     [Flags]
@@ -37,4 +38,7 @@ internal class Gp5Note
         // TODO: manual QA
         swapAccidentals_TODO = 0x02
     }
+
+    public string primaryFlags { get; internal set; }
+    public string secondaryFlags { get; internal set; }
 }
