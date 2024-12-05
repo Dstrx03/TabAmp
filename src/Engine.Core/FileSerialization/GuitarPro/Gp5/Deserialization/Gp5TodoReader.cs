@@ -372,7 +372,7 @@ internal class Gp5TodoReader : IGp5TodoReader
             }
         }
 
-        // throw new NotImplementedException("TODO: complete beat reading.");
+        // throw new NotImplementedException("TODO: complete beat reading, test flags.");
 
         beat.SecondaryFlags = (Gp5Beat.Secondary)await _primitivesReader.ReadShortAsync();
 
@@ -610,8 +610,50 @@ internal class Gp5TodoReader : IGp5TodoReader
         return note;
     }
 
-    private ValueTask<Gp5NoteEffects> ReadNoteEffectsAsync()
+    private async ValueTask<Gp5NoteEffects> ReadNoteEffectsAsync()
     {
-        throw new NotImplementedException("TODO: read note effects.");
+        // TODO: test flags
+        var primaryFlags = (Gp5NoteEffects.Primary)await _primitivesReader.ReadByteAsync();
+        var secondaryFlags = (Gp5NoteEffects.Secondary)await _primitivesReader.ReadByteAsync();
+        var noteEffects = new Gp5NoteEffects
+        {
+            PrimaryFlags = primaryFlags,
+            SecondaryFlags = secondaryFlags
+        };
+
+        if (primaryFlags.HasFlag(Gp5NoteEffects.Primary.HasBend))
+            noteEffects.Bend = await ReadBendAsync();
+
+        if (primaryFlags.HasFlag(Gp5NoteEffects.Primary.HasGraceNote))
+        {
+            noteEffects.GraceNote = null;
+            throw new NotImplementedException("TODO: read grace note.");
+        }
+
+        if (secondaryFlags.HasFlag(Gp5NoteEffects.Secondary.HasTremoloPicking))
+        {
+            noteEffects.TremoloPicking = null;
+            throw new NotImplementedException("TODO: read tremolo picking.");
+        }
+
+        if (secondaryFlags.HasFlag(Gp5NoteEffects.Secondary.HasSlide))
+        {
+            noteEffects.Slide = null;
+            throw new NotImplementedException("TODO: read slide.");
+        }
+
+        if (secondaryFlags.HasFlag(Gp5NoteEffects.Secondary.HasHarmonic))
+        {
+            noteEffects.Harmonic = null;
+            throw new NotImplementedException("TODO: read harmonic.");
+        }
+
+        if (secondaryFlags.HasFlag(Gp5NoteEffects.Secondary.HasTrill))
+        {
+            noteEffects.Trill = null;
+            throw new NotImplementedException("TODO: read trill.");
+        }
+
+        return noteEffects;
     }
 }
