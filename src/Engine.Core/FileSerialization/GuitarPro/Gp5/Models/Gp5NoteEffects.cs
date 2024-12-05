@@ -8,7 +8,7 @@ internal class Gp5NoteEffects
     public Secondary SecondaryFlags { get; set; }
     public Gp5Bend? Bend { get; set; }
     public object? GraceNote { get; set; }
-    public object? TremoloPicking { get; set; }
+    public byte? TremoloPicking { get; set; }
     public object? Slide { get; set; }
     public object? Harmonic { get; set; }
     public object? Trill { get; set; }

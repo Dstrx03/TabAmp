@@ -631,10 +631,7 @@ internal class Gp5TodoReader : IGp5TodoReader
         }
 
         if (secondaryFlags.HasFlag(Gp5NoteEffects.Secondary.HasTremoloPicking))
-        {
-            noteEffects.TremoloPicking = null;
-            throw new NotImplementedException("TODO: read tremolo picking.");
-        }
+            noteEffects.TremoloPicking = await _primitivesReader.ReadByteAsync();
 
         if (secondaryFlags.HasFlag(Gp5NoteEffects.Secondary.HasSlide))
         {
