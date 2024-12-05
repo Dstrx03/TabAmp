@@ -634,10 +634,7 @@ internal class Gp5TodoReader : IGp5TodoReader
             noteEffects.TremoloPicking = await _primitivesReader.ReadByteAsync();
 
         if (secondaryFlags.HasFlag(Gp5NoteEffects.Secondary.HasSlide))
-        {
-            noteEffects.Slide = null;
-            throw new NotImplementedException("TODO: read slide.");
-        }
+            noteEffects.SlideFlags = (Gp5NoteEffects.Slide)await _primitivesReader.ReadByteAsync();
 
         if (secondaryFlags.HasFlag(Gp5NoteEffects.Secondary.HasHarmonic))
         {
@@ -647,8 +644,8 @@ internal class Gp5TodoReader : IGp5TodoReader
 
         if (secondaryFlags.HasFlag(Gp5NoteEffects.Secondary.HasTrill))
         {
-            noteEffects.Trill = null;
-            throw new NotImplementedException("TODO: read trill.");
+            noteEffects.TrillFret = await _primitivesReader.ReadByteAsync();
+            noteEffects.TrillPeriod = await _primitivesReader.ReadByteAsync();
         }
 
         return noteEffects;

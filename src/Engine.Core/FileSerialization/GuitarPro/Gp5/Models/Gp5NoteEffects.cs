@@ -9,9 +9,10 @@ internal class Gp5NoteEffects
     public Gp5Bend? Bend { get; set; }
     public object? GraceNote { get; set; }
     public byte? TremoloPicking { get; set; }
-    public object? Slide { get; set; }
+    public Slide? SlideFlags { get; set; }
     public object? Harmonic { get; set; }
-    public object? Trill { get; set; }
+    public byte? TrillFret { get; set; }
+    public byte? TrillPeriod { get; set; }
 
 
     [Flags]
@@ -33,5 +34,16 @@ internal class Gp5NoteEffects
         HasHarmonic = 0x10,
         HasTrill = 0x20,
         HasVibrato = 0x40
+    }
+
+    [Flags]
+    public enum Slide : byte
+    {
+        HasShiftSlide = 0x01,
+        HasLegatoSlide = 0x02,
+        HasSlideOutDownwards = 0x04,
+        HasSlideOutUpwards = 0x08,
+        HasSlideInFromBelow = 0x10,
+        HasSlideInFromAbove = 0x20
     }
 }
