@@ -625,10 +625,7 @@ internal class Gp5TodoReader : IGp5TodoReader
             noteEffects.Bend = await ReadBendAsync();
 
         if (primaryFlags.HasFlag(Gp5NoteEffects.Primary.HasGraceNote))
-        {
-            noteEffects.GraceNote = null;
-            throw new NotImplementedException("TODO: read grace note.");
-        }
+            noteEffects.GraceNote = await ReadGraceNoteAsync();
 
         if (secondaryFlags.HasFlag(Gp5NoteEffects.Secondary.HasTremoloPicking))
             noteEffects.TremoloPicking = await _primitivesReader.ReadByteAsync();
@@ -649,5 +646,17 @@ internal class Gp5TodoReader : IGp5TodoReader
         }
 
         return noteEffects;
+    }
+
+    private async ValueTask<Gp5GraceNote> ReadGraceNoteAsync()
+    {
+        return new Gp5GraceNote
+        {
+            Fret = await _primitivesReader.ReadByteAsync(),
+            Dynamic = await _primitivesReader.ReadByteAsync(),
+            Transition = await _primitivesReader.ReadByteAsync(),
+            Duration = await _primitivesReader.ReadByteAsync(),
+            PrimaryFlags = (Gp5GraceNote.Primary)await _primitivesReader.ReadByteAsync()
+        };
     }
 }
