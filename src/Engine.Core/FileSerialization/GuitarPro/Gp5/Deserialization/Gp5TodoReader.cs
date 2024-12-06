@@ -634,10 +634,7 @@ internal class Gp5TodoReader : IGp5TodoReader
             noteEffects.SlideFlags = (Gp5NoteEffects.Slide)await _primitivesReader.ReadByteAsync();
 
         if (secondaryFlags.HasFlag(Gp5NoteEffects.Secondary.HasHarmonic))
-        {
-            noteEffects.Harmonic = null;
-            throw new NotImplementedException("TODO: read harmonic.");
-        }
+            noteEffects.Harmonic = await ReadHarmonicAsync();
 
         if (secondaryFlags.HasFlag(Gp5NoteEffects.Secondary.HasTrill))
         {
@@ -658,5 +655,10 @@ internal class Gp5TodoReader : IGp5TodoReader
             Duration = await _primitivesReader.ReadByteAsync(),
             PrimaryFlags = (Gp5GraceNote.Primary)await _primitivesReader.ReadByteAsync()
         };
+    }
+
+    private async ValueTask<Gp5Harmonic> ReadHarmonicAsync()
+    {
+        throw new NotImplementedException("TODO: read harmonic.");
     }
 }
