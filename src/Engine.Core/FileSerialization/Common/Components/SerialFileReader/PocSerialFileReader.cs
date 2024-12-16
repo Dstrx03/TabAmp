@@ -61,6 +61,6 @@ internal class PocSerialFileReader : ISerialFileReader
         if (Position < Length) summary = "PRTL";
         if (Position > Length) summary = "EXCD";
 
-        Console.WriteLine($"[{nameof(PocSerialFileReader)}] {message} | {ratio * 100:n0}% d={diffStr}b *{summary}* | {_context.FilePath}");
+        Console.WriteLine($"[{nameof(PocSerialFileReader)}] {message} | {ratio:P} {diffStr}b *{summary}* | {_context.FilePath}");
     }
 }
