@@ -22,12 +22,13 @@ internal class PocSerialFileReader : ISerialFileReader
     }
 
     public long Length => _fileStream.Length;
-    public long Position => _fileStream.Position;
+    public long Position { get; private set; }
 
     public async ValueTask<byte[]> ReadBytesAsync(int count)
     {
         var buffer = new byte[count];
         await _fileStream.ReadAsync(buffer, _context.CancellationToken);
+        Position += count;
         return buffer;
     }
 
@@ -38,13 +39,26 @@ internal class PocSerialFileReader : ISerialFileReader
 
         // TODO: implement production grade tracking of skipped information
         //_fileStream.Position += count;
+        //Position += count;
     }
 
     public void Dispose()
     {
-        Console.WriteLine($"Disposing POC file reader, read {Position} of {Length} bytes");
-        // TODO: implement production grade tracking
-
+        PrintStatistics();
         _fileStream?.Dispose();
+    }
+
+    [Obsolete("TODO: implement production grade tracking")]
+    private void PrintStatistics()
+    {
+        var message = $"read {Position} ({_fileStream.Position}) of {Length} bytes";
+        var ratio = Position / (double)Length;
+
+        var summary = string.Empty;
+        if (Position == Length) summary = "FULL";
+        if (Position < Length) summary = "PRTL";
+        if (Position > Length) summary = "EXCD";
+
+        Console.WriteLine($"[{nameof(PocSerialFileReader)}] {message} | {ratio * 100:n0}% *{summary}* | {_context.FilePath}");
     }
 }
