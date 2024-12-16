@@ -53,12 +53,14 @@ internal class PocSerialFileReader : ISerialFileReader
     {
         var message = $"read {Position} ({_fileStream.Position}) of {Length} bytes";
         var ratio = Position / (double)Length;
+        var diff = Position - Length;
+        var diffStr = diff > 0 ? $"+{diff}" : diff.ToString();
 
         var summary = string.Empty;
         if (Position == Length) summary = "FULL";
         if (Position < Length) summary = "PRTL";
         if (Position > Length) summary = "EXCD";
 
-        Console.WriteLine($"[{nameof(PocSerialFileReader)}] {message} | {ratio * 100:n0}% *{summary}* | {_context.FilePath}");
+        Console.WriteLine($"[{nameof(PocSerialFileReader)}] {message} | {ratio * 100:n0}% d={diffStr}b *{summary}* | {_context.FilePath}");
     }
 }
