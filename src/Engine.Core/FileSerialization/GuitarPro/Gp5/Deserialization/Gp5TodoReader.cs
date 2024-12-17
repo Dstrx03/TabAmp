@@ -442,25 +442,9 @@ internal class Gp5TodoReader : IGp5TodoReader
         return chord;
     }
 
-    private async ValueTask<Gp5RseInstrument> ReadRseInstrumentAsync()
-    {
-        return new Gp5RseInstrument
-        {
-            Instrument = await _primitivesReader.ReadIntAsync(),
-            _A01 = await _primitivesReader.ReadIntAsync(),
-            SoundBank = await _primitivesReader.ReadIntAsync(),
-            _B01 = await _primitivesReader.ReadIntAsync()
-        };
-    }
+    
 
-    private async ValueTask<Gp5RseInstrumentEffect> ReadRseInstrumentEffectAsync()
-    {
-        return new Gp5RseInstrumentEffect
-        {
-            Name = await _textReader.ReadIntByteTextAsync(),
-            CategoryName = await _textReader.ReadIntByteTextAsync()
-        };
-    }
+    
 
     private async ValueTask<Gp5MixTable> ReadMixTableAsync()
     {
