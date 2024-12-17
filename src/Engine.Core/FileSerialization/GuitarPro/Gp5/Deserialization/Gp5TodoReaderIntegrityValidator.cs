@@ -14,14 +14,11 @@ internal class Gp5TodoReaderIntegrityValidator : IGp5TodoReader
     public Gp5TodoReaderIntegrityValidator(IGp5TodoReader reader) =>
         _reader = reader;
 
-    public ValueTask<Gp5ByteText> ReadVersionAsync() =>
-        _reader.ReadVersionAsync();
+    
 
-    public ValueTask<Gp5ScoreInformation> ReadScoreInformationAsync() =>
-        _reader.ReadScoreInformationAsync();
+    
 
-    public ValueTask<Gp5Lyrics> ReadLyricsAsync() =>
-        _reader.ReadLyricsAsync();
+    
 
     public async ValueTask<Gp5RseMasterEffect> ReadRseMasterEffectAsync()
     {
@@ -34,8 +31,7 @@ internal class Gp5TodoReaderIntegrityValidator : IGp5TodoReader
         return rseMasterEffect;
     }
 
-    public ValueTask<Gp5PageSetup> ReadPageSetupAsync() =>
-        _reader.ReadPageSetupAsync();
+    
 
     public ValueTask<Gp5Tempo> ReadHeaderTempoAsync() =>
         _reader.ReadHeaderTempoAsync();
@@ -56,20 +52,7 @@ internal class Gp5TodoReaderIntegrityValidator : IGp5TodoReader
     public ValueTask<int> ReadRseMasterEffectReverbAsync() =>
         _reader.ReadRseMasterEffectReverbAsync();
 
-    public async ValueTask<(int measureHeadersCount, int tracksCount)> ReadMeasureHeadersAndTracksCountAsync()
-    {
-        var (measureHeadersCount, tracksCount) = await _reader.ReadMeasureHeadersAndTracksCountAsync();
-
-        if (measureHeadersCount < 1 || measureHeadersCount > 2048)
-            // TODO: message
-            throw new FileSerializationIntegrityException($"measureHeadersCount out of valid range: measureHeadersCount={measureHeadersCount}");
-
-        if (tracksCount < 1 || tracksCount > 127)
-            // TODO: message
-            throw new FileSerializationIntegrityException($"tracksCount out of valid range: tracksCount={tracksCount}");
-
-        return (measureHeadersCount, tracksCount);
-    }
+    
 
     public async ValueTask<Gp5MeasureHeader> ReadMeasureHeaderAsync(bool isFirst)
     {
