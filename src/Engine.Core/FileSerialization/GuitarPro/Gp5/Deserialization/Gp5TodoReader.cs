@@ -105,33 +105,12 @@ internal class Gp5TodoReader : IGp5TodoReader
         };
     }
 
-    public async ValueTask<Gp5Tempo> ReadHeaderTempoAsync()
+    public async ValueTask<Gp5Tempo> ReadHeaderTempoAsync()//TODO: move to deserializer
     {
         var tempo = await ReadTempoAsync();
-        tempo.HideBeatsPerMinute = await _primitivesReader.ReadBoolAsync();
+        tempo.HideBeatsPerMinute = await _primitivesReader.ReadBoolAsync();// TODO: named method via Demetra principle
 
         return tempo;
-    }
-
-    private async ValueTask<Gp5Tempo> ReadTempoAsync()
-    {
-        return new Gp5Tempo
-        {
-            WordIndication = await _textReader.ReadIntByteTextAsync(),
-            BeatsPerMinute = await _primitivesReader.ReadIntAsync()
-        };
-    }
-
-    public async ValueTask<Gp5HeaderKeySignature> ReadHeaderKeySignatureAsync()
-    {
-        return new Gp5HeaderKeySignature
-        {
-            Key = await _primitivesReader.ReadSignedByteAsync(),
-            _A01 = await _primitivesReader.ReadSignedByteAsync(),
-            _A02 = await _primitivesReader.ReadSignedByteAsync(),
-            _A03 = await _primitivesReader.ReadSignedByteAsync(),
-            Octave = await _primitivesReader.ReadSignedByteAsync()
-        };
     }
 
     public async ValueTask<Gp5MidiChannel> ReadMidiChannelAsync()
@@ -150,31 +129,7 @@ internal class Gp5TodoReader : IGp5TodoReader
         };
     }
 
-    public async ValueTask<Gp5MusicalDirections> ReadMusicalDirectionsAsync()
-    {
-        return new Gp5MusicalDirections
-        {
-            Coda = await _primitivesReader.ReadShortAsync(),
-            DoubleCoda = await _primitivesReader.ReadShortAsync(),
-            Segno = await _primitivesReader.ReadShortAsync(),
-            SegnoSegno = await _primitivesReader.ReadShortAsync(),
-            Fine = await _primitivesReader.ReadShortAsync(),
-            DaCapo = await _primitivesReader.ReadShortAsync(),
-            DaCapoAlCoda = await _primitivesReader.ReadShortAsync(),
-            DaCapoAlDoubleCoda = await _primitivesReader.ReadShortAsync(),
-            DaCapoAlFine = await _primitivesReader.ReadShortAsync(),
-            DaSegno = await _primitivesReader.ReadShortAsync(),
-            DaSegnoAlCoda = await _primitivesReader.ReadShortAsync(),
-            DaSegnoAlDoubleCoda = await _primitivesReader.ReadShortAsync(),
-            DaSegnoAlFine = await _primitivesReader.ReadShortAsync(),
-            DaSegnoSegno = await _primitivesReader.ReadShortAsync(),
-            DaSegnoSegnoAlCoda = await _primitivesReader.ReadShortAsync(),
-            DaSegnoSegnoAlDoubleCoda = await _primitivesReader.ReadShortAsync(),
-            DaSegnoSegnoAlFine = await _primitivesReader.ReadShortAsync(),
-            DaCoda = await _primitivesReader.ReadShortAsync(),
-            DaDoubleCoda = await _primitivesReader.ReadShortAsync()
-        };
-    }
+
 
     public ValueTask<int> ReadRseMasterEffectReverbAsync() =>
         _primitivesReader.ReadIntAsync();
@@ -230,35 +185,6 @@ internal class Gp5TodoReader : IGp5TodoReader
         measureHeader._A01 = await _primitivesReader.ReadByteAsync();
 
         return measureHeader;
-    }
-
-    private async ValueTask<Gp5KeySignature> ReadKeySignatureAsync()
-    {
-        return new Gp5KeySignature
-        {
-            Key = await _primitivesReader.ReadSignedByteAsync(),
-            IsMinorKey = await _primitivesReader.ReadBoolAsync()
-        };
-    }
-
-    private async ValueTask<Gp5TimeSignature> ReadTimeSignatureAsync(bool hasDenominator)
-    {
-        return new Gp5TimeSignature
-        {
-            Numerator = await _primitivesReader.ReadByteAsync(),
-            Denominator = hasDenominator ? await _primitivesReader.ReadByteAsync() : null
-        };
-    }
-
-    private async ValueTask<Gp5TimeSignatureBeamGroups> ReadTimeSignatureBeamGroupsAsync()
-    {
-        return new Gp5TimeSignatureBeamGroups
-        {
-            FirstSpan = await _primitivesReader.ReadByteAsync(),
-            SecondSpan = await _primitivesReader.ReadByteAsync(),
-            ThirdSpan = await _primitivesReader.ReadByteAsync(),
-            FourthSpan = await _primitivesReader.ReadByteAsync()
-        };
     }
 
     private async ValueTask<Gp5Marker> ReadMarkerAsync()
@@ -370,82 +296,6 @@ internal class Gp5TodoReader : IGp5TodoReader
         return beat;
     }
 
-    private async ValueTask<Gp5Chord> ReadChordAsync()
-    {
-        // TODO: apply more transparent naming for Gp5Chord model properties
-        // TODO: apply cleaner reading code
-        // TODO: use consts
-        // TODO: manual QA
-        throw new NotImplementedException("TODO: complete chord reading.");
-
-        var isNewFormat = await _primitivesReader.ReadBoolAsync();
-
-        // TODO: move to the integrity validation layer
-        if (!isNewFormat)
-            throw new FileSerializationIntegrityException("Expected chord to have ~new~ format.");
-
-        var chord = new Gp5Chord
-        {
-            Sharp = await _primitivesReader.ReadBoolAsync(),
-            _A01 = await _primitivesReader.ReadByteAsync(),
-            _A02 = await _primitivesReader.ReadByteAsync(),
-            _A03 = await _primitivesReader.ReadByteAsync(),
-            Root = await _primitivesReader.ReadByteAsync(),
-            Type = await _primitivesReader.ReadByteAsync(),
-            Extension = await _primitivesReader.ReadByteAsync(),
-            Bass = await _primitivesReader.ReadIntAsync(),
-            Tonality = await _primitivesReader.ReadIntAsync(),
-            Add = await _primitivesReader.ReadBoolAsync(),
-            Name = await _textReader.ReadByteTextAsync(22),
-            FifthTonality = await _primitivesReader.ReadByteAsync(),
-            NinthTonality = await _primitivesReader.ReadByteAsync(),
-            EleventhTonality = await _primitivesReader.ReadByteAsync(),
-            Fret = await _primitivesReader.ReadIntAsync()
-        };
-
-        var frets = new int[7];
-        chord.Frets = frets;
-        for (var i = 0; i < frets.Length; i++)
-            frets[i] = await _primitivesReader.ReadIntAsync();
-
-        chord.BarresCount = await _primitivesReader.ReadByteAsync();
-
-        var barreFrets = new byte[5];
-        chord.BarreFrets = barreFrets;
-        for (var i = 0; i < barreFrets.Length; i++)
-            barreFrets[i] = await _primitivesReader.ReadByteAsync();
-
-        var barreStarts = new byte[5];
-        chord.BarreStarts = barreStarts;
-        for (var i = 0; i < barreStarts.Length; i++)
-            barreStarts[i] = await _primitivesReader.ReadByteAsync();
-
-        var barreEnds = new byte[5];
-        chord.BarreEnds = barreEnds;
-        for (var i = 0; i < barreEnds.Length; i++)
-            barreEnds[i] = await _primitivesReader.ReadByteAsync();
-
-        var omissions = new bool[7];
-        chord.Omissions = omissions;
-        for (var i = 0; i < omissions.Length; i++)
-            omissions[i] = await _primitivesReader.ReadBoolAsync();
-
-        chord._B01 = await _primitivesReader.ReadByteAsync();
-
-        var fingerings = new sbyte[7];
-        chord.Fingerings = fingerings;
-        for (var i = 0; i < fingerings.Length; i++)
-            fingerings[i] = await _primitivesReader.ReadSignedByteAsync();
-
-        chord.Show = await _primitivesReader.ReadBoolAsync();
-
-        return chord;
-    }
-
-    
-
-    
-
     private async ValueTask<Gp5MixTable> ReadMixTableAsync()
     {
         var mixTable = new Gp5MixTable
@@ -484,7 +334,7 @@ internal class Gp5TodoReader : IGp5TodoReader
         if (HasValueChange(mixTable.Tempo.BeatsPerMinute))
         {
             mixTable.TempoTransition = await _primitivesReader.ReadByteAsync();
-            mixTable.Tempo.HideBeatsPerMinute = await _primitivesReader.ReadBoolAsync();
+            mixTable.Tempo.HideBeatsPerMinute = await _primitivesReader.ReadBoolAsync();// TODO: named method via Demetra principle
         }
 
         mixTable.PrimaryFlags = (Gp5MixTable.Primary)await _primitivesReader.ReadByteAsync();
@@ -493,36 +343,6 @@ internal class Gp5TodoReader : IGp5TodoReader
 
         return mixTable;
     }
-
-    private async ValueTask<Gp5BeatEffects> ReadBeatEffectsAsync()
-    {
-        var primaryFlags = (Gp5BeatEffects.Primary)await _primitivesReader.ReadByteAsync();
-        var secondaryFlags = (Gp5BeatEffects.Secondary)await _primitivesReader.ReadByteAsync();
-        var beatEffects = new Gp5BeatEffects
-        {
-            PrimaryFlags = primaryFlags,
-            SecondaryFlags = secondaryFlags
-        };
-
-        if (primaryFlags.HasFlag(Gp5BeatEffects.Primary.HasTappingSlappingPopping))
-            beatEffects.TappingSlappingPopping = await _primitivesReader.ReadByteAsync();
-
-        if (secondaryFlags.HasFlag(Gp5BeatEffects.Secondary.HasTremoloBar))
-            beatEffects.TremoloBar = await ReadBendAsync();
-
-        if (primaryFlags.HasFlag(Gp5BeatEffects.Primary.HasStroke))
-        {
-            beatEffects.UpstrokeDuration = await _primitivesReader.ReadByteAsync();
-            beatEffects.DownstrokeDuration = await _primitivesReader.ReadByteAsync();
-        }
-
-        if (secondaryFlags.HasFlag(Gp5BeatEffects.Secondary.HasPickStroke))
-            beatEffects.PickStroke = await _primitivesReader.ReadByteAsync();
-
-        return beatEffects;
-    }
-
-    
 
     public async ValueTask<Gp5Note> ReadNoteAsync()
     {
@@ -559,43 +379,4 @@ internal class Gp5TodoReader : IGp5TodoReader
 
         return note;
     }
-
-    private async ValueTask<Gp5NoteEffects> ReadNoteEffectsAsync()
-    {
-        // TODO: test flags
-        var primaryFlags = (Gp5NoteEffects.Primary)await _primitivesReader.ReadByteAsync();
-        var secondaryFlags = (Gp5NoteEffects.Secondary)await _primitivesReader.ReadByteAsync();
-        var noteEffects = new Gp5NoteEffects
-        {
-            PrimaryFlags = primaryFlags,
-            SecondaryFlags = secondaryFlags
-        };
-
-        if (primaryFlags.HasFlag(Gp5NoteEffects.Primary.HasBend))
-            noteEffects.Bend = await ReadBendAsync();
-
-        if (primaryFlags.HasFlag(Gp5NoteEffects.Primary.HasGraceNote))
-            noteEffects.GraceNote = await ReadGraceNoteAsync();
-
-        if (secondaryFlags.HasFlag(Gp5NoteEffects.Secondary.HasTremoloPicking))
-            noteEffects.TremoloPicking = await _primitivesReader.ReadByteAsync();
-
-        if (secondaryFlags.HasFlag(Gp5NoteEffects.Secondary.HasSlide))
-            noteEffects.SlideFlags = (Gp5NoteEffects.Slide)await _primitivesReader.ReadByteAsync();
-
-        if (secondaryFlags.HasFlag(Gp5NoteEffects.Secondary.HasHarmonic))
-            noteEffects.Harmonic = await ReadHarmonicAsync();
-
-        if (secondaryFlags.HasFlag(Gp5NoteEffects.Secondary.HasTrill))
-        {
-            noteEffects.TrillFret = await _primitivesReader.ReadByteAsync();
-            noteEffects.TrillPeriod = await _primitivesReader.ReadByteAsync();
-        }
-
-        return noteEffects;
-    }
-
-    
-
-    
 }

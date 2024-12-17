@@ -14,9 +14,9 @@ internal interface IGp5TodoReader
     ValueTask<Gp5RseMasterEffect> ReadRseMasterEffectAsync();
     ValueTask<Gp5PageSetup> ReadPageSetupAsync();
     ValueTask<Gp5Tempo> ReadHeaderTempoAsync();
-    ValueTask<Gp5HeaderKeySignature> ReadHeaderKeySignatureAsync();
+    
     ValueTask<Gp5MidiChannel> ReadMidiChannelAsync();
-    ValueTask<Gp5MusicalDirections> ReadMusicalDirectionsAsync();
+    
     ValueTask<int> ReadRseMasterEffectReverbAsync();
     ValueTask<(int measureHeadersCount, int tracksCount)> ReadMeasureHeadersAndTracksCountAsync();
     ValueTask<Gp5MeasureHeader> ReadMeasureHeaderAsync(bool isFirst);
