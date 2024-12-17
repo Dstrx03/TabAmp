@@ -99,21 +99,22 @@ internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeseria
 
     protected override ValueTask NextNotesAsync(Gp5Beat beat)
     {
-        var notesCount =
-            Convert.ToByte(beat.NotesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasFirstStringNote)) +
-            Convert.ToByte(beat.NotesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasSecondStringNote)) +
-            Convert.ToByte(beat.NotesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasThirdStringNote)) +
-            Convert.ToByte(beat.NotesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasFourthStringNote)) +
-            Convert.ToByte(beat.NotesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasFifthStringNote)) +
-            Convert.ToByte(beat.NotesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasSixthStringNote)) +
-            Convert.ToByte(beat.NotesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasSeventhStringNote));
-
+        var notesCount = CalculateNotesCount(beat.NotesPresenceFlags);
         if (notesCount == 0)
             return ValueTask.CompletedTask;
 
         beat.Notes = new Gp5Note[notesCount];
         return base.NextNotesAsync(beat);
     }
+
+    private int CalculateNotesCount(Gp5Beat.NotesPresence notesPresenceFlags) =>
+        Convert.ToByte(notesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasFirstStringNote)) +
+        Convert.ToByte(notesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasSecondStringNote)) +
+        Convert.ToByte(notesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasThirdStringNote)) +
+        Convert.ToByte(notesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasFourthStringNote)) +
+        Convert.ToByte(notesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasFifthStringNote)) +
+        Convert.ToByte(notesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasSixthStringNote)) +
+        Convert.ToByte(notesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasSeventhStringNote));
 
     protected override async ValueTask NextNoteAsync(Gp5Beat beat, int index) =>
         beat.Notes![index] = await _measuresReader.ReadNoteAsync();

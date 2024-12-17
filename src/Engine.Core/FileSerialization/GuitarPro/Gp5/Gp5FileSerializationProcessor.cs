@@ -47,9 +47,7 @@ internal abstract class Gp5FileSerializationProcessor : IFileSerializationProces
     protected virtual async ValueTask NextMidiChannelsAsync()
     {
         for (var index = 0; index < File.MidiChannels.Length; index++)
-        {
             await NextMidiChannelAsync(index);
-        }
     }
 
     protected abstract ValueTask NextMidiChannelAsync(int index);
@@ -63,9 +61,7 @@ internal abstract class Gp5FileSerializationProcessor : IFileSerializationProces
     private async ValueTask NextMeasureHeadersAsync()
     {
         for (var index = 0; index < File.MeasureHeaders.Length; index++)
-        {
             await NextMeasureHeaderAsync(index);
-        }
     }
 
     protected abstract ValueTask NextMeasureHeaderAsync(int index);
@@ -73,9 +69,7 @@ internal abstract class Gp5FileSerializationProcessor : IFileSerializationProces
     private async ValueTask NextTracksAsync()
     {
         for (var index = 0; index < File.Tracks.Length; index++)
-        {
             await NextTrackAsync(index);
-        }
     }
 
     protected abstract ValueTask NextTrackAsync(int index);
@@ -83,9 +77,7 @@ internal abstract class Gp5FileSerializationProcessor : IFileSerializationProces
     private async ValueTask NextMeasuresAsync()
     {
         for (var measureIndex = 0; measureIndex < File.MeasureBreakLines.Length; measureIndex++)
-        {
             await NextCompositeMeasureAsync(measureIndex);
-        }
     }
 
     private async ValueTask NextCompositeMeasureAsync(int measureIndex)
@@ -117,9 +109,7 @@ internal abstract class Gp5FileSerializationProcessor : IFileSerializationProces
     private async ValueTask NextBeatsAsync(int measureIndex)
     {
         for (var beatIndex = 0; beatIndex < File.MeasureBeats[measureIndex].Length; beatIndex++)
-        {
             await NextBeatAsync(measureIndex: measureIndex, beatIndex: beatIndex);
-        }
     }
 
     protected abstract ValueTask NextBeatAsync(int measureIndex, int beatIndex);
@@ -127,9 +117,7 @@ internal abstract class Gp5FileSerializationProcessor : IFileSerializationProces
     protected virtual async ValueTask NextNotesAsync(Gp5Beat beat)
     {
         for (var index = 0; index < beat.Notes!.Length; index++)
-        {
             await NextNoteAsync(beat, index);
-        }
     }
 
     protected abstract ValueTask NextNoteAsync(Gp5Beat beat, int index);
