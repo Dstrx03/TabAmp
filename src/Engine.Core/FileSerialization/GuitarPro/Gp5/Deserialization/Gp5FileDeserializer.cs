@@ -9,10 +9,15 @@ namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 
 internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeserializer<Gp5Score>
 {
-    private readonly IGp5TodoReader _reader;
+    private readonly IGp5DocumentComponentsReader _documentReader;
+    private readonly IGp5MusicalNotationReader _notationReader;
+    private readonly IGp5TracksReader _tracksReader;
+    private readonly IGp5MeasuresReader _measuresReader;
 
-    public Gp5FileDeserializer(IGp5TodoReader reader) =>
-        _reader = reader;
+    public Gp5FileDeserializer(IGp5DocumentComponentsReader documentReader, IGp5MusicalNotationReader notationReader,
+        IGp5TracksReader tracksReader, IGp5MeasuresReader measuresReader) =>
+        (_documentReader, _notationReader, _tracksReader, _measuresReader) =
+        (documentReader, notationReader, tracksReader, measuresReader);
 
     public async Task<Gp5Score> DeserializeAsync()
     {
@@ -28,25 +33,28 @@ internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeseria
     }
 
     protected override async ValueTask NextVersionAsync() =>
-        File.Version = await _reader.ReadVersionAsync();
+        File.Version = await _documentReader.ReadVersionAsync();
 
     protected override async ValueTask NextScoreInformationAsync() =>
-        File.ScoreInformation = await _reader.ReadScoreInformationAsync();
+        File.ScoreInformation = await _documentReader.ReadScoreInformationAsync();
 
     protected override async ValueTask NextLyricsAsync() =>
-        File.Lyrics = await _reader.ReadLyricsAsync();
+        File.Lyrics = await _documentReader.ReadLyricsAsync();
 
     protected override async ValueTask NextRseMasterEffectAsync() =>
-        File.RseMasterEffect = await _reader.ReadRseMasterEffectAsync();
+        File.RseMasterEffect = await _tracksReader.ReadRseMasterEffectAsync();
 
     protected override async ValueTask NextPageSetupAsync() =>
-        File.PageSetup = await _reader.ReadPageSetupAsync();
+        File.PageSetup = await _documentReader.ReadPageSetupAsync();
 
-    protected override async ValueTask NextHeaderTempoAsync() =>
-        File.Tempo = await _reader.ReadHeaderTempoAsync();
+    protected override async ValueTask NextHeaderTempoAsync()
+    {
+        File.Tempo = await _notationReader.ReadTempoAsync();
+        File.Tempo.HideBeatsPerMinute = await _notationReader.ReadTempoHideBeatsPerMinuteAsync();
+    }
 
     protected override async ValueTask NextHeaderKeySignatureAsync() =>
-        File.KeySignature = await _reader.ReadHeaderKeySignatureAsync();
+        File.KeySignature = await _notationReader.ReadHeaderKeySignatureAsync();
 
     protected override ValueTask NextMidiChannelsAsync()
     {
@@ -55,17 +63,17 @@ internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeseria
     }
 
     protected override async ValueTask NextMidiChannelAsync(int index) =>
-        File.MidiChannels[index] = await _reader.ReadMidiChannelAsync();
+        File.MidiChannels[index] = await _tracksReader.ReadMidiChannelAsync();
 
     protected override async ValueTask NextMusicalDirectionsAsync() =>
-        File.MusicalDirections = await _reader.ReadMusicalDirectionsAsync();
+        File.MusicalDirections = await _notationReader.ReadMusicalDirectionsAsync();
 
     protected override async ValueTask NextRseMasterEffectReverbAsync() =>
-        File.RseMasterEffect.Reverb = await _reader.ReadRseMasterEffectReverbAsync();
+        File.RseMasterEffect.Reverb = await _tracksReader.ReadRseMasterEffectReverbAsync();
 
     protected override async ValueTask NextMeasureHeadersAndTracksCountAsync()
     {
-        var (measureHeadersCount, tracksCount) = await _reader.ReadMeasureHeadersAndTracksCountAsync();
+        var (measureHeadersCount, tracksCount) = await _documentReader.ReadMeasureHeadersAndTracksCountAsync();
         File.MeasureHeaders = new Gp5MeasureHeader[measureHeadersCount];
         File.Tracks = new Gp5Track[tracksCount];
 
@@ -75,19 +83,19 @@ internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeseria
     }
 
     protected override async ValueTask NextMeasureHeaderAsync(int index) =>
-        File.MeasureHeaders[index] = await _reader.ReadMeasureHeaderAsync(isFirst: index == 0);
+        File.MeasureHeaders[index] = await _measuresReader.ReadMeasureHeaderAsync(isFirst: index == 0);
 
     protected override async ValueTask NextTrackAsync(int index) =>
-        File.Tracks[index] = await _reader.ReadTrackAsync();
+        File.Tracks[index] = await _tracksReader.ReadTrackAsync();
 
     protected override async ValueTask NextMeasureBreakLineAsync(int measureIndex) =>
-        File.MeasureBreakLines[measureIndex] = await _reader.ReadMeasureBreakLineAsync();
+        File.MeasureBreakLines[measureIndex] = await _measuresReader.ReadMeasureBreakLineAsync();
 
     protected override async ValueTask NextMeasureBeatsCountAsync(int measureIndex) =>
-        File.MeasureBeats[measureIndex] = new Gp5Beat[await _reader.ReadMeasureBeatsCountAsync()];
+        File.MeasureBeats[measureIndex] = new Gp5Beat[await _measuresReader.ReadMeasureBeatsCountAsync()];
 
     protected override async ValueTask NextBeatAsync(int measureIndex, int beatIndex) =>
-        File.MeasureBeats[measureIndex][beatIndex] = await _reader.ReadBeatAsync(NextNotesAsync);
+        File.MeasureBeats[measureIndex][beatIndex] = await _measuresReader.ReadBeatAsync(NextNotesAsync);
 
     protected override ValueTask NextNotesAsync(Gp5Beat beat)
     {
@@ -108,5 +116,5 @@ internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeseria
     }
 
     protected override async ValueTask NextNoteAsync(Gp5Beat beat, int index) =>
-        beat.Notes![index] = await _reader.ReadNoteAsync();
+        beat.Notes![index] = await _measuresReader.ReadNoteAsync();
 }
