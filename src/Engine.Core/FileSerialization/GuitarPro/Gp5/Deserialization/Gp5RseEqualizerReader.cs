@@ -1,8 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 
+[Obsolete]
 internal class Gp5RseEqualizerReader : IGp5RseEqualizerReader
 {
     private readonly IGp5BinaryPrimitivesReader _primitivesReader;

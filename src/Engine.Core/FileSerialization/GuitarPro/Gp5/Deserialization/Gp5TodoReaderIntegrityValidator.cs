@@ -6,6 +6,7 @@ using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Text;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 
+[Obsolete]
 internal class Gp5TodoReaderIntegrityValidator : IGp5TodoReader
 {
     private readonly IGp5TodoReader _reader;
