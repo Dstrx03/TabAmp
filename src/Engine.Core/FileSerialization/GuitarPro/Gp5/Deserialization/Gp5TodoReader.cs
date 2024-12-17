@@ -324,7 +324,7 @@ internal class Gp5TodoReader : IGp5TodoReader
     public ValueTask<int> ReadMeasureBeatsCountAsync() =>
         _primitivesReader.ReadIntAsync();
 
-    public async ValueTask<Gp5Beat> ReadBeatAsync()
+    public async ValueTask<Gp5Beat> ReadBeatAsync(Func<Gp5Beat, ValueTask> readNotesAsync)
     {
         var primaryFlags = (Gp5Beat.Primary)await _primitivesReader.ReadByteAsync();
         var beat = new Gp5Beat
@@ -354,23 +354,7 @@ internal class Gp5TodoReader : IGp5TodoReader
 
         beat.NotesPresenceFlags = (Gp5Beat.NotesPresence)await _primitivesReader.ReadByteAsync();
 
-        var notesCount =
-            Convert.ToByte(beat.NotesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasFirstStringNote)) +
-            Convert.ToByte(beat.NotesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasSecondStringNote)) +
-            Convert.ToByte(beat.NotesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasThirdStringNote)) +
-            Convert.ToByte(beat.NotesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasFourthStringNote)) +
-            Convert.ToByte(beat.NotesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasFifthStringNote)) +
-            Convert.ToByte(beat.NotesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasSixthStringNote)) +
-            Convert.ToByte(beat.NotesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasSeventhStringNote));
-
-        if (notesCount > 0)
-        {
-            beat.Notes = new Gp5Note[notesCount];
-            for (var i = 0; i < beat.Notes.Length; i++)
-            {
-                beat.Notes[i] = await ReadNoteAsync();
-            }
-        }
+        await readNotesAsync(beat);
 
         // throw new NotImplementedException("TODO: complete beat reading, test flags.");
 
@@ -574,7 +558,7 @@ internal class Gp5TodoReader : IGp5TodoReader
         return bend;
     }
 
-    private async ValueTask<Gp5Note> ReadNoteAsync()
+    public async ValueTask<Gp5Note> ReadNoteAsync()
     {
         var primaryFlags = (Gp5Note.Primary)await _primitivesReader.ReadByteAsync();
 

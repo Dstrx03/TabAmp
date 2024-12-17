@@ -87,5 +87,26 @@ internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeseria
         File.MeasureBeats[measureIndex] = new Gp5Beat[await _reader.ReadMeasureBeatsCountAsync()];
 
     protected override async ValueTask NextBeatAsync(int measureIndex, int beatIndex) =>
-        File.MeasureBeats[measureIndex][beatIndex] = await _reader.ReadBeatAsync();
+        File.MeasureBeats[measureIndex][beatIndex] = await _reader.ReadBeatAsync(NextNotesAsync);
+
+    protected override ValueTask NextNotesAsync(Gp5Beat beat)
+    {
+        var notesCount =
+            Convert.ToByte(beat.NotesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasFirstStringNote)) +
+            Convert.ToByte(beat.NotesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasSecondStringNote)) +
+            Convert.ToByte(beat.NotesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasThirdStringNote)) +
+            Convert.ToByte(beat.NotesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasFourthStringNote)) +
+            Convert.ToByte(beat.NotesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasFifthStringNote)) +
+            Convert.ToByte(beat.NotesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasSixthStringNote)) +
+            Convert.ToByte(beat.NotesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasSeventhStringNote));
+
+        if (notesCount == 0)
+            return ValueTask.CompletedTask;
+
+        beat.Notes = new Gp5Note[notesCount];
+        return base.NextNotesAsync(beat);
+    }
+
+    protected override async ValueTask NextNoteAsync(Gp5Beat beat, int index) =>
+        beat.Notes![index] = await _reader.ReadNoteAsync();
 }

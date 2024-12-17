@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.Common.Exceptions;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Text;
@@ -229,6 +230,9 @@ internal class Gp5TodoReaderIntegrityValidator : IGp5TodoReader
         return beatsCount;
     }
 
-    public ValueTask<Gp5Beat> ReadBeatAsync() =>
-        _reader.ReadBeatAsync();
+    public ValueTask<Gp5Beat> ReadBeatAsync(Func<Gp5Beat, ValueTask> readNotesAsync) =>
+        _reader.ReadBeatAsync(readNotesAsync);
+
+    public ValueTask<Gp5Note> ReadNoteAsync() =>
+        _reader.ReadNoteAsync();
 }
