@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.Common.Exceptions;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.BinaryPrimitives;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Readers;
 
@@ -64,6 +65,9 @@ internal class Gp5MusicalNotationReader : IGp5MusicalNotationReader
             BeatsPerMinute = await _primitivesReader.ReadIntAsync()
         };
     }
+
+    public ValueTask<Gp5Bool> ReadTempoHideBeatsPerMinuteAsync() =>
+        _primitivesReader.ReadBoolAsync();
 
     public async ValueTask<Gp5MusicalDirections> ReadMusicalDirectionsAsync()
     {

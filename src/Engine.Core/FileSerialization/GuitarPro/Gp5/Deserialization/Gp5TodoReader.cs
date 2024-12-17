@@ -29,15 +29,7 @@ internal class Gp5TodoReader : IGp5TodoReader
 
     
 
-    public async ValueTask<Gp5RseMasterEffect> ReadRseMasterEffectAsync()
-    {
-        return new Gp5RseMasterEffect
-        {
-            Volume = await _primitivesReader.ReadIntAsync(),
-            _A01 = await _primitivesReader.ReadIntAsync(),
-            Equalizer = await _rseEqualizerReader.ReadRseEqualizerAsync(Gp5RseMasterEffect.EqualizerBandsCount)
-        };
-    }
+    
 
     
 
@@ -49,26 +41,11 @@ internal class Gp5TodoReader : IGp5TodoReader
         return tempo;
     }
 
-    public async ValueTask<Gp5MidiChannel> ReadMidiChannelAsync()
-    {
-        return new Gp5MidiChannel
-        {
-            Instrument = await _primitivesReader.ReadIntAsync(),
-            Volume = await _primitivesReader.ReadByteAsync(),
-            Balance = await _primitivesReader.ReadByteAsync(),
-            Chorus = await _primitivesReader.ReadByteAsync(),
-            Reverb = await _primitivesReader.ReadByteAsync(),
-            Phaser = await _primitivesReader.ReadByteAsync(),
-            Tremolo = await _primitivesReader.ReadByteAsync(),
-            _A01 = await _primitivesReader.ReadByteAsync(),
-            _A02 = await _primitivesReader.ReadByteAsync()
-        };
-    }
+    
 
 
 
-    public ValueTask<int> ReadRseMasterEffectReverbAsync() =>
-        _primitivesReader.ReadIntAsync();
+    
 
     
 
@@ -122,54 +99,9 @@ internal class Gp5TodoReader : IGp5TodoReader
         return measureHeader;
     }
 
-    public async ValueTask<Gp5Track> ReadTrackAsync()
-    {
-        return new Gp5Track
-        {
-            PrimaryFlags = (Gp5Track.Primary)await _primitivesReader.ReadByteAsync(),
-            Name = await _textReader.ReadByteTextAsync(Gp5Track.NameMaxLength),
-            StringsCount = await _primitivesReader.ReadIntAsync(),
-            StringsTuning = await ReadStringsTuningAsync(),
-            Port = await _primitivesReader.ReadIntAsync(),
-            MainChannel = await _primitivesReader.ReadIntAsync(),
-            EffectChannel = await _primitivesReader.ReadIntAsync(),
-            FretsCount = await _primitivesReader.ReadIntAsync(),
-            CapoPosition = await _primitivesReader.ReadIntAsync(),
-            Color = await _primitivesReader.ReadColorAsync(),
-            SecondaryFlags = (Gp5Track.Secondary)await _primitivesReader.ReadShortAsync(),
-            RseAutoAccentuation = await _primitivesReader.ReadByteAsync(),
-            MidiBank = await _primitivesReader.ReadByteAsync(),
-            RseHumanPlaying = await _primitivesReader.ReadByteAsync(),
-            _A01 = await _primitivesReader.ReadIntAsync(),
-            _A02 = await _primitivesReader.ReadIntAsync(),
-            _A03 = await _primitivesReader.ReadIntAsync(),
-            _B01 = await _primitivesReader.ReadByteAsync(),
-            _B02 = await _primitivesReader.ReadByteAsync(),
-            _B03 = await _primitivesReader.ReadByteAsync(),
-            _B04 = await _primitivesReader.ReadByteAsync(),
-            _B05 = await _primitivesReader.ReadByteAsync(),
-            _B06 = await _primitivesReader.ReadByteAsync(),
-            _B07 = await _primitivesReader.ReadByteAsync(),
-            _B08 = await _primitivesReader.ReadByteAsync(),
-            _B09 = await _primitivesReader.ReadByteAsync(),
-            _B10 = await _primitivesReader.ReadByteAsync(),
-            _C01 = await _primitivesReader.ReadShortAsync(),
-            RseInstrument = await ReadRseInstrumentAsync(),
-            RseEqualizer = await _rseEqualizerReader.ReadRseEqualizerAsync(Gp5Track.RseEqualizerBandsCount),
-            RseInstrumentEffect = await ReadRseInstrumentEffectAsync()
-        };
-    }
+    
 
-    private async ValueTask<int[]> ReadStringsTuningAsync()
-    {
-        var stringsTuning = new int[Gp5Track.StringsTuningLength];
-        for (var i = 0; i < stringsTuning.Length; i++)
-        {
-            stringsTuning[i] = await _primitivesReader.ReadIntAsync();
-        }
-
-        return stringsTuning;
-    }
+    
 
     public ValueTask<byte> ReadMeasureBreakLineAsync() =>
         _primitivesReader.ReadByteAsync();
@@ -222,53 +154,7 @@ internal class Gp5TodoReader : IGp5TodoReader
         return beat;
     }
 
-    private async ValueTask<Gp5MixTable> ReadMixTableAsync()
-    {
-        var mixTable = new Gp5MixTable
-        {
-            Instrument = await _primitivesReader.ReadSignedByteAsync(),
-            RseInstrument = await ReadRseInstrumentAsync(),
-            Volume = await _primitivesReader.ReadSignedByteAsync(),
-            Balance = await _primitivesReader.ReadSignedByteAsync(),
-            Chorus = await _primitivesReader.ReadSignedByteAsync(),
-            Reverb = await _primitivesReader.ReadSignedByteAsync(),
-            Phaser = await _primitivesReader.ReadSignedByteAsync(),
-            Tremolo = await _primitivesReader.ReadSignedByteAsync(),
-            Tempo = await ReadTempoAsync()
-        };
-
-        bool HasValueChange(int value) => value != -1;
-
-        if (HasValueChange(mixTable.Volume))
-            mixTable.VolumeTransition = await _primitivesReader.ReadByteAsync();
-
-        if (HasValueChange(mixTable.Balance))
-            mixTable.BalanceTransition = await _primitivesReader.ReadByteAsync();
-
-        if (HasValueChange(mixTable.Chorus))
-            mixTable.ChorusTransition = await _primitivesReader.ReadByteAsync();
-
-        if (HasValueChange(mixTable.Reverb))
-            mixTable.ReverbTransition = await _primitivesReader.ReadByteAsync();
-
-        if (HasValueChange(mixTable.Phaser))
-            mixTable.PhaserTransition = await _primitivesReader.ReadByteAsync();
-
-        if (HasValueChange(mixTable.Tremolo))
-            mixTable.TremoloTransition = await _primitivesReader.ReadByteAsync();
-
-        if (HasValueChange(mixTable.Tempo.BeatsPerMinute))
-        {
-            mixTable.TempoTransition = await _primitivesReader.ReadByteAsync();
-            mixTable.Tempo.HideBeatsPerMinute = await _primitivesReader.ReadBoolAsync();// TODO: named method via Demetra principle
-        }
-
-        mixTable.PrimaryFlags = (Gp5MixTable.Primary)await _primitivesReader.ReadByteAsync();
-        mixTable.WahWah = await _primitivesReader.ReadSignedByteAsync();
-        mixTable.RseInstrumentEffect = await ReadRseInstrumentEffectAsync();
-
-        return mixTable;
-    }
+    
 
     public async ValueTask<Gp5Note> ReadNoteAsync()
     {
