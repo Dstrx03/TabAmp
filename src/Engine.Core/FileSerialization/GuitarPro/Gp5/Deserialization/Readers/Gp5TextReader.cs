@@ -10,11 +10,8 @@ internal class Gp5TextReader : IGp5TextReader
     private readonly ISerialFileReader _fileReader;
     private readonly IGp5BinaryPrimitivesReader _primitivesReader;
 
-    public Gp5TextReader(ISerialFileReader fileReader, IGp5BinaryPrimitivesReader primitivesReader)
-    {
-        _fileReader = fileReader;
-        _primitivesReader = primitivesReader;
-    }
+    public Gp5TextReader(ISerialFileReader fileReader, IGp5BinaryPrimitivesReader primitivesReader) =>
+        (_fileReader, _primitivesReader) = (fileReader, primitivesReader);
 
     public async ValueTask<Gp5ByteText> ReadByteTextAsync(int maxLength)
     {
