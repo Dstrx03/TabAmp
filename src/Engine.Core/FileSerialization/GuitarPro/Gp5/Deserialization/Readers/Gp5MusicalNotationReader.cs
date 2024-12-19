@@ -46,15 +46,15 @@ internal class Gp5MusicalNotationReader : IGp5MusicalNotationReader
         };
     }
 
-    public async ValueTask<Gp5TimeSignatureBeamGroups> ReadTimeSignatureBeamGroupsAsync()
+    public async ValueTask<byte[]> ReadTimeSignatureBeamGroupsAsync()
     {
-        return new Gp5TimeSignatureBeamGroups
+        var beamGroups = new byte[Gp5TimeSignature.BeamGroupsLength];
+        for (var i = 0; i < beamGroups.Length; i++)
         {
-            FirstSpan = await _primitivesReader.ReadByteAsync(),
-            SecondSpan = await _primitivesReader.ReadByteAsync(),
-            ThirdSpan = await _primitivesReader.ReadByteAsync(),
-            FourthSpan = await _primitivesReader.ReadByteAsync()
-        };
+            beamGroups[i] = await _primitivesReader.ReadByteAsync();
+        }
+
+        return beamGroups;
     }
 
     public async ValueTask<Gp5Tempo> ReadTempoAsync()

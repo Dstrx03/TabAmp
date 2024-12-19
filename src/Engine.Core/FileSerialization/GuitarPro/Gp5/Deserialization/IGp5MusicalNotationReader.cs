@@ -9,7 +9,7 @@ internal interface IGp5MusicalNotationReader
     ValueTask<Gp5HeaderKeySignature> ReadHeaderKeySignatureAsync();
     ValueTask<Gp5KeySignature> ReadKeySignatureAsync();
     ValueTask<Gp5TimeSignature> ReadTimeSignatureAsync(bool hasDenominator);
-    ValueTask<Gp5TimeSignatureBeamGroups> ReadTimeSignatureBeamGroupsAsync();
+    ValueTask<byte[]> ReadTimeSignatureBeamGroupsAsync();
     ValueTask<Gp5Tempo> ReadTempoAsync();
     ValueTask<Gp5Bool> ReadTempoHideBeatsPerMinuteAsync();
     ValueTask<Gp5MusicalDirections> ReadMusicalDirectionsAsync();

@@ -42,7 +42,7 @@ internal class Gp5MusicalNotationReaderIntegrityValidator : IGp5MusicalNotationR
     public ValueTask<Gp5TimeSignature> ReadTimeSignatureAsync(bool hasDenominator) =>
         _notationReader.ReadTimeSignatureAsync(hasDenominator);
 
-    public ValueTask<Gp5TimeSignatureBeamGroups> ReadTimeSignatureBeamGroupsAsync() =>
+    public ValueTask<byte[]> ReadTimeSignatureBeamGroupsAsync() =>
         _notationReader.ReadTimeSignatureBeamGroupsAsync();
 
     public ValueTask<Gp5Tempo> ReadTempoAsync() =>
