@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.Processor;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Measures;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Tracks;
 using TabAmp.Engine.Core.Score;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
