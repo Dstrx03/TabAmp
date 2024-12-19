@@ -70,24 +70,21 @@ internal class Gp5DocumentComponentsReader : IGp5DocumentComponentsReader
 
     public async ValueTask<Gp5Lyrics> ReadLyricsAsync()
     {
-        return new Gp5Lyrics
+        var lyrics = new Gp5Lyrics
         {
             ApplyToTrack = await _primitivesReader.ReadIntAsync(),
-            FirstLine = await ReadLyricsLineAsync(),
-            SecondLine = await ReadLyricsLineAsync(),
-            ThirdLine = await ReadLyricsLineAsync(),
-            FourthLine = await ReadLyricsLineAsync(),
-            FifthLine = await ReadLyricsLineAsync()
+            Lines = new (int, string)[Gp5Lyrics.LinesLength]
         };
 
-        async ValueTask<Gp5LyricsLine> ReadLyricsLineAsync()
+        for (var i = 0; i < lyrics.Lines.Length; i++)
         {
-            return new Gp5LyricsLine
-            {
-                StartFromBar = await _primitivesReader.ReadIntAsync(),
-                Lyrics = await _textReader.ReadIntTextAsync()
-            };
+            var startFromBar = await _primitivesReader.ReadIntAsync();
+            var text = await _textReader.ReadIntTextAsync();
+
+            lyrics.Lines[i] = (startFromBar, text);
         }
+
+        return lyrics;
     }
 
     public async ValueTask<Gp5Marker> ReadMarkerAsync()

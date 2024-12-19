@@ -2,10 +2,8 @@
 
 internal class Gp5Lyrics
 {
+    public const int LinesLength = 5;
+
     public int ApplyToTrack { get; set; }
-    public Gp5LyricsLine FirstLine { get; set; }
-    public Gp5LyricsLine SecondLine { get; set; }
-    public Gp5LyricsLine ThirdLine { get; set; }
-    public Gp5LyricsLine FourthLine { get; set; }
-    public Gp5LyricsLine FifthLine { get; set; }
+    public (int startFromBar, string text)[] Lines { get; set; }
 }
