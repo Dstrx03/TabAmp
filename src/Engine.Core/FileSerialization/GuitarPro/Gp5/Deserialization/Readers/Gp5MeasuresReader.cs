@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.Common.Exceptions;
-using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Measures;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Readers;
 

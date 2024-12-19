@@ -1,4 +1,6 @@
-﻿namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
+﻿using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Measures;
+
+namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 
 internal class Gp5File
 {
