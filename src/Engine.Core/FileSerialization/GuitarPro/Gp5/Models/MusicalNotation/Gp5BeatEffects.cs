@@ -1,7 +1,7 @@
 ﻿using System;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Effects;
 
-namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
+namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.MusicalNotation;
 
 internal class Gp5BeatEffects
 {

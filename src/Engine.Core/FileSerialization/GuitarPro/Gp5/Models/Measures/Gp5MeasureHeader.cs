@@ -1,5 +1,6 @@
 ﻿using System;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.DocumentComponents;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.MusicalNotation;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Measures;
 
