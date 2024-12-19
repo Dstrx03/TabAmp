@@ -1,4 +1,4 @@
-﻿namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
+﻿namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Rse;
 
 internal class Gp5RseEqualizer
 {

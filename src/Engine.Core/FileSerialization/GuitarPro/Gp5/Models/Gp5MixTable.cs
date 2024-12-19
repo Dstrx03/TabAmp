@@ -1,4 +1,5 @@
 ﻿using System;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Rse;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 
