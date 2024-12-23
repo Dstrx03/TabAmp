@@ -44,6 +44,14 @@ internal class Gp5MeasuresReaderIntegrityValidator : IGp5MeasuresReader
     public ValueTask<Gp5Beat> ReadBeatAsync(Func<Gp5Beat, ValueTask> readNotesAsync) =>
         _measuresReader.ReadBeatAsync(readNotesAsync);
 
-    public ValueTask<Gp5Note> ReadNoteAsync() =>
-        _measuresReader.ReadNoteAsync();
+    public async ValueTask<Gp5Note> ReadNoteAsync()
+    {
+        var note = await _measuresReader.ReadNoteAsync();
+
+        if (!note.PrimaryFlags.HasFlag(Gp5Note.Primary._A01))
+            // TODO: message
+            throw new FileSerializationIntegrityException("note expected to have primary flag _A01");
+
+        return note;
+    }
 }

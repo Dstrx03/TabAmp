@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using TabAmp.Engine.Core.FileSerialization.Common.Exceptions;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Measures;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Readers;
@@ -122,11 +121,6 @@ internal class Gp5MeasuresReader : IGp5MeasuresReader
     public async ValueTask<Gp5Note> ReadNoteAsync()
     {
         var primaryFlags = (Gp5Note.Primary)await _primitivesReader.ReadByteAsync();
-
-        // TODO: move to the integrity validation layer
-        if (!primaryFlags.HasFlag(Gp5Note.Primary._A01))
-            throw new FileSerializationIntegrityException("note expected to have primary flag _A01");
-
         var note = new Gp5Note
         {
             PrimaryFlags = primaryFlags,
