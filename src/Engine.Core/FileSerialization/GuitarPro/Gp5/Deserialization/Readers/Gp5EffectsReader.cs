@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Effects;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Readers;
@@ -46,6 +45,22 @@ internal class Gp5EffectsReader : IGp5EffectsReader
 
     public async ValueTask<Gp5Harmonic> ReadHarmonicAsync()
     {
-        throw new NotImplementedException("TODO: read harmonic.");
+        var harmonic = new Gp5Harmonic
+        {
+            Type = await _primitivesReader.ReadByteAsync()
+        };
+
+        if (harmonic.Type == 2)
+        {
+            harmonic.Note = await _primitivesReader.ReadByteAsync();
+            harmonic.Accidental = await _primitivesReader.ReadSignedByteAsync();
+            harmonic.Octave = await _primitivesReader.ReadByteAsync();
+        }
+        else if (harmonic.Type == 3)
+        {
+            harmonic.Fret = await _primitivesReader.ReadByteAsync();
+        }
+
+        return harmonic;
     }
 }
