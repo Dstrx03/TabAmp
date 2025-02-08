@@ -57,10 +57,20 @@ internal class PocSerialFileReader : ISerialFileReader
         var diffStr = diff > 0 ? $"+{diff}" : diff.ToString();
 
         var summary = string.Empty;
-        if (Position == Length) summary = "FULL";
+        var summaryColor = ConsoleColor.DarkRed;
+        if (Position == Length)
+        {
+            summary = "FULL";
+            summaryColor = ConsoleColor.DarkGreen;
+        }
         if (Position < Length) summary = "PRTL";
         if (Position > Length) summary = "EXCD";
 
-        Console.WriteLine($"[{nameof(PocSerialFileReader)}] {message} | {ratio:P} {diffStr}b *{summary}* | {_context.FilePath}");
+        Console.Write($"[{nameof(PocSerialFileReader)}] {message} | {ratio:P} {diffStr}b ");
+        var color = Console.ForegroundColor;
+        Console.ForegroundColor = summaryColor;
+        Console.Write($"*{summary}*");
+        Console.ForegroundColor = color;
+        Console.WriteLine($" | {_context.FilePath}");
     }
 }
