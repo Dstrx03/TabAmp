@@ -35,9 +35,7 @@ internal class Gp5RseReader : IGp5RseReader
     {
         var bands = new sbyte[bandsCount];
         for (var i = 0; i < bands.Length; i++)
-        {
             bands[i] = await _primitivesReader.ReadSignedByteAsync();
-        }
 
         var gainPreFader = await _primitivesReader.ReadSignedByteAsync();
 

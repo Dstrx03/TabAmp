@@ -71,9 +71,7 @@ internal class Gp5TracksReader : IGp5TracksReader
         {
             var stringsTuning = new int[Gp5Track.StringsTuningLength];
             for (var i = 0; i < stringsTuning.Length; i++)
-            {
                 stringsTuning[i] = await _primitivesReader.ReadIntAsync();
-            }
 
             return stringsTuning;
         }

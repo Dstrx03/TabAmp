@@ -50,9 +50,7 @@ internal class Gp5MusicalNotationReader : IGp5MusicalNotationReader
     {
         var beamGroups = new byte[Gp5TimeSignature.BeamGroupsLength];
         for (var i = 0; i < beamGroups.Length; i++)
-        {
             beamGroups[i] = await _primitivesReader.ReadByteAsync();
-        }
 
         return beamGroups;
     }
@@ -97,15 +95,9 @@ internal class Gp5MusicalNotationReader : IGp5MusicalNotationReader
 
     public async ValueTask<Gp5Chord> ReadChordAsync()
     {
-        // TODO: apply more transparent naming for Gp5Chord model properties
-        // TODO: apply cleaner reading code
-        // TODO: use consts
-        // TODO: manual QA
         throw new NotImplementedException("TODO: complete chord reading.");
 
         var isNewFormat = await _primitivesReader.ReadBoolAsync();
-
-        // TODO: move to the integrity validation layer
         if (!isNewFormat)
             throw new FileSerializationIntegrityException("Expected chord to have ~new~ format.");
 

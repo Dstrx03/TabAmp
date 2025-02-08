@@ -36,9 +36,7 @@ internal class Gp5DocumentComponentsReader : IGp5DocumentComponentsReader
         };
 
         for (var i = 0; i < scoreInformation.Notice.Length; i++)
-        {
             scoreInformation.Notice[i] = await _textReader.ReadIntByteTextAsync();
-        }
 
         return scoreInformation;
     }
