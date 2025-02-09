@@ -118,6 +118,6 @@ internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeseria
         Convert.ToByte(notesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasSixthStringNote)) +
         Convert.ToByte(notesPresenceFlags.HasFlag(Gp5Beat.NotesPresence.HasSeventhStringNote));
 
-    protected override async ValueTask NextNoteAsync(Gp5Beat beat, int index) =>
-        beat.Notes![index] = await _measuresReader.ReadNoteAsync();
+    protected override async ValueTask NextNoteAsync(Gp5Note[] notes, int index) =>
+        notes[index] = await _measuresReader.ReadNoteAsync();
 }

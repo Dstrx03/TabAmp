@@ -118,8 +118,8 @@ internal abstract class Gp5FileSerializationProcessor : IFileSerializationProces
     protected virtual async ValueTask NextNotesAsync(Gp5Beat beat)
     {
         for (var index = 0; index < beat.Notes!.Length; index++)
-            await NextNoteAsync(beat, index);
+            await NextNoteAsync(beat.Notes, index);
     }
 
-    protected abstract ValueTask NextNoteAsync(Gp5Beat beat, int index);
+    protected abstract ValueTask NextNoteAsync(Gp5Note[] notes, int index);
 }
