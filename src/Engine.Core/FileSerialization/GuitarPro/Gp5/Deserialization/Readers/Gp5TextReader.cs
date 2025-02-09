@@ -19,8 +19,8 @@ internal class Gp5TextReader : IGp5TextReader
         var decodedString = await ReadStringAsync(length);
 
         var stringWrapper = new Gp5ByteText(decodedString, maxLength);
-        if (stringWrapper.TrailingBytesCount > 0)
-            await _fileReader.SkipBytesAsync(stringWrapper.TrailingBytesCount);
+
+        await _fileReader.SkipBytesAsync(stringWrapper.TrailingBytesCount);
 
         return stringWrapper;
     }
