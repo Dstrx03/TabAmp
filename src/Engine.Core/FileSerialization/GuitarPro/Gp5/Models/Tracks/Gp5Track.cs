@@ -1,4 +1,5 @@
 ﻿using System;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.BinaryPrimitives;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Rse;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Tracks;
@@ -18,7 +19,7 @@ internal class Gp5Track
     public int EffectChannel { get; set; }
     public int FretsCount { get; set; }
     public int CapoPosition { get; set; }
-    public int Color { get; set; }
+    public Gp5Color Color { get; set; }
     public Secondary SecondaryFlags { get; set; }
     public byte RseAutoAccentuation { get; set; }
     public byte MidiBank { get; set; }
