@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers;
 using System.IO;
 using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.Context;
@@ -8,6 +9,7 @@ namespace TabAmp.Engine.Core.FileSerialization.Common.Components.SerialFileReade
 internal class PocSerialFileReader : ISerialFileReader
 {
     private readonly FileStream _fileStream;
+    private readonly ArrayPool<byte> _arrayPool;
     private readonly FileSerializationContext _context;
 
     public PocSerialFileReader(FileSerializationContext context)
@@ -18,6 +20,7 @@ internal class PocSerialFileReader : ISerialFileReader
             Share = FileShare.None
         };
         _fileStream = File.Open(context.FilePath, options);
+        _arrayPool = ArrayPool<byte>.Shared;
         _context = context;
     }
 
