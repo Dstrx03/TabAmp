@@ -26,10 +26,21 @@ internal class PocSerialFileReader : ISerialFileReader
 
     public async ValueTask<byte[]> ReadBytesAsync(int count)
     {
-        var buffer = new byte[count];
-        await _fileStream.ReadAsync(buffer, _context.CancellationToken);
-        Position += count;
-        return buffer;
+        byte[]? buffer = null;
+        try
+        {
+            buffer = _arrayPool.Rent(count);
+
+            await _fileStream.ReadExactlyAsync(buffer, offset: 0, count, _context.CancellationToken);
+            Position += count;
+
+            return convertTo(buffer.AsSpan(start: 0, count));
+        }
+        finally
+        {
+            if (buffer != null)
+                _arrayPool.Return(buffer);
+        }
     }
 
     public async ValueTask SkipBytesAsync(int count)
