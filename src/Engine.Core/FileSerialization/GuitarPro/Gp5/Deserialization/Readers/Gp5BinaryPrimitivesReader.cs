@@ -1,4 +1,5 @@
-﻿using System.Buffers.Binary;
+﻿using System;
+using System.Buffers.Binary;
 using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.SerialFileReader;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.BinaryPrimitives;
@@ -20,44 +21,40 @@ internal class Gp5BinaryPrimitivesReader : IGp5BinaryPrimitivesReader
         _fileReader = fileReader;
 
     public ValueTask<byte> ReadByteAsync() =>
-        ReadByteValueAsync();
+        _fileReader.ReadBytesAsync(ByteSize, ConvertToByte);
 
-    public async ValueTask<sbyte> ReadSignedByteAsync() =>
-        (sbyte)await ReadByteValueAsync();
+    public ValueTask<sbyte> ReadSignedByteAsync() =>
+        _fileReader.ReadBytesAsync(ByteSize, ConvertToSignedByte);
 
-    public async ValueTask<short> ReadShortAsync()
-    {
-        var buffer = await _fileReader.ReadBytesAsync(ShortSize);
-        return BinaryPrimitives.ReadInt16LittleEndian(buffer);
-    }
+    public ValueTask<short> ReadShortAsync() =>
+        _fileReader.ReadBytesAsync(ShortSize, ConvertToShort);
 
-    public async ValueTask<int> ReadIntAsync()
-    {
-        var buffer = await _fileReader.ReadBytesAsync(IntSize);
-        return BinaryPrimitives.ReadInt32LittleEndian(buffer);
-    }
+    public ValueTask<int> ReadIntAsync() =>
+        _fileReader.ReadBytesAsync(IntSize, ConvertToInt);
 
-    public async ValueTask<float> ReadFloatAsync()
-    {
-        var buffer = await _fileReader.ReadBytesAsync(FloatSize);
-        return BinaryPrimitives.ReadSingleLittleEndian(buffer);
-    }
+    public ValueTask<float> ReadFloatAsync() =>
+        _fileReader.ReadBytesAsync(FloatSize, ConvertToFloat);
 
-    public async ValueTask<double> ReadDoubleAsync()
-    {
-        var buffer = await _fileReader.ReadBytesAsync(DoubleSize);
-        return BinaryPrimitives.ReadDoubleLittleEndian(buffer);
-    }
+    public ValueTask<double> ReadDoubleAsync() =>
+        _fileReader.ReadBytesAsync(DoubleSize, ConvertToDouble);
 
-    public async ValueTask<Gp5Bool> ReadBoolAsync() =>
-        (Gp5Bool)await ReadByteValueAsync();
+    public ValueTask<Gp5Bool> ReadBoolAsync() =>
+        _fileReader.ReadBytesAsync(ByteSize, ConvertToBool);
 
-    public async ValueTask<Gp5Color> ReadColorAsync() =>
-        (Gp5Color)await _fileReader.ReadBytesAsync(ColorSize);
+    public  ValueTask<Gp5Color> ReadColorAsync() =>
+         _fileReader.ReadBytesAsync(ColorSize, ConvertToColor);
 
-    private async ValueTask<byte> ReadByteValueAsync()
-    {
-        var buffer = await _fileReader.ReadBytesAsync(ByteSize);
-        return buffer[0];
-    }
+    private static ISerialFileReader.Convert<byte> ConvertToByte { get; } = ToByte;
+    private static ISerialFileReader.Convert<sbyte> ConvertToSignedByte { get; } = ToSignedByte;
+    private static ISerialFileReader.Convert<short> ConvertToShort { get; } = BinaryPrimitives.ReadInt16LittleEndian;
+    private static ISerialFileReader.Convert<int> ConvertToInt { get; } = BinaryPrimitives.ReadInt32LittleEndian;
+    private static ISerialFileReader.Convert<float> ConvertToFloat { get; } = BinaryPrimitives.ReadSingleLittleEndian;
+    private static ISerialFileReader.Convert<double> ConvertToDouble { get; } = BinaryPrimitives.ReadDoubleLittleEndian;
+    private static ISerialFileReader.Convert<Gp5Bool> ConvertToBool { get; } = ToBool;
+    private static ISerialFileReader.Convert<Gp5Color> ConvertToColor { get; } = ToColor;
+
+    private static byte ToByte(ReadOnlySpan<byte> buffer) => buffer[0];
+    private static sbyte ToSignedByte(ReadOnlySpan<byte> buffer) => (sbyte)ToByte(buffer);
+    private static Gp5Bool ToBool(ReadOnlySpan<byte> buffer) => (Gp5Bool)ToByte(buffer);
+    private static Gp5Color ToColor(ReadOnlySpan<byte> buffer) => (Gp5Color)buffer;
 }

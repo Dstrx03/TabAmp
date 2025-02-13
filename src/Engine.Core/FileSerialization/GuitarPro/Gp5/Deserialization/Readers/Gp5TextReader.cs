@@ -40,9 +40,8 @@ internal class Gp5TextReader : IGp5TextReader
         return new Gp5IntByteText(decodedString, size);
     }
 
-    private async ValueTask<string> ReadStringAsync(int length)
-    {
-        var buffer = await _fileReader.ReadBytesAsync(length);
-        return Encoding.UTF8.GetString(buffer);
-    }
+    private ValueTask<string> ReadStringAsync(int length) =>
+        _fileReader.ReadBytesAsync(length, ConvertToString);
+
+    private static ISerialFileReader.Convert<string> ConvertToString { get; } = Encoding.UTF8.GetString;
 }

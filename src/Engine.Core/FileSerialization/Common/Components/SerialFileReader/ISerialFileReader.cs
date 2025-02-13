@@ -8,8 +8,8 @@ internal interface ISerialFileReader : IDisposable
     long Length { get; }
     long Position { get; }
 
-    delegate T TODO_Delegate_Name<T>(ReadOnlySpan<byte> buffer);
+    delegate T Convert<T>(ReadOnlySpan<byte> buffer);
 
-    ValueTask<byte[]> ReadBytesAsync(int count);
+    ValueTask<T> ReadBytesAsync<T>(int count, Convert<T> convert);
     ValueTask SkipBytesAsync(int count);
 }
