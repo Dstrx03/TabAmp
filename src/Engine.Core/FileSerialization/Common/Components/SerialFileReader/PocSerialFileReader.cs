@@ -3,6 +3,7 @@ using System.Buffers;
 using System.IO;
 using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.Context;
+using static TabAmp.Engine.Core.FileSerialization.Common.Components.SerialFileReader.ISerialFileReader;
 
 namespace TabAmp.Engine.Core.FileSerialization.Common.Components.SerialFileReader;
 
@@ -27,7 +28,7 @@ internal class PocSerialFileReader : ISerialFileReader
     public long Length => _fileStream.Length;
     public long Position { get; private set; }
 
-    public async ValueTask<byte[]> ReadBytesAsync(int count)
+    public async ValueTask<T> ReadBytesAsync<T>(int count, Convert<T> convert)
     {
         byte[]? buffer = null;
         try
@@ -37,7 +38,7 @@ internal class PocSerialFileReader : ISerialFileReader
             await _fileStream.ReadExactlyAsync(buffer, offset: 0, count, _context.CancellationToken);
             Position += count;
 
-            return convertTo(buffer.AsSpan(start: 0, count));
+            return convert(buffer.AsSpan(start: 0, count));
         }
         finally
         {
@@ -48,7 +49,7 @@ internal class PocSerialFileReader : ISerialFileReader
 
     public async ValueTask SkipBytesAsync(int count)
     {
-        var skippedBytes = await ReadBytesAsync(count);
+        var skippedBytes = await ReadBytesAsync(count, buffer => buffer.ToArray());
         Console.WriteLine($"Skipped {count} bytes from {Position - count} to {Position - 1} inclusive: {string.Join(",", skippedBytes)}");
 
         // TODO: implement production grade tracking of skipped information

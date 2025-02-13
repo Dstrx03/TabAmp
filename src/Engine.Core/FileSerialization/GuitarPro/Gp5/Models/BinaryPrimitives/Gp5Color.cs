@@ -1,4 +1,6 @@
-﻿namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.BinaryPrimitives;
+﻿using System;
+
+namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.BinaryPrimitives;
 
 internal readonly struct Gp5Color
 {
@@ -14,7 +16,7 @@ internal readonly struct Gp5Color
         _A01 = _a01;
     }
 
-    public static explicit operator Gp5Color(byte[] buffer) =>
+    public static explicit operator Gp5Color(ReadOnlySpan<byte> buffer) =>
         new(red: buffer[0], green: buffer[1], blue: buffer[2], _a01: buffer[3]);
 
 
