@@ -17,9 +17,15 @@ internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeseria
     private readonly IGp5MeasuresReader _measuresReader;
 
     public Gp5FileDeserializer(IGp5DocumentComponentsReader documentReader, IGp5MusicalNotationReader notationReader,
-        IGp5TracksReader tracksReader, IGp5MeasuresReader measuresReader) =>
-        (_documentReader, _notationReader, _tracksReader, _measuresReader) =
-        (documentReader, notationReader, tracksReader, measuresReader);
+        IGp5TracksReader tracksReader, IGp5MeasuresReader measuresReader)
+    {
+        _documentReader = documentReader;
+        _notationReader = notationReader;
+        _tracksReader = tracksReader;
+        _measuresReader = measuresReader;
+
+        ReadNotesAsync = NextNotesAsync;
+    }
 
     public async Task<Gp5Score> DeserializeAsync()
     {
@@ -97,7 +103,9 @@ internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeseria
         File.MeasureBeats[measureIndex] = new Gp5Beat[await _measuresReader.ReadMeasureBeatsCountAsync()];
 
     protected override async ValueTask NextBeatAsync(int measureIndex, int beatIndex) =>
-        File.MeasureBeats[measureIndex][beatIndex] = await _measuresReader.ReadBeatAsync(NextNotesAsync);
+        File.MeasureBeats[measureIndex][beatIndex] = await _measuresReader.ReadBeatAsync(ReadNotesAsync);
+
+    private Func<Gp5Beat, ValueTask> ReadNotesAsync { get; }
 
     protected override ValueTask NextNotesAsync(Gp5Beat beat)
     {
