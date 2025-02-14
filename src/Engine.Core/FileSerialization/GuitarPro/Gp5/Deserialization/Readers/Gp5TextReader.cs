@@ -18,11 +18,11 @@ internal class Gp5TextReader : IGp5TextReader
         var length = await _primitivesReader.ReadByteAsync();
         var decodedString = await ReadStringAsync(length);
 
-        var stringWrapper = new Gp5ByteText(decodedString, maxLength);
+        var textWrapper = new Gp5ByteText(decodedString, maxLength);
 
-        await _fileReader.SkipBytesAsync(stringWrapper.TrailingBytesCount);
+        await _fileReader.SkipBytesAsync(textWrapper.TrailingBytesCount);
 
-        return stringWrapper;
+        return textWrapper;
     }
 
     public async ValueTask<string> ReadIntTextAsync()
