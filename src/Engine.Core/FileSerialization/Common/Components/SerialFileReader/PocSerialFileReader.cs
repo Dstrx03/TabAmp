@@ -3,6 +3,7 @@ using System.Buffers;
 using System.IO;
 using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.Context;
+using TabAmp.Engine.Core.FileSerialization.Common.Exceptions;
 using static TabAmp.Engine.Core.FileSerialization.Common.Components.SerialFileReader.ISerialFileReader;
 
 namespace TabAmp.Engine.Core.FileSerialization.Common.Components.SerialFileReader;
@@ -30,7 +31,11 @@ internal class PocSerialFileReader : ISerialFileReader
 
     public async ValueTask<T> ReadBytesAsync<T>(int count, Convert<T> convert)
     {
+        if (count   <   0    )
+            throw new A(count);
+
         byte[]? buffer = null;
+
         try
         {
             buffer = _arrayPool.Rent(count);
@@ -49,6 +54,9 @@ internal class PocSerialFileReader : ISerialFileReader
 
     public async ValueTask SkipBytesAsync(int count)
     {
+        if (count<0            )
+            throw new B(count);
+
         var skippedBytes = await ReadBytesAsync(count, buffer => buffer.ToArray());
         Console.WriteLine($"Skipped {count} bytes from {Position - count} to {Position - 1} inclusive: {string.Join(",", skippedBytes)}");
 
