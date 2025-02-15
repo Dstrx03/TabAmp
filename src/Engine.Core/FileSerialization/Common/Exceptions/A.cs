@@ -3,7 +3,7 @@
 internal  class A: FileSerializationException
 {
     public A(int count)
-        : base($"Cannot read {count} byte(s).")
+        : base($"Unable to read next {count} byte(s).")
     {
     }
 }
