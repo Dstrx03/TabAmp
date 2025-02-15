@@ -31,9 +31,6 @@ internal class PocSerialFileReader : ISerialFileReader
 
     public async ValueTask<T> ReadBytesAsync<T>(int count, Convert<T> convert)
     {
-        if (count   <   0    )
-            throw new A(count);
-
         byte[]? buffer = null;
 
         try
@@ -44,6 +41,10 @@ internal class PocSerialFileReader : ISerialFileReader
             Position += count;
 
             return convert(buffer.AsSpan(start: 0, count));
+        }
+        catch(ArgumentOutOfRangeException exception)when(count < 0)
+        {
+            throw new A(count);
         }
         finally
         {
