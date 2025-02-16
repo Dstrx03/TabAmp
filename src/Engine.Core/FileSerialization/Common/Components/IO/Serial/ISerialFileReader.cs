@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace TabAmp.Engine.Core.FileSerialization.Common.Components.SerialFileReader;
+namespace TabAmp.Engine.Core.FileSerialization.Common.Components.IO.Serial;
 
 internal interface ISerialFileReader : IDisposable
 {

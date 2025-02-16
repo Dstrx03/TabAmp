@@ -4,9 +4,9 @@ using System.IO;
 using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.Context;
 using TabAmp.Engine.Core.FileSerialization.Common.Exceptions;
-using static TabAmp.Engine.Core.FileSerialization.Common.Components.SerialFileReader.ISerialFileReader;
+using static TabAmp.Engine.Core.FileSerialization.Common.Components.IO.Serial.ISerialFileReader;
 
-namespace TabAmp.Engine.Core.FileSerialization.Common.Components.SerialFileReader;
+namespace TabAmp.Engine.Core.FileSerialization.Common.Components.IO.Serial;
 
 internal class PocSerialFileReader : ISerialFileReader
 {
@@ -42,9 +42,9 @@ internal class PocSerialFileReader : ISerialFileReader
 
             return convert(buffer.AsSpan(start: 0, count));
         }
-        catch(ArgumentOutOfRangeException exception)when(count < 0)
+        catch (ArgumentOutOfRangeException exception) when (count < 0)
         {
-            throw new A(count,exception);
+            throw new A(count, exception);
         }
         finally
         {
@@ -55,7 +55,7 @@ internal class PocSerialFileReader : ISerialFileReader
 
     public async ValueTask SkipBytesAsync(int count)
     {
-        if (count<0            )
+        if (count < 0)
             throw new B(count);
 
         var skippedBytes = await ReadBytesAsync(count, buffer => buffer.ToArray());
