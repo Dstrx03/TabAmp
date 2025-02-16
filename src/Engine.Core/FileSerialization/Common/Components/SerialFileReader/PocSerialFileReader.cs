@@ -44,7 +44,7 @@ internal class PocSerialFileReader : ISerialFileReader
         }
         catch(ArgumentOutOfRangeException exception)when(count < 0)
         {
-            throw new A(count);
+            throw new A(count,exception);
         }
         finally
         {

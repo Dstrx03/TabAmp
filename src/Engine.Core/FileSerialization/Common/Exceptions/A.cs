@@ -1,9 +1,13 @@
-﻿namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions;
+﻿using System;
+
+namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions;
 
 internal  class A: FileSerializationException
 {
-    public A(int count)
-        : base($"Unable to read the next {count} byte(s), the specified byte count must be a non-negative value.")
+    private const  string _msg = "Unable to read the next {0} byte(s), the specified byte count must be a non-negative value.";
+
+    public     A     (int count, Exception inner)
+        : base(string.Format(_msg, count), inner)
     {
     }
 }
