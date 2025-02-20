@@ -4,7 +4,7 @@ namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO;
 
 internal sealed class Todo_Name_Exception : OperationException
 {
-    private const string MessageTemplate = "Unable to {0} the next {1} byte(s), the specified byte count must be a non-negative value.";
+    private new const string MessageTemplate = $"{OperationException.MessageTemplate}, the specified byte count must be a non-negative value.";
 
     public Todo_Name_Exception(OperationType operation, int count)
         : base(operation, count, ComposeMessage(operation, count))
