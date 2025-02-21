@@ -4,7 +4,7 @@ namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO;
 
 internal sealed class NegativeByteCountOperationException : OperationException
 {
-    private new const string MessageTemplate = $"{OperationException.MessageTemplate}, the specified byte count must be a non-negative value.";
+    private new const string MessageTemplate = $"{OperationException.MessageTemplate}; the specified byte count must be a non-negative value.";
 
     public NegativeByteCountOperationException(OperationType operation, int byteCount)
         : base(operation, byteCount, ComposeMessage(operation, byteCount))

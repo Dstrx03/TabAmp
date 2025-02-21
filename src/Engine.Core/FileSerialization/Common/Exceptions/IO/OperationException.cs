@@ -27,6 +27,6 @@ internal abstract class OperationException : FileSerializationException
     {
         OperationType.Read => "read",
         OperationType.ReadSkip => "read (skip)",
-        _ => $"perform an unidentified operation ({(int)operation}) on"
+        _ => $"perform an unidentified operation (type: {(int)operation}) on"
     };
 }
