@@ -23,5 +23,5 @@ internal sealed class NegativeByteCountOperationException : OperationException
     }
 
     private static string ComposeMessage(OperationType operation, int byteCount) =>
-        string.Format(MessageTemplate, GetOperationName(operation), byteCount);
+        string.Format(MessageTemplate, GetMessageComponent(operation), byteCount);
 }

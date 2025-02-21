@@ -23,7 +23,7 @@ internal abstract class OperationException : FileSerializationException
     public OperationType Operation { get; }
     public int ByteCount { get; }
 
-    protected static string GetOperationName(OperationType operation) => operation switch
+    protected static string GetMessageComponent(OperationType operation) => operation switch
     {
         OperationType.Read => "read",
         OperationType.ReadSkip => "read (skip)",
