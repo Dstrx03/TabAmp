@@ -26,7 +26,7 @@ internal abstract class OperationException : FileSerializationException
     protected static string GetOperationName(OperationType operation) => operation switch
     {
         OperationType.Read => "read",
-        OperationType.Skip => "skip",
-        _ => throw new ArgumentException()//TODO: exception?
+        OperationType.ReadSkip => "read (skip)",
+        _ => $"perform an unidentified operation ({(int)operation}) on"
     };
 }

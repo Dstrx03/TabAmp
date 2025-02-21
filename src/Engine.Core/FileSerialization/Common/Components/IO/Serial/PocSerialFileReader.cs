@@ -55,7 +55,7 @@ internal class PocSerialFileReader : ISerialFileReader
 
     public async ValueTask SkipBytesAsync(int count)
     {
-        NegativeByteCountOperationException.ThrowIfNegative(OperationType.Skip, count);
+        NegativeByteCountOperationException.ThrowIfNegative(OperationType.ReadSkip, count);
 
         var skippedBytes = await ReadBytesAsync(count, buffer => buffer.ToArray());
         Console.WriteLine($"Skipped {count} bytes from {Position - count} to {Position - 1} inclusive: {string.Join(",", skippedBytes)}");
