@@ -6,22 +6,22 @@ internal abstract class OperationException : FileSerializationException
 {
     protected const string MessageTemplate = "Unable to {0} the next {1} byte(s)";
 
-    protected OperationException(OperationType operation, int byteCount, string message)
+    protected OperationException(OperationType operation, int bytesCount, string message)
         : base(message)
     {
         Operation = operation;
-        ByteCount = byteCount;
+        BytesCount = bytesCount;
     }
 
-    protected OperationException(OperationType operation, int byteCount, string message, Exception inner)
+    protected OperationException(OperationType operation, int bytesCount, string message, Exception inner)
         : base(message, inner)
     {
         Operation = operation;
-        ByteCount = byteCount;
+        BytesCount = bytesCount;
     }
 
     public OperationType Operation { get; }
-    public int ByteCount { get; }
+    public int BytesCount { get; }
 
     protected static string GetMessageComponent(OperationType operation) => operation switch
     {
