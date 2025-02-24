@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using TabAmp.Engine.Core.FileSerialization.Common.Exceptions;
+using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IntegrityValidation;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.BinaryPrimitives;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.IntegrityValidators;
@@ -35,7 +35,7 @@ internal class Gp5BinaryPrimitivesReaderIntegrityValidator : IGp5BinaryPrimitive
 
         if (boolWrapper.ByteValue is not Gp5Bool.FalseValue and not Gp5Bool.TrueValue)
             // TODO: message
-            throw new FileSerializationIntegrityException($"{boolWrapper.ByteValue}!=0<>1 P=~");
+            throw new ProcessIntegrityException($"{boolWrapper.ByteValue}!=0<>1 P=~");
 
         return boolWrapper;
     }
@@ -46,7 +46,7 @@ internal class Gp5BinaryPrimitivesReaderIntegrityValidator : IGp5BinaryPrimitive
 
         if (colorWrapper._A01 != 0)
             // TODO: message
-            throw new FileSerializationIntegrityException($"{colorWrapper._A01}!=0 P=~");
+            throw new ProcessIntegrityException($"{colorWrapper._A01}!=0 P=~");
 
         return colorWrapper;
     }

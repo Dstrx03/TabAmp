@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using TabAmp.Engine.Core.FileSerialization.Common.Exceptions;
+using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IntegrityValidation;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Measures;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.IntegrityValidators;
@@ -18,11 +18,11 @@ internal class Gp5MeasuresReaderIntegrityValidator : IGp5MeasuresReader
 
         if (measureHeader._A01 != 0)
             // TODO: message
-            throw new FileSerializationIntegrityException($"measure header _A01 expected to be 0: _A01={measureHeader._A01}");
+            throw new ProcessIntegrityException($"measure header _A01 expected to be 0: _A01={measureHeader._A01}");
 
         if (!measureHeader.PrimaryFlags.HasFlag(Gp5MeasureHeader.Primary.HasAlternateEndings) && measureHeader.AlternateEndingsFlags != 0)
             // TODO: message
-            throw new FileSerializationIntegrityException($"AlternateEndingsFlags expected to be 0 due to measure has no alternate endings: AlternateEndingsFlags={measureHeader.AlternateEndingsFlags}");
+            throw new ProcessIntegrityException($"AlternateEndingsFlags expected to be 0 due to measure has no alternate endings: AlternateEndingsFlags={measureHeader.AlternateEndingsFlags}");
 
         return measureHeader;
     }
@@ -36,7 +36,7 @@ internal class Gp5MeasuresReaderIntegrityValidator : IGp5MeasuresReader
 
         if (beatsCount < 1 || beatsCount > 127)
             // TODO: message
-            throw new FileSerializationIntegrityException($"beatsCount out of valid range: beatsCount={beatsCount}");
+            throw new ProcessIntegrityException($"beatsCount out of valid range: beatsCount={beatsCount}");
 
         return beatsCount;
     }
@@ -50,7 +50,7 @@ internal class Gp5MeasuresReaderIntegrityValidator : IGp5MeasuresReader
 
         if (!note.PrimaryFlags.HasFlag(Gp5Note.Primary._A01))
             // TODO: message
-            throw new FileSerializationIntegrityException("note expected to have primary flag _A01");
+            throw new ProcessIntegrityException("note expected to have primary flag _A01");
 
         return note;
     }

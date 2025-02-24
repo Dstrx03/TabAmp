@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using TabAmp.Engine.Core.FileSerialization.Common.Exceptions;
+using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IntegrityValidation;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.BinaryPrimitives;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.MusicalNotation;
 
@@ -18,19 +18,19 @@ internal class Gp5MusicalNotationReaderIntegrityValidator : IGp5MusicalNotationR
 
         if (keySignature.Octave != 0)
             // TODO: message
-            throw new FileSerializationIntegrityException($"expected to be 0: Octave={keySignature.Octave}");
+            throw new ProcessIntegrityException($"expected to be 0: Octave={keySignature.Octave}");
 
         if (keySignature.Key >= 0)
         {
             if (keySignature._A01 != 0 || keySignature._A02 != 0 || keySignature._A03 != 0)
                 // TODO: message
-                throw new FileSerializationIntegrityException($"expected to be 0: _A01={keySignature._A01}, _A02={keySignature._A02}, _A03={keySignature._A03}, ");
+                throw new ProcessIntegrityException($"expected to be 0: _A01={keySignature._A01}, _A02={keySignature._A02}, _A03={keySignature._A03}, ");
         }
         else
         {
             if (keySignature._A01 != -1 || keySignature._A02 != -1 || keySignature._A03 != -1)
                 // TODO: message
-                throw new FileSerializationIntegrityException($"expected to be -1: _A01={keySignature._A01}, _A02={keySignature._A02}, _A03={keySignature._A03}, ");
+                throw new ProcessIntegrityException($"expected to be -1: _A01={keySignature._A01}, _A02={keySignature._A02}, _A03={keySignature._A03}, ");
         }
 
         return keySignature;

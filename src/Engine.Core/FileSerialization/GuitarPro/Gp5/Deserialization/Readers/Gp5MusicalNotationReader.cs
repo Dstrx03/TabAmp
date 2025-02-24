@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using TabAmp.Engine.Core.FileSerialization.Common.Exceptions;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.BinaryPrimitives;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.MusicalNotation;
 
@@ -99,7 +98,7 @@ internal class Gp5MusicalNotationReader : IGp5MusicalNotationReader
 
         var isNewFormat = await _primitivesReader.ReadBoolAsync();
         if (!isNewFormat)
-            throw new FileSerializationIntegrityException("Expected chord to have ~new~ format.");
+            throw new InvalidOperationException("Expected chord to have ~new~ format.");
 
         var chord = new Gp5Chord
         {

@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using TabAmp.Engine.Core.FileSerialization.Common.Exceptions;
+using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IntegrityValidation;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Tracks;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.IntegrityValidators;
@@ -17,7 +17,7 @@ internal class Gp5TracksReaderIntegrityValidator : IGp5TracksReader
 
         if (midiChannel._A01 != 0 || midiChannel._A02 != 0)
             // TODO: message
-            throw new FileSerializationIntegrityException($"midiChannel _A01,_A02 expected to be 0: _A01={midiChannel._A01}, _A02={midiChannel._A02}");
+            throw new ProcessIntegrityException($"midiChannel _A01,_A02 expected to be 0: _A01={midiChannel._A01}, _A02={midiChannel._A02}");
 
         return midiChannel;
     }
@@ -28,53 +28,53 @@ internal class Gp5TracksReaderIntegrityValidator : IGp5TracksReader
 
         if (!track.PrimaryFlags.HasFlag(Gp5Track.Primary._A01))
             // TODO: message
-            throw new FileSerializationIntegrityException("expected Primary._A01");
+            throw new ProcessIntegrityException("expected Primary._A01");
 
         if (track.PrimaryFlags.HasFlag(Gp5Track.Primary.TrackTypePercussion) ==
             track.SecondaryFlags.HasFlag(Gp5Track.Secondary.TrackTypeInstrument))
             // TODO: message
-            throw new FileSerializationIntegrityException($"expected to have consistent track type (instrument or percussion): instrument:{track.SecondaryFlags.HasFlag(Gp5Track.Secondary.TrackTypeInstrument)}, percussion:{track.PrimaryFlags.HasFlag(Gp5Track.Primary.TrackTypePercussion)}");
+            throw new ProcessIntegrityException($"expected to have consistent track type (instrument or percussion): instrument:{track.SecondaryFlags.HasFlag(Gp5Track.Secondary.TrackTypeInstrument)}, percussion:{track.PrimaryFlags.HasFlag(Gp5Track.Primary.TrackTypePercussion)}");
 
         if (track.StringsCount >= 6 && (track._A01 != 0 || track._A02 != 0))
         {
             // TODO: message
-            throw new FileSerializationIntegrityException($"A1/2 expected to be 0 ({track.StringsCount} strings): _A01={track._A01}, _A02={track._A02}");
+            throw new ProcessIntegrityException($"A1/2 expected to be 0 ({track.StringsCount} strings): _A01={track._A01}, _A02={track._A02}");
         }
         else if (track.StringsCount < 6 && (track._A01 != 12 || track._A02 != 12))
         {
             // TODO: message
-            throw new FileSerializationIntegrityException($"A1/2 expected to be 12 ({track.StringsCount} strings): _A01={track._A01}, _A02={track._A02}");
+            throw new ProcessIntegrityException($"A1/2 expected to be 12 ({track.StringsCount} strings): _A01={track._A01}, _A02={track._A02}");
         }
 
         if (track._A03 != 100)
             // TODO: message
-            throw new FileSerializationIntegrityException($"A3 expected to be 100: _A03={track._A03}");
+            throw new ProcessIntegrityException($"A3 expected to be 100: _A03={track._A03}");
 
         var decodedBValue = track._B01 * 2 + track._B02 * 125 + track._B03 * 384 + track._B04 * 1 + track._B05 * 1 + track._B06 * 22 + track._B07 * -20 + track._B08 * 100 + track._B09 * -98 + track._B10 * -30;
         if (decodedBValue != track._C01)
             // TODO: message
-            throw new FileSerializationIntegrityException($"B expected to be valid sequence: sequence={string.Join(",", track._B01, track._B02, track._B03, track._B04, track._B05, track._B06, track._B07, track._B08, track._B09, track._B10)}, _C01={track._C01}, decodedBValue={decodedBValue}");
+            throw new ProcessIntegrityException($"B expected to be valid sequence: sequence={string.Join(",", track._B01, track._B02, track._B03, track._B04, track._B05, track._B06, track._B07, track._B08, track._B09, track._B10)}, _C01={track._C01}, decodedBValue={decodedBValue}");
 
         if (track.SecondaryFlags.HasFlag(Gp5Track.Secondary.DisplayTablature) &&
             track.SecondaryFlags.HasFlag(Gp5Track.Secondary.DisplayStandardNotation) &&
             track._C01 != 1023)
         {
             // TODO: message
-            throw new FileSerializationIntegrityException($"C expected to be 1023: _C01={track._C01}");
+            throw new ProcessIntegrityException($"C expected to be 1023: _C01={track._C01}");
         }
         else if (track.SecondaryFlags.HasFlag(Gp5Track.Secondary.DisplayTablature) &&
             !track.SecondaryFlags.HasFlag(Gp5Track.Secondary.DisplayStandardNotation) &&
             track._C01 != 991)
         {
             // TODO: message
-            throw new FileSerializationIntegrityException($"C expected to be 991: _C01={track._C01}");
+            throw new ProcessIntegrityException($"C expected to be 991: _C01={track._C01}");
         }
         else if (!track.SecondaryFlags.HasFlag(Gp5Track.Secondary.DisplayTablature) &&
             track.SecondaryFlags.HasFlag(Gp5Track.Secondary.DisplayStandardNotation) &&
             track._C01 != 767)
         {
             // TODO: message
-            throw new FileSerializationIntegrityException($"C expected to be 767: _C01={track._C01}");
+            throw new ProcessIntegrityException($"C expected to be 767: _C01={track._C01}");
         }
 
         return track;
@@ -137,7 +137,7 @@ internal class Gp5TracksReaderIntegrityValidator : IGp5TracksReader
 
         if (rseMasterEffect._A01 != 0)
             // TODO: message
-            throw new FileSerializationIntegrityException($"expected to be 0: _A01={rseMasterEffect._A01}");
+            throw new ProcessIntegrityException($"expected to be 0: _A01={rseMasterEffect._A01}");
 
         return rseMasterEffect;
     }

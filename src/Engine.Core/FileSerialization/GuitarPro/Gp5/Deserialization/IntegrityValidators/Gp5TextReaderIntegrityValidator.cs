@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using TabAmp.Engine.Core.FileSerialization.Common.Exceptions;
+using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IntegrityValidation;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Text;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.IntegrityValidators;
@@ -17,7 +17,7 @@ internal class Gp5TextReaderIntegrityValidator : IGp5TextReader
 
         if (textWrapper.TrailingBytesCount < 0)
             // TODO: message
-            throw new FileSerializationIntegrityException($"{maxLength}-{textWrapper.Length}<0 P=~");
+            throw new ProcessIntegrityException($"{maxLength}-{textWrapper.Length}<0 P=~");
 
         return textWrapper;
     }
@@ -31,7 +31,7 @@ internal class Gp5TextReaderIntegrityValidator : IGp5TextReader
 
         if (textWrapper.Length != textWrapper.MaxLength)
             // TODO: message
-            throw new FileSerializationIntegrityException($"{textWrapper.Length}+1!={textWrapper.Size} P=~");
+            throw new ProcessIntegrityException($"{textWrapper.Length}+1!={textWrapper.Size} P=~");
 
         return textWrapper;
     }

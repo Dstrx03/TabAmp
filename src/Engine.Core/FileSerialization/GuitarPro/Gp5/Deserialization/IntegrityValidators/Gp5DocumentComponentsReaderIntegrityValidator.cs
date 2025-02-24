@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using TabAmp.Engine.Core.FileSerialization.Common.Exceptions;
+using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IntegrityValidation;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.DocumentComponents;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Text;
 
@@ -21,11 +21,11 @@ internal class Gp5DocumentComponentsReaderIntegrityValidator : IGp5DocumentCompo
 
         if (measureHeadersCount < 1 || measureHeadersCount > 2048)
             // TODO: message
-            throw new FileSerializationIntegrityException($"measureHeadersCount out of valid range: measureHeadersCount={measureHeadersCount}");
+            throw new ProcessIntegrityException($"measureHeadersCount out of valid range: measureHeadersCount={measureHeadersCount}");
 
         if (tracksCount < 1 || tracksCount > 127)
             // TODO: message
-            throw new FileSerializationIntegrityException($"tracksCount out of valid range: tracksCount={tracksCount}");
+            throw new ProcessIntegrityException($"tracksCount out of valid range: tracksCount={tracksCount}");
 
         return (measureHeadersCount, tracksCount);
     }
