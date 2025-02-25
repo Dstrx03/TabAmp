@@ -1,25 +1,15 @@
 ﻿namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Text;
 
-internal readonly struct Gp5IntByteText
+internal readonly record struct Gp5IntByteText(int Size, byte Length, string Text)
 {
     private const int LengthByteSize = 1;
 
-    public string DecodedString { get; }
-    public int Size { get; }
-    public int Length => DecodedString.Length;
     public int MaxLength => Size - LengthByteSize;
 
-    public Gp5IntByteText(string decodedString, int size)
+    public Gp5IntByteText(string text)
+        : this(text.Length + LengthByteSize, (byte)text.Length, text)
     {
-        DecodedString = decodedString;
-        Size = size;
     }
 
-    public Gp5IntByteText(string decodedString)
-    {
-        DecodedString = decodedString;
-        Size = decodedString.Length + LengthByteSize;
-    }
-
-    public static implicit operator string(Gp5IntByteText textWrapper) => textWrapper.DecodedString;
+    public static implicit operator string(Gp5IntByteText textWrapper) => textWrapper.Text;
 }
