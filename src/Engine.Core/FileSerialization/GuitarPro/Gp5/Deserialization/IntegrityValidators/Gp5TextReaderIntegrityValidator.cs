@@ -35,7 +35,7 @@ internal class Gp5TextReaderIntegrityValidator : IGp5TextReader
         catch (NegativeBytesCountOperationException exception) when (exception.Operation == OperationType.Read)
         {
             var length = exception.BytesCount;
-            var message = $"The text length ({length}) must be non-negative.";
+            var message = $"The text length ({length}) must be a non-negative number.";
             throw new ProcessIntegrityException(message, exception);
         }
     }
