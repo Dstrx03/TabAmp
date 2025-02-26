@@ -20,15 +20,25 @@ internal class Gp5TextReaderIntegrityValidator : IGp5TextReader
         }
         catch (NegativeBytesCountOperationException exception) when (exception.Operation == OperationType.ReadSkip)
         {
-            var trailingBytesCount = exception.BytesCount;
-            var length = maxLength + trailingBytesCount * -1 ;
+            var length = maxLength + exception.BytesCount * -1;
             var message = $"The text length ({length}) exceeds the maximum length of {maxLength}.";
-            throw new ProcessIntegrityException(message,exception);
+            throw new ProcessIntegrityException(message, exception);
         }
     }
 
-    public ValueTask<string> ReadIntTextAsync() =>
-        _textReader.ReadIntTextAsync();
+    public async ValueTask<string> ReadIntTextAsync()
+    {
+        try
+        {
+            return await _textReader.ReadIntTextAsync();
+        }
+        catch (NegativeBytesCountOperationException exception) when (exception.Operation == OperationType.Read)
+        {
+            var length = exception.BytesCount;
+            var message = $"The text length ({length}) must be non-negative.";
+            throw new ProcessIntegrityException(message, exception);
+        }
+    }
 
     public async ValueTask<Gp5IntByteText> ReadIntByteTextAsync()
     {
