@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IntegrityValidation;
+using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Text;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.IntegrityValidators;
@@ -13,13 +14,17 @@ internal class Gp5TextReaderIntegrityValidator : IGp5TextReader
 
     public async ValueTask<Gp5ByteText> ReadByteTextAsync(int maxLength)
     {
-        var textWrapper = await _textReader.ReadByteTextAsync(maxLength);
-
-        if (textWrapper.TrailingBytesCount < 0)
-            // TODO: message
-            throw new ProcessIntegrityException($"{maxLength}-{textWrapper.Length}<0 P=~");
-
-        return textWrapper;
+        try
+        {
+            return await _textReader.ReadByteTextAsync(maxLength);
+        }
+        catch (NegativeBytesCountOperationException exception) when (exception.Operation == OperationType.ReadSkip)
+        {
+            var trailingBytesCount = exception.BytesCount;
+            var length = maxLength + trailingBytesCount * -1 ;
+            var message = $"The text length ({length}) exceeds the maximum length of {maxLength}.";
+            throw new ProcessIntegrityException(message,exception);
+        }
     }
 
     public ValueTask<string> ReadIntTextAsync() =>
