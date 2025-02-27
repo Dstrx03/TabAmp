@@ -2,9 +2,7 @@
 
 internal readonly record struct Gp5IntByteText(int Size, byte Length, string Text)
 {
-    private const int LengthByteSize = 1;
-
-    public int MaxLength => Size - LengthByteSize;
+    public const int LengthByteSize = 1;
 
     public Gp5IntByteText(string text)
         : this(text.Length + LengthByteSize, (byte)text.Length, text)
