@@ -44,7 +44,7 @@ internal class Gp5TextReaderIntegrityValidator : IGp5TextReader
     {
         var textWrapper = await _textReader.ReadIntByteTextAsync();
 
-        var size = textWrapper.Length + Gp5IntByteText.LengthByteSize;
+        var size = Gp5IntByteText.CalculateSize(textWrapper);
         if (textWrapper.Size != size)
         {
             var message = $"The text size ({textWrapper.Size}) is expected to be {size} byte(s).";
