@@ -1,21 +1,17 @@
 ﻿namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.BinaryPrimitives;
 
-internal readonly struct Gp5Bool
+internal readonly record struct Gp5Bool(byte Value)
 {
     public const byte FalseValue = 0;
     public const byte TrueValue = 1;
 
-    public byte ByteValue { get; }
-    public bool BoolValue => ByteValue == TrueValue;
+    public Gp5Bool(bool value)
+        : this(value ? TrueValue : FalseValue)
+    {
+    }
 
-    public Gp5Bool(byte byteValue) =>
-        ByteValue = byteValue;
+    public static implicit operator bool(Gp5Bool boolWrapper) => boolWrapper.Value == TrueValue;
 
-    public Gp5Bool(bool boolValue) =>
-        ByteValue = boolValue ? TrueValue : FalseValue;
-
-    public static implicit operator bool(Gp5Bool boolWrapper) => boolWrapper.BoolValue;
-
-    public static explicit operator Gp5Bool(byte byteValue) => new(byteValue);
-    public static explicit operator Gp5Bool(bool boolValue) => new(boolValue);
+    public static explicit operator Gp5Bool(byte value) => new(value);
+    public static explicit operator Gp5Bool(bool value) => new(value);
 }

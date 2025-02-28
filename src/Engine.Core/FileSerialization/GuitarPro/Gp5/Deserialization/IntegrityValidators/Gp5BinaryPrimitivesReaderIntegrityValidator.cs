@@ -33,9 +33,11 @@ internal class Gp5BinaryPrimitivesReaderIntegrityValidator : IGp5BinaryPrimitive
     {
         var boolWrapper = await _primitivesReader.ReadBoolAsync();
 
-        if (boolWrapper.ByteValue is not Gp5Bool.FalseValue and not Gp5Bool.TrueValue)
-            // TODO: message
-            throw new ProcessIntegrityException($"{boolWrapper.ByteValue}!=0<>1 P=~");
+        if (boolWrapper.Value is not Gp5Bool.FalseValue and not Gp5Bool.TrueValue)
+        {
+            var message = $"todo: message {boolWrapper.Value}";
+            throw new ProcessIntegrityException(message);
+        }
 
         return boolWrapper;
     }
