@@ -21,7 +21,7 @@ internal class Gp5TextReaderIntegrityValidator : IGp5TextReader
         catch (NegativeBytesCountOperationException exception) when (exception.Operation == OperationType.ReadSkip)
         {
             var length = maxLength + exception.BytesCount * -1;
-            var message = $"The text length exceeds the maximum length of {maxLength}. Actual length: {length}";
+            var message = $"The text length exceeds the maximum length of {maxLength}. Actual length: {length} character(s).";
             throw new ProcessIntegrityException(message, exception);
         }
     }
@@ -35,7 +35,7 @@ internal class Gp5TextReaderIntegrityValidator : IGp5TextReader
         catch (NegativeBytesCountOperationException exception) when (exception.Operation == OperationType.Read)
         {
             var length = exception.BytesCount;
-            var message = $"The text length must be a non-negative number. Actual length: {length}";
+            var message = $"The text length must be a non-negative number. Actual length: {length} character(s).";
             throw new ProcessIntegrityException(message, exception);
         }
     }
@@ -45,9 +45,9 @@ internal class Gp5TextReaderIntegrityValidator : IGp5TextReader
         var textWrapper = await _textReader.ReadIntByteTextAsync();
 
         var size = Gp5IntByteText.CalculateSize(textWrapper);
-        if (textWrapper.Size != size )
+        if (textWrapper.Size != size)
         {
-            var message = $"The expected size for a text with length of {textWrapper.Length} is {size} byte(s). Actual size: {textWrapper.Size} byte(s)";
+            var message = $"The expected size for a text with length of {textWrapper.Length} character(s) is {size} byte(s). Actual size: {textWrapper.Size} byte(s).";
             throw new ProcessIntegrityException(message);
         }
 
