@@ -35,7 +35,7 @@ internal class Gp5BinaryPrimitivesReaderIntegrityValidator : IGp5BinaryPrimitive
 
         if (boolWrapper.Value is not Gp5Bool.FalseValue and not Gp5Bool.TrueValue)
         {
-            var message = $"todo: message {boolWrapper.Value}";
+            var message = $"The boolean value is expected to be {Gp5Bool.FalseValue} or {Gp5Bool.TrueValue}. Actual value: {boolWrapper.Value}.";
             throw new ProcessIntegrityException(message);
         }
 
