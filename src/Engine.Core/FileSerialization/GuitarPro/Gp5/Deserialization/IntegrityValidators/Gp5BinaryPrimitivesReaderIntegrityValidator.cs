@@ -46,10 +46,10 @@ internal class Gp5BinaryPrimitivesReaderIntegrityValidator : IGp5BinaryPrimitive
     {
         var color = await _primitivesReader.ReadColorAsync();
 
-        var expectedTodoName = 0;
-        if (color._A01 != expectedTodoName)
+        var expected_A01 = 0;
+        if (color._A01 != expected_A01)
         {
-            var message = $"The anonymous property {nameof(color._A01)} is expected to be {expectedTodoName}. Actual value: {color._A01}.";
+            var message = $"The anonymous property {nameof(color._A01)} is expected to be {expected_A01}. Actual value: {color._A01}.";
             throw new ProcessIntegrityException(message);
         }
 
