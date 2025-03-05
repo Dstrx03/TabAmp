@@ -44,17 +44,16 @@ internal class Gp5BinaryPrimitivesReader : IGp5BinaryPrimitivesReader
     public ValueTask<Gp5Color> ReadColorAsync() =>
          _fileReader.ReadBytesAsync(ColorSize, ConvertToColor);
 
-    private static ISerialFileReader.Convert<byte> ConvertToByte { get; } = ToByte;
-    private static ISerialFileReader.Convert<sbyte> ConvertToSignedByte { get; } = ToSignedByte;
+    private static ISerialFileReader.Convert<byte> ConvertToByte { get; } = ReadByte;
+    private static ISerialFileReader.Convert<sbyte> ConvertToSignedByte { get; } = ReadSignedByte;
     private static ISerialFileReader.Convert<short> ConvertToShort { get; } = BinaryPrimitives.ReadInt16LittleEndian;
     private static ISerialFileReader.Convert<int> ConvertToInt { get; } = BinaryPrimitives.ReadInt32LittleEndian;
     private static ISerialFileReader.Convert<float> ConvertToFloat { get; } = BinaryPrimitives.ReadSingleLittleEndian;
     private static ISerialFileReader.Convert<double> ConvertToDouble { get; } = BinaryPrimitives.ReadDoubleLittleEndian;
-    private static ISerialFileReader.Convert<Gp5Bool> ConvertToBool { get; } = ToBool;
-    private static ISerialFileReader.Convert<Gp5Color> ConvertToColor { get; } = ToColor;
+    private static ISerialFileReader.Convert<Gp5Bool> ConvertToBool { get; } = ReadBool;
+    private static ISerialFileReader.Convert<Gp5Color> ConvertToColor { get; } = Gp5Color.Read;
 
-    private static byte ToByte(ReadOnlySpan<byte> buffer) => buffer[0];
-    private static sbyte ToSignedByte(ReadOnlySpan<byte> buffer) => (sbyte)ToByte(buffer);
-    private static Gp5Bool ToBool(ReadOnlySpan<byte> buffer) => (Gp5Bool)ToByte(buffer);
-    private static Gp5Color ToColor(ReadOnlySpan<byte> buffer) => (Gp5Color)buffer;
+    private static byte ReadByte(ReadOnlySpan<byte> source) => source[0];
+    private static sbyte ReadSignedByte(ReadOnlySpan<byte> source) => (sbyte)ReadByte(source);
+    private static Gp5Bool ReadBool(ReadOnlySpan<byte> source) => (Gp5Bool)ReadByte(source);
 }
