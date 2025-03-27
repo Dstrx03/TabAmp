@@ -49,7 +49,7 @@ internal class PocSerialFileReader : ISerialFileReader
         }
         catch (EndOfStreamException exception)
         {
-            _fileStream.Position = Position; 
+            _fileStream.Position = Position;
 
             var trailingCount = (int)CalculateTrailingBytesCount(count);
             throw new EndOfFileOperationException(OperationType.Read, count, trailingCount, exception);
