@@ -22,11 +22,12 @@ internal class PocSerialFileReader : ISerialFileReader
             Share = FileShare.None
         };
         _fileStream = File.Open(context.FilePath, options);
+        Length = _fileStream.Length;
         _arrayPool = ArrayPool<byte>.Shared;
         _context = context;
     }
 
-    public long Length => _fileStream.Length;
+    public long Length { get; }
     public long Position { get; private set; }
 
     public async ValueTask<T> ReadBytesAsync<T>(int count, Convert<T> convert)
@@ -46,6 +47,13 @@ internal class PocSerialFileReader : ISerialFileReader
         {
             throw new NegativeBytesCountOperationException(OperationType.Read, count, exception);
         }
+        catch (EndOfStreamException exception)
+        {
+            //_fileStream.Position = Position; // TODO: test
+
+            var trailingCount = (int)CalculateTrailingBytesCount(count);
+            throw new EndOfFileOperationException(OperationType.Read, count, trailingCount, exception);
+        }
         finally
         {
             if (buffer != null)
@@ -56,6 +64,7 @@ internal class PocSerialFileReader : ISerialFileReader
     public async ValueTask SkipBytesAsync(int count)
     {
         NegativeBytesCountOperationException.ThrowIfNegative(OperationType.ReadSkip, count);
+        EndOfFileOperationException.ThrowIfTrailing(OperationType.ReadSkip, count, CalculateTrailingBytesCount(count));
 
         var skippedBytes = await ReadBytesAsync(count, buffer => buffer.ToArray());
         Console.WriteLine($"Skipped {count} bytes from {Position - count} to {Position - 1} inclusive: {string.Join(",", skippedBytes)}");
@@ -70,6 +79,8 @@ internal class PocSerialFileReader : ISerialFileReader
         PrintStatistics();
         _fileStream?.Dispose();
     }
+
+    private long CalculateTrailingBytesCount(int count) => Position - Length + count;
 
     [Obsolete("TODO: implement production grade tracking")]
     private void PrintStatistics()
