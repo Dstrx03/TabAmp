@@ -4,7 +4,7 @@ namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO;
 
 internal sealed class EndOfFileOperationException : OperationException
 {
-    private new const string MessageTemplate = $"{OperationException.MessageTemplate}; end of file reached, while attempting to process {{2}} byte(s) beyond the file length.";
+    private new const string MessageTemplate = $"{OperationException.MessageTemplate}; end of file reached. Attempted to {{0}} {{2}} byte(s) beyond the file length.";
 
     public EndOfFileOperationException(OperationType operation, int bytesCount, int trailingBytesCount)
         : base(operation, bytesCount, ComposeMessage(operation, bytesCount, trailingBytesCount))
