@@ -20,12 +20,6 @@ internal sealed class EndOfFileOperationException : OperationException
 
     public int TrailingBytesCount { get; }
 
-    public static void ThrowIfTrailing(OperationType operation, int bytesCount, long trailingBytesCount)
-    {
-        if (trailingBytesCount > 0)
-            throw new EndOfFileOperationException(operation, bytesCount, (int)trailingBytesCount);
-    }
-
     private static string ComposeMessage(OperationType operation, int bytesCount, int trailingBytesCount) =>
         string.Format(MessageTemplate, GetMessageComponent(operation), bytesCount, trailingBytesCount);
 }

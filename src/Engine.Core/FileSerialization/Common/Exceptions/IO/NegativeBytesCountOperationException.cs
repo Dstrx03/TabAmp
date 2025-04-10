@@ -16,12 +16,6 @@ internal sealed class NegativeBytesCountOperationException : OperationException
     {
     }
 
-    public static void ThrowIfNegative(OperationType operation, int bytesCount)
-    {
-        if (bytesCount < 0)
-            throw new NegativeBytesCountOperationException(operation, bytesCount);
-    }
-
     private static string ComposeMessage(OperationType operation, int bytesCount) =>
         string.Format(MessageTemplate, GetMessageComponent(operation), bytesCount);
 }

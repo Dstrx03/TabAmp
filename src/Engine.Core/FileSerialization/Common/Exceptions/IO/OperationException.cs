@@ -1,4 +1,5 @@
 ﻿using System;
+using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Fluent;
 
 namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO;
 
@@ -22,6 +23,12 @@ internal abstract class OperationException : FileSerializationException
 
     public OperationType Operation { get; }
     public int BytesCount { get; }
+
+    public static IOperationExceptionFluentBuilderSelectOperationStage<NegativeBytesCountOperationException> NegativeBytesCount =>
+        new OperationExceptionFluentBuilder<NegativeBytesCountOperationException>();
+
+    public static IOperationExceptionFluentBuilderSelectOperationStage<EndOfFileOperationException> EndOfFile =>
+        new OperationExceptionFluentBuilder<EndOfFileOperationException>();
 
     protected static string GetMessageComponent(OperationType operation) => operation switch
     {
