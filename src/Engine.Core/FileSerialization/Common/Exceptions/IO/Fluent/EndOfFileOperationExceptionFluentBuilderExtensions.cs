@@ -1,18 +1,19 @@
 ﻿using System;
+using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Fluent;
 
-namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Fluent;
+namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO;
 
 internal static class EndOfFileOperationExceptionFluentBuilderExtensions
 {
     public static EndOfFileOperationException Build(
         this IOperationExceptionFluentBuilder<EndOfFileOperationException> builder,
         int bytesCount,
-        int trailingBytesCount) => new(builder.Operation, bytesCount, trailingBytesCount);
+        long trailingBytesCount) => new(builder.Operation, bytesCount, trailingBytesCount);
 
     public static EndOfFileOperationException Build(
         this IOperationExceptionFluentBuilder<EndOfFileOperationException> builder,
         int bytesCount,
-        int trailingBytesCount,
+        long trailingBytesCount,
         Exception inner) => new(builder.Operation, bytesCount, trailingBytesCount, inner);
 
     public static void ThrowIfTrailing(
@@ -21,6 +22,6 @@ internal static class EndOfFileOperationExceptionFluentBuilderExtensions
         long trailingBytesCount)
     {
         if (trailingBytesCount > 0)
-            throw builder.Build(bytesCount, (int)trailingBytesCount);
+            throw builder.Build(bytesCount, trailingBytesCount);
     }
 }

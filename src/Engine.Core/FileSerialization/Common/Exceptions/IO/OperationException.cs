@@ -24,10 +24,10 @@ internal abstract class OperationException : FileSerializationException
     public OperationType Operation { get; }
     public int BytesCount { get; }
 
-    public static IOperationExceptionFluentBuilderSelectOperationStage<NegativeBytesCountOperationException> NegativeBytesCount =>
+    public static IOperationExceptionFluentBuilderSelectOperationStage<NegativeBytesCountOperationException> AsNegativeBytesCount =>
         new OperationExceptionFluentBuilder<NegativeBytesCountOperationException>();
 
-    public static IOperationExceptionFluentBuilderSelectOperationStage<EndOfFileOperationException> EndOfFile =>
+    public static IOperationExceptionFluentBuilderSelectOperationStage<EndOfFileOperationException> AsEndOfFile =>
         new OperationExceptionFluentBuilder<EndOfFileOperationException>();
 
     protected static string GetMessageComponent(OperationType operation) => operation switch

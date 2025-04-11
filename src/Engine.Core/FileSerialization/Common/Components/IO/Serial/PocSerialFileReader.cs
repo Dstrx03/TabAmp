@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.Context;
 using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO;
+using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Fluent;
 using static TabAmp.Engine.Core.FileSerialization.Common.Components.IO.Serial.ISerialFileReader;
 
 namespace TabAmp.Engine.Core.FileSerialization.Common.Components.IO.Serial;
@@ -45,14 +46,12 @@ internal class PocSerialFileReader : ISerialFileReader
         }
         catch (ArgumentOutOfRangeException exception) when (count < 0)
         {
-            throw new NegativeBytesCountOperationException(OperationType.Read, count, exception);
+            throw OperationException.AsNegativeBytesCount.Read.Build(count, exception);
         }
         catch (EndOfStreamException exception)
         {
             _fileStream.Position = Position;
-
-            var trailingCount = (int)CalculateTrailingBytesCount(count);
-            throw new EndOfFileOperationException(OperationType.Read, count, trailingCount, exception);
+            throw OperationException.AsEndOfFile.Read.Build(count, CalculateTrailingBytesCount(count), exception);
         }
         finally
         {
@@ -61,10 +60,16 @@ internal class PocSerialFileReader : ISerialFileReader
         }
     }
 
+    private static readonly IOperationExceptionFluentBuilder<NegativeBytesCountOperationException>
+        _negativeBytesCountReadSkipExceptionBuilder = OperationException.AsNegativeBytesCount.ReadSkip;
+
+    private static readonly IOperationExceptionFluentBuilder<EndOfFileOperationException>
+        _endOfFileReadSkipExceptionBuilder = OperationException.AsEndOfFile.ReadSkip;
+
     public async ValueTask SkipBytesAsync(int count)
     {
-        NegativeBytesCountOperationException.ThrowIfNegative(OperationType.ReadSkip, count);
-        EndOfFileOperationException.ThrowIfTrailing(OperationType.ReadSkip, count, CalculateTrailingBytesCount(count));
+        _negativeBytesCountReadSkipExceptionBuilder.ThrowIfNegative(count);
+        _endOfFileReadSkipExceptionBuilder.ThrowIfTrailing(count, CalculateTrailingBytesCount(count));
 
         var skippedBytes = await ReadBytesAsync(count, buffer => buffer.ToArray());
         Console.WriteLine($"Skipped {count} bytes from {Position - count} to {Position - 1} inclusive: {string.Join(",", skippedBytes)}");

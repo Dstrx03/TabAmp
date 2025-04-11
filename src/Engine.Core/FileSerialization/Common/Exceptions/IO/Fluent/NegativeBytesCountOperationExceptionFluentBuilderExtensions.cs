@@ -1,6 +1,7 @@
 ﻿using System;
+using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Fluent;
 
-namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Fluent;
+namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO;
 
 internal static class NegativeBytesCountOperationExceptionFluentBuilderExtensions
 {
