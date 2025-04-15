@@ -24,4 +24,7 @@ internal record struct OperationExceptionFluentBuilder<TException> :
             return this;
         }
     }
+
+    public override string ToString() =>
+        $"{nameof(OperationExceptionFluentBuilder<TException>)} {{ TException = {typeof(TException).Name}, Operation = {Operation} }}";
 }

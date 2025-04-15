@@ -2,6 +2,6 @@
 
 internal enum OperationType
 {
-    Read,
-    ReadSkip
+    Read = 1,
+    ReadSkip = 2
 }
