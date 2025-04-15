@@ -1,4 +1,7 @@
-﻿namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Fluent;
+﻿using System.Diagnostics;
+using System.Text;
+
+namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Fluent;
 
 internal record struct OperationExceptionFluentBuilder<TException> :
     IOperationExceptionFluentBuilderSelectOperationStage<TException>,
@@ -7,6 +10,7 @@ internal record struct OperationExceptionFluentBuilder<TException> :
 {
     public OperationType Operation { get; private set; }
 
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     public IOperationExceptionFluentBuilder<TException> Read
     {
         get
@@ -16,6 +20,7 @@ internal record struct OperationExceptionFluentBuilder<TException> :
         }
     }
 
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     public IOperationExceptionFluentBuilder<TException> ReadSkip
     {
         get
@@ -25,6 +30,9 @@ internal record struct OperationExceptionFluentBuilder<TException> :
         }
     }
 
-    public override string ToString() =>
-        $"{nameof(OperationExceptionFluentBuilder<TException>)} {{ TException = {typeof(TException).Name}, Operation = {Operation} }}";
+    private bool PrintMembers(StringBuilder stringBuilder)
+    {
+        stringBuilder.Append($"{nameof(TException)} = {typeof(TException).Name}, {nameof(Operation)} = {Operation}");
+        return true;
+    }
 }
