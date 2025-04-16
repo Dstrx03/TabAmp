@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Fluent;
 
 namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO;
 
@@ -15,6 +17,10 @@ internal sealed class NegativeBytesCountOperationException : OperationException
         : base(operation, bytesCount, ComposeMessage(operation, bytesCount), inner)
     {
     }
+
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+    public static IOperationExceptionFluentBuilderSelectOperationStage<NegativeBytesCountOperationException> With =>
+        new OperationExceptionFluentBuilder<NegativeBytesCountOperationException>();
 
     private static string ComposeMessage(OperationType operation, int bytesCount) =>
         string.Format(MessageTemplate, GetMessageComponent(operation), bytesCount);

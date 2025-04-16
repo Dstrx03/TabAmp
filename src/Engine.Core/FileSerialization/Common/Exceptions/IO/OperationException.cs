@@ -2,7 +2,7 @@
 
 namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO;
 
-internal abstract partial class OperationException : FileSerializationException
+internal abstract class OperationException : FileSerializationException
 {
     protected const string MessageTemplate = "Unable to {0} the next {1} byte(s)";
 

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Fluent;
 
 namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO;
 
@@ -19,6 +21,10 @@ internal sealed class EndOfFileOperationException : OperationException
     }
 
     public long TrailingBytesCount { get; }
+
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+    public static IOperationExceptionFluentBuilderSelectOperationStage<EndOfFileOperationException> With =>
+        new OperationExceptionFluentBuilder<EndOfFileOperationException>();
 
     private static string ComposeMessage(OperationType operation, int bytesCount, long trailingBytesCount) =>
         string.Format(MessageTemplate, GetMessageComponent(operation), bytesCount, trailingBytesCount);

@@ -46,12 +46,12 @@ internal class PocSerialFileReader : ISerialFileReader
         }
         catch (ArgumentOutOfRangeException exception) when (count < 0)
         {
-            throw OperationException.As.NegativeBytesCount.Read.Build(count, exception);
+            throw NegativeBytesCountOperationException.With.Read.Build(count, exception);
         }
         catch (EndOfStreamException exception)
         {
             _fileStream.Position = Position;
-            throw OperationException.As.EndOfFile.Read.Build(count, CalculateTrailingBytesCount(count), exception);
+            throw EndOfFileOperationException.With.Read.Build(count, CalculateTrailingBytesCount(count), exception);
         }
         finally
         {
@@ -61,15 +61,15 @@ internal class PocSerialFileReader : ISerialFileReader
     }
 
     private static readonly IOperationExceptionFluentBuilder<NegativeBytesCountOperationException>
-        _negativeBytesCountReadSkipExceptionBuilder = OperationException.As.NegativeBytesCount.ReadSkip;
+        _negativeBytesCountOperationExceptionWithReadSkip = NegativeBytesCountOperationException.With.ReadSkip;
 
     private static readonly IOperationExceptionFluentBuilder<EndOfFileOperationException>
-        _endOfFileReadSkipExceptionBuilder = OperationException.As.EndOfFile.ReadSkip;
+        _endOfFileOperationExceptionWithReadSkip = EndOfFileOperationException.With.ReadSkip;
 
     public async ValueTask SkipBytesAsync(int count)
     {
-        _negativeBytesCountReadSkipExceptionBuilder.ThrowIfNegative(count);
-        _endOfFileReadSkipExceptionBuilder.ThrowIfTrailing(count, CalculateTrailingBytesCount(count));
+        _negativeBytesCountOperationExceptionWithReadSkip.ThrowIfNegative(count);
+        _endOfFileOperationExceptionWithReadSkip.ThrowIfTrailing(count, CalculateTrailingBytesCount(count));
 
         var skippedBytes = await ReadBytesAsync(count, buffer => buffer.ToArray());
         Console.WriteLine($"Skipped {count} bytes from {Position - count} to {Position - 1} inclusive: {string.Join(",", skippedBytes)}");
