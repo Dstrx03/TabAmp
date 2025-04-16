@@ -46,12 +46,12 @@ internal class PocSerialFileReader : ISerialFileReader
         }
         catch (ArgumentOutOfRangeException exception) when (count < 0)
         {
-            throw OperationException.AsNegativeBytesCount.Read.Build(count, exception);
+            throw OperationException.As.NegativeBytesCount.Read.Build(count, exception);
         }
         catch (EndOfStreamException exception)
         {
             _fileStream.Position = Position;
-            throw OperationException.AsEndOfFile.Read.Build(count, CalculateTrailingBytesCount(count), exception);
+            throw OperationException.As.EndOfFile.Read.Build(count, CalculateTrailingBytesCount(count), exception);
         }
         finally
         {
@@ -61,10 +61,10 @@ internal class PocSerialFileReader : ISerialFileReader
     }
 
     private static readonly IOperationExceptionFluentBuilder<NegativeBytesCountOperationException>
-        _negativeBytesCountReadSkipExceptionBuilder = OperationException.AsNegativeBytesCount.ReadSkip;
+        _negativeBytesCountReadSkipExceptionBuilder = OperationException.As.NegativeBytesCount.ReadSkip;
 
     private static readonly IOperationExceptionFluentBuilder<EndOfFileOperationException>
-        _endOfFileReadSkipExceptionBuilder = OperationException.AsEndOfFile.ReadSkip;
+        _endOfFileReadSkipExceptionBuilder = OperationException.As.EndOfFile.ReadSkip;
 
     public async ValueTask SkipBytesAsync(int count)
     {

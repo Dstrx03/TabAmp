@@ -1,9 +1,8 @@
 ﻿using System;
-using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Fluent;
 
 namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO;
 
-internal abstract class OperationException : FileSerializationException
+internal abstract partial class OperationException : FileSerializationException
 {
     protected const string MessageTemplate = "Unable to {0} the next {1} byte(s)";
 
@@ -23,12 +22,6 @@ internal abstract class OperationException : FileSerializationException
 
     public OperationType Operation { get; }
     public int BytesCount { get; }
-
-    public static IOperationExceptionFluentBuilderSelectOperationStage<NegativeBytesCountOperationException> AsNegativeBytesCount =>
-        new OperationExceptionFluentBuilder<NegativeBytesCountOperationException>();
-
-    public static IOperationExceptionFluentBuilderSelectOperationStage<EndOfFileOperationException> AsEndOfFile =>
-        new OperationExceptionFluentBuilder<EndOfFileOperationException>();
 
     protected static string GetMessageComponent(OperationType operation) => operation switch
     {
