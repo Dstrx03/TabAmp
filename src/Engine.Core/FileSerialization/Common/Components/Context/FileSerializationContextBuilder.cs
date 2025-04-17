@@ -7,7 +7,7 @@ internal class FileSerializationContextBuilder
 {
     private ScopedFileSerializationContext _context;
 
-    public bool IsConstructed { get; private set; }
+    public bool IsConstructed => _context is not null;
 
     public FileSerializationContext GetConstructedContext()
     {
@@ -22,23 +22,15 @@ internal class FileSerializationContextBuilder
         if (IsConstructed)
             throw new InvalidOperationException($"{nameof(FileSerializationContext)} is already constructed.");
 
-        CreateContext(filePath, cancellationToken);
-        IsConstructed = true;
-    }
-
-    private void CreateContext(string filePath, CancellationToken cancellationToken)
-    {
-        if (string.IsNullOrEmpty(filePath) || string.IsNullOrWhiteSpace(filePath))
-            throw new ArgumentNullException(nameof(filePath));
-
-        _context = new ScopedFileSerializationContext
-        {
-            FilePath = filePath,
-            CancellationToken = cancellationToken
-        };
+        _context = new(filePath, cancellationToken);
     }
 
     private class ScopedFileSerializationContext : FileSerializationContext
     {
+        public ScopedFileSerializationContext(string filePath, CancellationToken cancellationToken)
+        {
+            FilePath = filePath;
+            CancellationToken = cancellationToken;
+        }
     }
 }
