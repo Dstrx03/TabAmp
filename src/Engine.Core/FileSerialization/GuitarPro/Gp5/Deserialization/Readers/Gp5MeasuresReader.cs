@@ -12,10 +12,18 @@ internal class Gp5MeasuresReader : IGp5MeasuresReader
     private readonly IGp5MusicalNotationReader _notationReader;
     private readonly IGp5TracksReader _tracksReader;
 
-    public Gp5MeasuresReader(IGp5BinaryPrimitivesReader primitivesReader, IGp5TextReader textReader,
-        IGp5DocumentComponentsReader documentReader, IGp5MusicalNotationReader notationReader, IGp5TracksReader tracksReader) =>
-        (_primitivesReader, _textReader, _documentReader, _notationReader, _tracksReader) =
-        (primitivesReader, textReader, documentReader, notationReader, tracksReader);
+    public Gp5MeasuresReader(IGp5BinaryPrimitivesReader primitivesReader,
+        IGp5TextReader textReader,
+        IGp5DocumentComponentsReader documentReader,
+        IGp5MusicalNotationReader notationReader,
+        IGp5TracksReader tracksReader)
+    {
+        _primitivesReader = primitivesReader;
+        _textReader = textReader;
+        _documentReader = documentReader;
+        _notationReader = notationReader;
+        _tracksReader = tracksReader;
+    }
 
     public async ValueTask<Gp5MeasureHeader> ReadMeasureHeaderAsync(bool isFirst)
     {

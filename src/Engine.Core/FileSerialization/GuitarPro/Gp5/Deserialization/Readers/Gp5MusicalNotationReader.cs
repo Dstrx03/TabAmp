@@ -11,9 +11,14 @@ internal class Gp5MusicalNotationReader : IGp5MusicalNotationReader
     private readonly IGp5TextReader _textReader;
     private readonly IGp5EffectsReader _effectsReader;
 
-    public Gp5MusicalNotationReader(IGp5BinaryPrimitivesReader primitivesReader, IGp5TextReader textReader,
-        IGp5EffectsReader effectsReader) =>
-        (_primitivesReader, _textReader, _effectsReader) = (primitivesReader, textReader, effectsReader);
+    public Gp5MusicalNotationReader(IGp5BinaryPrimitivesReader primitivesReader,
+        IGp5TextReader textReader,
+        IGp5EffectsReader effectsReader)
+    {
+        _primitivesReader = primitivesReader;
+        _textReader = textReader;
+        _effectsReader = effectsReader;
+    }
 
     public async ValueTask<Gp5HeaderKeySignature> ReadHeaderKeySignatureAsync()
     {

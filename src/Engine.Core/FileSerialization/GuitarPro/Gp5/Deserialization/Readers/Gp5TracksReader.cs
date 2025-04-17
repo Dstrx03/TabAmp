@@ -10,9 +10,16 @@ internal class Gp5TracksReader : IGp5TracksReader
     private readonly IGp5MusicalNotationReader _notationReader;
     private readonly IGp5RseReader _rseReader;
 
-    public Gp5TracksReader(IGp5BinaryPrimitivesReader primitivesReader, IGp5TextReader textReader,
-        IGp5MusicalNotationReader notationReader, IGp5RseReader rseReader) =>
-        (_primitivesReader, _textReader, _notationReader, _rseReader) = (primitivesReader, textReader, notationReader, rseReader);
+    public Gp5TracksReader(IGp5BinaryPrimitivesReader primitivesReader,
+        IGp5TextReader textReader,
+        IGp5MusicalNotationReader notationReader,
+        IGp5RseReader rseReader)
+    {
+        _primitivesReader = primitivesReader;
+        _textReader = textReader;
+        _notationReader = notationReader;
+        _rseReader = rseReader;
+    }
 
     public async ValueTask<Gp5MidiChannel> ReadMidiChannelAsync()
     {

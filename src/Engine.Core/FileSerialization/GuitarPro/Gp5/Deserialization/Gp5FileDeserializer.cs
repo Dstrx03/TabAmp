@@ -16,8 +16,10 @@ internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeseria
     private readonly IGp5TracksReader _tracksReader;
     private readonly IGp5MeasuresReader _measuresReader;
 
-    public Gp5FileDeserializer(IGp5DocumentComponentsReader documentReader, IGp5MusicalNotationReader notationReader,
-        IGp5TracksReader tracksReader, IGp5MeasuresReader measuresReader)
+    public Gp5FileDeserializer(IGp5DocumentComponentsReader documentReader,
+        IGp5MusicalNotationReader notationReader,
+        IGp5TracksReader tracksReader,
+        IGp5MeasuresReader measuresReader)
     {
         _documentReader = documentReader;
         _notationReader = notationReader;
