@@ -11,18 +11,18 @@ internal class ScopedFileSerializationContextContainer
     {
         get
         {
-            if (!IsConstructed)
+            if (!HasContext)
                 throw new InvalidOperationException($"{nameof(FileSerializationContext)} is not constructed.");
 
             return _context!;
         }
     }
 
-    public bool IsConstructed => _context is not null;
+    public bool HasContext => _context is not null;
 
     public void CreateContext(string filePath, CancellationToken cancellationToken)
     {
-        if (IsConstructed)
+        if (HasContext)
             throw new InvalidOperationException($"{nameof(FileSerializationContext)} is already constructed.");
 
         _context = new(filePath, cancellationToken);
