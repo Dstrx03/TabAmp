@@ -12,7 +12,7 @@ internal class ScopedFileSerializationContextContainer
         get
         {
             if (!HasContext)
-                throw new InvalidOperationException($"{nameof(FileSerializationContext)} is not constructed.");
+                throw new InvalidOperationException($"Cannot access the context: {nameof(FileSerializationContext)} does not exist in the current scope and must be initialized via {nameof(CreateContext)}.");
 
             return _context!;
         }
@@ -23,7 +23,7 @@ internal class ScopedFileSerializationContextContainer
     public void CreateContext(string filePath, CancellationToken cancellationToken)
     {
         if (HasContext)
-            throw new InvalidOperationException($"{nameof(FileSerializationContext)} is already constructed.");
+            throw new InvalidOperationException($"Cannot create the context: {nameof(FileSerializationContext)} already exists in the current scope and cannot be initialized again.");
 
         _context = new(filePath, cancellationToken);
     }
