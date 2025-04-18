@@ -39,6 +39,6 @@ public static class DependencyInjection
     }
 
     private static IServiceCollection AddFileSerializationContext(this IServiceCollection services) =>
-        services.AddScoped<FileSerializationContextBuilder>()
-            .AddScoped<FileSerializationContext>(x => x.GetRequiredService<FileSerializationContextBuilder>().GetConstructedContext());
+        services.AddScoped<ScopedFileSerializationContextContainer>()
+            .AddScoped<FileSerializationContext>(x => x.GetRequiredService<ScopedFileSerializationContextContainer>().Context);
 }
