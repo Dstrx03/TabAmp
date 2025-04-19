@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 
 namespace TabAmp.Engine.Core.FileSerialization.Common.Components.Context;
@@ -33,11 +34,13 @@ internal class ScopedFileSerializationContextContainer
     {
     }
 
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private InvalidOperationException ContextDoesNotExistException =>
         new($"Cannot access the context: {nameof(FileSerializationContext)} does not exist in the current scope " +
             $"and must be initialized via {nameof(CreateContext)}.");
 
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private InvalidOperationException ContextAlreadyExistsException =>
         new($"Cannot create the context: {nameof(FileSerializationContext)} already exists in the current scope " +
-            $"and cannot be initialized again.");
+            $"with {nameof(_context.FilePath)}: '{_context!.FilePath}' and cannot be initialized again.");
 }
