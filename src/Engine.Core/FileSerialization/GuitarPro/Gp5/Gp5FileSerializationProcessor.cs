@@ -7,8 +7,6 @@ namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5;
 
 internal abstract class Gp5FileSerializationProcessor : IFileSerializationProcessor
 {
-    public string SupportedFileExtensions => ".gp5";
-
     protected Gp5File File { get; private set; }
 
     protected async Task ProcessAsync(Gp5File file)

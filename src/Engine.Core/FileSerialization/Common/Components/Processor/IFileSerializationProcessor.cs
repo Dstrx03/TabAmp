@@ -2,5 +2,4 @@
 
 internal interface IFileSerializationProcessor
 {
-    string SupportedFileExtensions { get; }
 }
