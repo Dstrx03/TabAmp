@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Text.Json;
 using System.Threading.Tasks;
+using TabAmp.Engine.Core.FileSerialization.Common.Components.IO.Serial;
+using TabAmp.Engine.Core.FileSerialization.Common.Components.Metadata;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.Processor;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Measures;
@@ -11,16 +13,19 @@ namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 
 internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeserializer<Gp5Score>
 {
+    private readonly IFileDeserializationMetadataProvider _metadataProvider;
     private readonly IGp5DocumentComponentsReader _documentReader;
     private readonly IGp5MusicalNotationReader _notationReader;
     private readonly IGp5TracksReader _tracksReader;
     private readonly IGp5MeasuresReader _measuresReader;
 
-    public Gp5FileDeserializer(IGp5DocumentComponentsReader documentReader,
+    public Gp5FileDeserializer(ISerialFileReader fileReader,
+        IGp5DocumentComponentsReader documentReader,
         IGp5MusicalNotationReader notationReader,
         IGp5TracksReader tracksReader,
         IGp5MeasuresReader measuresReader)
     {
+        _metadataProvider = fileReader;
         _documentReader = documentReader;
         _notationReader = notationReader;
         _tracksReader = tracksReader;
@@ -35,6 +40,8 @@ internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeseria
         PrintDeserializedFileJson();
         return new Gp5Score();
     }
+
+    public IFileDeserializationMetadata Metadata => _metadataProvider.Metadata;
 
     [Obsolete("Temporary runtime testing")]
     private void PrintDeserializedFileJson()

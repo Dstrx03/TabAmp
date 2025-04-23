@@ -21,6 +21,9 @@ internal class FileSerializationService : IFileSerializationService
             .CreateContext(filePath, cancellationToken);
 
         var deserializer = scope.ServiceProvider.GetRequiredService<IFileDeserializer<T>>();
-        return await deserializer.DeserializeAsync();
+        var file = await deserializer.DeserializeAsync();
+        var metadata = deserializer.Metadata;
+
+        return file;
     }
 }
