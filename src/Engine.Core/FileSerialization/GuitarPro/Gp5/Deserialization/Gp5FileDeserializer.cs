@@ -11,7 +11,10 @@ using TabAmp.Engine.Core.Score;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 
-internal class Gp5FileDeserializer : Gp5FileSerializationProcessor, IFileDeserializer<Gp5Score>
+internal class Gp5FileDeserializer :
+    Gp5FileSerializationProcessor,
+    IFileDeserializer<Gp5Score>,
+    IExactFileDeserializer
 {
     private readonly IFileDeserializationMetadataProvider _metadataProvider;
     private readonly IGp5DocumentComponentsReader _documentReader;

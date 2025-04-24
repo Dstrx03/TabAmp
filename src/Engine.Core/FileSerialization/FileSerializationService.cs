@@ -22,7 +22,8 @@ internal class FileSerializationService : IFileSerializationService
 
         var deserializer = scope.ServiceProvider.GetRequiredService<IFileDeserializer<T>>();
         var file = await deserializer.DeserializeAsync();
-        var metadata = deserializer.Metadata;
+        if (deserializer is IExactFileDeserializer exactDeserializer)
+            exactDeserializer.Todo_Name();
 
         return file;
     }
