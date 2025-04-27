@@ -39,8 +39,8 @@ internal class PocSerialFileReader : ISerialFileReader
     {
         get
         {
-            _metadata ??= new FileDeserializationMetadata { TODO_length = _length };
-            _metadata.TODO_position = _position;
+            _metadata ??= new FileDeserializationMetadata { Length = _length };
+            _metadata.ProcessedBytes = _position;
             return _metadata;
         }
     }
@@ -129,7 +129,7 @@ internal class PocSerialFileReader : ISerialFileReader
 
     private class FileDeserializationMetadata : IFileDeserializationMetadata
     {
-        public long? TODO_length { get; set; }
-        public long? TODO_position { get; set; }
+        public long? Length { get; set; }
+        public long? ProcessedBytes { get; set; }
     }
 }

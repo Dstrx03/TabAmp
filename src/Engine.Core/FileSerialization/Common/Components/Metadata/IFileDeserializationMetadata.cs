@@ -2,6 +2,6 @@
 
 internal interface IFileDeserializationMetadata
 {
-    long? TODO_length { get; }
-    long? TODO_position { get; }
+    long? Length { get; }
+    long? ProcessedBytes { get; }
 }
