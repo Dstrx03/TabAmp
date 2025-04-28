@@ -39,7 +39,7 @@ internal interface IExactFileDeserializer : IFileDeserializationMetadataProvider
             string.Format(GetMessageTemplate(metadata),
                 metadata.Length,
                 metadata.ProcessedBytes,
-                $"{metadata.ProcessedPercentage:P2}");
+                $"{metadata.ProcessedBytesRate:P2}");
 
         private static string GetMessageTemplate(IFileDeserializationMetadata metadata)
         {

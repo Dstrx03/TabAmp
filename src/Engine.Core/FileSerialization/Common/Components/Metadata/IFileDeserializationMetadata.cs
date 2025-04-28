@@ -5,14 +5,14 @@ internal interface IFileDeserializationMetadata
     long? Length { get; }
     long? ProcessedBytes { get; }
 
-    float? ProcessedPercentage
+    float? ProcessedBytesRate
     {
         get
         {
             if (Length is null || ProcessedBytes is null)
                 return null;
-            // TODO: overflow is expected, resolve
-            return (float)ProcessedBytes / Length;
+
+            return (float)((double)ProcessedBytes / (double)Length);
         }
     }
 }
