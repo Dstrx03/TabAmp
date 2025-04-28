@@ -11,8 +11,8 @@ internal interface IFileDeserializationMetadata
         {
             if (Length is null || ProcessedBytes is null)
                 return null;
-
-            return ProcessedBytes * 100f / Length;
+            // TODO: overflow is expected, resolve
+            return (float)ProcessedBytes / Length;
         }
     }
 }

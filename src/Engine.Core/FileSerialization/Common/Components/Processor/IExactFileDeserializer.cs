@@ -16,12 +16,13 @@ internal interface IExactFileDeserializer : IFileDeserializationMetadataProvider
 
     internal sealed class ExactFileDeserializationException : FileSerializationException
     {
-        private const string MessageTemplate = "The file was expected to be deserialized exactly";
-        private const string Template = "Total length: {0} byte(s), processed: {1} byte(s).";
+        private const string MainMessageToken = "The file was expected to be deserialized exactly";
+        private const string InfoMessageToken = "Total length: {0} byte(s), processed: {1} byte(s).";
 
-        private const string ZeroBytesProcessedMessageTemplate = $"{MessageTemplate}, but zero byte(s) were processed. {Template}";
-        private const string FewerBytesProcessedMessageTemplate = $"{MessageTemplate}, but only {{1}} of {{0}} byte(s) were processed ({{2}}). {Template}";
-        private const string MoreBytesProcessedMessageTemplate = $"{MessageTemplate}, but {{1}} byte(s) were processed instead of {{0}} byte(s) ({{2}}). {Template}";
+        private const string MessageTemplate = $"{MainMessageToken}. {InfoMessageToken}";
+        private const string ZeroBytesProcessedMessageTemplate = $"{MainMessageToken}, but zero byte(s) were processed. {InfoMessageToken}";
+        private const string FewerBytesProcessedMessageTemplate = $"{MainMessageToken}, but only {{1}} of {{0}} byte(s) were processed ({{2}}). {InfoMessageToken}";
+        private const string MoreBytesProcessedMessageTemplate = $"{MainMessageToken}, but {{1}} byte(s) were processed instead of {{0}} byte(s) ({{2}}). {InfoMessageToken}";
 
         public ExactFileDeserializationException(IFileDeserializationMetadata metadata)
             : base(ComposeMessage(metadata))
@@ -38,16 +39,19 @@ internal interface IExactFileDeserializer : IFileDeserializationMetadataProvider
             string.Format(GetMessageTemplate(metadata),
                 metadata.Length,
                 metadata.ProcessedBytes,
-                metadata.ProcessedPercentage);
+                $"{metadata.ProcessedPercentage:P2}");
 
         private static string GetMessageTemplate(IFileDeserializationMetadata metadata)
         {
+            if (metadata.ProcessedBytes <= 0)
+                return ZeroBytesProcessedMessageTemplate;
+
             if (metadata.ProcessedBytes < metadata.Length)
                 return FewerBytesProcessedMessageTemplate;
             else if (metadata.ProcessedBytes > metadata.Length)
                 return MoreBytesProcessedMessageTemplate;
-            else
-                return ZeroBytesProcessedMessageTemplate;
+
+            return MessageTemplate;
         }
     }
 }
