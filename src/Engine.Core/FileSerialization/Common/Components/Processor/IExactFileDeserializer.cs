@@ -1,28 +1,23 @@
-﻿using System;
-using TabAmp.Engine.Core.FileSerialization.Common.Components.Metadata;
+﻿using TabAmp.Engine.Core.FileSerialization.Common.Components.Metadata;
 using TabAmp.Engine.Core.FileSerialization.Common.Exceptions;
 
 namespace TabAmp.Engine.Core.FileSerialization.Common.Components.Processor;
 
 internal interface IExactFileDeserializer : IFileDeserializationMetadataProvider
 {
-    void Todo_Name()
-    {
-        if (Metadata.Length is null || Metadata.ProcessedBytes is null)
-            throw new Exception("TODO: metadata is null");
-
-        ExactFileDeserializationException.ThrowIfNotExactlyDeserialized(Metadata);
-    }
+    void Todo_Name() => ExactFileDeserializationException.ThrowIfNotExactlyDeserialized(Metadata);
 
     internal sealed class ExactFileDeserializationException : FileSerializationException
     {
-        private const string MainMessageToken = "The file was expected to be deserialized exactly";
-        private const string InfoMessageToken = "Total length: {0} byte(s), processed: {1} byte(s).";
+        private const string MessageToken = "The file was expected to be deserialized exactly";
+        private const string PercentageDeviationMessageToken = "({2}, deviation: {3})";
+        private const string BoundaryMetadataMessageToken = "Total length: {0} byte(s), processed: {1} byte(s).";
 
-        private const string MessageTemplate = $"{MainMessageToken}. {InfoMessageToken}";
-        private const string ZeroBytesProcessedMessageTemplate = $"{MainMessageToken}, but zero byte(s) were processed. {InfoMessageToken}";
-        private const string FewerBytesProcessedMessageTemplate = $"{MainMessageToken}, but only {{1}} of {{0}} byte(s) were processed ({{2}}). {InfoMessageToken}";
-        private const string MoreBytesProcessedMessageTemplate = $"{MainMessageToken}, but {{1}} byte(s) were processed instead of {{0}} byte(s) ({{2}}). {InfoMessageToken}";
+        private const string MessageTemplate = $"{MessageToken}. {BoundaryMetadataMessageToken}";
+        private const string BoundaryMetadataMissingMessageTemplate = $"{MessageToken}, but required boundary metadata is missing. {BoundaryMetadataMessageToken}";
+        private const string ZeroBytesProcessedMessageTemplate = $"{MessageToken}, but zero byte(s) were processed. {BoundaryMetadataMessageToken}";
+        private const string FewerBytesProcessedMessageTemplate = $"{MessageToken}, but only {{1}} of {{0}} byte(s) were processed {PercentageDeviationMessageToken}. {BoundaryMetadataMessageToken}";
+        private const string MoreBytesProcessedMessageTemplate = $"{MessageToken}, but {{1}} byte(s) were processed instead of {{0}} byte(s) {PercentageDeviationMessageToken}. {BoundaryMetadataMessageToken}";
 
         public ExactFileDeserializationException(IFileDeserializationMetadata metadata)
             : base(ComposeMessage(metadata))
@@ -31,27 +26,55 @@ internal interface IExactFileDeserializer : IFileDeserializationMetadataProvider
 
         public static void ThrowIfNotExactlyDeserialized(IFileDeserializationMetadata metadata)
         {
-            if (metadata.Length != metadata.ProcessedBytes)
+            if (IsBoundaryMetadataMissing(metadata) || IsNotExactlyDeserialized(metadata))
                 throw new ExactFileDeserializationException(metadata);
         }
 
+        private static bool IsBoundaryMetadataMissing(IFileDeserializationMetadata metadata) =>
+            metadata.Length is null || metadata.ProcessedBytes is null;
+
+        private static bool IsNotExactlyDeserialized(IFileDeserializationMetadata metadata) =>
+            metadata.Length != metadata.ProcessedBytes;
+
         private static string ComposeMessage(IFileDeserializationMetadata metadata) =>
             string.Format(GetMessageTemplate(metadata),
-                metadata.Length,
-                metadata.ProcessedBytes,
-                $"{metadata.ProcessedBytesRate:P2}");
+                FormatNullableMessageComponent(metadata.Length),
+                FormatNullableMessageComponent(metadata.ProcessedBytes),
+                GetPercentageMessageComponent(metadata),
+                GetDeviationMessageComponent(metadata));
 
         private static string GetMessageTemplate(IFileDeserializationMetadata metadata)
         {
-            if (metadata.ProcessedBytes <= 0)
+            if (IsBoundaryMetadataMissing(metadata))
+                return BoundaryMetadataMissingMessageTemplate;
+
+            if (metadata.ProcessedBytes == 0)
                 return ZeroBytesProcessedMessageTemplate;
 
             if (metadata.ProcessedBytes < metadata.Length)
                 return FewerBytesProcessedMessageTemplate;
-            else if (metadata.ProcessedBytes > metadata.Length)
+
+            if (metadata.ProcessedBytes > metadata.Length)
                 return MoreBytesProcessedMessageTemplate;
 
             return MessageTemplate;
         }
+
+        private static string GetPercentageMessageComponent(IFileDeserializationMetadata metadata) =>
+            metadata.ProcessedBytesRate is not null ? $"{metadata.ProcessedBytesRate:P2}" : string.Empty;
+
+        private static string GetDeviationMessageComponent(IFileDeserializationMetadata metadata)
+        {
+            if (metadata.Length is not long length || metadata.ProcessedBytes is not long processed)
+                return string.Empty;
+
+            var deviation = processed - length;
+            var signToken = deviation > 0 ? "+" : "";
+
+            return $"{signToken}{deviation} B";
+        }
+
+        private static string FormatNullableMessageComponent<T>(T? value)
+            where T : struct => value?.ToString() ?? "'null'";
     }
 }
