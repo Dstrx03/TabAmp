@@ -9,7 +9,7 @@ internal interface IExactFileDeserializer : IFileDeserializationMetadataProvider
 
     internal sealed class ExactFileDeserializationException : FileSerializationException
     {
-        private const string MessageToken = "The file was expected to be deserialized exactly";
+        private const string MessageToken = "The file must be deserialized exactly";
         private const string PercentageDeviationMessageToken = "({2}, deviation: {3})";
         private const string BoundaryMetadataMessageToken = "Total length: {0} byte(s), processed: {1} byte(s).";
 
