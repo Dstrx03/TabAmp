@@ -1,4 +1,5 @@
-﻿using TabAmp.Engine.Core.FileSerialization.Common.Components.Metadata;
+﻿using System;
+using TabAmp.Engine.Core.FileSerialization.Common.Components.Metadata;
 using TabAmp.Engine.Core.FileSerialization.Common.Exceptions;
 
 namespace TabAmp.Engine.Core.FileSerialization.Common.Components.Processor;
@@ -13,21 +14,25 @@ internal interface IExactFileDeserializer : IFileDeserializationMetadataProvider
         private const string PercentageDeviationMessageToken = "({2}, deviation: {3})";
         private const string BoundaryMetadataMessageToken = "Total length: {0} byte(s), processed: {1} byte(s).";
 
-        private const string MessageTemplate = $"{MessageToken}. {BoundaryMetadataMessageToken}";
         private const string BoundaryMetadataMissingMessageTemplate = $"{MessageToken}, but required boundary metadata is missing. {BoundaryMetadataMessageToken}";
         private const string ZeroBytesProcessedMessageTemplate = $"{MessageToken}, but zero byte(s) were processed. {BoundaryMetadataMessageToken}";
         private const string FewerBytesProcessedMessageTemplate = $"{MessageToken}, but only {{1}} of {{0}} byte(s) were processed {PercentageDeviationMessageToken}. {BoundaryMetadataMessageToken}";
         private const string MoreBytesProcessedMessageTemplate = $"{MessageToken}, but {{1}} byte(s) were processed instead of {{0}} byte(s) {PercentageDeviationMessageToken}. {BoundaryMetadataMessageToken}";
 
-        public ExactFileDeserializationException(IFileDeserializationMetadata metadata)
-            : base(ComposeMessage(metadata))
+        public ExactFileDeserializationException(string message)
+            : base(message)
+        {
+        }
+
+        public ExactFileDeserializationException(string message, Exception inner)
+            : base(message, inner)
         {
         }
 
         public static void ThrowIfNotExactlyDeserialized(IFileDeserializationMetadata metadata)
         {
             if (IsBoundaryMetadataMissing(metadata) || IsNotExactlyDeserialized(metadata))
-                throw new ExactFileDeserializationException(metadata);
+                throw new ExactFileDeserializationException(ComposeMessage(metadata));
         }
 
         private static bool IsBoundaryMetadataMissing(IFileDeserializationMetadata metadata) =>
@@ -54,10 +59,7 @@ internal interface IExactFileDeserializer : IFileDeserializationMetadataProvider
             if (metadata.ProcessedBytes < metadata.Length)
                 return FewerBytesProcessedMessageTemplate;
 
-            if (metadata.ProcessedBytes > metadata.Length)
-                return MoreBytesProcessedMessageTemplate;
-
-            return MessageTemplate;
+            return MoreBytesProcessedMessageTemplate;
         }
 
         private static string GetPercentageMessageComponent(IFileDeserializationMetadata metadata) =>
