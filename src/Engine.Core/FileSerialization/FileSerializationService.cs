@@ -23,7 +23,7 @@ internal class FileSerializationService : IFileSerializationService
         var deserializer = scope.ServiceProvider.GetRequiredService<IFileDeserializer<T>>();
         var file = await deserializer.DeserializeAsync();
         if (deserializer is IExactFileDeserializer exactDeserializer)
-            exactDeserializer.Todo_Name();
+            exactDeserializer.ValidateExactDeserialization();
 
         return file;
     }
