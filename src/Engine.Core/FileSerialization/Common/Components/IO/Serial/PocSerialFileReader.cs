@@ -10,39 +10,41 @@ using static TabAmp.Engine.Core.FileSerialization.Common.Components.IO.Serial.IS
 
 namespace TabAmp.Engine.Core.FileSerialization.Common.Components.IO.Serial;
 
-[Obsolete("Proof of concept implementation")]
-internal class PocSerialFileReader : ISerialFileReader
+internal sealed class PocSerialFileReader : ISerialFileReader
 {
-    private readonly FileStream _fileStream;
-    private readonly ArrayPool<byte> _arrayPool;
     private readonly FileSerializationContext _context;
+    private readonly ArrayPool<byte> _arrayPool;
+    private readonly FileDeserializationMetadata _metadata;
+
+    private FileStream _fileStream;
+    private readonly long _length;
+    private long _position;
+
+    private static readonly IOperationExceptionFluentBuilder<NegativeBytesCountOperationException>
+        _negativeBytesCountOperationExceptionWithReadSkip = NegativeBytesCountOperationException.With.ReadSkip;
+
+    private static readonly IOperationExceptionFluentBuilder<EndOfFileOperationException>
+        _endOfFileOperationExceptionWithReadSkip = EndOfFileOperationException.With.ReadSkip;
 
     public PocSerialFileReader(FileSerializationContext context)
+    {
+        _fileStream = OpenFileStream(context);
+        _length = _fileStream.Length;
+
+        _context = context;
+        _arrayPool = ArrayPool<byte>.Shared;
+        _metadata = new FileDeserializationMetadata(_length);
+    }
+
+    private static FileStream OpenFileStream(FileSerializationContext context)
     {
         var options = new FileStreamOptions
         {
             Options = FileOptions.Asynchronous,
             Share = FileShare.None
         };
-        _fileStream = File.Open(context.FilePath, options);
-        _length = _fileStream.Length;
-        _arrayPool = ArrayPool<byte>.Shared;
-        _context = context;
 
-    }
-
-    private long _length;
-    private long _position;
-
-    private FileDeserializationMetadata _metadata;
-    public IFileDeserializationMetadata Metadata
-    {
-        get
-        {
-            _metadata ??= new FileDeserializationMetadata { Length = _length };
-            _metadata.ProcessedBytes = _position;
-            return _metadata;
-        }
+        return File.Open(context.FilePath, options);
     }
 
     public async ValueTask<T> ReadBytesAsync<T>(int count, Convert<T> convert)
@@ -74,62 +76,37 @@ internal class PocSerialFileReader : ISerialFileReader
         }
     }
 
-    private static readonly IOperationExceptionFluentBuilder<NegativeBytesCountOperationException>
-        _negativeBytesCountOperationExceptionWithReadSkip = NegativeBytesCountOperationException.With.ReadSkip;
-
-    private static readonly IOperationExceptionFluentBuilder<EndOfFileOperationException>
-        _endOfFileOperationExceptionWithReadSkip = EndOfFileOperationException.With.ReadSkip;
-
-    public async ValueTask SkipBytesAsync(int count)
+    public ValueTask SkipBytesAsync(int count)
     {
         _negativeBytesCountOperationExceptionWithReadSkip.ThrowIfNegative(count);
         _endOfFileOperationExceptionWithReadSkip.ThrowIfTrailing(count, CalculateTrailingBytesCount(count));
 
-        var skippedBytes = await ReadBytesAsync(count, buffer => buffer.ToArray());
-        Console.WriteLine($"Skipped {count} bytes from {_position - count} to {_position - 1} inclusive: {string.Join(",", skippedBytes)}");
+        _fileStream.Position += count;
+        _position += count;
 
-        // TODO: implement production grade tracking of skipped information
-        //_fileStream.Position += count;
-        //Position += count;
-    }
-
-    public void Dispose()
-    {
-        PrintStatistics();
-        _fileStream?.Dispose();
+        return ValueTask.CompletedTask;
     }
 
     private long CalculateTrailingBytesCount(int count) => _position - _length + count;
 
-    [Obsolete("TODO: implement production grade tracking")]
-    private void PrintStatistics()
+    public IFileDeserializationMetadata Metadata
     {
-        var message = $"read {_position} ({_fileStream.Position}) of {_length} bytes";
-        var ratio = _position / (double)_length;
-        var diff = _position - _length;
-        var diffStr = diff > 0 ? $"+{diff}" : diff.ToString();
-
-        var summary = string.Empty;
-        var summaryColor = ConsoleColor.DarkRed;
-        if (_position == _length)
+        get
         {
-            summary = "FULL";
-            summaryColor = ConsoleColor.DarkGreen;
+            _metadata.ProcessedBytes = _position;
+            return _metadata;
         }
-        if (_position < _length) summary = "PRTL";
-        if (_position > _length) summary = "EXCD";
-
-        Console.Write($"[{nameof(PocSerialFileReader)}] {message} | {ratio:P} {diffStr}b ");
-        var color = Console.ForegroundColor;
-        Console.ForegroundColor = summaryColor;
-        Console.Write($"*{summary}*");
-        Console.ForegroundColor = color;
-        Console.WriteLine($" | {_context.FilePath}");
     }
 
-    private class FileDeserializationMetadata : IFileDeserializationMetadata
+    public void Dispose()
     {
-        public long? Length { get; set; }
+        _fileStream?.Dispose();
+        _fileStream = null;
+    }
+
+    private class FileDeserializationMetadata(long length) : IFileDeserializationMetadata
+    {
+        public long? Length { get; } = length;
         public long? ProcessedBytes { get; set; }
     }
 }
