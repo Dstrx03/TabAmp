@@ -10,7 +10,7 @@ using static TabAmp.Engine.Core.FileSerialization.Common.Components.IO.Serial.IS
 
 namespace TabAmp.Engine.Core.FileSerialization.Common.Components.IO.Serial;
 
-internal sealed class PocSerialFileReader : ISerialFileReader
+internal sealed class SerialFileReader : ISerialFileReader
 {
     private readonly FileSerializationContext _context;
     private readonly ArrayPool<byte> _arrayPool;
@@ -26,7 +26,7 @@ internal sealed class PocSerialFileReader : ISerialFileReader
     private static readonly IOperationExceptionFluentBuilder<EndOfFileOperationException>
         _endOfFileOperationExceptionWithReadSkip = EndOfFileOperationException.With.ReadSkip;
 
-    public PocSerialFileReader(FileSerializationContext context)
+    public SerialFileReader(FileSerializationContext context)
     {
         _fileStream = OpenFileStream(context);
         _length = _fileStream.Length;

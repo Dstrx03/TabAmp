@@ -15,7 +15,7 @@ public static class DependencyInjection
     {
         services.AddTransient<IFileSerializationService, FileSerializationService>()
             .AddFileSerializationContext()
-            .AddScoped<ISerialFileReader, PocSerialFileReader>();
+            .AddScoped<ISerialFileReader, SerialFileReader>();
 
         services.AddScoped<IFileDeserializer<Gp5Score>, Gp5FileDeserializer>()
             .AddScoped<Gp5BinaryPrimitivesReader>()
