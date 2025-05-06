@@ -1,4 +1,4 @@
-﻿namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Fluent;
+﻿namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Operation.Fluent;
 
 internal interface IOperationExceptionFluentBuilderSelectOperationStage<TException>
     where TException : OperationException

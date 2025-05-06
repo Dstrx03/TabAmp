@@ -4,8 +4,8 @@ using System.IO;
 using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.Context;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.Metadata;
-using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO;
-using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Fluent;
+using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Operation;
+using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Operation.Fluent;
 using static TabAmp.Engine.Core.FileSerialization.Common.Components.IO.Serial.ISerialFileReader;
 
 namespace TabAmp.Engine.Core.FileSerialization.Common.Components.IO.Serial;

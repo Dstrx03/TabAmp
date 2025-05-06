@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO;
+namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Operation;
 
 internal abstract class OperationException : FileSerializationException
 {

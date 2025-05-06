@@ -1,7 +1,6 @@
 ﻿using System;
-using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Fluent;
 
-namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO;
+namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Operation.Fluent;
 
 internal static class EndOfFileOperationExceptionFluentBuilderExtensions
 {

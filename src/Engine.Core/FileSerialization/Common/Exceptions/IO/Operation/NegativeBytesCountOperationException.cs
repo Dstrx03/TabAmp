@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
-using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Fluent;
+using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Operation.Fluent;
 
-namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO;
+namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Operation;
 
 internal sealed class NegativeBytesCountOperationException : OperationException
 {

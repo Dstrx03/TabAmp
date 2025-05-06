@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Text;
 
-namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Fluent;
+namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Operation.Fluent;
 
 internal record struct OperationExceptionFluentBuilder<TException> :
     IOperationExceptionFluentBuilderSelectOperationStage<TException>,
