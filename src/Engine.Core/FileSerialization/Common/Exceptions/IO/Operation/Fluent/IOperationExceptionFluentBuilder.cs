@@ -3,5 +3,5 @@
 internal interface IOperationExceptionFluentBuilder<TException>
     where TException : OperationException
 {
-    OperationType Operation { get; }
+    Operation Operation { get; }
 }

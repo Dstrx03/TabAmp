@@ -8,12 +8,12 @@ internal sealed class NegativeBytesCountOperationException : OperationException
 {
     private new const string MessageTemplate = $"{OperationException.MessageTemplate}; the specified byte count must be a non-negative number.";
 
-    public NegativeBytesCountOperationException(OperationType operation, int bytesCount)
+    public NegativeBytesCountOperationException(Operation operation, int bytesCount)
         : base(operation, bytesCount, ComposeMessage(operation, bytesCount))
     {
     }
 
-    public NegativeBytesCountOperationException(OperationType operation, int bytesCount, Exception inner)
+    public NegativeBytesCountOperationException(Operation operation, int bytesCount, Exception inner)
         : base(operation, bytesCount, ComposeMessage(operation, bytesCount), inner)
     {
     }
@@ -22,6 +22,6 @@ internal sealed class NegativeBytesCountOperationException : OperationException
     public static IOperationExceptionFluentBuilderSelectOperationStage<NegativeBytesCountOperationException> With =>
         new OperationExceptionFluentBuilder<NegativeBytesCountOperationException>();
 
-    private static string ComposeMessage(OperationType operation, int bytesCount) =>
+    private static string ComposeMessage(Operation operation, int bytesCount) =>
         string.Format(MessageTemplate, GetMessageComponent(operation), bytesCount);
 }

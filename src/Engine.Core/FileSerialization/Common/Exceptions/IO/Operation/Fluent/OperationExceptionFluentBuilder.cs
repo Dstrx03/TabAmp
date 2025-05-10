@@ -8,14 +8,14 @@ internal record struct OperationExceptionFluentBuilder<TException> :
     IOperationExceptionFluentBuilder<TException>
     where TException : OperationException
 {
-    public OperationType Operation { get; private set; }
+    public Operation Operation { get; private set; }
 
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     public IOperationExceptionFluentBuilder<TException> Read
     {
         get
         {
-            Operation = OperationType.Read;
+            Operation = Operation.Read;
             return this;
         }
     }
@@ -25,7 +25,7 @@ internal record struct OperationExceptionFluentBuilder<TException> :
     {
         get
         {
-            Operation = OperationType.ReadSkip;
+            Operation = Operation.ReadSkip;
             return this;
         }
     }

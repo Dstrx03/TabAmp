@@ -18,7 +18,7 @@ internal class Gp5TextReaderIntegrityValidator : IGp5TextReader
         {
             return await _textReader.ReadByteTextAsync(maxLength);
         }
-        catch (NegativeBytesCountOperationException exception) when (exception.Operation == OperationType.ReadSkip)
+        catch (NegativeBytesCountOperationException exception) when (exception.Operation == Operation.ReadSkip)
         {
             var length = maxLength + exception.BytesCount * -1;
             var message = $"The text length exceeds the maximum length of {maxLength}. Actual length: {length} character(s).";
@@ -32,7 +32,7 @@ internal class Gp5TextReaderIntegrityValidator : IGp5TextReader
         {
             return await _textReader.ReadIntTextAsync();
         }
-        catch (NegativeBytesCountOperationException exception) when (exception.Operation == OperationType.Read)
+        catch (NegativeBytesCountOperationException exception) when (exception.Operation == Operation.Read)
         {
             var length = exception.BytesCount;
             var message = $"The text length must be a non-negative number. Actual length: {length} character(s).";
