@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Buffers;
 using System.IO;
+using System.Security;
 using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.Context;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.Metadata;
+using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.FileOpenFailed;
 using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Operation;
 using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Operation.Fluent;
 using static TabAmp.Engine.Core.FileSerialization.Common.Components.IO.Serial.ISerialFileReader;
@@ -44,7 +46,42 @@ internal sealed class SerialFileReader : ISerialFileReader
             Share = FileShare.None
         };
 
-        return File.Open(context.FilePath, options);
+        try
+        {
+            return File.Open(context.FilePath, options);
+        }
+        catch (FileNotFoundException exception)
+        {
+            throw new FileOpenFailedException(Reason.FileNotFound, exception);
+        }
+        catch (DirectoryNotFoundException exception)
+        {
+            throw new FileOpenFailedException(Reason.InvalidPath, exception);
+        }
+        catch (DriveNotFoundException exception)
+        {
+            throw new FileOpenFailedException(Reason.DriveNotFound, exception);
+        }
+        catch (PathTooLongException exception)
+        {
+            throw new FileOpenFailedException(Reason.PathTooLong, exception);
+        }
+        catch (NotSupportedException exception)
+        {
+            throw new FileOpenFailedException(Reason.UnsupportedPathFormat, exception);
+        }
+        catch (UnauthorizedAccessException exception)
+        {
+            throw new FileOpenFailedException(Reason.AccessDenied, exception);
+        }
+        catch (SecurityException exception)
+        {
+            throw new FileOpenFailedException(Reason.SecurityError, exception);
+        }
+        catch (IOException exception)
+        {
+            throw new FileOpenFailedException(Reason.IOError, exception);
+        }
     }
 
     public async ValueTask<T> ReadBytesAsync<T>(int count, Convert<T> convert)
