@@ -21,12 +21,10 @@ internal sealed class FileOpenFailedException : FileSerializationException
     {
         Reason.IOError => "an unexpected I/O error occurred",
         Reason.FileNotFound => "the file does not exist",
-        Reason.InvalidPath => "the specified path is invalid",
         Reason.DriveNotFound => "the specified drive is unavailable",
+        Reason.InvalidPath => "the specified path is invalid",
         Reason.PathTooLong => "the file path is too long",
-        Reason.UnsupportedPathFormat => "the path format is not supported",
         Reason.AccessDenied => "access is denied",
-        Reason.SecurityError => "the operation is not permitted due to security restrictions",
         _ => "TODO"
     };
 }

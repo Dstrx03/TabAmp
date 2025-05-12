@@ -68,7 +68,7 @@ internal sealed class SerialFileReader : ISerialFileReader
         }
         catch (NotSupportedException exception)
         {
-            throw new FileOpenFailedException(Reason.UnsupportedPathFormat, exception);
+            throw new FileOpenFailedException(Reason.InvalidPath, exception);
         }
         catch (UnauthorizedAccessException exception)
         {
@@ -76,7 +76,7 @@ internal sealed class SerialFileReader : ISerialFileReader
         }
         catch (SecurityException exception)
         {
-            throw new FileOpenFailedException(Reason.SecurityError, exception);
+            throw new FileOpenFailedException(Reason.AccessDenied, exception);
         }
         catch (IOException exception)
         {
