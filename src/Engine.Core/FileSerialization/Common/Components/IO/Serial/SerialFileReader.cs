@@ -50,21 +50,23 @@ internal sealed class SerialFileReader : ISerialFileReader
         {
             return File.Open(context.FilePath, options);
         }
-        catch (FileNotFoundException exception)
+        catch (IOException exception)
         {
-            throw new FileOpenFailedException(Reason.FileNotFound, exception);
-        }
-        catch (DirectoryNotFoundException exception)
-        {
-            throw new FileOpenFailedException(Reason.InvalidPath, exception);
-        }
-        catch (DriveNotFoundException exception)
-        {
-            throw new FileOpenFailedException(Reason.DriveNotFound, exception);
-        }
-        catch (PathTooLongException exception)
-        {
-            throw new FileOpenFailedException(Reason.PathTooLong, exception);
+            var reason = Reason.IOError;
+
+            if (exception is FileNotFoundException)
+                reason = Reason.FileNotFound;
+
+            if (exception is DriveNotFoundException)
+                reason = Reason.DriveNotFound;
+
+            if (exception is DirectoryNotFoundException)
+                reason = Reason.InvalidPath;
+
+            if (exception is PathTooLongException)
+                reason = Reason.PathTooLong;
+
+            throw new FileOpenFailedException(reason, exception);
         }
         catch (NotSupportedException exception)
         {
@@ -77,10 +79,6 @@ internal sealed class SerialFileReader : ISerialFileReader
         catch (SecurityException exception)
         {
             throw new FileOpenFailedException(Reason.AccessDenied, exception);
-        }
-        catch (IOException exception)
-        {
-            throw new FileOpenFailedException(Reason.IOError, exception);
         }
     }
 
