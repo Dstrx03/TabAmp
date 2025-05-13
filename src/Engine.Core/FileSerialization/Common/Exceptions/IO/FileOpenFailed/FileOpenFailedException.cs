@@ -25,6 +25,6 @@ internal sealed class FileOpenFailedException : FileSerializationException
         Reason.InvalidPath => "the specified path is invalid",
         Reason.PathTooLong => "the file path is too long",
         Reason.AccessDenied => "access is denied",
-        _ => "TODO"
+        _ => $"an unexpected error occurred ({nameof(Reason)}: {(int)reason})"
     };
 }
