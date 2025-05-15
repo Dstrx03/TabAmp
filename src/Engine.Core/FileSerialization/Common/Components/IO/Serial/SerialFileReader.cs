@@ -38,7 +38,7 @@ internal sealed class SerialFileReader : ISerialFileReader
         _metadata = new FileDeserializationMetadata(_length);
     }
 
-    private static FileStream OpenFileStream(FileSerializationContext context)
+    private FileStream OpenFileStream(FileSerializationContext context)
     {
         var options = new FileStreamOptions
         {
@@ -56,14 +56,11 @@ internal sealed class SerialFileReader : ISerialFileReader
 
             if (exception is FileNotFoundException)
                 reason = Reason.FileNotFound;
-
-            if (exception is DriveNotFoundException)
+            else if (exception is DriveNotFoundException)
                 reason = Reason.DriveNotFound;
-
-            if (exception is DirectoryNotFoundException)
+            else if (exception is DirectoryNotFoundException)
                 reason = Reason.InvalidPath;
-
-            if (exception is PathTooLongException)
+            else if (exception is PathTooLongException)
                 reason = Reason.PathTooLong;
 
             throw new FileOpenFailedException(reason, exception);
