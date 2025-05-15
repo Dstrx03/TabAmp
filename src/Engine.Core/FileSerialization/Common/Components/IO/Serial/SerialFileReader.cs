@@ -62,6 +62,8 @@ internal sealed class SerialFileReader : ISerialFileReader
                 reason = Reason.InvalidPath;
             else if (exception is PathTooLongException)
                 reason = Reason.PathTooLong;
+            else if (IsWin32ErrorInvalidName(exception))
+                reason = Reason.InvalidPath;
 
             throw new FileOpenFailedException(reason, exception);
         }
@@ -76,6 +78,12 @@ internal sealed class SerialFileReader : ISerialFileReader
         catch (SecurityException exception)
         {
             throw new FileOpenFailedException(Reason.AccessDenied, exception);
+        }
+
+        bool IsWin32ErrorInvalidName(IOException exception)
+        {
+            const int win32ErrorInvalidName = unchecked((int)0x8007007B);
+            return OperatingSystem.IsWindows() && exception.HResult == win32ErrorInvalidName;
         }
     }
 
