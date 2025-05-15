@@ -12,7 +12,7 @@ using static TabAmp.Engine.Core.FileSerialization.Common.Components.IO.Serial.IS
 
 namespace TabAmp.Engine.Core.FileSerialization.Common.Components.IO.Serial;
 
-internal sealed class SerialFileReader : ISerialFileReader
+internal sealed class SerialFileReader : ISerialFileReader, IDisposable
 {
     private readonly FileSerializationContext _context;
     private readonly ArrayPool<byte> _arrayPool;
