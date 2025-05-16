@@ -20,10 +20,10 @@ internal sealed class FileOpenFailedException : FileSerializationException
     private static string GetMessageComponent(Reason reason) => reason switch
     {
         Reason.IOError => "an unexpected I/O error occurred",
-        Reason.FileNotFound => "the file does not exist",
+        Reason.FileNotFound => "file not found",
         Reason.DriveNotFound => "the specified drive is unavailable",
         Reason.InvalidPath => "the specified path is invalid",
-        Reason.PathTooLong => "the file path is too long",
+        Reason.PathTooLong => "the specified path is too long",
         Reason.AccessDenied => "access is denied",
         _ => $"an unexpected error occurred ({nameof(Reason)}: {(int)reason})"
     };
