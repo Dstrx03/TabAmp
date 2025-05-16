@@ -2,6 +2,6 @@
 
 internal enum Operation
 {
-    Read = 1,
-    ReadSkip = 2
+    Read,
+    ReadSkip
 }
