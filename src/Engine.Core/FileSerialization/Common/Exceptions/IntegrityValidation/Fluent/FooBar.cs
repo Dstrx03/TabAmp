@@ -32,7 +32,7 @@ internal class FooBar:A,B,C
     public C IsExpectedToBe(int expectedValue)
     {
         _expectedValue = expectedValue;
-        _assertion = _value == expectedValue;
+        _assertion = _value != expectedValue;
         return this;
     }
 
