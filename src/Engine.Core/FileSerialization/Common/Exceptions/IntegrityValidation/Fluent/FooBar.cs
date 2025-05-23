@@ -1,8 +1,10 @@
-﻿namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IntegrityValidation.Fluent;
+﻿using System.Runtime.CompilerServices;
+
+namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IntegrityValidation.Fluent;
 
 internal interface A
 {
-    B AnonymousProperty(int value, string valueName);
+    B AnonymousProperty(int value, [CallerArgumentExpression(nameof(value))] string? valueName = default);
 }
 internal interface B
 {
@@ -12,7 +14,7 @@ internal interface C
 {
     void Throw();
 }
-internal class FooBar:A,B,C
+internal class FooBar : A, B, C
 {
     private int _value;
     private string _valueName;
@@ -21,7 +23,7 @@ internal class FooBar:A,B,C
     private int _expectedValue;
     private bool _assertion;
 
-    public B AnonymousProperty(int value, string valueName)
+    public B AnonymousProperty(int value, string? valueName)
     {
         _value = value;
         _valueName = valueName;
