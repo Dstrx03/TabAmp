@@ -7,7 +7,6 @@ using TabAmp.Engine.Core.FileSerialization.Common.Components.Context;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.Metadata;
 using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.FileOpenFailed;
 using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Operation;
-using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Operation.Fluent;
 using static TabAmp.Engine.Core.FileSerialization.Common.Components.IO.Serial.ISerialFileReader;
 
 namespace TabAmp.Engine.Core.FileSerialization.Common.Components.IO.Serial;
@@ -21,12 +20,6 @@ internal sealed class SerialFileReader : ISerialFileReader, IDisposable
     private FileStream _fileStream;
     private readonly long _length;
     private long _position;
-
-    private static readonly OperationExceptionFluentBuilder<NegativeBytesCountOperationException>
-        _negativeBytesCountOperationExceptionWithReadSkip = NegativeBytesCountOperationException.With.ReadSkip;
-
-    private static readonly OperationExceptionFluentBuilder<EndOfFileOperationException>
-        _endOfFileOperationExceptionWithReadSkip = EndOfFileOperationException.With.ReadSkip;
 
     public SerialFileReader(FileSerializationContext context)
     {
@@ -118,8 +111,8 @@ internal sealed class SerialFileReader : ISerialFileReader, IDisposable
 
     public ValueTask SkipBytesAsync(int count)
     {
-        _negativeBytesCountOperationExceptionWithReadSkip.ThrowIfNegative(count);
-        _endOfFileOperationExceptionWithReadSkip.ThrowIfTrailing(count, CalculateTrailingBytesCount(count));
+        NegativeBytesCountOperationException.With.ReadSkip.ThrowIfNegative(count);
+        EndOfFileOperationException.With.ReadSkip.ThrowIfTrailing(count, CalculateTrailingBytesCount(count));
 
         _fileStream.Position += count;
         _position += count;
