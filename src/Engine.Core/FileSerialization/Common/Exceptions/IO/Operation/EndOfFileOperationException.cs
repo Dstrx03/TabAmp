@@ -23,8 +23,8 @@ internal sealed class EndOfFileOperationException : OperationException
     public long TrailingBytesCount { get; }
 
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    public static IOperationExceptionFluentBuilderSelectOperationStage<EndOfFileOperationException> With =>
-        new OperationExceptionFluentBuilder<EndOfFileOperationException>();
+    public static OperationExceptionFluentBuilderSelectOperationStage<EndOfFileOperationException> With =>
+        OperationExceptionFluentBuilderSelectOperationStage<EndOfFileOperationException>.With;
 
     private static string ComposeMessage(Operation operation, int bytesCount, long trailingBytesCount) =>
         string.Format(MessageTemplate, GetMessageComponent(operation), bytesCount, trailingBytesCount);

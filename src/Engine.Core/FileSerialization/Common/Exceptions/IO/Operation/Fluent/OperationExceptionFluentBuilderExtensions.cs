@@ -6,18 +6,18 @@ namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Operation;
 internal static class OperationExceptionFluentBuilderExtensions
 {
     public static EndOfFileOperationException Build(
-        this IOperationExceptionFluentBuilder<EndOfFileOperationException> builder,
+        this OperationExceptionFluentBuilder<EndOfFileOperationException> builder,
         int bytesCount,
         long trailingBytesCount) => new(builder.Operation, bytesCount, trailingBytesCount);
 
     public static EndOfFileOperationException Build(
-        this IOperationExceptionFluentBuilder<EndOfFileOperationException> builder,
+        this OperationExceptionFluentBuilder<EndOfFileOperationException> builder,
         int bytesCount,
         long trailingBytesCount,
         Exception inner) => new(builder.Operation, bytesCount, trailingBytesCount, inner);
 
     public static void ThrowIfTrailing(
-        this IOperationExceptionFluentBuilder<EndOfFileOperationException> builder,
+        this OperationExceptionFluentBuilder<EndOfFileOperationException> builder,
         int bytesCount,
         long trailingBytesCount)
     {
@@ -27,16 +27,16 @@ internal static class OperationExceptionFluentBuilderExtensions
 
 
     public static NegativeBytesCountOperationException Build(
-        this IOperationExceptionFluentBuilder<NegativeBytesCountOperationException> builder,
+        this OperationExceptionFluentBuilder<NegativeBytesCountOperationException> builder,
         int bytesCount) => new(builder.Operation, bytesCount);
 
     public static NegativeBytesCountOperationException Build(
-        this IOperationExceptionFluentBuilder<NegativeBytesCountOperationException> builder,
+        this OperationExceptionFluentBuilder<NegativeBytesCountOperationException> builder,
         int bytesCount,
         Exception inner) => new(builder.Operation, bytesCount, inner);
 
     public static void ThrowIfNegative(
-        this IOperationExceptionFluentBuilder<NegativeBytesCountOperationException> builder,
+        this OperationExceptionFluentBuilder<NegativeBytesCountOperationException> builder,
         int bytesCount)
     {
         if (bytesCount < 0)

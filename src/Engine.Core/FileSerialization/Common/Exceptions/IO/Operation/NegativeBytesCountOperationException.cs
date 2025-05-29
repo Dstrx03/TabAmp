@@ -19,8 +19,8 @@ internal sealed class NegativeBytesCountOperationException : OperationException
     }
 
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    public static IOperationExceptionFluentBuilderSelectOperationStage<NegativeBytesCountOperationException> With =>
-        new OperationExceptionFluentBuilder<NegativeBytesCountOperationException>();
+    public static OperationExceptionFluentBuilderSelectOperationStage<NegativeBytesCountOperationException> With =>
+        OperationExceptionFluentBuilderSelectOperationStage<NegativeBytesCountOperationException>.With;
 
     private static string ComposeMessage(Operation operation, int bytesCount) =>
         string.Format(MessageTemplate, GetMessageComponent(operation), bytesCount);

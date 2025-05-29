@@ -22,10 +22,10 @@ internal sealed class SerialFileReader : ISerialFileReader, IDisposable
     private readonly long _length;
     private long _position;
 
-    private static readonly IOperationExceptionFluentBuilder<NegativeBytesCountOperationException>
+    private static readonly OperationExceptionFluentBuilder<NegativeBytesCountOperationException>
         _negativeBytesCountOperationExceptionWithReadSkip = NegativeBytesCountOperationException.With.ReadSkip;
 
-    private static readonly IOperationExceptionFluentBuilder<EndOfFileOperationException>
+    private static readonly OperationExceptionFluentBuilder<EndOfFileOperationException>
         _endOfFileOperationExceptionWithReadSkip = EndOfFileOperationException.With.ReadSkip;
 
     public SerialFileReader(FileSerializationContext context)

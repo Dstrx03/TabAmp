@@ -1,15 +1,22 @@
-﻿namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Operation.Fluent;
+﻿using System.Diagnostics;
 
-internal struct OperationExceptionFluentBuilder<TException>() :
-    IOperationExceptionFluentBuilderSelectOperationStage<TException>,
-    IOperationExceptionFluentBuilder<TException>
+namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Operation.Fluent;
+
+internal class OperationExceptionFluentBuilderSelectOperationStage<TException>
     where TException : OperationException
 {
-    public Operation Operation { get; private set; } = (Operation)(-1);
+    public static readonly OperationExceptionFluentBuilderSelectOperationStage<TException> With = new();
 
-    public IOperationExceptionFluentBuilder<TException> SelectOperation(Operation operation)
+    private OperationExceptionFluentBuilderSelectOperationStage()
     {
-        Operation = operation;
-        return this;
     }
+
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+    public OperationExceptionFluentBuilder<TException> Read => new(Operation.Read);
+
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+    public OperationExceptionFluentBuilder<TException> ReadSkip => new(Operation.ReadSkip);
 }
+
+internal readonly record struct OperationExceptionFluentBuilder<TException>(Operation Operation)
+    where TException : OperationException;
