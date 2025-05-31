@@ -17,5 +17,5 @@ internal sealed class ProcessIntegrityException : FileSerializationException
     }
 
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    public static A The => new FooBar();
+    public static ProcessIntegrityExceptionFluentBuilder The => new();
 }
