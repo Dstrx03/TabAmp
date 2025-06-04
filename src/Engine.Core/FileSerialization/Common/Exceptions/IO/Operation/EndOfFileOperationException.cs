@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Diagnostics;
-using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Operation.Fluent;
 
 namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Operation;
 
-internal sealed class EndOfFileOperationException : OperationException
+internal sealed partial class EndOfFileOperationException : OperationException
 {
     private new const string MessageTemplate = $"{OperationException.MessageTemplate}; end of file reached. Attempted to {{0}} {{2}} byte(s) beyond the file length.";
 
@@ -21,10 +19,6 @@ internal sealed class EndOfFileOperationException : OperationException
     }
 
     public long TrailingBytesCount { get; }
-
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    public static OperationExceptionFluentBuilderSelectOperationStage<EndOfFileOperationException> With =>
-        OperationExceptionFluentBuilderSelectOperationStage<EndOfFileOperationException>.With;
 
     private static string ComposeMessage(Operation operation, int bytesCount, long trailingBytesCount) =>
         string.Format(MessageTemplate, GetMessageComponent(operation), bytesCount, trailingBytesCount);
