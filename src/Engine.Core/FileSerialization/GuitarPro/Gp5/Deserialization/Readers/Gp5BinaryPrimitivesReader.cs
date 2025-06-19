@@ -17,6 +17,8 @@ internal class Gp5BinaryPrimitivesReader : IGp5BinaryPrimitivesReader
     private const int DoubleSize = 8;
     private const int ColorSize = 4;
 
+    private const int ColorRedPosition = 0, ColorGreenPosition = 1, ColorBluePosition = 2, Color_A01Position = 3;
+
     public Gp5BinaryPrimitivesReader(ISerialFileReader fileReader) =>
         _fileReader = fileReader;
 
@@ -51,9 +53,19 @@ internal class Gp5BinaryPrimitivesReader : IGp5BinaryPrimitivesReader
     private static ISerialFileReader.Convert<float> ConvertToFloat { get; } = BinaryPrimitives.ReadSingleLittleEndian;
     private static ISerialFileReader.Convert<double> ConvertToDouble { get; } = BinaryPrimitives.ReadDoubleLittleEndian;
     private static ISerialFileReader.Convert<Gp5Bool> ConvertToBool { get; } = ReadBool;
-    private static ISerialFileReader.Convert<Gp5Color> ConvertToColor { get; } = Gp5Color.Read;
+    private static ISerialFileReader.Convert<Gp5Color> ConvertToColor { get; } = ReadColor;
 
     private static byte ReadByte(ReadOnlySpan<byte> source) => source[0];
+
     private static sbyte ReadSignedByte(ReadOnlySpan<byte> source) => (sbyte)ReadByte(source);
+
     private static Gp5Bool ReadBool(ReadOnlySpan<byte> source) => (Gp5Bool)ReadByte(source);
+
+    private static Gp5Color ReadColor(ReadOnlySpan<byte> source) => new()
+    {
+        Red = source[ColorRedPosition],
+        Green = source[ColorGreenPosition],
+        Blue = source[ColorBluePosition],
+        _A01 = source[Color_A01Position]
+    };
 }
