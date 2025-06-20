@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IntegrityValidation;
+using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IntegrityValidation.Fluent;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.BinaryPrimitives;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.IntegrityValidators;
@@ -47,6 +48,11 @@ internal class Gp5BinaryPrimitivesReaderIntegrityValidator : IGp5BinaryPrimitive
         var color = await _primitivesReader.ReadColorAsync();
 
         const byte expected_A01 = 0;
+
+        byte notExpected = 1;
+        var test_0 = Ensure.That(color._A01).Is.EqualTo(notExpected);
+        var test_1 = Ensure.That(color._A01, "A1").Is.EqualTo(notExpected);
+
         if (color._A01 != expected_A01)
         {
             var message = $"The anonymous property {nameof(color._A01)} is expected to be {expected_A01}. Actual value: {color._A01}.";
