@@ -29,7 +29,9 @@ internal struct A<T>
 
     public B<T> WithLabel(string label) => new(_value, _identifier, label);
 
-    public ValidationContext<T> Is => new(_value, _identifier, null);
+    public C<T> WithUnit(string unit) => new(_value, _identifier, null, unit);
+
+    public ValidationContext<T> Is => new(_value, _identifier, null, null);
 }
 
 internal struct B<T>
@@ -45,7 +47,27 @@ internal struct B<T>
         _label = label;
     }
 
-    public ValidationContext<T> Is => new(_value, _identifier, _label);
+    public C<T> WithUnit(string unit) => new(_value, _identifier, _label, unit);
+
+    public ValidationContext<T> Is => new(_value, _identifier, _label, null);
+}
+
+internal struct C<T>
+{
+    private T _value;
+    private string? _identifier;
+    private string? _label;
+    private string? _unit;
+
+    public C(T value, string? identifier, string? label, string? unit)
+    {
+        _value = value;
+        _identifier = identifier;
+        _label = label;
+        _unit = unit;
+    }
+
+    public ValidationContext<T> Is => new(_value, _identifier, _label, _unit);
 }
 
 internal struct ValidationContext<T>
@@ -53,17 +75,19 @@ internal struct ValidationContext<T>
     private T _value;
     private string? _identifier;
     private string? _label;
+    private string? _unit;
 
-    public ValidationContext(T value, string? identifier, string? label)
+    public ValidationContext(T value, string? identifier, string? label, string? unit)
     {
         _value = value;
         _identifier = identifier;
         _label = label;
+        _unit = unit;
     }
 
     public ValidationFailure Apply<TRule>(TRule rule) where TRule : struct, IValidationRule<T>
     {
-        return rule.Validate(_value, _identifier, _label);
+        return rule.Validate(_value, _identifier, _label, _unit);
     }
 }
 
@@ -77,7 +101,7 @@ internal static class ValidationContextExtensions
 
 internal interface IValidationRule<T>
 {
-    ValidationFailure Validate(T value, string? identifier, string? label);
+    ValidationFailure Validate(T value, string? identifier, string? label, string? unit);
 }
 
 internal struct IsEqualTo<T> : IValidationRule<T>
@@ -89,12 +113,12 @@ internal struct IsEqualTo<T> : IValidationRule<T>
         _expected = expected;
     }
 
-    public ValidationFailure Validate(T value, string? identifier, string? label)
+    public ValidationFailure Validate(T value, string? identifier, string? label, string? unit)
     {
         if (EqualityComparer<T>.Default.Equals(value, _expected))
             return default;
 
-        var message = $"The {GetLabelToken(identifier, label)} is expected to be {GetValueToken(_expected)}. Actual value: {GetValueToken(value)}.";
+        var message = $"The {GetLabelToken(identifier, label)} is expected to be {GetValueToken(_expected, unit)}. Actual value: {GetValueToken(value, unit)}.";
         return new(message);
     }
 
@@ -106,9 +130,12 @@ internal struct IsEqualTo<T> : IValidationRule<T>
         _ => $"{label} {identifier}"
     };
 
-    private string GetValueToken(T value)
+    private string GetValueToken(T value, string? unit)
     {
-        return value.ToString();
+        if (unit is null)
+            return value.ToString();
+
+        return $"{value} {unit}";
     }
 }
 

@@ -55,6 +55,8 @@ internal class Gp5BinaryPrimitivesReaderIntegrityValidator : IGp5BinaryPrimitive
         var test_2 = Ensure.That_Todo(color._A01).Is.EqualTo(notExpected).Message;
         var test_3 = Ensure.That(color._A01).WithLabel("anonymous property").Is.EqualTo(notExpected).Message;
         var test_4 = Ensure.That(color._A01, nameof(color._A01)).WithLabel("anonymous property").Is.EqualTo(notExpected).Message;
+        var test_5 = Ensure.That_Todo(color._A01).WithUnit("cap(s)").Is.EqualTo(notExpected).Message;
+        var test_6 = Ensure.That(color._A01, nameof(color._A01)).WithLabel("anonymous property").WithUnit("cap(s)").Is.EqualTo(notExpected).Message;
 
         if (color._A01 != expected_A01)
         {
