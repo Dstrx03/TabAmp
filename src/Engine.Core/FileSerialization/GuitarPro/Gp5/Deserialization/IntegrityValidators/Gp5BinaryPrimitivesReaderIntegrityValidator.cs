@@ -49,9 +49,12 @@ internal class Gp5BinaryPrimitivesReaderIntegrityValidator : IGp5BinaryPrimitive
 
         const byte expected_A01 = 0;
 
-        byte notExpected = 1;
-        var test_0 = Ensure.That(color._A01).Is.EqualTo(notExpected);
-        var test_1 = Ensure.That(color._A01, "A1").Is.EqualTo(notExpected);
+        byte notExpected = 255;
+        var test_0 = Ensure.That(color._A01).Is.EqualTo(notExpected).Message;
+        var test_1 = Ensure.That(color._A01, nameof(color._A01)).Is.EqualTo(notExpected).Message;
+        var test_2 = Ensure.That_Todo(color._A01).Is.EqualTo(notExpected).Message;
+        var test_3 = Ensure.That(color._A01).WithLabel("anonymous property").Is.EqualTo(notExpected).Message;
+        var test_4 = Ensure.That(color._A01, nameof(color._A01)).WithLabel("anonymous property").Is.EqualTo(notExpected).Message;
 
         if (color._A01 != expected_A01)
         {
