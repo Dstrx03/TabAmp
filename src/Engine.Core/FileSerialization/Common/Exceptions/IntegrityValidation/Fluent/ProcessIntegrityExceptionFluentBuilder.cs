@@ -106,6 +106,8 @@ internal interface IValidationRule<T>
 
 internal struct IsEqualTo<T> : IValidationRule<T>
 {
+    private const string MessageTemplate = "The {0} is expected to be {1}. Actual {2}: {3}.";
+
     private T _expected;
 
     public IsEqualTo(T expected)
@@ -118,11 +120,17 @@ internal struct IsEqualTo<T> : IValidationRule<T>
         if (EqualityComparer<T>.Default.Equals(value, _expected))
             return default;
 
-        var message = $"The {GetLabelToken(identifier, label)} is expected to be {GetValueToken(_expected, unit)}. Actual value: {GetValueToken(value, unit)}.";
-        return new(message);
+        return new(ComposeMessage(value, identifier, label, unit));
     }
 
-    private string GetLabelToken(string? identifier, string? label) => (identifier, label) switch
+    private string ComposeMessage(T value, string? identifier, string? label, string? unit) =>
+        string.Format(MessageTemplate,
+            GetLabelMessageComponent(identifier, label),
+            GetValueMessageComponent(_expected, unit),
+            GetSummaryLabelMessageComponent(label, unit),
+            GetValueMessageComponent(value, unit));
+
+    private string GetLabelMessageComponent(string? identifier, string? label) => (identifier, label) switch
     {
         (null, null) => "value",
         (string identifierToken, null) => identifierToken,
@@ -130,13 +138,11 @@ internal struct IsEqualTo<T> : IValidationRule<T>
         _ => $"{label} {identifier}"
     };
 
-    private string GetValueToken(T value, string? unit)
-    {
-        if (unit is null)
-            return value.ToString();
+    private string GetSummaryLabelMessageComponent(string? label, string? unit) =>
+        unit is null ? GetLabelMessageComponent(null, null) : GetLabelMessageComponent(null, label);
 
-        return $"{value} {unit}";
-    }
+    private string GetValueMessageComponent(T value, string? unit) =>
+        unit is null ? $"{value}" : $"{value} {unit}";
 }
 
 internal struct ValidationFailure
