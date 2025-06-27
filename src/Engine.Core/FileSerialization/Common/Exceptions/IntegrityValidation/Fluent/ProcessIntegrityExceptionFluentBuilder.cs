@@ -16,10 +16,10 @@ internal static class Ensure
     }
 }
 
-internal struct A<T>
+internal readonly ref struct A<T>
 {
-    private T _value;
-    private string? _identifier;
+    private readonly T _value;
+    private readonly string? _identifier;
 
     public A(T value, string? identifier)
     {
@@ -34,11 +34,11 @@ internal struct A<T>
     public ValidationContext<T> Is => new(_value, _identifier, null, null);
 }
 
-internal struct B<T>
+internal readonly ref struct B<T>
 {
-    private T _value;
-    private string? _identifier;
-    private string? _label;
+    private readonly T _value;
+    private readonly string? _identifier;
+    private readonly string? _label;
 
     public B(T value, string? identifier, string? label)
     {
@@ -52,12 +52,12 @@ internal struct B<T>
     public ValidationContext<T> Is => new(_value, _identifier, _label, null);
 }
 
-internal struct C<T>
+internal readonly ref struct C<T>
 {
-    private T _value;
-    private string? _identifier;
-    private string? _label;
-    private string? _unit;
+    private readonly T _value;
+    private readonly string? _identifier;
+    private readonly string? _label;
+    private readonly string? _unit;
 
     public C(T value, string? identifier, string? label, string? unit)
     {
@@ -70,12 +70,12 @@ internal struct C<T>
     public ValidationContext<T> Is => new(_value, _identifier, _label, _unit);
 }
 
-internal struct ValidationContext<T>
+internal readonly ref struct ValidationContext<T>
 {
-    private T _value;
-    private string? _identifier;
-    private string? _label;
-    private string? _unit;
+    private readonly T _value;
+    private readonly string? _identifier;
+    private readonly string? _label;
+    private readonly string? _unit;
 
     public ValidationContext(T value, string? identifier, string? label, string? unit)
     {
@@ -85,7 +85,7 @@ internal struct ValidationContext<T>
         _unit = unit;
     }
 
-    public ValidationFailure Apply<TRule>(TRule rule) where TRule : struct, IValidationRule<T>
+    public ValidationFailure Apply<TRule>(TRule rule) where TRule : struct, IValidationRule<T>, allows ref struct
     {
         return rule.Validate(_value, _identifier, _label, _unit);
     }
@@ -104,11 +104,11 @@ internal interface IValidationRule<T>
     ValidationFailure Validate(T value, string? identifier, string? label, string? unit);
 }
 
-internal struct IsEqualTo<T> : IValidationRule<T>
+internal readonly ref struct IsEqualTo<T> : IValidationRule<T>
 {
     private const string MessageTemplate = "The {0} is expected to be {1}. Actual {2}: {3}.";
 
-    private T _expected;
+    private readonly T _expected;
 
     public IsEqualTo(T expected)
     {
@@ -145,7 +145,7 @@ internal struct IsEqualTo<T> : IValidationRule<T>
         unit is null ? $"{value}" : $"{value} {unit}";
 }
 
-internal struct ValidationFailure
+internal readonly ref struct ValidationFailure
 {
     public ValidationFailure(string message)
     {
@@ -154,6 +154,12 @@ internal struct ValidationFailure
 
     public string Message { get; }
     public bool HasFailure => Message is not null;
+
+    public void Throw()
+    {
+        if (HasFailure)
+            throw new ProcessIntegrityException(Message);
+    }
 }
 
 internal class ProcessIntegrityExceptionFluentBuilder
