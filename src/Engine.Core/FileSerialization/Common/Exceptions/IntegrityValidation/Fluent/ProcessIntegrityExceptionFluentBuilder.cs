@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IntegrityValidation.Fluent;
@@ -10,7 +11,7 @@ internal static class Ensure
         return new A<T>(value, identifier);
     }
 
-    public static A<T> That_Todo<T>(T value)
+    public static A<T> ThatAnonymous<T>(T value)
     {
         return new A<T>(value, null);
     }
@@ -155,10 +156,57 @@ internal readonly ref struct ValidationFailure
     public string Message { get; }
     public bool HasFailure => Message is not null;
 
-    public void Throw()
+    public T Build<T>() where T : Exception
+    {
+        /*var info = typeof(T).GetConstructor([typeof(string)]);
+        var instance = info!.Invoke([Message]);
+        return (T)instance;*/
+
+        var assembly = typeof(ExceptionBuilder).Assembly;
+
+        var builders = assembly.GetTypes().Where(type => type.GetInterfaces().Any(i =>
+           i.IsGenericType &&
+           i.GetGenericTypeDefinition() == typeof(IExceptionBuilder<>) &&
+           i.GenericTypeArguments[0] == typeof(T)));
+
+        var builder = builders.FirstOrDefault();
+
+        if (builder is null)
+            throw new InvalidOperationException($"TODO: {nameof(IExceptionBuilder<T>)}:{typeof(T).Name} not found");
+
+        /*var ctorInfo = builder.GetConstructor(Type.EmptyTypes);
+        var builderInstance = ctorInfo.Invoke(null) as IExceptionBuilder<T>;*/
+
+        var builderInstance = Activator.CreateInstance(builder) as IExceptionBuilder<T>;
+
+        var exc = builderInstance!.Build(Message);
+
+        return exc;
+    }
+
+    public void Throw<T>() where T : Exception
     {
         if (HasFailure)
-            throw new ProcessIntegrityException(Message);
+            throw Build<T>();
+    }
+}
+
+internal interface IExceptionBuilder<T> where T : Exception
+{
+    T Build(string message);
+}
+
+internal class ExceptionBuilder : IExceptionBuilder<ProcessIntegrityException>,
+    IExceptionBuilder<ArgumentNullException>
+{
+    ProcessIntegrityException IExceptionBuilder<ProcessIntegrityException>.Build(string message)
+    {
+        return new ProcessIntegrityException(message);
+    }
+
+    ArgumentNullException IExceptionBuilder<ArgumentNullException>.Build(string message)
+    {
+        return new ArgumentNullException("test param name", message);
     }
 }
 
