@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Runtime.CompilerServices;
 
 namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IntegrityValidation.Fluent;
@@ -93,7 +93,7 @@ internal readonly ref struct ValidationContext<T>
 
 internal static class ValidationContextExtensions
 {
-    public static ValidationFailure EqualTo<T>(this ValidationContext<T> context, T expected)
+    public static ValidationFailure EqualTo<T>(this ValidationContext<T> context, T expected) where T : IEquatable<T>
     {
         return context.Apply(new IsEqualTo<T>(expected));
     }
@@ -104,7 +104,7 @@ internal interface IValidationRule<T>
     ValidationFailure Validate(T value, string? identifier, string? label, string? unit);
 }
 
-internal readonly ref struct IsEqualTo<T> : IValidationRule<T>
+internal readonly ref struct IsEqualTo<T> : IValidationRule<T> where T : IEquatable<T>
 {
     private const string MessageTemplate = "The {0} is expected to be {1}. Actual {2}: {3}.";
 
@@ -117,7 +117,7 @@ internal readonly ref struct IsEqualTo<T> : IValidationRule<T>
 
     public ValidationFailure Validate(T value, string? identifier, string? label, string? unit)
     {
-        if (EqualityComparer<T>.Default.Equals(value, _expected))
+        if (value.Equals(_expected))
             return default;
 
         return new(ComposeMessage(value, identifier, label, unit));
