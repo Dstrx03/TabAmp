@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
-using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IntegrityValidation.Fluent;
 
 namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IntegrityValidation;
 
@@ -15,7 +13,4 @@ internal sealed class ProcessIntegrityException : FileSerializationException
         : base(message, inner)
     {
     }
-
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    public static ProcessIntegrityExceptionFluentBuilder The => new();
 }
