@@ -2,7 +2,7 @@
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.BinaryPrimitives;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.MusicalNotation;
 
-namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
+namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.MusicalNotation;
 
 internal interface IGp5MusicalNotationReader
 {

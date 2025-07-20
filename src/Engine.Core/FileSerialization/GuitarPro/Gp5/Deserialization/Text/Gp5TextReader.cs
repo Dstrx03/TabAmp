@@ -1,9 +1,10 @@
 ﻿using System.Text;
 using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.IO.Serial;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.BinaryPrimitives;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Text;
 
-namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Readers;
+namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Text;
 
 internal class Gp5TextReader : IGp5TextReader
 {

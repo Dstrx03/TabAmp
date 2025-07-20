@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.BinaryPrimitives;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.DocumentComponents;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.MusicalNotation;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Text;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Tracks;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Measures;
 
-namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Readers;
+namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Measures;
 
 internal class Gp5MeasuresReader : IGp5MeasuresReader
 {

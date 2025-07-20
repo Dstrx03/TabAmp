@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.BinaryPrimitives;
 
-namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
+namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.BinaryPrimitives;
 
 internal interface IGp5BinaryPrimitivesReader
 {

@@ -2,7 +2,7 @@
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.DocumentComponents;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Text;
 
-namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
+namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.DocumentComponents;
 
 internal interface IGp5DocumentComponentsReader
 {

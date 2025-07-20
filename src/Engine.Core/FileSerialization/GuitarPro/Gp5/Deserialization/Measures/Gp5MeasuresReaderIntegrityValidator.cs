@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IntegrityValidation;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Measures;
 
-namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.IntegrityValidators;
+namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Measures;
 
 internal class Gp5MeasuresReaderIntegrityValidator : IGp5MeasuresReader
 {

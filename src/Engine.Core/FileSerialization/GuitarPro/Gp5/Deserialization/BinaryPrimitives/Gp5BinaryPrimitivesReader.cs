@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Buffers.Binary;
 using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.IO.Serial;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.BinaryPrimitives;
+using SystemBinaryPrimitives = System.Buffers.Binary.BinaryPrimitives;
 
-namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Readers;
+namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.BinaryPrimitives;
 
 internal class Gp5BinaryPrimitivesReader : IGp5BinaryPrimitivesReader
 {
@@ -48,10 +48,10 @@ internal class Gp5BinaryPrimitivesReader : IGp5BinaryPrimitivesReader
 
     private static ISerialFileReader.Convert<byte> ConvertToByte { get; } = ReadByte;
     private static ISerialFileReader.Convert<sbyte> ConvertToSignedByte { get; } = ReadSignedByte;
-    private static ISerialFileReader.Convert<short> ConvertToShort { get; } = BinaryPrimitives.ReadInt16LittleEndian;
-    private static ISerialFileReader.Convert<int> ConvertToInt { get; } = BinaryPrimitives.ReadInt32LittleEndian;
-    private static ISerialFileReader.Convert<float> ConvertToFloat { get; } = BinaryPrimitives.ReadSingleLittleEndian;
-    private static ISerialFileReader.Convert<double> ConvertToDouble { get; } = BinaryPrimitives.ReadDoubleLittleEndian;
+    private static ISerialFileReader.Convert<short> ConvertToShort { get; } = SystemBinaryPrimitives.ReadInt16LittleEndian;
+    private static ISerialFileReader.Convert<int> ConvertToInt { get; } = SystemBinaryPrimitives.ReadInt32LittleEndian;
+    private static ISerialFileReader.Convert<float> ConvertToFloat { get; } = SystemBinaryPrimitives.ReadSingleLittleEndian;
+    private static ISerialFileReader.Convert<double> ConvertToDouble { get; } = SystemBinaryPrimitives.ReadDoubleLittleEndian;
     private static ISerialFileReader.Convert<Gp5Bool> ConvertToBool { get; } = ReadBool;
     private static ISerialFileReader.Convert<Gp5Color> ConvertToColor { get; } = ReadColor;
 

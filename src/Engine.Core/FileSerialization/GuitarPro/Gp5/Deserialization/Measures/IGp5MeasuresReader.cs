@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Measures;
 
-namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
+namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Measures;
 
 internal interface IGp5MeasuresReader
 {

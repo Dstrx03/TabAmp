@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.BinaryPrimitives;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Effects;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Text;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.BinaryPrimitives;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.MusicalNotation;
 
-namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Readers;
+namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.MusicalNotation;
 
 internal class Gp5MusicalNotationReader : IGp5MusicalNotationReader
 {

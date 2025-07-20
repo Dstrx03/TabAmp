@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Rse;
 
-namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.IntegrityValidators;
+namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Rse;
 
 internal class Gp5RseReaderIntegrityValidator : IGp5RseReader
 {

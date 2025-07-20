@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Effects;
 
-namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.IntegrityValidators;
+namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Effects;
 
 internal class Gp5EffectsReaderIntegrityValidator : IGp5EffectsReader
 {

@@ -3,7 +3,7 @@ using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IntegrityValidation
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.DocumentComponents;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.Text;
 
-namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.IntegrityValidators;
+namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.DocumentComponents;
 
 internal class Gp5DocumentComponentsReaderIntegrityValidator : IGp5DocumentComponentsReader
 {

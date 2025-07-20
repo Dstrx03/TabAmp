@@ -3,8 +3,14 @@ using TabAmp.Engine.Core.FileSerialization.Common.Components.Context;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.IO.Serial;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.Processor;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
-using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.IntegrityValidators;
-using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Readers;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.BinaryPrimitives;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.DocumentComponents;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Effects;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Measures;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.MusicalNotation;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Rse;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Text;
+using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Tracks;
 using TabAmp.Engine.Core.Score;
 
 namespace Microsoft.Extensions.DependencyInjection;

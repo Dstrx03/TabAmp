@@ -3,7 +3,7 @@ using TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IntegrityValidation
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.BinaryPrimitives;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Models.MusicalNotation;
 
-namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.IntegrityValidators;
+namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.MusicalNotation;
 
 internal class Gp5MusicalNotationReaderIntegrityValidator : IGp5MusicalNotationReader
 {
