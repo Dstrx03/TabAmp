@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using TabAmp.Engine.Core.FileSerialization;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.Context;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.IO.Serial;
@@ -25,8 +26,9 @@ public static class DependencyInjection
             .AddScoped<ISerialFileReader, SerialFileReader>();
 
         services.AddScoped<IFileDeserializer<Gp5Score>, Gp5FileDeserializer>()
-            .AddScoped<Gp5BinaryPrimitivesReader>()
-            .AddScoped<IGp5BinaryPrimitivesReader>(x => new Gp5BinaryPrimitivesReaderIntegrityValidator(x.GetRequiredService<Gp5BinaryPrimitivesReader>()))
+            .AddGp5Reader<IGp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReaderIntegrityValidator>()
+            //.AddScoped<Gp5BinaryPrimitivesReader>()
+            //.AddScoped<IGp5BinaryPrimitivesReader>(x => new Gp5BinaryPrimitivesReaderIntegrityValidator(x.GetRequiredService<Gp5BinaryPrimitivesReader>()))
             .AddScoped<Gp5TextReader>()
             .AddScoped<IGp5TextReader>(x => new Gp5TextReaderIntegrityValidator(x.GetRequiredService<Gp5TextReader>()))
             .AddScoped<Gp5DocumentComponentsReader>()
@@ -58,17 +60,30 @@ public static class DependencyInjection
         services.AddScoped<TService>(x =>
         {
             TService reader = x.GetRequiredService<TImplementation>();
-            reader = Decorate<TService, TIntegrityValidator>(reader);
+            reader = Decorate<TService, TIntegrityValidator>(reader, x);
             return reader;
         });
         return services;
     }
 
-    private static TService Decorate<TService, TDecorator>(TService service)
+    private static TService Decorate<TService, TDecorator>(TService service, IServiceProvider serviceProvider)
         where TDecorator : TService
     {
         var decoratorType = typeof(TDecorator);
-        var decorator = Activator.CreateInstance(decoratorType, [service]);
+
+        var constructors = decoratorType.GetConstructors();
+        if (constructors.Length > 1)
+            throw new Exception($"TODO: {decoratorType.Name} multiple ctors");
+
+        var parameters = constructors.Single().GetParameters();
+        var args = new object[parameters.Length];
+        for (var i = 0; i < parameters.Length; i++)
+        {
+            var parameterType = parameters[i].ParameterType;
+            args[i] = parameterType == typeof(TService) ? service! : serviceProvider.GetRequiredService(parameterType);
+        }
+
+        var decorator = Activator.CreateInstance(decoratorType, args) ?? throw new Exception("TODO:");
         return (TService)decorator;
     }
 }
