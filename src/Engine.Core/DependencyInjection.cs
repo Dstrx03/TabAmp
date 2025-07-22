@@ -1,4 +1,5 @@
-﻿using TabAmp.Engine.Core.FileSerialization;
+﻿using System;
+using TabAmp.Engine.Core.FileSerialization;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.Context;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.IO.Serial;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.Processor;
@@ -47,4 +48,27 @@ public static class DependencyInjection
     private static IServiceCollection AddFileSerializationContext(this IServiceCollection services) =>
         services.AddScoped<ScopedFileSerializationContextContainer>()
             .AddScoped<FileSerializationContext>(x => x.GetRequiredService<ScopedFileSerializationContextContainer>().Context);
+
+    private static IServiceCollection AddGp5Reader<TService, TImplementation, TIntegrityValidator>(this IServiceCollection services)
+        where TService : class
+        where TImplementation : class, TService
+        where TIntegrityValidator : class, TService
+    {
+        services.AddScoped<TImplementation>();
+        services.AddScoped<TService>(x =>
+        {
+            TService reader = x.GetRequiredService<TImplementation>();
+            reader = Decorate<TService, TIntegrityValidator>(reader);
+            return reader;
+        });
+        return services;
+    }
+
+    private static TService Decorate<TService, TDecorator>(TService service)
+        where TDecorator : TService
+    {
+        var decoratorType = typeof(TDecorator);
+        var decorator = Activator.CreateInstance(decoratorType, [service]);
+        return (TService)decorator;
+    }
 }
