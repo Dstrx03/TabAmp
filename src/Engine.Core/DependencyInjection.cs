@@ -69,10 +69,11 @@ public static class DependencyInjection
     private static TService Decorate<TService, TDecorator>(TService service, IServiceProvider serviceProvider)
         where TDecorator : TService
     {
+        var serviceType = typeof(TService);
         var decoratorType = typeof(TDecorator);
 
-        var constructors = decoratorType.GetConstructors();
-        if (constructors.Length > 1)
+        var constructors = decoratorType.GetConstructors().Where(c => c.GetParameters().Any(p => p.ParameterType == serviceType));
+        if (constructors.Count() != 1)
             throw new Exception($"TODO: {decoratorType.Name} multiple ctors");
 
         var parameters = constructors.Single().GetParameters();
@@ -80,7 +81,7 @@ public static class DependencyInjection
         for (var i = 0; i < parameters.Length; i++)
         {
             var parameterType = parameters[i].ParameterType;
-            args[i] = parameterType == typeof(TService) ? service! : serviceProvider.GetRequiredService(parameterType);
+            args[i] = parameterType == serviceType ? service! : serviceProvider.GetRequiredService(parameterType);
         }
 
         var decorator = Activator.CreateInstance(decoratorType, args) ?? throw new Exception("TODO:");
