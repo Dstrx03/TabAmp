@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Reflection;
 using TabAmp.Engine.Core.FileSerialization;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.Context;
@@ -28,8 +27,6 @@ public static class DependencyInjection
 
         services.AddScoped<IFileDeserializer<Gp5Score>, Gp5FileDeserializer>()
             .AddGp5Reader<IGp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReaderIntegrityValidator>()
-            //.AddScoped<Gp5BinaryPrimitivesReader>()
-            //.AddScoped<IGp5BinaryPrimitivesReader>(x => new Gp5BinaryPrimitivesReaderIntegrityValidator(x.GetRequiredService<Gp5BinaryPrimitivesReader>()))
             .AddScoped<Gp5TextReader>()
             .AddScoped<IGp5TextReader>(x => new Gp5TextReaderIntegrityValidator(x.GetRequiredService<Gp5TextReader>()))
             .AddScoped<Gp5DocumentComponentsReader>()
@@ -52,44 +49,31 @@ public static class DependencyInjection
         services.AddScoped<ScopedFileSerializationContextContainer>()
             .AddScoped<FileSerializationContext>(x => x.GetRequiredService<ScopedFileSerializationContextContainer>().Context);
 
-    private static IServiceCollection AddGp5Reader<TService, TImplementation, TIntegrityValidator>(this IServiceCollection services)
+    private static IServiceCollection AddGp5Reader<TService, TReader, TIntegrityValidator>(this IServiceCollection services)
         where TService : class
-        where TImplementation : class, TService
+        where TReader : class, TService
         where TIntegrityValidator : class, TService
     {
-        services.AddScoped<TImplementation>();
+        services.AddScoped<TReader>();
         services.AddScoped<TService>(x =>
         {
-            TService reader = x.GetRequiredService<TImplementation>();
-            //reader = Decorate<TService, TIntegrityValidator>(reader, x);
-            reader = Decorate_NoLambdaExpr<TService, TIntegrityValidator>(reader, x);
+            TService reader = x.GetRequiredService<TReader>();
+            reader = x.DecorateService<TService, TIntegrityValidator>(reader);
             return reader;
         });
         return services;
     }
 
-    private static TService Decorate<TService, TDecorator>(TService service, IServiceProvider serviceProvider)
+    private static TService DecorateService<TService, TDecorator>(this IServiceProvider serviceProvider, TService service)
         where TDecorator : TService
     {
-        var serviceType = typeof(TService);
-        var decoratorType = typeof(TDecorator);
+        var constructorInfo = DiscoverDecoratorConstructorInfo<TService, TDecorator>();
+        var parameters = ResolveDecoratorParameters(service, constructorInfo, serviceProvider);
 
-        var constructors = decoratorType.GetConstructors()
-            .Where(c => c.GetParameters().Any(p => p.ParameterType == serviceType));
-
-        if (constructors.Count() != 1)
-            throw new Exception($"TODO: {decoratorType.Name} multiple ctors");
-
-        var constructor = constructors.Single();
-
-        var parameters = constructor.GetParameters().Select(p =>
-            p.ParameterType == serviceType ? service : serviceProvider.GetRequiredService(p.ParameterType)
-        ).ToArray();
-
-        return (TService)constructor.Invoke(parameters);
+        return (TService)constructorInfo.Invoke(parameters);
     }
 
-    private static TService Decorate_NoLambdaExpr<TService, TDecorator>(TService service, IServiceProvider serviceProvider)
+    private static ConstructorInfo DiscoverDecoratorConstructorInfo<TService, TDecorator>()
         where TDecorator : TService
     {
         var serviceType = typeof(TService);
@@ -111,8 +95,14 @@ public static class DependencyInjection
             }
         }
 
-        if (constructorInfo is null)
-            throw new Exception($"TODO: {decoratorType.Name} no ctors");
+        return constructorInfo ?? throw new Exception($"TODO: {decoratorType.Name} no ctors");
+    }
+
+    private static object[] ResolveDecoratorParameters<TService>(TService service,
+        ConstructorInfo constructorInfo,
+        IServiceProvider serviceProvider)
+    {
+        var serviceType = typeof(TService);
 
         var parameterInfo = constructorInfo.GetParameters();
         var parameters = new object[parameterInfo.Length];
@@ -122,6 +112,6 @@ public static class DependencyInjection
             parameters[i] = parameterType == serviceType ? service! : serviceProvider.GetRequiredService(parameterType);
         }
 
-        return (TService)constructorInfo.Invoke(parameters);
+        return parameters;
     }
 }
