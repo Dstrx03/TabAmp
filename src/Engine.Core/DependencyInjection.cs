@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using TabAmp.Engine.Core.FileSerialization;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.Context;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.IO.Serial;
@@ -60,7 +61,8 @@ public static class DependencyInjection
         services.AddScoped<TService>(x =>
         {
             TService reader = x.GetRequiredService<TImplementation>();
-            reader = Decorate<TService, TIntegrityValidator>(reader, x);
+            //reader = Decorate<TService, TIntegrityValidator>(reader, x);
+            reader = Decorate_NoLambdaExpr<TService, TIntegrityValidator>(reader, x);
             return reader;
         });
         return services;
@@ -72,19 +74,54 @@ public static class DependencyInjection
         var serviceType = typeof(TService);
         var decoratorType = typeof(TDecorator);
 
-        var constructors = decoratorType.GetConstructors().Where(c => c.GetParameters().Any(p => p.ParameterType == serviceType));
+        var constructors = decoratorType.GetConstructors()
+            .Where(c => c.GetParameters().Any(p => p.ParameterType == serviceType));
+
         if (constructors.Count() != 1)
             throw new Exception($"TODO: {decoratorType.Name} multiple ctors");
 
-        var parameters = constructors.Single().GetParameters();
-        var args = new object[parameters.Length];
-        for (var i = 0; i < parameters.Length; i++)
+        var constructor = constructors.Single();
+
+        var parameters = constructor.GetParameters().Select(p =>
+            p.ParameterType == serviceType ? service : serviceProvider.GetRequiredService(p.ParameterType)
+        ).ToArray();
+
+        return (TService)constructor.Invoke(parameters);
+    }
+
+    private static TService Decorate_NoLambdaExpr<TService, TDecorator>(TService service, IServiceProvider serviceProvider)
+        where TDecorator : TService
+    {
+        var serviceType = typeof(TService);
+        var decoratorType = typeof(TDecorator);
+
+        ConstructorInfo? constructorInfo = null;
+        foreach (var constructor in decoratorType.GetConstructors())
         {
-            var parameterType = parameters[i].ParameterType;
-            args[i] = parameterType == serviceType ? service! : serviceProvider.GetRequiredService(parameterType);
+            foreach (var parameter in constructor.GetParameters())
+            {
+                if (parameter.ParameterType != serviceType)
+                    continue;
+
+                if (constructorInfo is not null)
+                    throw new Exception($"TODO: {decoratorType.Name} multiple ctors");
+
+                constructorInfo = constructor;
+                break;
+            }
         }
 
-        var decorator = Activator.CreateInstance(decoratorType, args) ?? throw new Exception("TODO:");
-        return (TService)decorator;
+        if (constructorInfo is null)
+            throw new Exception($"TODO: {decoratorType.Name} no ctors");
+
+        var parameterInfo = constructorInfo.GetParameters();
+        var parameters = new object[parameterInfo.Length];
+        for (var i = 0; i < parameterInfo.Length; i++)
+        {
+            var parameterType = parameterInfo[i].ParameterType;
+            parameters[i] = parameterType == serviceType ? service! : serviceProvider.GetRequiredService(parameterType);
+        }
+
+        return (TService)constructorInfo.Invoke(parameters);
     }
 }
