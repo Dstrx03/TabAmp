@@ -124,5 +124,5 @@ public static class DependencyInjection
         new($"Unable to activate decorator type '{decoratorType.FullName}'. " +
             $"The following constructors are ambiguous:{Environment.NewLine}" +
             $"{constructorInfo}{Environment.NewLine}" +
-            $"{constructorInfoCollision}{Environment.NewLine}");
+            $"{constructorInfoCollision}");
 }
