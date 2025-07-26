@@ -88,7 +88,7 @@ public static class DependencyInjection
                     continue;
 
                 if (constructorInfo is not null)
-                    throw new Exception($"TODO: {decoratorType.Name} multiple ctors");
+                    throw AmbiguousDecoratorConstructorsException(decoratorType, constructorInfo, constructor);
 
                 constructorInfo = constructor;
                 break;
@@ -98,20 +98,31 @@ public static class DependencyInjection
         return constructorInfo ?? throw new Exception($"TODO: {decoratorType.Name} no ctors");
     }
 
-    private static object[] ResolveDecoratorParameters<TService>(TService service,
+    private static object[] ResolveDecoratorParameters<TService>(
+        TService service,
         ConstructorInfo constructorInfo,
         IServiceProvider serviceProvider)
     {
         var serviceType = typeof(TService);
 
-        var parameterInfo = constructorInfo.GetParameters();
-        var parameters = new object[parameterInfo.Length];
-        for (var i = 0; i < parameterInfo.Length; i++)
+        var parametersInfo = constructorInfo.GetParameters();
+        var parameters = new object[parametersInfo.Length];
+        for (var i = 0; i < parametersInfo.Length; i++)
         {
-            var parameterType = parameterInfo[i].ParameterType;
-            parameters[i] = parameterType == serviceType ? service! : serviceProvider.GetRequiredService(parameterType);
+            var parameterType = parametersInfo[i].ParameterType;
+            parameters[i] = parameterType == serviceType ?
+                service! : serviceProvider.GetRequiredService(parameterType);
         }
 
         return parameters;
     }
+
+    private static InvalidOperationException AmbiguousDecoratorConstructorsException(
+        Type decoratorType,
+        ConstructorInfo constructorInfo,
+        ConstructorInfo constructorInfoCollision) =>
+        new($"Unable to activate decorator type '{decoratorType.FullName}'. " +
+            $"The following constructors are ambiguous:{Environment.NewLine}" +
+            $"{constructorInfo}{Environment.NewLine}" +
+            $"{constructorInfoCollision}{Environment.NewLine}");
 }
