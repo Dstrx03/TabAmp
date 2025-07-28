@@ -88,14 +88,14 @@ public static class DependencyInjection
                     continue;
 
                 if (constructorInfo is not null)
-                    throw AmbiguousDecoratorConstructorsException(decoratorType, constructorInfo, constructor);
+                    throw AmbiguousDecoratorConstructorException(decoratorType, constructorInfo, constructor);
 
                 constructorInfo = constructor;
                 break;
             }
         }
 
-        return constructorInfo ?? throw new Exception($"TODO: {decoratorType.Name} no ctors");
+        return constructorInfo ?? throw MissingDecoratorConstructorException(decoratorType, serviceType);
     }
 
     private static object[] ResolveDecoratorParameters<TService>(
@@ -117,12 +117,16 @@ public static class DependencyInjection
         return parameters;
     }
 
-    private static InvalidOperationException AmbiguousDecoratorConstructorsException(
+    private static InvalidOperationException AmbiguousDecoratorConstructorException(
         Type decoratorType,
         ConstructorInfo constructorInfo,
-        ConstructorInfo constructorInfoCollision) =>
+        ConstructorInfo constructorInfoOther) =>
         new($"Unable to activate decorator type '{decoratorType.FullName}'. " +
             $"The following constructors are ambiguous:{Environment.NewLine}" +
             $"{constructorInfo}{Environment.NewLine}" +
-            $"{constructorInfoCollision}");
+            $"{constructorInfoOther}");
+
+    private static InvalidOperationException MissingDecoratorConstructorException(Type decoratorType, Type serviceType) =>
+        new($"Unable to activate decorator type '{decoratorType.FullName}'. " +
+            $"Missing constructor with a parameter for the decorated type '{serviceType.FullName}'.");
 }
