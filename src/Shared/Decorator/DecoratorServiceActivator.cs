@@ -6,7 +6,7 @@ namespace TabAmp.Shared.Decorator;
 
 internal static class DecoratorServiceActivator
 {
-    internal static TService CreateInstance<TService, TDecorator>(IServiceProvider serviceProvider, TService service)
+    internal static TService CreateInstance<TService, TDecorator>(TService service, IServiceProvider serviceProvider)
         where TDecorator : TService
     {
         var constructorInfo = DiscoverDecoratorConstructorInfo<TService, TDecorator>();
@@ -37,7 +37,7 @@ internal static class DecoratorServiceActivator
             }
         }
 
-        return constructorInfo ?? throw MissingDecoratorConstructorException(decoratorType, serviceType);
+        return constructorInfo ?? throw MissingDecoratorConstructorException(serviceType, decoratorType);
     }
 
     private static object[] ResolveDecoratorParameters<TService>(
@@ -68,7 +68,7 @@ internal static class DecoratorServiceActivator
             $"{constructorInfo}{Environment.NewLine}" +
             $"{constructorInfoOther}");
 
-    private static InvalidOperationException MissingDecoratorConstructorException(Type decoratorType, Type serviceType) =>
+    private static InvalidOperationException MissingDecoratorConstructorException(Type serviceType, Type decoratorType) =>
         new($"Unable to activate decorator type '{decoratorType.FullName}'. " +
             $"Missing constructor with a parameter for the decorated type '{serviceType.FullName}'.");
 }
