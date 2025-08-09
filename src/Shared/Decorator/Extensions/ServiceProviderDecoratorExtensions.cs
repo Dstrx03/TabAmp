@@ -2,11 +2,11 @@
 
 namespace TabAmp.Shared.Decorator.Extensions;
 
-internal static class ServiceProviderDecoratorExtensions
+public static class ServiceProviderDecoratorExtensions
 {
-    private static TService DecorateService<TService, TDecorator>(this IServiceProvider serviceProvider, TService service)
+    public static TService DecorateService<TService, TDecorator>(this IServiceProvider serviceProvider, TService service)
         where TDecorator : TService
     {
-        return default;
+        return DecoratorServiceActivator.CreateInstance<TService, TDecorator>(serviceProvider, service);
     }
 }

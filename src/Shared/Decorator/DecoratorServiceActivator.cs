@@ -1,0 +1,74 @@
+﻿using System;
+using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace TabAmp.Shared.Decorator;
+
+internal static class DecoratorServiceActivator
+{
+    internal static TService CreateInstance<TService, TDecorator>(IServiceProvider serviceProvider, TService service)
+        where TDecorator : TService
+    {
+        var constructorInfo = DiscoverDecoratorConstructorInfo<TService, TDecorator>();
+        var parameters = ResolveDecoratorParameters(service, constructorInfo, serviceProvider);
+
+        return (TService)constructorInfo.Invoke(parameters);
+    }
+
+    private static ConstructorInfo DiscoverDecoratorConstructorInfo<TService, TDecorator>()
+        where TDecorator : TService
+    {
+        var serviceType = typeof(TService);
+        var decoratorType = typeof(TDecorator);
+
+        ConstructorInfo? constructorInfo = null;
+        foreach (var constructor in decoratorType.GetConstructors())
+        {
+            foreach (var parameter in constructor.GetParameters())
+            {
+                if (parameter.ParameterType != serviceType)
+                    continue;
+
+                if (constructorInfo is not null)
+                    throw AmbiguousDecoratorConstructorException(decoratorType, constructorInfo, constructor);
+
+                constructorInfo = constructor;
+                break;
+            }
+        }
+
+        return constructorInfo ?? throw MissingDecoratorConstructorException(decoratorType, serviceType);
+    }
+
+    private static object[] ResolveDecoratorParameters<TService>(
+        TService service,
+        ConstructorInfo constructorInfo,
+        IServiceProvider serviceProvider)
+    {
+        var serviceType = typeof(TService);
+
+        var parametersInfo = constructorInfo.GetParameters();
+        var parameters = new object[parametersInfo.Length];
+        for (var i = 0; i < parametersInfo.Length; i++)
+        {
+            var parameterType = parametersInfo[i].ParameterType;
+            parameters[i] = parameterType == serviceType ?
+                service! : serviceProvider.GetRequiredService(parameterType);
+        }
+
+        return parameters;
+    }
+
+    private static InvalidOperationException AmbiguousDecoratorConstructorException(
+        Type decoratorType,
+        ConstructorInfo constructorInfo,
+        ConstructorInfo constructorInfoOther) =>
+        new($"Unable to activate decorator type '{decoratorType.FullName}'. " +
+            $"The following constructors are ambiguous:{Environment.NewLine}" +
+            $"{constructorInfo}{Environment.NewLine}" +
+            $"{constructorInfoOther}");
+
+    private static InvalidOperationException MissingDecoratorConstructorException(Type decoratorType, Type serviceType) =>
+        new($"Unable to activate decorator type '{decoratorType.FullName}'. " +
+            $"Missing constructor with a parameter for the decorated type '{serviceType.FullName}'.");
+}
