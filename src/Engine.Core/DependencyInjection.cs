@@ -1,4 +1,5 @@
-﻿using TabAmp.Engine.Core.FileSerialization;
+﻿using Microsoft.Extensions.DependencyInjection.Decorator;
+using TabAmp.Engine.Core.FileSerialization;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.Context;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.IO.Serial;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.Processor;

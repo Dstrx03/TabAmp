@@ -1,6 +1,7 @@
 ﻿using System;
+using TabAmp.Shared.Decorator;
 
-namespace TabAmp.Shared.Decorator.Extensions;
+namespace Microsoft.Extensions.DependencyInjection.Decorator;
 
 public static class ServiceProviderDecoratorExtensions
 {
