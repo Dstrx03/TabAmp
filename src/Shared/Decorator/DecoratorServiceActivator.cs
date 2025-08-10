@@ -9,6 +9,8 @@ internal static class DecoratorServiceActivator
     internal static TService CreateInstance<TService, TDecorator>(TService service, IServiceProvider serviceProvider)
         where TDecorator : TService
     {
+        ArgumentNullException.ThrowIfNull(service, nameof(service));
+
         var constructorInfo = DiscoverDecoratorConstructorInfo<TService, TDecorator>();
         var parameters = ResolveDecoratorParameters(service, constructorInfo, serviceProvider);
 
