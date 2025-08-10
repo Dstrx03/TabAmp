@@ -31,11 +31,12 @@ internal static class DecoratorServiceActivator
                 if (parameter.ParameterType != serviceType)
                     continue;
 
-                if (constructorInfo is not null)
+                if (constructorInfo == constructor)
+                    throw Todo_Exception(decoratorType, constructorInfo);
+                else if (constructorInfo is not null)
                     throw AmbiguousDecoratorConstructorException(decoratorType, constructorInfo, constructor);
 
                 constructorInfo = constructor;
-                break;
             }
         }
 
@@ -60,6 +61,11 @@ internal static class DecoratorServiceActivator
 
         return parameters;
     }
+
+    private static InvalidOperationException Todo_Exception(Type decoratorType, ConstructorInfo constructorInfo) =>
+        new($"Unable to activate decorator type '{decoratorType.FullName}'. " +
+            $"TODO:{Environment.NewLine}" +
+            $"{constructorInfo}");
 
     private static InvalidOperationException AmbiguousDecoratorConstructorException(
         Type decoratorType,
