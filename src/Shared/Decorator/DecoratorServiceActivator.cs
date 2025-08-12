@@ -32,7 +32,7 @@ internal static class DecoratorServiceActivator
                     continue;
 
                 if (constructorInfo == constructor)
-                    throw Todo_Exception(decoratorType, constructorInfo);
+                    throw MultipleServiceTypeParametersDecoratorConstructorException(serviceType, decoratorType, constructorInfo);
                 else if (constructorInfo is not null)
                     throw AmbiguousDecoratorConstructorException(decoratorType, constructorInfo, constructor);
 
@@ -62,9 +62,12 @@ internal static class DecoratorServiceActivator
         return parameters;
     }
 
-    private static InvalidOperationException Todo_Exception(Type decoratorType, ConstructorInfo constructorInfo) =>
+    private static InvalidOperationException MultipleServiceTypeParametersDecoratorConstructorException(
+        Type serviceType,
+        Type decoratorType,
+        ConstructorInfo constructorInfo) =>
         new($"Unable to activate decorator type '{decoratorType.FullName}'. " +
-            $"TODO:{Environment.NewLine}" +
+            $"Constructor has multiple parameters of the decorated type '{serviceType.FullName}':{Environment.NewLine}" +
             $"{constructorInfo}");
 
     private static InvalidOperationException AmbiguousDecoratorConstructorException(
