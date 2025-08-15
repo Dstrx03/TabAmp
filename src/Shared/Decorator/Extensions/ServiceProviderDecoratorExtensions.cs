@@ -6,5 +6,9 @@ namespace Microsoft.Extensions.DependencyInjection.Decorator;
 public static class ServiceProviderDecoratorExtensions
 {
     public static TService DecorateService<TService, TDecorator>(this IServiceProvider serviceProvider, TService service)
-        where TDecorator : TService => DecoratorServiceActivator.CreateInstance<TService, TDecorator>(service, serviceProvider);
+        where TService : notnull
+        where TDecorator : notnull, TService
+    {
+        return DecoratorServiceActivator.CreateInstance<TService, TDecorator>(service, serviceProvider);
+    }
 }
