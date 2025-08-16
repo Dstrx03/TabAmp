@@ -4,9 +4,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace TabAmp.Shared.Decorator;
 
-internal static class DecoratorServiceActivator
+internal static class ServiceDecoratorActivator
 {
-    internal static TService CreateInstance<TService, TDecorator>(TService service, IServiceProvider serviceProvider)
+    internal static TService CreateDecorator<TService, TDecorator>(TService service, IServiceProvider serviceProvider)
         where TService : notnull
         where TDecorator : notnull, TService
     {

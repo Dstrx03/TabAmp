@@ -9,6 +9,6 @@ public static class ServiceProviderDecoratorExtensions
         where TService : notnull
         where TDecorator : notnull, TService
     {
-        return DecoratorServiceActivator.CreateInstance<TService, TDecorator>(service, serviceProvider);
+        return ServiceDecoratorActivator.CreateDecorator<TService, TDecorator>(service, serviceProvider);
     }
 }
