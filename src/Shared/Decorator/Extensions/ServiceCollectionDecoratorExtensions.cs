@@ -1,18 +1,28 @@
-﻿namespace Microsoft.Extensions.DependencyInjection.Decorator;
+﻿using System;
+
+namespace Microsoft.Extensions.DependencyInjection.Decorator;
 
 public static class ServiceCollectionDecoratorExtensions
 {
-    public static IServiceCollection AddDecoratedScoped<TService, TImplementation>(this IServiceCollection serviceCollection)
+    public static IServiceCollection AddDecoratedScoped<TService, TImplementation>(
+        this IServiceCollection serviceCollection,
+        Func<IServiceProvider, TService, TService> decoratorFactory)
         where TService : class
         where TImplementation : class, TService
     {
         serviceCollection.AddScoped<TImplementation>();
         serviceCollection.AddScoped<TService>(serviceProvider =>
-        {
-            TService service = serviceProvider.GetRequiredService<TImplementation>();
-            // ...
-            return service;
-        });
+            ImplementationFactory<TService, TImplementation>(serviceProvider, decoratorFactory));
+
         return serviceCollection;
+    }
+
+    private static TService ImplementationFactory<TService, TImplementation>(
+        IServiceProvider serviceProvider,
+        Func<IServiceProvider, TService, TService> decoratorFactory)
+        where TImplementation : class, TService
+    {
+        TService service = serviceProvider.GetRequiredService<TImplementation>();
+        return decoratorFactory(serviceProvider, service);
     }
 }
