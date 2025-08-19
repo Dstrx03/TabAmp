@@ -1,9 +1,12 @@
 ﻿using System;
+using TabAmp.Shared.Decorator.Fluent;
 
 namespace Microsoft.Extensions.DependencyInjection.Decorator;
 
 public static class ServiceCollectionDecoratorExtensions
 {
+    internal static IServiceDecoratorFluentBuilder AddDecorated() => new ServiceDecoratorFluentBuilder();
+
     public static IServiceCollection AddDecoratedScoped<TService, TImplementation>(
         this IServiceCollection serviceCollection,
         Func<IServiceProvider, TService, TService> decoratorFactory)
