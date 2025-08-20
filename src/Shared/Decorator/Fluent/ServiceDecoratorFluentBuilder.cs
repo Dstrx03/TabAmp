@@ -3,17 +3,19 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace TabAmp.Shared.Decorator.Fluent;
 
-internal interface IServiceDecoratorFluentBuilder<TService>// TODO: name
+internal interface IServiceDecoratorFluentBuilder<TService>
 {
-    IServiceDecoratorFluentBuilder<TService> With<TDecorator>() where TDecorator : TService;
+    IServiceDecoratorFluentBuilderSelectLifetimeStage<TService> With<TDecorator>() where TDecorator : TService;
 }
 
-internal interface IServiceDecoratorFluentBuilderTODOStage<TService> : IServiceDecoratorFluentBuilder<TService>
+internal interface IServiceDecoratorFluentBuilderSelectLifetimeStage<TService> : IServiceDecoratorFluentBuilder<TService>
 {
     IServiceCollection Scoped();
 }
 
-internal sealed class ServiceDecoratorFluentBuilder<TService, TImplementation> : IServiceDecoratorFluentBuilderTODOStage<TService>
+internal sealed class ServiceDecoratorFluentBuilder<TService, TImplementation> :
+    IServiceDecoratorFluentBuilder<TService>,
+    IServiceDecoratorFluentBuilderSelectLifetimeStage<TService>
 {
     private readonly IServiceCollection _serviceCollection;
     private List<IDescriptor<TService>>? _descriptors;
@@ -21,7 +23,7 @@ internal sealed class ServiceDecoratorFluentBuilder<TService, TImplementation> :
     public ServiceDecoratorFluentBuilder(IServiceCollection serviceCollection) =>
         _serviceCollection = serviceCollection;
 
-    public IServiceDecoratorFluentBuilder<TService> With<TDecorator>()
+    public IServiceDecoratorFluentBuilderSelectLifetimeStage<TService> With<TDecorator>()
         where TDecorator : TService
     {
         var descriptor = new Descriptor<TService, TDecorator>();// TODO: generic constraints
