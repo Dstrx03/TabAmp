@@ -5,7 +5,8 @@ namespace Microsoft.Extensions.DependencyInjection.Decorator;
 
 public static class ServiceCollectionDecoratorExtensions
 {
-    internal static IServiceDecoratorFluentBuilder AddDecorated() => new ServiceDecoratorFluentBuilder();
+    internal static IServiceDecoratorFluentBuilder<TService> AddDecorated<TService, TImplementation>(this IServiceCollection serviceCollection) =>
+        new ServiceDecoratorFluentBuilder<TService, TImplementation>(serviceCollection);
 
     public static IServiceCollection AddDecoratedScoped<TService, TImplementation>(
         this IServiceCollection serviceCollection,
