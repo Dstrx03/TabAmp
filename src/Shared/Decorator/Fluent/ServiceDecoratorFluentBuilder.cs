@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
+using TabAmp.Shared.Decorator.Fluent.Descriptor;
 
 namespace TabAmp.Shared.Decorator.Fluent;
 
@@ -18,7 +19,7 @@ internal sealed class ServiceDecoratorFluentBuilder<TService, TImplementation> :
     IServiceDecoratorFluentBuilderSelectLifetimeStage<TService>
 {
     private readonly IServiceCollection _serviceCollection;
-    private List<IDescriptor<TService>>? _descriptors;
+    private List<IServiceDecoratorDescriptor<TService>>? _descriptors;
 
     public ServiceDecoratorFluentBuilder(IServiceCollection serviceCollection) =>
         _serviceCollection = serviceCollection;
@@ -26,7 +27,7 @@ internal sealed class ServiceDecoratorFluentBuilder<TService, TImplementation> :
     public IServiceDecoratorFluentBuilderSelectLifetimeStage<TService> With<TDecorator>()
         where TDecorator : TService
     {
-        var descriptor = new Descriptor<TService, TDecorator>();// TODO: generic constraints
+        var descriptor = new ServiceDecoratorDescriptor<TService, TDecorator>(); // TODO: generic constraints
 
         _descriptors ??= [];
         _descriptors.Add(descriptor);
@@ -36,7 +37,18 @@ internal sealed class ServiceDecoratorFluentBuilder<TService, TImplementation> :
 
     public IServiceCollection Scoped()
     {
+        var descriptor = Todo_name();
         throw new System.NotImplementedException();
         return _serviceCollection;
+    }
+
+    private IServiceDecoratorDescriptorNode<TService> Todo_name()//TODO: name, nullable list
+    {
+        var node = (IServiceDecoratorDescriptorNode<TService>)null!;
+
+        for (var i = _descriptors.Count - 1; i >= 0; i--)
+            node = _descriptors[i].ToNode(node);
+
+        return node;
     }
 }
