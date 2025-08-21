@@ -53,7 +53,6 @@ public static class DependencyInjection
         where TReader : class, TService
         where TIntegrityValidator : class, TService
     {
-        return services.AddDecoratedScoped<TService, TReader>((provider, reader) =>
-            provider.DecorateService<TService, TIntegrityValidator>(reader));
+        return services.AddDecorated<TService, TReader>().With<TIntegrityValidator>().Scoped();
     }
 }
