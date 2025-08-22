@@ -37,35 +37,32 @@ internal sealed class ServiceDecoratorFluentBuilder<TService, TImplementation> :
 
     public IServiceCollection Scoped()
     {
-        var head = CreateDescriptorLinkedList();//TODO: name
+        var descriptorChain = BuildDescriptorChain();
 
         _serviceCollection.AddScoped<TImplementation>();
-        _serviceCollection.AddScoped<TService>(serviceProvider => CreateDecoratedService(serviceProvider, head));
+        _serviceCollection.AddScoped<TService>(serviceProvider =>
+            ComposeDecoratedService(serviceProvider, descriptorChain));
 
         return _serviceCollection;
     }
 
-    private IServiceDecoratorDescriptorNode<TService> CreateDescriptorLinkedList()
+    private IServiceDecoratorDescriptorNode<TService> BuildDescriptorChain()
     {
-        if (_descriptors.Count == 0)
-            throw new InvalidOperationException();// TODO: message
-
         var node = (IServiceDecoratorDescriptorNode<TService>)null!;
+
         for (var i = _descriptors.Count - 1; i >= 0; i--)
             node = _descriptors[i].ToNode(node);
-
-        _descriptors.Clear();
 
         return node;
     }
 
-    private static TService CreateDecoratedService(//TODO: name
+    private static TService ComposeDecoratedService(
         IServiceProvider serviceProvider,
-        IServiceDecoratorDescriptorNode<TService> head)//TODO: name
+        IServiceDecoratorDescriptorNode<TService> descriptorChain)
     {
         TService service = serviceProvider.GetRequiredService<TImplementation>();
 
-        var descriptor = head;
+        var descriptor = descriptorChain;
         while (descriptor is not null)
         {
             service = descriptor.DecorateService(service, serviceProvider);
