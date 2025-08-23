@@ -15,17 +15,13 @@ public interface IServiceDecoratorFluentBuilderSelectLifetimeStage<TService> : I
     IServiceCollection Scoped();
 }
 
-internal sealed class ServiceDecoratorFluentBuilder<TService, TImplementation> :
+internal sealed class ServiceDecoratorFluentBuilder<TService, TImplementation>(IServiceCollection serviceCollection) :
     IServiceDecoratorFluentBuilder<TService>,
     IServiceDecoratorFluentBuilderSelectLifetimeStage<TService>
     where TService : class
     where TImplementation : class, TService
 {
-    private readonly IServiceCollection _serviceCollection;
     private readonly List<IServiceDecoratorDescriptor<TService>> _descriptors = [];
-
-    public ServiceDecoratorFluentBuilder(IServiceCollection serviceCollection) =>
-        _serviceCollection = serviceCollection;
 
     public IServiceDecoratorFluentBuilderSelectLifetimeStage<TService> With<TDecorator>()
         where TDecorator : notnull, TService
@@ -39,11 +35,11 @@ internal sealed class ServiceDecoratorFluentBuilder<TService, TImplementation> :
     {
         var descriptorChain = BuildDescriptorChain();
 
-        _serviceCollection.AddScoped<TImplementation>();
-        _serviceCollection.AddScoped<TService>(serviceProvider =>
+        serviceCollection.AddScoped<TImplementation>();
+        serviceCollection.AddScoped<TService>(serviceProvider =>
             ComposeDecoratedService(serviceProvider, descriptorChain));
 
-        return _serviceCollection;
+        return serviceCollection;
     }
 
     private IServiceDecoratorDescriptorNode<TService> BuildDescriptorChain()
