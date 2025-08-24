@@ -56,6 +56,7 @@ internal sealed class ServiceDecoratorFluentBuilder<TService, TImplementation>(I
         IServiceProvider serviceProvider,
         IServiceDecoratorDescriptorNode<TService> descriptorChain)
     {
+        //TService service = ActivatorUtilities.CreateInstance<TImplementation>(serviceProvider);
         TService service = serviceProvider.GetRequiredService<TImplementation>();
 
         var descriptor = descriptorChain;
