@@ -10,7 +10,8 @@ internal static class ServiceDecoratorActivator
         where TService : notnull
         where TDecorator : notnull, TService
     {
-        ArgumentNullException.ThrowIfNull(service, nameof(service));
+        ArgumentNullException.ThrowIfNull(service);
+        ArgumentNullException.ThrowIfNull(serviceProvider);
 
         var constructorInfo = DiscoverDecoratorConstructorInfo<TService, TDecorator>();
         var parameters = ResolveDecoratorParameters(service, constructorInfo, serviceProvider);
