@@ -35,7 +35,6 @@ internal sealed class ServiceDecoratorFluentBuilder<TService, TImplementation>(I
     {
         var descriptorChain = BuildDescriptorChain();
 
-        serviceCollection.AddScoped<TImplementation>();
         serviceCollection.AddScoped<TService>(serviceProvider =>
             ComposeDecoratedService(serviceProvider, descriptorChain));
 
@@ -56,8 +55,7 @@ internal sealed class ServiceDecoratorFluentBuilder<TService, TImplementation>(I
         IServiceProvider serviceProvider,
         IServiceDecoratorDescriptorNode<TService> descriptorChain)
     {
-        //TService service = ActivatorUtilities.CreateInstance<TImplementation>(serviceProvider);
-        TService service = serviceProvider.GetRequiredService<TImplementation>();
+        TService service = ActivatorUtilities.CreateInstance<TImplementation>(serviceProvider);
 
         var descriptor = descriptorChain;
         while (descriptor is not null)
