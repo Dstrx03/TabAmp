@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading;
 
 namespace TabAmp.Engine.Core.FileSerialization.Common.Components.Context;
@@ -13,7 +12,7 @@ internal class ScopedFileSerializationContextContainer
         get
         {
             if (!HasContext)
-                throw ContextDoesNotExistException;
+                throw ContextDoesNotExistException();
 
             return _context!;
         }
@@ -24,23 +23,19 @@ internal class ScopedFileSerializationContextContainer
     public void CreateContext(string filePath, CancellationToken cancellationToken)
     {
         if (HasContext)
-            throw ContextAlreadyExistsException;
+            throw ContextAlreadyExistsException(_context!);
 
         _context = new(filePath, cancellationToken);
     }
 
     private class ScopedFileSerializationContext(string filePath, CancellationToken cancellationToken)
-        : FileSerializationContext(filePath, cancellationToken)
-    {
-    }
+        : FileSerializationContext(filePath, cancellationToken);
 
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    private InvalidOperationException ContextDoesNotExistException =>
+    private static InvalidOperationException ContextDoesNotExistException() =>
         new($"Cannot access the context: {nameof(FileSerializationContext)} does not exist in the current scope " +
             $"and must be initialized via {nameof(CreateContext)}.");
 
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    private InvalidOperationException ContextAlreadyExistsException =>
+    private static InvalidOperationException ContextAlreadyExistsException(FileSerializationContext context) =>
         new($"Cannot create the context: {nameof(FileSerializationContext)} already exists in the current scope " +
-            $"with {nameof(_context.FilePath)}: '{_context!.FilePath}' and cannot be initialized again.");
+            $"with {nameof(FileSerializationContext.FilePath)}: '{context.FilePath}' and cannot be initialized again.");
 }

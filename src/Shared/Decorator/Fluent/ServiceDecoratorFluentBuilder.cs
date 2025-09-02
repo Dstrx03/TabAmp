@@ -72,6 +72,6 @@ internal sealed class ServiceDecoratorFluentBuilder<TService, TImplementation>(I
         return service;
     }
 
-    private InvalidOperationException TodoException() =>
+    private static InvalidOperationException TodoException() =>
         new($"TODO: message");
 }
