@@ -134,7 +134,7 @@ internal sealed class SerialFileReader : ISerialFileReader, IDisposable
     public void Dispose()
     {
         _fileStream?.Dispose();
-        _fileStream = null;
+        _fileStream = null!;
     }
 
     private class FileDeserializationMetadata(long length) : IFileDeserializationMetadata

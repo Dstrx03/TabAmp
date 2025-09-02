@@ -21,7 +21,7 @@ internal sealed class ServiceDecoratorFluentBuilder<TService, TImplementation>(I
     where TService : class
     where TImplementation : class, TService
 {
-    private readonly List<IServiceDecoratorDescriptor<TService>> _descriptors = [];
+    private List<IServiceDecoratorDescriptor<TService>> _descriptors = [];
 
     public IServiceDecoratorFluentBuilderSelectLifetimeStage<TService> With<TDecorator>()
         where TDecorator : notnull, TService
@@ -43,10 +43,15 @@ internal sealed class ServiceDecoratorFluentBuilder<TService, TImplementation>(I
 
     private IServiceDecoratorDescriptorNode<TService> BuildDescriptorChain()
     {
-        var node = (IServiceDecoratorDescriptorNode<TService>)null!;
+        if (_descriptors is null)
+            throw TodoException();
 
+        IServiceDecoratorDescriptorNode<TService> node = null!;
         for (var i = _descriptors.Count - 1; i >= 0; i--)
             node = _descriptors[i].ToNode(node);
+
+        _descriptors.Clear();
+        _descriptors = null!;
 
         return node;
     }
@@ -66,4 +71,7 @@ internal sealed class ServiceDecoratorFluentBuilder<TService, TImplementation>(I
 
         return service;
     }
+
+    private InvalidOperationException TodoException() =>
+        new($"TODO: message");
 }
