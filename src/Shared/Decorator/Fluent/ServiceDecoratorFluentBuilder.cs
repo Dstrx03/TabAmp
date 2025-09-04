@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
-using TabAmp.Shared.Decorator.Fluent.Descriptor;
+using Microsoft.Extensions.DependencyInjection.Decorator;
 
 namespace TabAmp.Shared.Decorator.Fluent;
 
@@ -21,12 +21,12 @@ internal sealed class ServiceDecoratorFluentBuilder<TService, TImplementation>(I
     where TService : class
     where TImplementation : class, TService
 {
-    private List<IServiceDecoratorDescriptor<TService>> _descriptors = [];
+    private List<IDescriptor> _descriptors = [];
 
     public IServiceDecoratorFluentBuilderSelectLifetimeStage<TService> With<TDecorator>()
         where TDecorator : notnull, TService
     {
-        var descriptor = new ServiceDecoratorDescriptor<TService, TDecorator>();
+        var descriptor = new Descriptor<TDecorator>();
         _descriptors.Add(descriptor);
         return this;
     }
@@ -41,12 +41,12 @@ internal sealed class ServiceDecoratorFluentBuilder<TService, TImplementation>(I
         return serviceCollection;
     }
 
-    private IServiceDecoratorDescriptorNode<TService> BuildDescriptorChain()
+    private IDescriptorNode BuildDescriptorChain()
     {
         if (_descriptors is null)
             throw TodoException();
 
-        IServiceDecoratorDescriptorNode<TService> node = null!;
+        IDescriptorNode node = null!;
         for (var i = _descriptors.Count - 1; i >= 0; i--)
             node = _descriptors[i].ToNode(node);
 
@@ -58,7 +58,7 @@ internal sealed class ServiceDecoratorFluentBuilder<TService, TImplementation>(I
 
     private static TService ComposeDecoratedService(
         IServiceProvider serviceProvider,
-        IServiceDecoratorDescriptorNode<TService> descriptorChain)
+        IDescriptorNode descriptorChain)
     {
         TService service = ActivatorUtilities.CreateInstance<TImplementation>(serviceProvider);
 
@@ -74,4 +74,29 @@ internal sealed class ServiceDecoratorFluentBuilder<TService, TImplementation>(I
 
     private static InvalidOperationException TodoException() =>
         new($"TODO: message");
+
+    private interface IDescriptor
+    {
+        IDescriptorNode ToNode(IDescriptorNode? next);
+    }
+
+    private interface IDescriptorNode
+    {
+        IDescriptorNode? Next { get; }
+        TService DecorateService(TService service, IServiceProvider serviceProvider);
+    }
+
+    private record Descriptor<TDecorator> : IDescriptor
+        where TDecorator : notnull, TService
+    {
+        public IDescriptorNode ToNode(IDescriptorNode? next) =>
+            new DescriptorNode<TDecorator>(next);
+    }
+
+    private record DescriptorNode<TDecorator>(IDescriptorNode? Next) : IDescriptorNode
+        where TDecorator : notnull, TService
+    {
+        public TService DecorateService(TService service, IServiceProvider serviceProvider) =>
+            serviceProvider.DecorateService<TService, TDecorator>(service);
+    }
 }
