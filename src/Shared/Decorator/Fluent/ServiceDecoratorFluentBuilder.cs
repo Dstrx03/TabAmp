@@ -26,8 +26,12 @@ internal sealed class ServiceDecoratorFluentBuilder<TService, TImplementation>(I
     public IServiceDecoratorFluentBuilderSelectLifetimeStage<TService> With<TDecorator>()
         where TDecorator : notnull, TService
     {
+        if (_descriptors is null)
+            throw TodoException();
+
         var descriptor = new Descriptor<TDecorator>();
         _descriptors.Add(descriptor);
+
         return this;
     }
 
@@ -46,19 +50,22 @@ internal sealed class ServiceDecoratorFluentBuilder<TService, TImplementation>(I
         if (_descriptors is null)
             throw TodoException();
 
+        if (_descriptors.Count == 0)
+            throw Todo2Exception();
+
         IDescriptorNode node = null!;
         for (var i = _descriptors.Count - 1; i >= 0; i--)
+        {
             node = _descriptors[i].ToNode(node);
+            _descriptors.RemoveAt(i);
+        }
 
-        _descriptors.Clear();
         _descriptors = null!;
 
         return node;
     }
 
-    private static TService ComposeDecoratedService(
-        IServiceProvider serviceProvider,
-        IDescriptorNode descriptorChain)
+    private static TService ComposeDecoratedService(IServiceProvider serviceProvider, IDescriptorNode descriptorChain)
     {
         TService service = ActivatorUtilities.CreateInstance<TImplementation>(serviceProvider);
 
@@ -71,9 +78,6 @@ internal sealed class ServiceDecoratorFluentBuilder<TService, TImplementation>(I
 
         return service;
     }
-
-    private static InvalidOperationException TodoException() =>
-        new($"TODO: message");
 
     private interface IDescriptor
     {
@@ -89,8 +93,7 @@ internal sealed class ServiceDecoratorFluentBuilder<TService, TImplementation>(I
     private record Descriptor<TDecorator> : IDescriptor
         where TDecorator : notnull, TService
     {
-        public IDescriptorNode ToNode(IDescriptorNode? next) =>
-            new DescriptorNode<TDecorator>(next);
+        public IDescriptorNode ToNode(IDescriptorNode? next) => new DescriptorNode<TDecorator>(next);
     }
 
     private record DescriptorNode<TDecorator>(IDescriptorNode? Next) : IDescriptorNode
@@ -99,4 +102,10 @@ internal sealed class ServiceDecoratorFluentBuilder<TService, TImplementation>(I
         public TService DecorateService(TService service, IServiceProvider serviceProvider) =>
             serviceProvider.DecorateService<TService, TDecorator>(service);
     }
+
+    private static InvalidOperationException TodoException() =>
+        new($"TODO: message");
+
+    private static InvalidOperationException Todo2Exception() =>
+        new($"TODO: message 2");
 }
