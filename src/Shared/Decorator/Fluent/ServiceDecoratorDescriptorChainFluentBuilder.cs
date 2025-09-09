@@ -17,6 +17,11 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder(
 
     private ServiceDecoratorDescriptorNode BuildDescriptorChain()
     {
-        return default;
+        ServiceDecoratorDescriptorNode node = null!;
+
+        for (var i = descriptors.Count - 1; i >= 0; i--)
+            node = descriptors[i].ToNode(node);
+
+        return node;
     }
 }
