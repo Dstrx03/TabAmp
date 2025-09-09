@@ -15,8 +15,8 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder(
 
     public IServiceCollection Scoped() => decoratedServiceFluentBuilder.Scoped(BuildDescriptorChain());
 
-    private string BuildDescriptorChain()
+    private ServiceDecoratorDescriptorNode BuildDescriptorChain()
     {
-        return string.Join(',', descriptors);
+        return default;
     }
 }

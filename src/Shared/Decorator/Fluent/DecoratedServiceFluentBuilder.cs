@@ -10,5 +10,5 @@ public abstract class DecoratedServiceFluentBuilder
         return new(this, [descriptor]);
     }
 
-    internal abstract IServiceCollection Scoped(string descriptorChain);
+    internal abstract IServiceCollection Scoped(ServiceDecoratorDescriptorNode descriptorChain);
 }
