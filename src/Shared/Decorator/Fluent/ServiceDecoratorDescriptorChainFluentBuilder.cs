@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Immutable;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace TabAmp.Shared.Decorator.Fluent;
 
 public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation>(
     DecoratedServiceFluentBuilder<TService, TImplementation> decoratedServiceFluentBuilder,
-    List<ServiceDecoratorDescriptor<TService>> descriptors)
+    ImmutableList<ServiceDecoratorDescriptor<TService>> descriptors)
     where TService : class
     where TImplementation : class, TService
 {
@@ -19,7 +19,7 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
     public IServiceCollection Scoped() => decoratedServiceFluentBuilder.Scoped(BuildDescriptorChain(descriptors));
 
     private static ServiceDecoratorDescriptorNode<TService> BuildDescriptorChain(
-        List<ServiceDecoratorDescriptor<TService>> descriptors)
+        ImmutableList<ServiceDecoratorDescriptor<TService>> descriptors)
     {
         ServiceDecoratorDescriptorNode<TService> node = null!;
 
