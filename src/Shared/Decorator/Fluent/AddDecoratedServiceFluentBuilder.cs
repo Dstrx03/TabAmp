@@ -2,9 +2,10 @@
 
 namespace TabAmp.Shared.Decorator.Fluent;
 
-public sealed class AddDecoratedServiceFluentBuilder : DecoratedServiceFluentBuilder
+public sealed class AddDecoratedServiceFluentBuilder<TService> : DecoratedServiceFluentBuilder<TService>
+    where TService : notnull
 {
-    internal override IServiceCollection Scoped(ServiceDecoratorDescriptorNode descriptorChain)
+    internal override IServiceCollection Scoped(ServiceDecoratorDescriptorNode<TService> descriptorChain)
     {
         throw new System.NotImplementedException();
     }
