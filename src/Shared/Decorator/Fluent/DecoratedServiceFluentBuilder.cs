@@ -16,7 +16,9 @@ public abstract class DecoratedServiceFluentBuilder<TService, TImplementation>
 
     internal abstract IServiceCollection Scoped(ServiceDecoratorDescriptorNode<TService> descriptorChain);
 
-    protected static TService ComposeDecoratedService(IServiceProvider serviceProvider, ServiceDecoratorDescriptorNode<TService> descriptorChain)
+    private static TService ComposeDecoratedService(
+        IServiceProvider serviceProvider,
+        ServiceDecoratorDescriptorNode<TService> descriptorChain)
     {
         TService service = ActivatorUtilities.CreateInstance<TImplementation>(serviceProvider);
 
