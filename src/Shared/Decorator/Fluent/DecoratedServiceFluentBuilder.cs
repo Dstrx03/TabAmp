@@ -20,8 +20,9 @@ public abstract class DecoratedServiceFluentBuilder<TService, TImplementation>
         IServiceProvider serviceProvider,
         ServiceDecoratorDescriptorNode<TService> descriptorChain)
     {
-        TService service = ActivatorUtilities.CreateInstance<TImplementation>(serviceProvider);
+        ArgumentNullException.ThrowIfNull(descriptorChain);
 
+        TService service = ActivatorUtilities.CreateInstance<TImplementation>(serviceProvider);
         var descriptor = descriptorChain;
         while (descriptor is not null)
         {
