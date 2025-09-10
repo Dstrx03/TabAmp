@@ -1,18 +1,17 @@
-﻿using TabAmp.Shared.Decorator.Fluent;
+﻿using System;
+using TabAmp.Shared.Decorator.Fluent;
 
 namespace Microsoft.Extensions.DependencyInjection.Decorator;
 
 public static class ServiceCollectionDecoratorExtensions
 {
-    public static IServiceDecoratorFluentBuilder<TService> AddDecorated<TService, TImplementation>(
+    public static AddDecoratedServiceFluentBuilder<TService, TImplementation> AddDecorated<TService, TImplementation>(
         this IServiceCollection serviceCollection)
         where TService : class
         where TImplementation : class, TService
     {
-        // test
-        var test = new AddDecoratedServiceFluentBuilder<TService, TImplementation>().With<TImplementation>().With<TImplementation>().Scoped();
-        // test
+        ArgumentNullException.ThrowIfNull(serviceCollection);
 
-        return new ServiceDecoratorFluentBuilder<TService, TImplementation>(serviceCollection);
+        return new AddDecoratedServiceFluentBuilder<TService, TImplementation>(serviceCollection);
     }
 }
