@@ -2,13 +2,11 @@
 
 public abstract record ServiceDecoratorDescriptor
 {
-    public abstract ServiceDecoratorDescriptorNode ToNode(ServiceDecoratorDescriptorNode? next);
+    internal abstract ServiceDecoratorDescriptorNode ToNode(ServiceDecoratorDescriptorNode? next);
 
-    internal static ServiceDecoratorDescriptor Create<TDecorator>() => new Instance<TDecorator>();
-
-    private record Instance<TDecorator> : ServiceDecoratorDescriptor
+    internal sealed record Instance<TDecorator> : ServiceDecoratorDescriptor
     {
-        public override ServiceDecoratorDescriptorNode ToNode(ServiceDecoratorDescriptorNode? next) =>
+        internal override ServiceDecoratorDescriptorNode ToNode(ServiceDecoratorDescriptorNode? next) =>
             new ServiceDecoratorDescriptorNode.Instance<TDecorator>(next);
     }
 }

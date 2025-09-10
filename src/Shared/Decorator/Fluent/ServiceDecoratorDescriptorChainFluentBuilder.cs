@@ -9,7 +9,7 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder(
 {
     public ServiceDecoratorDescriptorChainFluentBuilder With<TDecorator>()
     {
-        var descriptor = ServiceDecoratorDescriptor.Create<TDecorator>();
+        var descriptor = new ServiceDecoratorDescriptor.Instance<TDecorator>();
         return new(decoratedServiceFluentBuilder, [.. descriptors, descriptor]);
     }
 

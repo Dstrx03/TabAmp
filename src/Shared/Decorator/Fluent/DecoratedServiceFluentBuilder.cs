@@ -6,7 +6,7 @@ public abstract class DecoratedServiceFluentBuilder
 {
     public ServiceDecoratorDescriptorChainFluentBuilder With<TDecorator>()
     {
-        var descriptor = ServiceDecoratorDescriptor.Create<TDecorator>();
+        var descriptor = new ServiceDecoratorDescriptor.Instance<TDecorator>();
         return new(this, [descriptor]);
     }
 
