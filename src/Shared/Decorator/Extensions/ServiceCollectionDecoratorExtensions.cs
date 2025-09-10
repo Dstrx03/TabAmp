@@ -10,7 +10,7 @@ public static class ServiceCollectionDecoratorExtensions
         where TImplementation : class, TService
     {
         // test
-        var test = new AddDecoratedServiceFluentBuilder().With<string>().With<int>().Scoped();
+        var test = new AddDecoratedServiceFluentBuilder<TService>().With<TImplementation>().With<TImplementation>().Scoped();
         // test
 
         return new ServiceDecoratorFluentBuilder<TService, TImplementation>(serviceCollection);
