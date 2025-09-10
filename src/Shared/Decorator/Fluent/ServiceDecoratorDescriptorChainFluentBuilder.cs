@@ -3,12 +3,13 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace TabAmp.Shared.Decorator.Fluent;
 
-public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService>(
-    DecoratedServiceFluentBuilder<TService> decoratedServiceFluentBuilder,
+public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation>(
+    DecoratedServiceFluentBuilder<TService, TImplementation> decoratedServiceFluentBuilder,
     List<ServiceDecoratorDescriptor<TService>> descriptors)
-    where TService : notnull
+    where TService : class
+    where TImplementation : class, TService
 {
-    public ServiceDecoratorDescriptorChainFluentBuilder<TService> With<TDecorator>()
+    public ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> With<TDecorator>()
         where TDecorator : notnull, TService
     {
         var descriptor = new ServiceDecoratorDescriptor<TService>.Instance<TDecorator>();
