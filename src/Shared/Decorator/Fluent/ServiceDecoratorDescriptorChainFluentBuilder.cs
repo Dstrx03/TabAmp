@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿using System;
+using System.Collections.Immutable;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace TabAmp.Shared.Decorator.Fluent;
@@ -21,11 +22,19 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
     private static ServiceDecoratorDescriptorNode<TService> BuildDescriptorChain(
         ImmutableList<ServiceDecoratorDescriptor<TService>> descriptors)
     {
-        ServiceDecoratorDescriptorNode<TService> node = null!;
+        ArgumentNullException.ThrowIfNull(descriptors);
 
+        if (descriptors.IsEmpty)
+            throw DescriptorsIsEmptyException(typeof(TService));
+
+        ServiceDecoratorDescriptorNode<TService> node = null!;
         for (var i = descriptors.Count - 1; i >= 0; i--)
             node = descriptors[i].ToNode(node);
 
         return node;
     }
+
+    private static InvalidOperationException DescriptorsIsEmptyException(Type serviceType) =>
+        new($"Cannot build decorator descriptor chain for the decorated type '{serviceType.FullName}'. " +
+            "At least one decorator descriptor is required.");
 }
