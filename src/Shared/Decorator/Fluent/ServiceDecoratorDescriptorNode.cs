@@ -3,7 +3,9 @@ using Microsoft.Extensions.DependencyInjection.Decorator;
 
 namespace TabAmp.Shared.Decorator.Fluent;
 
-internal abstract record ServiceDecoratorDescriptorNode<TService>(ServiceDecoratorDescriptorNode<TService>? Next, object _placeholder)
+internal abstract record ServiceDecoratorDescriptorNode<TService>(
+    ServiceDecoratorDescriptorNode<TService>? Next,
+    object _placeholder)
     where TService : notnull
 {
     internal abstract TService DecorateService(TService service, IServiceProvider serviceProvider);
