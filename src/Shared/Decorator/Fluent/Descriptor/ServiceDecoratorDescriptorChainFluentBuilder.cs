@@ -17,10 +17,9 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
         return new(decoratedServiceFluentBuilder, [.. descriptors, descriptor]);
     }
 
-    public IServiceCollection Scoped() => decoratedServiceFluentBuilder.Scoped(BuildDescriptorChain(descriptors));
+    public IServiceCollection Scoped() => decoratedServiceFluentBuilder.Scoped(BuildDescriptorChain());
 
-    private static ServiceDecoratorDescriptorNode<TService> BuildDescriptorChain(
-        ImmutableList<ServiceDecoratorDescriptor<TService>> descriptors)
+    private ServiceDecoratorDescriptorNode<TService> BuildDescriptorChain()
     {
         ArgumentNullException.ThrowIfNull(descriptors);
 
