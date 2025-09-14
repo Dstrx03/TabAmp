@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection.Decorator;
 
-namespace TabAmp.Shared.Decorator.Fluent;
+namespace TabAmp.Shared.Decorator.Fluent.Descriptor;
 
 internal abstract record ServiceDecoratorDescriptorNode<TService>(
     ServiceDecoratorDescriptorNode<TService>? Next,
