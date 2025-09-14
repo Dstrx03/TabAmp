@@ -2,7 +2,7 @@
 using System.Collections.Immutable;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace TabAmp.Shared.Decorator.Fluent;
+namespace TabAmp.Shared.Decorator.Fluent.Descriptor;
 
 public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation>(
     DecoratedServiceFluentBuilder<TService, TImplementation> decoratedServiceFluentBuilder,

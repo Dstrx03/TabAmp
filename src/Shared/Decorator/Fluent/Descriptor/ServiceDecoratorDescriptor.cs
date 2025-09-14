@@ -1,4 +1,4 @@
-﻿namespace TabAmp.Shared.Decorator.Fluent;
+﻿namespace TabAmp.Shared.Decorator.Fluent.Descriptor;
 
 public abstract record ServiceDecoratorDescriptor<TService>
     where TService : notnull
