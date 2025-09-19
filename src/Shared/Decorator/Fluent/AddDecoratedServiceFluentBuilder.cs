@@ -8,6 +8,6 @@ public sealed class AddDecoratedServiceFluentBuilder<TService, TImplementation>(
     where TService : class
     where TImplementation : class, TService
 {
-    internal override IServiceCollection Scoped(ServiceDecoratorDescriptorNode<TService> descriptorChain) =>
+    internal override IServiceCollection Scoped(ServiceDecoratorDescriptor<TService> descriptorChain) =>
         serviceCollection.AddScoped<TService>(serviceProvider => ComposeDecoratedService(serviceProvider, descriptorChain));
 }
