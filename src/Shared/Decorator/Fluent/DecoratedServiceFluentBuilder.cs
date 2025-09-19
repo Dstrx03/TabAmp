@@ -11,15 +11,15 @@ public abstract class DecoratedServiceFluentBuilder<TService, TImplementation>
     public ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> With<TDecorator>()
         where TDecorator : notnull, TService
     {
-        var descriptor = new ServiceDecoratorDescriptor<TService>.Instance<TDecorator>();
-        return new(this, [descriptor]);
+        var descriptor = new ServiceDecoratorDescriptor<TService>.Instance<TDecorator>(null);
+        return new(this, descriptor);
     }
 
-    internal abstract IServiceCollection Scoped(ServiceDecoratorDescriptorNode<TService> descriptorChain);
+    internal abstract IServiceCollection Scoped(ServiceDecoratorDescriptor<TService> descriptorChain);
 
     private protected static TService ComposeDecoratedService(
         IServiceProvider serviceProvider,
-        ServiceDecoratorDescriptorNode<TService> descriptorChain)
+        ServiceDecoratorDescriptor<TService> descriptorChain)
     {
         ArgumentNullException.ThrowIfNull(descriptorChain);
 

@@ -1,14 +1,20 @@
-﻿namespace TabAmp.Shared.Decorator.Fluent.Descriptor;
+﻿using System;
+using Microsoft.Extensions.DependencyInjection.Decorator;
 
-public abstract record ServiceDecoratorDescriptor<TService>
+namespace TabAmp.Shared.Decorator.Fluent.Descriptor;
+
+public abstract record ServiceDecoratorDescriptor<TService>(
+    ServiceDecoratorDescriptor<TService>? Next,
+    string Name)
     where TService : notnull
 {
-    internal abstract ServiceDecoratorDescriptorNode<TService> ToNode(ServiceDecoratorDescriptorNode<TService>? next);
+    internal abstract TService DecorateService(TService service, IServiceProvider serviceProvider);
 
-    internal sealed record Instance<TDecorator> : ServiceDecoratorDescriptor<TService>
+    internal sealed record Instance<TDecorator>(ServiceDecoratorDescriptor<TService>? Next) :
+        ServiceDecoratorDescriptor<TService>(Next, typeof(TDecorator).Name)
         where TDecorator : notnull, TService
     {
-        internal override ServiceDecoratorDescriptorNode<TService> ToNode(ServiceDecoratorDescriptorNode<TService>? next) =>
-            new ServiceDecoratorDescriptorNode<TService>.Instance<TDecorator>(next);
+        internal override TService DecorateService(TService service, IServiceProvider serviceProvider) =>
+            serviceProvider.DecorateService<TService, TDecorator>(service);
     }
 }
