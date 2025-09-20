@@ -24,7 +24,6 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
 
         ServiceDecoratorDescriptor<TService> descriptorChain = null!;
         var descriptor = descriptors;
-
         while (descriptor is not null)
         {
             descriptorChain = descriptor with { Next = descriptorChain };
