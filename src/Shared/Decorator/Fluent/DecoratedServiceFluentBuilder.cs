@@ -11,8 +11,7 @@ public abstract class DecoratedServiceFluentBuilder<TService, TImplementation>
     public ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> With<TDecorator>()
         where TDecorator : notnull, TService
     {
-        var descriptor = new ServiceDecoratorDescriptor<TService>.Instance<TDecorator>(null);
-        return new(this, descriptor);
+        return new ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation>(this, null!).With<TDecorator>();
     }
 
     internal abstract IServiceCollection Scoped(ServiceDecoratorDescriptor<TService> descriptorChain);
