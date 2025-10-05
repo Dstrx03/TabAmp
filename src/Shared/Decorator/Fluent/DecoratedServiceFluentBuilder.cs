@@ -14,7 +14,9 @@ public abstract class DecoratedServiceFluentBuilder<TService, TImplementation>
         return new ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation>(this, null!).With<TDecorator>();
     }
 
+    internal abstract IServiceCollection Transient(ServiceDecoratorDescriptor<TService> descriptorChain);
     internal abstract IServiceCollection Scoped(ServiceDecoratorDescriptor<TService> descriptorChain);
+    internal abstract IServiceCollection Singleton(ServiceDecoratorDescriptor<TService> descriptorChain);
 
     private protected static TService ComposeDecoratedService(
         IServiceProvider serviceProvider,
