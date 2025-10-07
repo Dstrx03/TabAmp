@@ -12,7 +12,7 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
     public ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> With<TDecorator>()
         where TDecorator : notnull, TService
     {
-        var descriptor = new ServiceDecoratorDescriptor<TService>.Instance<TDecorator>(descriptors);
+        var descriptor = new ServiceDecoratorDescriptor<TService>.For<TDecorator>(descriptors);
         return new(decoratedServiceFluentBuilder, descriptor);
     }
 

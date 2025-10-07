@@ -10,7 +10,7 @@ public abstract record ServiceDecoratorDescriptor<TService>(
 {
     internal abstract TService DecorateService(TService service, IServiceProvider serviceProvider);
 
-    internal sealed record Instance<TDecorator>(ServiceDecoratorDescriptor<TService>? Next) :
+    internal sealed record For<TDecorator>(ServiceDecoratorDescriptor<TService>? Next) :
         ServiceDecoratorDescriptor<TService>(Next, typeof(TDecorator).Name)
         where TDecorator : notnull, TService
     {
