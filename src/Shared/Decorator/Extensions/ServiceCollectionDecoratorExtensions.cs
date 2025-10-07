@@ -14,6 +14,16 @@ public static class ServiceCollectionDecoratorExtensions
         return new AddDecoratedServiceFluentBuilder<TService, TImplementation>(serviceCollection);
     }
 
+    public static AddKeyedDecoratedServiceFluentBuilder<TService, TImplementation> AddKeyedDecorated<TService, TImplementation>(
+        this IServiceCollection serviceCollection,
+        object? serviceKey)
+        where TService : class
+        where TImplementation : class, TService
+    {
+        ArgumentNullException.ThrowIfNull(serviceCollection);
+        return new AddKeyedDecoratedServiceFluentBuilder<TService, TImplementation>(serviceCollection, serviceKey);
+    }
+
     public static TryAddDecoratedServiceFluentBuilder<TService, TImplementation> TryAddDecorated<TService, TImplementation>(
         this IServiceCollection serviceCollection)
         where TService : class
@@ -21,5 +31,15 @@ public static class ServiceCollectionDecoratorExtensions
     {
         ArgumentNullException.ThrowIfNull(serviceCollection);
         return new TryAddDecoratedServiceFluentBuilder<TService, TImplementation>(serviceCollection);
+    }
+
+    public static TryAddKeyedDecoratedServiceFluentBuilder<TService, TImplementation> TryAddKeyedDecorated<TService, TImplementation>(
+        this IServiceCollection serviceCollection,
+        object? serviceKey)
+        where TService : class
+        where TImplementation : class, TService
+    {
+        ArgumentNullException.ThrowIfNull(serviceCollection);
+        return new TryAddKeyedDecoratedServiceFluentBuilder<TService, TImplementation>(serviceCollection, serviceKey);
     }
 }
