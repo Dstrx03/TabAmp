@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace TabAmp.Shared.Decorator.Fluent.Descriptor;
 
 public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation>(
-    DecoratedServiceFluentBuilder<TService, TImplementation> decoratedServiceFluentBuilder,
+    DecoratedServiceFluentBuilder<TService, TImplementation> decoratedServiceBuilder,
     ServiceDecoratorDescriptor<TService> descriptors)
     where TService : class
     where TImplementation : class, TService
@@ -13,12 +13,12 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
         where TDecorator : notnull, TService
     {
         var descriptor = new ServiceDecoratorDescriptor<TService>.For<TDecorator>(descriptors);
-        return new(decoratedServiceFluentBuilder, descriptor);
+        return new(decoratedServiceBuilder, descriptor);
     }
 
-    public IServiceCollection Transient() => decoratedServiceFluentBuilder.Transient(BuildDescriptorChain());
-    public IServiceCollection Scoped() => decoratedServiceFluentBuilder.Scoped(BuildDescriptorChain());
-    public IServiceCollection Singleton() => decoratedServiceFluentBuilder.Singleton(BuildDescriptorChain());
+    public IServiceCollection Transient() => decoratedServiceBuilder.Transient(BuildDescriptorChain());
+    public IServiceCollection Scoped() => decoratedServiceBuilder.Scoped(BuildDescriptorChain());
+    public IServiceCollection Singleton() => decoratedServiceBuilder.Singleton(BuildDescriptorChain());
 
     private ServiceDecoratorDescriptor<TService> BuildDescriptorChain()
     {
