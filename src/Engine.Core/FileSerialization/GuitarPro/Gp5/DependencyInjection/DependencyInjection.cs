@@ -1,7 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection.Decorator;
-using TabAmp.Engine.Core.FileSerialization;
-using TabAmp.Engine.Core.FileSerialization.Common.Components.Context;
-using TabAmp.Engine.Core.FileSerialization.Common.Components.IO.Serial;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Decorator;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.Processor;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.BinaryPrimitives;
@@ -14,17 +12,13 @@ using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Text;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Tracks;
 using TabAmp.Engine.Core.Score;
 
-namespace Microsoft.Extensions.DependencyInjection;
+namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.DependencyInjection;
 
-public static class DependencyInjection
+internal static class DependencyInjection
 {
-    public static IServiceCollection AddEngineCore(this IServiceCollection services)
+    public static IServiceCollection AddGp5(this IServiceCollection serviceCollection)
     {
-        services.AddTransient<IFileSerializationService, FileSerializationService>()
-            .AddFileSerializationContext()
-            .AddScoped<ISerialFileReader, SerialFileReader>();
-
-        services.AddScoped<IFileDeserializer<Gp5Score>, Gp5FileDeserializer>()
+        serviceCollection.AddScoped<IFileDeserializer<Gp5Score>, Gp5FileDeserializer>()
             .AddGp5Reader<IGp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReaderIntegrityValidator>()
             .AddScoped<Gp5TextReader>()
             .AddScoped<IGp5TextReader>(x => new Gp5TextReaderIntegrityValidator(x.GetRequiredService<Gp5TextReader>()))
@@ -41,18 +35,15 @@ public static class DependencyInjection
             .AddScoped<Gp5RseReader>()
             .AddScoped<IGp5RseReader>(x => new Gp5RseReaderIntegrityValidator(x.GetRequiredService<Gp5RseReader>()));
 
-        return services;
+        return serviceCollection;
     }
 
-    private static IServiceCollection AddFileSerializationContext(this IServiceCollection services) =>
-        services.AddScoped<ScopedFileSerializationContextContainer>()
-            .AddScoped<FileSerializationContext>(x => x.GetRequiredService<ScopedFileSerializationContextContainer>().Context);
-
-    private static IServiceCollection AddGp5Reader<TService, TReader, TIntegrityValidator>(this IServiceCollection services)
+    private static IServiceCollection AddGp5Reader<TService, TReader, TIntegrityValidator>(
+        this IServiceCollection serviceCollection)
         where TService : class
         where TReader : class, TService
         where TIntegrityValidator : class, TService
     {
-        return services.AddDecorated<TService, TReader>().With<TIntegrityValidator>().Scoped();
+        return serviceCollection.AddDecorated<TService, TReader>().With<TIntegrityValidator>().Scoped();
     }
 }
