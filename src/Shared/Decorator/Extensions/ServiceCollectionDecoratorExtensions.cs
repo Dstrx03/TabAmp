@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using TabAmp.Shared.Decorator;
-using TabAmp.Shared.Decorator.Fluent.Descriptor;
+using TabAmp.Shared.Decorator.Fluent;
 
 namespace Microsoft.Extensions.DependencyInjection.Decorator;
 

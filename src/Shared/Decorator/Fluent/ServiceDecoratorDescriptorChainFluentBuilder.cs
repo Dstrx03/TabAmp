@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TabAmp.Shared.Decorator.Fluent.Descriptor;
+namespace TabAmp.Shared.Decorator.Fluent;
 
 public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation>(
     ServiceDecoratorDescriptor<TService> descriptors)
