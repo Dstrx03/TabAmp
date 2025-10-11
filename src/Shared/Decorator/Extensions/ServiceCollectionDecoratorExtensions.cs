@@ -65,6 +65,58 @@ public static class ServiceCollectionDecoratorExtensions
         ArgumentNullException.ThrowIfNull(serviceCollection);
         return new AddKeyedDecoratedServiceFluentBuilder<TService, TImplementation>(serviceCollection, serviceKey);
     }
+    public static IServiceCollection AddKeyedDecoratedTransient<TService, TImplementation>(
+        this IServiceCollection serviceCollection,
+        object? serviceKey,
+        ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
+        where TService : class
+        where TImplementation : class, TService
+    {
+        var descriptorChain = GetDescriptorChain(configureDescriptorChain);
+        serviceCollection.AddKeyedTransient(serviceKey, (serviceProvider, _) =>
+            DecoratedServiceActivator.CreateService<TService, TImplementation>(serviceProvider, descriptorChain));
+
+        return serviceCollection;
+    }
+    public static IServiceCollection AddKeyedDecoratedScoped<TService, TImplementation>(
+        this IServiceCollection serviceCollection,
+        object? serviceKey,
+        ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
+        where TService : class
+        where TImplementation : class, TService
+    {
+        var descriptorChain = GetDescriptorChain(configureDescriptorChain);
+        serviceCollection.AddKeyedScoped(serviceKey, (serviceProvider, _) =>
+            DecoratedServiceActivator.CreateService<TService, TImplementation>(serviceProvider, descriptorChain));
+
+        return serviceCollection;
+    }
+    public static IServiceCollection AddKeyedDecoratedSingleton<TService, TImplementation>(
+        this IServiceCollection serviceCollection,
+        object? serviceKey,
+        ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
+        where TService : class
+        where TImplementation : class, TService
+    {
+        var descriptorChain = GetDescriptorChain(configureDescriptorChain);
+        serviceCollection.AddKeyedSingleton(serviceKey, (serviceProvider, _) =>
+            DecoratedServiceActivator.CreateService<TService, TImplementation>(serviceProvider, descriptorChain));
+
+        return serviceCollection;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public static TryAddDecoratedServiceFluentBuilder<TService, TImplementation> TryAddDecorated<TService, TImplementation>(
         this IServiceCollection serviceCollection)
