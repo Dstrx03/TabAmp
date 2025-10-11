@@ -25,21 +25,11 @@ public static class ServiceCollectionDecoratorExtensions
         var descriptorChain = GetDescriptorChain(configureDescriptorChain);
         serviceCollection.AddTransient(serviceProvider =>
             DecoratedServiceActivator.CreateService<TService, TImplementation>(serviceProvider, descriptorChain));
+
         return serviceCollection;
     }
 
-    private static ServiceDecoratorDescriptor<TService> GetDescriptorChain<TService, TImplementation>(
-        ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
-        where TService : class
-        where TImplementation : class, TService
-    {
-        ArgumentNullException.ThrowIfNull(configureDescriptorChain);
-        var builder = new ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation>();
-        var descriptorChain = configureDescriptorChain(builder).BuildDescriptorChain();
-        return descriptorChain;
-    }
-
-    public delegate ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> ConfigureDescriptorChain<TService, TImplementation>(ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder) where TService : class where TImplementation : class, TService;
+    
 
 
 
@@ -70,5 +60,29 @@ public static class ServiceCollectionDecoratorExtensions
     {
         ArgumentNullException.ThrowIfNull(serviceCollection);
         return new TryAddKeyedDecoratedServiceFluentBuilder<TService, TImplementation>(serviceCollection, serviceKey);
+    }
+
+
+
+
+
+
+
+    public delegate ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> ConfigureDescriptorChain<TService, TImplementation>(
+        ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder) 
+        where TService : class 
+        where TImplementation : class, TService;
+
+    private static ServiceDecoratorDescriptor<TService> GetDescriptorChain<TService, TImplementation>(
+        ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
+        where TService : class
+        where TImplementation : class, TService
+    {
+        ArgumentNullException.ThrowIfNull(configureDescriptorChain);
+
+        var builder = new ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation>();
+        var descriptorChain = configureDescriptorChain(builder).BuildDescriptorChain();
+
+        return descriptorChain;
     }
 }
