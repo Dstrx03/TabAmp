@@ -1,21 +1,12 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using TabAmp.Shared.Decorator;
-using TabAmp.Shared.Decorator.Fluent;
 using TabAmp.Shared.Decorator.Fluent.Descriptor;
 
 namespace Microsoft.Extensions.DependencyInjection.Decorator;
 
 public static class ServiceCollectionDecoratorExtensions
 {
-    public static AddDecoratedServiceFluentBuilder<TService, TImplementation> AddDecorated<TService, TImplementation>(
-        this IServiceCollection serviceCollection)
-        where TService : class
-        where TImplementation : class, TService
-    {
-        ArgumentNullException.ThrowIfNull(serviceCollection);
-        return new AddDecoratedServiceFluentBuilder<TService, TImplementation>(serviceCollection);
-    }
     public static IServiceCollection AddDecoratedTransient<TService, TImplementation>(
         this IServiceCollection serviceCollection,
         ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
@@ -28,6 +19,7 @@ public static class ServiceCollectionDecoratorExtensions
 
         return serviceCollection;
     }
+
     public static IServiceCollection AddDecoratedScoped<TService, TImplementation>(
         this IServiceCollection serviceCollection,
         ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
@@ -40,6 +32,7 @@ public static class ServiceCollectionDecoratorExtensions
 
         return serviceCollection;
     }
+
     public static IServiceCollection AddDecoratedSingleton<TService, TImplementation>(
         this IServiceCollection serviceCollection,
         ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
@@ -53,19 +46,6 @@ public static class ServiceCollectionDecoratorExtensions
         return serviceCollection;
     }
 
-
-
-
-
-    public static AddKeyedDecoratedServiceFluentBuilder<TService, TImplementation> AddKeyedDecorated<TService, TImplementation>(
-        this IServiceCollection serviceCollection,
-        object? serviceKey)
-        where TService : class
-        where TImplementation : class, TService
-    {
-        ArgumentNullException.ThrowIfNull(serviceCollection);
-        return new AddKeyedDecoratedServiceFluentBuilder<TService, TImplementation>(serviceCollection, serviceKey);
-    }
     public static IServiceCollection AddKeyedDecoratedTransient<TService, TImplementation>(
         this IServiceCollection serviceCollection,
         object? serviceKey,
@@ -79,6 +59,7 @@ public static class ServiceCollectionDecoratorExtensions
 
         return serviceCollection;
     }
+
     public static IServiceCollection AddKeyedDecoratedScoped<TService, TImplementation>(
         this IServiceCollection serviceCollection,
         object? serviceKey,
@@ -92,6 +73,7 @@ public static class ServiceCollectionDecoratorExtensions
 
         return serviceCollection;
     }
+
     public static IServiceCollection AddKeyedDecoratedSingleton<TService, TImplementation>(
         this IServiceCollection serviceCollection,
         object? serviceKey,
@@ -106,18 +88,6 @@ public static class ServiceCollectionDecoratorExtensions
         return serviceCollection;
     }
 
-
-
-
-
-    public static TryAddDecoratedServiceFluentBuilder<TService, TImplementation> TryAddDecorated<TService, TImplementation>(
-        this IServiceCollection serviceCollection)
-        where TService : class
-        where TImplementation : class, TService
-    {
-        ArgumentNullException.ThrowIfNull(serviceCollection);
-        return new TryAddDecoratedServiceFluentBuilder<TService, TImplementation>(serviceCollection);
-    }
     public static void TryAddDecoratedTransient<TService, TImplementation>(
         this IServiceCollection serviceCollection,
         ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
@@ -128,6 +98,7 @@ public static class ServiceCollectionDecoratorExtensions
         serviceCollection.TryAddTransient(serviceProvider =>
             DecoratedServiceActivator.CreateService<TService, TImplementation>(serviceProvider, descriptorChain));
     }
+
     public static void TryAddDecoratedScoped<TService, TImplementation>(
         this IServiceCollection serviceCollection,
         ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
@@ -138,6 +109,7 @@ public static class ServiceCollectionDecoratorExtensions
         serviceCollection.TryAddScoped(serviceProvider =>
             DecoratedServiceActivator.CreateService<TService, TImplementation>(serviceProvider, descriptorChain));
     }
+
     public static void TryAddDecoratedSingleton<TService, TImplementation>(
         this IServiceCollection serviceCollection,
         ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
@@ -149,16 +121,6 @@ public static class ServiceCollectionDecoratorExtensions
             DecoratedServiceActivator.CreateService<TService, TImplementation>(serviceProvider, descriptorChain));
     }
 
-
-    public static TryAddKeyedDecoratedServiceFluentBuilder<TService, TImplementation> TryAddKeyedDecorated<TService, TImplementation>(
-        this IServiceCollection serviceCollection,
-        object? serviceKey)
-        where TService : class
-        where TImplementation : class, TService
-    {
-        ArgumentNullException.ThrowIfNull(serviceCollection);
-        return new TryAddKeyedDecoratedServiceFluentBuilder<TService, TImplementation>(serviceCollection, serviceKey);
-    }
     public static void TryAddKeyedDecoratedTransient<TService, TImplementation>(
         this IServiceCollection serviceCollection,
         object? serviceKey,
@@ -170,6 +132,7 @@ public static class ServiceCollectionDecoratorExtensions
         serviceCollection.TryAddKeyedTransient(serviceKey, (serviceProvider, _) =>
             DecoratedServiceActivator.CreateService<TService, TImplementation>(serviceProvider, descriptorChain));
     }
+
     public static void TryAddKeyedDecoratedScoped<TService, TImplementation>(
         this IServiceCollection serviceCollection,
         object? serviceKey,
@@ -181,6 +144,7 @@ public static class ServiceCollectionDecoratorExtensions
         serviceCollection.TryAddKeyedScoped(serviceKey, (serviceProvider, _) =>
             DecoratedServiceActivator.CreateService<TService, TImplementation>(serviceProvider, descriptorChain));
     }
+
     public static void TryAddKeyedDecoratedSingleton<TService, TImplementation>(
         this IServiceCollection serviceCollection,
         object? serviceKey,
@@ -192,12 +156,6 @@ public static class ServiceCollectionDecoratorExtensions
         serviceCollection.TryAddKeyedSingleton(serviceKey, (serviceProvider, _) =>
             DecoratedServiceActivator.CreateService<TService, TImplementation>(serviceProvider, descriptorChain));
     }
-
-
-
-
-
-
 
     public delegate ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> ConfigureDescriptorChain<TService, TImplementation>(
         ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder)
