@@ -3,23 +3,23 @@
 namespace TabAmp.Shared.Decorator.Fluent;
 
 public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation>(
-    ServiceDecoratorDescriptor<TService> descriptors)
+    ServiceDecoratorDescriptorNode<TService> descriptors)
     where TService : class
     where TImplementation : class, TService
 {
     public ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> With<TDecorator>()
         where TDecorator : notnull, TService
     {
-        var descriptor = new ServiceDecoratorDescriptor<TService>.For<TDecorator>(descriptors);
+        var descriptor = new ServiceDecoratorDescriptorNode<TService>.For<TDecorator>(descriptors);
         return new(descriptor);
     }
 
-    internal ServiceDecoratorDescriptor<TService> BuildDescriptorChain()
+    internal ServiceDecoratorDescriptorNode<TService> BuildDescriptorChain()
     {
         if (descriptors is null)
             AtLeastOneDescriptorRequiredException(typeof(TService));
 
-        ServiceDecoratorDescriptor<TService> descriptorChain = null!;
+        ServiceDecoratorDescriptorNode<TService> descriptorChain = null!;
         var descriptor = descriptors;
         while (descriptor is not null)
         {
