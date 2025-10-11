@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using TabAmp.Shared.Decorator;
 using TabAmp.Shared.Decorator.Fluent;
 using TabAmp.Shared.Decorator.Fluent.Descriptor;
@@ -109,15 +110,6 @@ public static class ServiceCollectionDecoratorExtensions
 
 
 
-
-
-
-
-
-
-
-
-
     public static TryAddDecoratedServiceFluentBuilder<TService, TImplementation> TryAddDecorated<TService, TImplementation>(
         this IServiceCollection serviceCollection)
         where TService : class
@@ -126,6 +118,37 @@ public static class ServiceCollectionDecoratorExtensions
         ArgumentNullException.ThrowIfNull(serviceCollection);
         return new TryAddDecoratedServiceFluentBuilder<TService, TImplementation>(serviceCollection);
     }
+    public static void TryAddDecoratedTransient<TService, TImplementation>(
+        this IServiceCollection serviceCollection,
+        ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
+        where TService : class
+        where TImplementation : class, TService
+    {
+        var descriptorChain = GetDescriptorChain(configureDescriptorChain);
+        serviceCollection.TryAddTransient(serviceProvider =>
+            DecoratedServiceActivator.CreateService<TService, TImplementation>(serviceProvider, descriptorChain));
+    }
+    public static void TryAddDecoratedScoped<TService, TImplementation>(
+        this IServiceCollection serviceCollection,
+        ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
+        where TService : class
+        where TImplementation : class, TService
+    {
+        var descriptorChain = GetDescriptorChain(configureDescriptorChain);
+        serviceCollection.TryAddScoped(serviceProvider =>
+            DecoratedServiceActivator.CreateService<TService, TImplementation>(serviceProvider, descriptorChain));
+    }
+    public static void TryAddDecoratedSingleton<TService, TImplementation>(
+        this IServiceCollection serviceCollection,
+        ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
+        where TService : class
+        where TImplementation : class, TService
+    {
+        var descriptorChain = GetDescriptorChain(configureDescriptorChain);
+        serviceCollection.TryAddSingleton(serviceProvider =>
+            DecoratedServiceActivator.CreateService<TService, TImplementation>(serviceProvider, descriptorChain));
+    }
+
 
     public static TryAddKeyedDecoratedServiceFluentBuilder<TService, TImplementation> TryAddKeyedDecorated<TService, TImplementation>(
         this IServiceCollection serviceCollection,

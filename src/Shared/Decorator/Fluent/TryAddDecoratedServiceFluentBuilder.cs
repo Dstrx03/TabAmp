@@ -9,21 +9,21 @@ public sealed class TryAddDecoratedServiceFluentBuilder<TService, TImplementatio
     where TService : class
     where TImplementation : class, TService
 {
-    internal override IServiceCollection Transient(ServiceDecoratorDescriptor<TService> descriptorChain)
+    internal override IServiceCollection (ServiceDecoratorDescriptor<TService> descriptorChain)
     {
-        serviceCollection.TryAddTransient(serviceProvider => ComposeDecoratedService(serviceProvider, descriptorChain));
+        
         return serviceCollection;
     }
 
-    internal override IServiceCollection Scoped(ServiceDecoratorDescriptor<TService> descriptorChain)
+    internal override IServiceCollection (ServiceDecoratorDescriptor<TService> descriptorChain)
     {
-        serviceCollection.TryAddScoped(serviceProvider => ComposeDecoratedService(serviceProvider, descriptorChain));
+        
         return serviceCollection;
     }
 
-    internal override IServiceCollection Singleton(ServiceDecoratorDescriptor<TService> descriptorChain)
+    internal override IServiceCollection (ServiceDecoratorDescriptor<TService> descriptorChain)
     {
-        serviceCollection.TryAddSingleton(serviceProvider => ComposeDecoratedService(serviceProvider, descriptorChain));
+        
         return serviceCollection;
     }
 }
