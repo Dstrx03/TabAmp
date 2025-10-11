@@ -33,6 +33,7 @@ public static class ServiceCollectionDecoratorExtensions
         where TService : class
         where TImplementation : class, TService
     {
+        ArgumentNullException.ThrowIfNull(todo);
         var builder = new ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation>();
         var descriptorChain = todo(builder).BuildDescriptorChain();
         return descriptorChain;

@@ -12,6 +12,7 @@ internal static class DecoratedServiceActivator
         where TService : class
         where TImplementation : class, TService
     {
+        ArgumentNullException.ThrowIfNull(serviceProvider);
         ArgumentNullException.ThrowIfNull(descriptorChain);
 
         TService service = ActivatorUtilities.CreateInstance<TImplementation>(serviceProvider);
