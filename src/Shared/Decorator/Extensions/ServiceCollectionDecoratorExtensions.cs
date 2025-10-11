@@ -18,28 +18,28 @@ public static class ServiceCollectionDecoratorExtensions
 
     public static IServiceCollection AddDecorated<TService, TImplementation>(
         this IServiceCollection serviceCollection,
-        BuilderDelegate<TService, TImplementation> todo)
+        ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
         where TService : class
         where TImplementation : class, TService
     {
-        var descriptorChain = GetDescriptorChain(todo);
+        var descriptorChain = GetDescriptorChain(configureDescriptorChain);
         serviceCollection.AddTransient(serviceProvider =>
             DecoratedServiceActivator.CreateService<TService, TImplementation>(serviceProvider, descriptorChain));
         return serviceCollection;
     }
 
     private static ServiceDecoratorDescriptor<TService> GetDescriptorChain<TService, TImplementation>(
-        BuilderDelegate<TService, TImplementation> todo)
+        ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
         where TService : class
         where TImplementation : class, TService
     {
-        ArgumentNullException.ThrowIfNull(todo);
+        ArgumentNullException.ThrowIfNull(configureDescriptorChain);
         var builder = new ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation>();
-        var descriptorChain = todo(builder).BuildDescriptorChain();
+        var descriptorChain = configureDescriptorChain(builder).BuildDescriptorChain();
         return descriptorChain;
     }
 
-    public delegate ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> BuilderDelegate<TService, TImplementation>(ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder) where TService : class where TImplementation : class, TService;
+    public delegate ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> ConfigureDescriptorChain<TService, TImplementation>(ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder) where TService : class where TImplementation : class, TService;
 
 
 
