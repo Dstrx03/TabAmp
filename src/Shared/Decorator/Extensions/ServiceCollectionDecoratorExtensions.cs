@@ -159,6 +159,39 @@ public static class ServiceCollectionDecoratorExtensions
         ArgumentNullException.ThrowIfNull(serviceCollection);
         return new TryAddKeyedDecoratedServiceFluentBuilder<TService, TImplementation>(serviceCollection, serviceKey);
     }
+    public static void TryAddKeyedDecoratedTransient<TService, TImplementation>(
+        this IServiceCollection serviceCollection,
+        object? serviceKey,
+        ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
+        where TService : class
+        where TImplementation : class, TService
+    {
+        var descriptorChain = GetDescriptorChain(configureDescriptorChain);
+        serviceCollection.TryAddKeyedTransient(serviceKey, (serviceProvider, _) =>
+            DecoratedServiceActivator.CreateService<TService, TImplementation>(serviceProvider, descriptorChain));
+    }
+    public static void TryAddKeyedDecoratedScoped<TService, TImplementation>(
+        this IServiceCollection serviceCollection,
+        object? serviceKey,
+        ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
+        where TService : class
+        where TImplementation : class, TService
+    {
+        var descriptorChain = GetDescriptorChain(configureDescriptorChain);
+        serviceCollection.TryAddKeyedScoped(serviceKey, (serviceProvider, _) =>
+            DecoratedServiceActivator.CreateService<TService, TImplementation>(serviceProvider, descriptorChain));
+    }
+    public static void TryAddKeyedDecoratedSingleton<TService, TImplementation>(
+        this IServiceCollection serviceCollection,
+        object? serviceKey,
+        ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
+        where TService : class
+        where TImplementation : class, TService
+    {
+        var descriptorChain = GetDescriptorChain(configureDescriptorChain);
+        serviceCollection.TryAddKeyedSingleton(serviceKey, (serviceProvider, _) =>
+            DecoratedServiceActivator.CreateService<TService, TImplementation>(serviceProvider, descriptorChain));
+    }
 
 
 
