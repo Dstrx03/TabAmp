@@ -15,8 +15,7 @@ public static class ServiceCollectionDecoratorExtensions
         ArgumentNullException.ThrowIfNull(serviceCollection);
         return new AddDecoratedServiceFluentBuilder<TService, TImplementation>(serviceCollection);
     }
-
-    public static IServiceCollection AddDecorated<TService, TImplementation>(
+    public static IServiceCollection AddDecoratedTransient<TService, TImplementation>(
         this IServiceCollection serviceCollection,
         ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
         where TService : class
@@ -28,8 +27,32 @@ public static class ServiceCollectionDecoratorExtensions
 
         return serviceCollection;
     }
+    public static IServiceCollection AddDecoratedScoped<TService, TImplementation>(
+        this IServiceCollection serviceCollection,
+        ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
+        where TService : class
+        where TImplementation : class, TService
+    {
+        var descriptorChain = GetDescriptorChain(configureDescriptorChain);
+        serviceCollection.AddScoped(serviceProvider =>
+            DecoratedServiceActivator.CreateService<TService, TImplementation>(serviceProvider, descriptorChain));
 
-    
+        return serviceCollection;
+    }
+    public static IServiceCollection AddDecoratedSingleton<TService, TImplementation>(
+        this IServiceCollection serviceCollection,
+        ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
+        where TService : class
+        where TImplementation : class, TService
+    {
+        var descriptorChain = GetDescriptorChain(configureDescriptorChain);
+        serviceCollection.AddSingleton(serviceProvider =>
+            DecoratedServiceActivator.CreateService<TService, TImplementation>(serviceProvider, descriptorChain));
+
+        return serviceCollection;
+    }
+
+
 
 
 
@@ -69,8 +92,8 @@ public static class ServiceCollectionDecoratorExtensions
 
 
     public delegate ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> ConfigureDescriptorChain<TService, TImplementation>(
-        ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder) 
-        where TService : class 
+        ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder)
+        where TService : class
         where TImplementation : class, TService;
 
     private static ServiceDecoratorDescriptor<TService> GetDescriptorChain<TService, TImplementation>(
