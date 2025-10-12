@@ -162,7 +162,7 @@ public static class ServiceCollectionDecoratorExtensions
         where TService : class
         where TImplementation : class, TService;
 
-    private static ServiceDecoratorDescriptorNode<TService> GetDescriptorChain<TService, TImplementation>(
+    private static ServiceDecoratorDescriptor<TService> GetDescriptorChain<TService, TImplementation>(
         ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
         where TService : class
         where TImplementation : class, TService
