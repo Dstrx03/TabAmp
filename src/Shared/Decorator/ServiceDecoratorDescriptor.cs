@@ -8,13 +8,13 @@ public abstract record ServiceDecoratorDescriptor<TService>(
     string Name)
     where TService : notnull
 {
-    internal abstract TService DecorateService(TService service, IServiceProvider serviceProvider);
+    internal abstract TService DecorateService(IServiceProvider serviceProvider, TService service);
 
     internal sealed record For<TDecorator>(ServiceDecoratorDescriptor<TService>? Next) :
         ServiceDecoratorDescriptor<TService>(Next, typeof(TDecorator).Name)
         where TDecorator : notnull, TService
     {
-        internal override TService DecorateService(TService service, IServiceProvider serviceProvider) =>
+        internal override TService DecorateService(IServiceProvider serviceProvider, TService service) =>
             serviceProvider.DecorateService<TService, TDecorator>(service);
     }
 }

@@ -18,7 +18,7 @@ internal static class DecoratedServiceActivator
         var descriptor = descriptorChain;
         while (descriptor is not null)
         {
-            service = descriptor.DecorateService(service, serviceProvider);
+            service = descriptor.DecorateService(serviceProvider, service);
             descriptor = descriptor.Next;
         }
 
