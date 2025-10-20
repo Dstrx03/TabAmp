@@ -17,7 +17,7 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
     internal ServiceDecoratorDescriptor<TService> BuildDescriptorChain()
     {
         if (descriptors is null)
-            AtLeastOneDescriptorRequiredException(typeof(TService));
+            throw AtLeastOneDescriptorRequiredException(typeof(TService));
 
         ServiceDecoratorDescriptor<TService> descriptorChain = null!;
         var descriptor = descriptors;
