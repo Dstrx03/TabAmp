@@ -11,7 +11,7 @@ public static class ServiceCollectionDecoratorExtensions
         this IServiceCollection serviceCollection,
         ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
         where TService : class
-        where TImplementation : class, TService
+        where TImplementation : notnull, TService
     {
         var descriptorChain = GetDescriptorChain(configureDescriptorChain);
         serviceCollection.AddTransient(serviceProvider =>
@@ -24,7 +24,7 @@ public static class ServiceCollectionDecoratorExtensions
         this IServiceCollection serviceCollection,
         ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
         where TService : class
-        where TImplementation : class, TService
+        where TImplementation : notnull, TService
     {
         var descriptorChain = GetDescriptorChain(configureDescriptorChain);
         serviceCollection.AddScoped(serviceProvider =>
@@ -37,7 +37,7 @@ public static class ServiceCollectionDecoratorExtensions
         this IServiceCollection serviceCollection,
         ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
         where TService : class
-        where TImplementation : class, TService
+        where TImplementation : notnull, TService
     {
         var descriptorChain = GetDescriptorChain(configureDescriptorChain);
         serviceCollection.AddSingleton(serviceProvider =>
@@ -51,7 +51,7 @@ public static class ServiceCollectionDecoratorExtensions
         object? serviceKey,
         ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
         where TService : class
-        where TImplementation : class, TService
+        where TImplementation : notnull, TService
     {
         var descriptorChain = GetDescriptorChain(configureDescriptorChain);
         serviceCollection.AddKeyedTransient(serviceKey, (serviceProvider, _) =>
@@ -65,7 +65,7 @@ public static class ServiceCollectionDecoratorExtensions
         object? serviceKey,
         ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
         where TService : class
-        where TImplementation : class, TService
+        where TImplementation : notnull, TService
     {
         var descriptorChain = GetDescriptorChain(configureDescriptorChain);
         serviceCollection.AddKeyedScoped(serviceKey, (serviceProvider, _) =>
@@ -79,7 +79,7 @@ public static class ServiceCollectionDecoratorExtensions
         object? serviceKey,
         ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
         where TService : class
-        where TImplementation : class, TService
+        where TImplementation : notnull, TService
     {
         var descriptorChain = GetDescriptorChain(configureDescriptorChain);
         serviceCollection.AddKeyedSingleton(serviceKey, (serviceProvider, _) =>
@@ -92,7 +92,7 @@ public static class ServiceCollectionDecoratorExtensions
         this IServiceCollection serviceCollection,
         ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
         where TService : class
-        where TImplementation : class, TService
+        where TImplementation : notnull, TService
     {
         var descriptorChain = GetDescriptorChain(configureDescriptorChain);
         serviceCollection.TryAddTransient(serviceProvider =>
@@ -103,7 +103,7 @@ public static class ServiceCollectionDecoratorExtensions
         this IServiceCollection serviceCollection,
         ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
         where TService : class
-        where TImplementation : class, TService
+        where TImplementation : notnull, TService
     {
         var descriptorChain = GetDescriptorChain(configureDescriptorChain);
         serviceCollection.TryAddScoped(serviceProvider =>
@@ -114,7 +114,7 @@ public static class ServiceCollectionDecoratorExtensions
         this IServiceCollection serviceCollection,
         ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
         where TService : class
-        where TImplementation : class, TService
+        where TImplementation : notnull, TService
     {
         var descriptorChain = GetDescriptorChain(configureDescriptorChain);
         serviceCollection.TryAddSingleton(serviceProvider =>
@@ -126,7 +126,7 @@ public static class ServiceCollectionDecoratorExtensions
         object? serviceKey,
         ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
         where TService : class
-        where TImplementation : class, TService
+        where TImplementation : notnull, TService
     {
         var descriptorChain = GetDescriptorChain(configureDescriptorChain);
         serviceCollection.TryAddKeyedTransient(serviceKey, (serviceProvider, _) =>
@@ -138,7 +138,7 @@ public static class ServiceCollectionDecoratorExtensions
         object? serviceKey,
         ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
         where TService : class
-        where TImplementation : class, TService
+        where TImplementation : notnull, TService
     {
         var descriptorChain = GetDescriptorChain(configureDescriptorChain);
         serviceCollection.TryAddKeyedScoped(serviceKey, (serviceProvider, _) =>
@@ -150,7 +150,7 @@ public static class ServiceCollectionDecoratorExtensions
         object? serviceKey,
         ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
         where TService : class
-        where TImplementation : class, TService
+        where TImplementation : notnull, TService
     {
         var descriptorChain = GetDescriptorChain(configureDescriptorChain);
         serviceCollection.TryAddKeyedSingleton(serviceKey, (serviceProvider, _) =>
@@ -159,13 +159,13 @@ public static class ServiceCollectionDecoratorExtensions
 
     public delegate ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> ConfigureDescriptorChain<TService, TImplementation>(
         ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder)
-        where TService : class
-        where TImplementation : class, TService;
+        where TService : notnull
+        where TImplementation : notnull, TService;
 
     private static ServiceDecoratorDescriptor<TService> GetDescriptorChain<TService, TImplementation>(
         ConfigureDescriptorChain<TService, TImplementation> configureDescriptorChain)
-        where TService : class
-        where TImplementation : class, TService
+        where TService : notnull
+        where TImplementation : notnull, TService
     {
         ArgumentNullException.ThrowIfNull(configureDescriptorChain);
 

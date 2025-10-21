@@ -8,8 +8,8 @@ internal static class DecoratedServiceActivator
     internal static TService CreateService<TService, TImplementation>(
         IServiceProvider serviceProvider,
         ServiceDecoratorDescriptor<TService> descriptorChain)
-        where TService : class
-        where TImplementation : class, TService
+        where TService : notnull
+        where TImplementation : notnull, TService
     {
         ArgumentNullException.ThrowIfNull(serviceProvider);
         ArgumentNullException.ThrowIfNull(descriptorChain);
