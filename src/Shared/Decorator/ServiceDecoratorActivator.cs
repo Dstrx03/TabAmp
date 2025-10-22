@@ -6,15 +6,15 @@ namespace TabAmp.Shared.Decorator;
 
 internal static class ServiceDecoratorActivator
 {
-    internal static TService CreateDecorator<TService, TDecorator>(TService service, IServiceProvider serviceProvider)
+    internal static TService CreateDecorator<TService, TDecorator>(IServiceProvider serviceProvider, TService service)
         where TService : notnull
         where TDecorator : notnull, TService
     {
-        ArgumentNullException.ThrowIfNull(service);
         ArgumentNullException.ThrowIfNull(serviceProvider);
+        ArgumentNullException.ThrowIfNull(service);
 
         var constructorInfo = DiscoverDecoratorConstructorInfo<TService, TDecorator>();
-        var parameters = ResolveDecoratorParameters(service, constructorInfo, serviceProvider);
+        var parameters = ResolveDecoratorParameters(serviceProvider, service, constructorInfo);
 
         return (TService)constructorInfo.Invoke(parameters);
     }
@@ -46,9 +46,9 @@ internal static class ServiceDecoratorActivator
     }
 
     private static object[] ResolveDecoratorParameters<TService>(
+        IServiceProvider serviceProvider,
         TService service,
-        ConstructorInfo constructorInfo,
-        IServiceProvider serviceProvider)
+        ConstructorInfo constructorInfo)
     {
         var serviceType = typeof(TService);
 

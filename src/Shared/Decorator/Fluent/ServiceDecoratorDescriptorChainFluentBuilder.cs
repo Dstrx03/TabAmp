@@ -1,28 +1,23 @@
 ﻿using System;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace TabAmp.Shared.Decorator.Fluent.Descriptor;
+namespace TabAmp.Shared.Decorator.Fluent;
 
 public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation>(
-    DecoratedServiceFluentBuilder<TService, TImplementation> decoratedServiceBuilder,
     ServiceDecoratorDescriptor<TService> descriptors)
-    where TService : class
-    where TImplementation : class, TService
+    where TService : notnull
+    where TImplementation : notnull, TService
 {
     public ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> With<TDecorator>()
         where TDecorator : notnull, TService
     {
         var descriptor = new ServiceDecoratorDescriptor<TService>.For<TDecorator>(descriptors);
-        return new(decoratedServiceBuilder, descriptor);
+        return new(descriptor);
     }
 
-    public IServiceCollection Transient() => decoratedServiceBuilder.Transient(BuildDescriptorChain());
-    public IServiceCollection Scoped() => decoratedServiceBuilder.Scoped(BuildDescriptorChain());
-    public IServiceCollection Singleton() => decoratedServiceBuilder.Singleton(BuildDescriptorChain());
-
-    private ServiceDecoratorDescriptor<TService> BuildDescriptorChain()
+    internal ServiceDecoratorDescriptor<TService> BuildDescriptorChain()
     {
-        ArgumentNullException.ThrowIfNull(descriptors);
+        if (descriptors is null)
+            throw AtLeastOneDescriptorRequiredException(typeof(TService));
 
         ServiceDecoratorDescriptor<TService> descriptorChain = null!;
         var descriptor = descriptors;
@@ -34,4 +29,8 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
 
         return descriptorChain;
     }
+
+    private static InvalidOperationException AtLeastOneDescriptorRequiredException(Type serviceType) =>
+        new($"Cannot build decorator descriptor chain for the decorated type '{serviceType.FullName}'. " +
+            "At least one decorator descriptor is required.");
 }
