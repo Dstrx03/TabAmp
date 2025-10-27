@@ -73,8 +73,7 @@ internal static class DependencyInjection
 
         var builder = new ServiceDecoratorDescriptorChainFluentBuilder<TService>();
 
-        if (integrityValidator is not null)
-            builder = integrityValidator.Apply(builder);
+        integrityValidator?.Apply(builder, out builder);
 
         return null;
     }
@@ -105,16 +104,16 @@ internal static class DependencyInjection
     private abstract record IntegrityValidatorDescriptor<TService>
         where TService : notnull
     {
-        public abstract ServiceDecoratorDescriptorChainFluentBuilder<TService> Apply(
-            ServiceDecoratorDescriptorChainFluentBuilder<TService> builder);
+        public abstract void Apply(ServiceDecoratorDescriptorChainFluentBuilder<TService> builder,
+            out ServiceDecoratorDescriptorChainFluentBuilder<TService> builder2);
 
         public sealed record For<TIntegrityValidator> : IntegrityValidatorDescriptor<TService>
             where TIntegrityValidator : notnull, TService
         {
-            public override ServiceDecoratorDescriptorChainFluentBuilder<TService> Apply(
-                ServiceDecoratorDescriptorChainFluentBuilder<TService> builder)
+            public override void Apply(ServiceDecoratorDescriptorChainFluentBuilder<TService> builder,
+                out ServiceDecoratorDescriptorChainFluentBuilder<TService> builder2)
             {
-                return builder.With<TIntegrityValidator>();
+                builder2 = builder.With<TIntegrityValidator>();
             }
         }
     }
