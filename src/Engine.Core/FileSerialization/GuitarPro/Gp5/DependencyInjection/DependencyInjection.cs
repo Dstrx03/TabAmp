@@ -25,13 +25,13 @@ internal static class DependencyInjection
 
         // TODO: AddReader API prototype
 
-        serviceCollection.AddReader<IGp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReader>(new Config<IGp5BinaryPrimitivesReader>
+        serviceCollection.AddReader(new Config<IGp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReader>
         {
             IntegrityValidator = new IntegrityValidatorDescriptor<IGp5BinaryPrimitivesReader>
                 .For<Gp5BinaryPrimitivesReaderIntegrityValidator>()
         });
 
-        serviceCollection.AddReader<IGp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReader>(new Config<IGp5BinaryPrimitivesReader>()
+        serviceCollection.AddReader(Config.For<IGp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReader>()
             .WithIntegrityValidator<Gp5BinaryPrimitivesReaderIntegrityValidator>());
 
         // TODO: AddReader API prototype
@@ -65,7 +65,7 @@ internal static class DependencyInjection
 
     private static IServiceCollection AddReader<TService, TReader>(
         this IServiceCollection serviceCollection,
-        Config<TService> config)
+        Config<TService, TReader> config)
         where TService : class
         where TReader : notnull, TService
     {
@@ -79,12 +79,20 @@ internal static class DependencyInjection
         return null;
     }
 
-    private readonly ref struct Config<TService>
+    private static class Config
+    {
+        public static Config<TService, TReader> For<TService, TReader>()
+            where TService : notnull
+            where TReader : notnull, TService => new();
+    }
+
+    private readonly ref struct Config<TService, TReader>
         where TService : notnull
+        where TReader : notnull, TService
     {
         public readonly IntegrityValidatorDescriptor<TService>? IntegrityValidator { get; init; }
 
-        public Config<TService> WithIntegrityValidator<TIntegrityValidator>()
+        public Config<TService, TReader> WithIntegrityValidator<TIntegrityValidator>()
             where TIntegrityValidator : notnull, TService
         {
             return new()
