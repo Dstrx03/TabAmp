@@ -11,6 +11,7 @@ using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Rse;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Text;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Tracks;
 using TabAmp.Engine.Core.Score;
+using TabAmp.Shared.Decorator.Fluent;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.DependencyInjection;
 
@@ -18,9 +19,24 @@ internal static class DependencyInjection
 {
     public static IServiceCollection AddGp5(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddScoped<IFileDeserializer<Gp5Score>, Gp5FileDeserializer>()
-            .AddGp5Reader<IGp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReaderIntegrityValidator>()
-            .AddScoped<Gp5TextReader>()
+        serviceCollection.AddScoped<IFileDeserializer<Gp5Score>, Gp5FileDeserializer>();
+
+        serviceCollection.AddGp5Reader<IGp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReaderIntegrityValidator>();
+
+        // TODO: AddReader API prototype
+
+        serviceCollection.AddReader<IGp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReader>(new Config<IGp5BinaryPrimitivesReader>
+        {
+            IntegrityValidator = new IntegrityValidatorDescriptor<IGp5BinaryPrimitivesReader>
+                .For<Gp5BinaryPrimitivesReaderIntegrityValidator>()
+        });
+
+        serviceCollection.AddReader<IGp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReader>(new Config<IGp5BinaryPrimitivesReader>()
+            .WithIntegrityValidator<Gp5BinaryPrimitivesReaderIntegrityValidator>());
+
+        // TODO: AddReader API prototype
+
+        serviceCollection.AddScoped<Gp5TextReader>()
             .AddScoped<IGp5TextReader>(x => new Gp5TextReaderIntegrityValidator(x.GetRequiredService<Gp5TextReader>()))
             .AddScoped<Gp5DocumentComponentsReader>()
             .AddScoped<IGp5DocumentComponentsReader>(x => new Gp5DocumentComponentsReaderIntegrityValidator(x.GetRequiredService<Gp5DocumentComponentsReader>()))
@@ -45,5 +61,53 @@ internal static class DependencyInjection
         where TIntegrityValidator : notnull, TService
     {
         return serviceCollection.AddDecoratedScoped<TService, TReader>(builder => builder.With<TIntegrityValidator>());
+    }
+
+    private static IServiceCollection AddReader<TService, TReader>(
+        this IServiceCollection serviceCollection,
+        Config<TService> config)
+        where TService : class
+        where TReader : notnull, TService
+    {
+        var integrityValidator = config.IntegrityValidator;
+
+        var builder = new ServiceDecoratorDescriptorChainFluentBuilder<TService>();
+
+        if (integrityValidator is not null)
+            builder = integrityValidator.Apply(builder);
+
+        return null;
+    }
+
+    private readonly ref struct Config<TService>
+        where TService : notnull
+    {
+        public readonly IntegrityValidatorDescriptor<TService>? IntegrityValidator { get; init; }
+
+        public Config<TService> WithIntegrityValidator<TIntegrityValidator>()
+            where TIntegrityValidator : notnull, TService
+        {
+            return new()
+            {
+                IntegrityValidator = new IntegrityValidatorDescriptor<TService>.For<TIntegrityValidator>()
+            };
+        }
+    }
+
+    private abstract record IntegrityValidatorDescriptor<TService>
+        where TService : notnull
+    {
+        public abstract ServiceDecoratorDescriptorChainFluentBuilder<TService> Apply(
+            ServiceDecoratorDescriptorChainFluentBuilder<TService> builder);
+
+        public sealed record For<TIntegrityValidator> : IntegrityValidatorDescriptor<TService>
+            where TIntegrityValidator : notnull, TService
+        {
+            public override ServiceDecoratorDescriptorChainFluentBuilder<TService> Apply(
+                ServiceDecoratorDescriptorChainFluentBuilder<TService> builder)
+            {
+                return builder.With<TIntegrityValidator>();
+            }
+        }
     }
 }
