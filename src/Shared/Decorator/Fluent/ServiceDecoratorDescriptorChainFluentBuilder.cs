@@ -7,6 +7,11 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
     bool isNormalized)
     where TService : notnull
 {
+    public ServiceDecoratorDescriptorChainFluentBuilder(bool isNormalized)
+        : this(null!, isNormalized)
+    {
+    }
+
     internal bool IsEmpty => descriptors is null;
     internal bool IsSingle => !IsEmpty && descriptors.Next is null;
     internal bool IsNormalized => isNormalized;
