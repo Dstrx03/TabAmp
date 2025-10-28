@@ -28,7 +28,10 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
         if (IsEmpty)
             throw AtLeastOneDescriptorRequiredException(typeof(TService));
 
-        return IsNormalized || IsSingle ? descriptors : NormalizeDescriptorChain();
+        if (IsNormalized || IsSingle)
+            return descriptors;
+
+        return NormalizeDescriptorChain();
     }
 
     private ServiceDecoratorDescriptor<TService> NormalizeDescriptorChain()
