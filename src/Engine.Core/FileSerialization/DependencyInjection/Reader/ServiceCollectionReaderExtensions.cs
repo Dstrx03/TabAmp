@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Decorator;
 using TabAmp.Shared.Decorator.Fluent;
 
 namespace TabAmp.Engine.Core.FileSerialization.DependencyInjection.Reader;
@@ -16,6 +17,6 @@ public static class ServiceCollectionReaderExtensions
         var integrityValidator = options.IntegrityValidator;
         integrityValidator?.AppendToDescriptorChain(builder, out builder);
 
-        return null;
+        return serviceCollection.AddDecoratedScoped<TService, TReader>(builder);
     }
 }
