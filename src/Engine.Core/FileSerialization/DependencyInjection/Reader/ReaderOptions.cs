@@ -11,14 +11,14 @@ public readonly ref struct ReaderOptions<TService, TReader>
     where TService : notnull
     where TReader : notnull, TService
 {
-    public readonly IntegrityValidatorDescriptor<TService>? IntegrityValidator { get; init; }
+    public readonly IntegrityValidatorDescriptor<TService, TReader>? IntegrityValidator { get; init; }
 
     public ReaderOptions<TService, TReader> WithIntegrityValidator<TIntegrityValidator>()
         where TIntegrityValidator : notnull, TService
     {
         return new()
         {
-            IntegrityValidator = new IntegrityValidatorDescriptor<TService>.For<TIntegrityValidator>()
+            IntegrityValidator = new IntegrityValidatorDescriptor<TService, TReader>.For<TIntegrityValidator>()
         };
     }
 }

@@ -27,7 +27,7 @@ internal static class DependencyInjection
 
         serviceCollection.AddReader(new ReaderOptions<IGp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReader>
         {
-            IntegrityValidator = new IntegrityValidatorDescriptor<IGp5BinaryPrimitivesReader>
+            IntegrityValidator = new IntegrityValidatorDescriptor<IGp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReader>
                 .For<Gp5BinaryPrimitivesReaderIntegrityValidator>()
         });
 

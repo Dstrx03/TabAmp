@@ -2,10 +2,11 @@
 
 namespace TabAmp.Shared.Decorator.Fluent;
 
-public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService>(
+public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation>(
     ServiceDecoratorDescriptor<TService> descriptors,
     bool isNormalized)
     where TService : notnull
+    where TImplementation : notnull, TService
 {
     public ServiceDecoratorDescriptorChainFluentBuilder(bool isNormalized)
         : this(null!, isNormalized)
@@ -16,7 +17,7 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
     internal bool IsSingle => !IsEmpty && descriptors.Next is null;
     internal bool IsNormalized => isNormalized;
 
-    public ServiceDecoratorDescriptorChainFluentBuilder<TService> With<TDecorator>()
+    public ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> With<TDecorator>()
         where TDecorator : notnull, TService
     {
         var descriptor = new ServiceDecoratorDescriptor<TService>.For<TDecorator>(descriptors);

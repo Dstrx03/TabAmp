@@ -13,7 +13,7 @@ public static class ServiceCollectionReaderExtensions
         where TService : class
         where TReader : notnull, TService
     {
-        var builder = new ServiceDecoratorDescriptorChainFluentBuilder<TService>(isNormalized: true);
+        var builder = new ServiceDecoratorDescriptorChainFluentBuilder<TService, TReader>(isNormalized: true);
         options.IntegrityValidator?.AppendTo(builder, out builder);
 
         if (builder.IsEmpty())
