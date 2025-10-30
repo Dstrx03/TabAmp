@@ -60,6 +60,9 @@ internal static class DependencyInjection
         where TReader : notnull, TService
         where TIntegrityValidator : notnull, TService
     {
-        return serviceCollection.AddDecoratedScoped<TService, TReader>(builder => builder.With<TIntegrityValidator>());
+        serviceCollection.AddDecoratedScoped(DescriptorChain.For<TService, TReader>().With<TIntegrityValidator>());
+        serviceCollection.AddDecoratedScoped<TService, TReader>(builder => builder.With<TIntegrityValidator>());
+
+        return serviceCollection;
     }
 }

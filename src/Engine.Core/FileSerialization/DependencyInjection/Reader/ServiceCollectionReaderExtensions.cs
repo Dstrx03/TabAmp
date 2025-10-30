@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Decorator;
-using TabAmp.Shared.Decorator.Fluent;
 using TabAmp.Shared.Decorator.Fluent.Extensions;
 
 namespace TabAmp.Engine.Core.FileSerialization.DependencyInjection.Reader;
@@ -13,7 +12,7 @@ public static class ServiceCollectionReaderExtensions
         where TService : class
         where TReader : notnull, TService
     {
-        var builder = new ServiceDecoratorDescriptorChainFluentBuilder<TService, TReader>(isNormalized: true);
+        var builder = NormalizedDescriptorChain.For<TService, TReader>();
         options.IntegrityValidator?.AppendTo(builder, out builder);
 
         if (builder.IsEmpty())

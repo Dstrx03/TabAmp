@@ -295,7 +295,6 @@ public static class ServiceCollectionDecoratorExtensions
     {
         ArgumentNullException.ThrowIfNull(configureDescriptorChain);
 
-        var builder = new ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation>();
-        return configureDescriptorChain(builder);
+        return configureDescriptorChain(DescriptorChain.For<TService, TImplementation>());
     }
 }
