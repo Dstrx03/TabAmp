@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection.Decorator;
 
 namespace TabAmp.Shared.Decorator.DescriptorChain;
 
-public abstract record ServiceDecoratorDescriptor<TService>(
+internal abstract record ServiceDecoratorDescriptor<TService>(
     ServiceDecoratorDescriptor<TService>? Next,
     string Name)
     where TService : notnull

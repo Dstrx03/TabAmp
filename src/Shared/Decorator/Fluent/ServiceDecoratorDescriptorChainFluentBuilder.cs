@@ -3,26 +3,35 @@ using TabAmp.Shared.Decorator.DescriptorChain;
 
 namespace TabAmp.Shared.Decorator.Fluent;
 
-public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation>(
-    ServiceDecoratorDescriptor<TService> descriptors,
-    bool isNormalized)
+public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation>
     where TService : notnull
     where TImplementation : notnull, TService
 {
-    public ServiceDecoratorDescriptorChainFluentBuilder(bool isNormalized)
+    private readonly ServiceDecoratorDescriptor<TService> _descriptors;
+
+    internal ServiceDecoratorDescriptorChainFluentBuilder(
+        ServiceDecoratorDescriptor<TService> descriptors,
+        bool isNormalized)
+    {
+        _descriptors = descriptors;
+        IsNormalized = isNormalized;
+    }
+
+    internal ServiceDecoratorDescriptorChainFluentBuilder(bool isNormalized)
         : this(null!, isNormalized)
     {
     }
 
-    internal bool IsEmpty => descriptors is null;
-    internal bool IsSingle => !IsEmpty && descriptors.Next is null;
-    internal bool IsNormalized => isNormalized;
+    internal readonly bool IsNormalized { get; }
+
+    internal bool IsEmpty => _descriptors is null;
+    internal bool IsSingle => !IsEmpty && _descriptors.Next is null;
 
     public ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> With<TDecorator>()
         where TDecorator : notnull, TService
     {
-        var descriptor = new ServiceDecoratorDescriptor<TService>.For<TDecorator>(descriptors);
-        return new(descriptor, isNormalized);
+        var descriptor = new ServiceDecoratorDescriptor<TService>.For<TDecorator>(_descriptors);
+        return new(descriptor, IsNormalized);
     }
 
     internal ServiceDecoratorDescriptor<TService> BuildDescriptorChain()
@@ -31,7 +40,7 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
             throw AtLeastOneDescriptorRequiredException(typeof(TService));
 
         if (IsNormalized || IsSingle)
-            return descriptors;
+            return _descriptors;
 
         return NormalizeDescriptorChain();
     }
@@ -39,7 +48,7 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
     private ServiceDecoratorDescriptor<TService> NormalizeDescriptorChain()
     {
         ServiceDecoratorDescriptor<TService> descriptorChain = null!;
-        var descriptor = descriptors;
+        var descriptor = _descriptors;
         while (descriptor is not null)
         {
             descriptorChain = descriptor with { Next = descriptorChain };
