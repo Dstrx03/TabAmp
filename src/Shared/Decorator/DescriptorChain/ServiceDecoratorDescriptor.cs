@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection.Decorator;
 
-namespace TabAmp.Shared.Decorator;
+namespace TabAmp.Shared.Decorator.DescriptorChain;
 
 public abstract record ServiceDecoratorDescriptor<TService>(
     ServiceDecoratorDescriptor<TService>? Next,

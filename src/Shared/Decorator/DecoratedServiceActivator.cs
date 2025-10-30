@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
+using TabAmp.Shared.Decorator.DescriptorChain;
 
 namespace TabAmp.Shared.Decorator;
 
