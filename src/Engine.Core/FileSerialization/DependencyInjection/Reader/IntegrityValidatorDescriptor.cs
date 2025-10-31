@@ -2,20 +2,17 @@
 
 namespace TabAmp.Engine.Core.FileSerialization.DependencyInjection.Reader;
 
-public abstract record IntegrityValidatorDescriptor<TService, TReader>
+internal abstract record IntegrityValidatorDescriptor<TService, TReader> : ReaderDecoratorDescriptor<TService, TReader>
     where TService : notnull
     where TReader : notnull, TService
 {
-    public abstract void AppendTo(ServiceDecoratorDescriptorChainFluentBuilder<TService, TReader> builder,
-        out ServiceDecoratorDescriptorChainFluentBuilder<TService, TReader> nextBuilder);
-
-    internal sealed record For<TIntegrityValidator> : IntegrityValidatorDescriptor<TService, TReader>
+    public sealed record For<TIntegrityValidator> : IntegrityValidatorDescriptor<TService, TReader>
         where TIntegrityValidator : notnull, TService
     {
-        public override void AppendTo(ServiceDecoratorDescriptorChainFluentBuilder<TService, TReader> builder,
-            out ServiceDecoratorDescriptorChainFluentBuilder<TService, TReader> nextBuilder)
+        public override ServiceDecoratorDescriptorChainFluentBuilder<TService, TReader> AppendTo(
+            ServiceDecoratorDescriptorChainFluentBuilder<TService, TReader> builder)
         {
-            nextBuilder = builder.With<TIntegrityValidator>();
+            return builder.With<TIntegrityValidator>();
         }
     }
 }
