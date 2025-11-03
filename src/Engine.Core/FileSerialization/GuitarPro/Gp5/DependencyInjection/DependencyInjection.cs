@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Decorator;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.Processor;
-using TabAmp.Engine.Core.FileSerialization.DependencyInjection.Reader;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.BinaryPrimitives;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.DocumentComponents;
@@ -49,7 +48,7 @@ internal static class DependencyInjection
         serviceCollection.AddDecoratedScoped<TService, TReader>(builder => builder.With<TIntegrityValidator>());
 
         // *** TODO: AddReader API prototype ***
-
+        /*
         serviceCollection.AddReader(new ReaderOptions<IGp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReader>
         {
             IntegrityValidator = new IntegrityValidatorDescriptor<IGp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReader>
@@ -58,7 +57,7 @@ internal static class DependencyInjection
 
         serviceCollection.AddReader(ReaderOptions.For<IGp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReader>()
             .WithIntegrityValidator<Gp5BinaryPrimitivesReaderIntegrityValidator>());
-
+        */
         // *** TODO: AddReader API prototype *** 
 
         return serviceCollection;

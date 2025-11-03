@@ -1,4 +1,4 @@
-﻿using TabAmp.Shared.Decorator.Fluent;
+﻿/*using TabAmp.Shared.Decorator.Fluent;
 
 namespace TabAmp.Engine.Core.FileSerialization.DependencyInjection.Reader;
 
@@ -9,3 +9,4 @@ internal abstract record ReaderDecoratorDescriptor<TService, TReader>
     public abstract ServiceDecoratorDescriptorChainFluentBuilder<TService, TReader> AppendTo(
         ServiceDecoratorDescriptorChainFluentBuilder<TService, TReader> builder);
 }
+*/

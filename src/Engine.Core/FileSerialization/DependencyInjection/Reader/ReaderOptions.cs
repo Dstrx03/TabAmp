@@ -1,4 +1,4 @@
-﻿namespace TabAmp.Engine.Core.FileSerialization.DependencyInjection.Reader;
+﻿/*namespace TabAmp.Engine.Core.FileSerialization.DependencyInjection.Reader;
 
 internal static class ReaderOptions
 {
@@ -22,3 +22,4 @@ internal readonly ref struct ReaderOptions<TService, TReader>
         };
     }
 }
+*/
