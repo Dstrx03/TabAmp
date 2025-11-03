@@ -19,24 +19,9 @@ internal static class DependencyInjection
 {
     public static IServiceCollection AddGp5(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddScoped<IFileDeserializer<Gp5Score>, Gp5FileDeserializer>();
-
-        serviceCollection.AddGp5Reader<IGp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReaderIntegrityValidator>();
-
-        // TODO: AddReader API prototype
-
-        serviceCollection.AddReader(new ReaderOptions<IGp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReader>
-        {
-            IntegrityValidator = new IntegrityValidatorDescriptor<IGp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReader>
-                .For<Gp5BinaryPrimitivesReaderIntegrityValidator>()
-        });
-
-        serviceCollection.AddReader(ReaderOptions.For<IGp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReader>()
-            .WithIntegrityValidator<Gp5BinaryPrimitivesReaderIntegrityValidator>());
-
-        // TODO: AddReader API prototype
-
-        serviceCollection.AddScoped<Gp5TextReader>()
+        serviceCollection.AddScoped<IFileDeserializer<Gp5Score>, Gp5FileDeserializer>()
+            .AddGp5Reader<IGp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReaderIntegrityValidator>()
+            .AddScoped<Gp5TextReader>()
             .AddScoped<IGp5TextReader>(x => new Gp5TextReaderIntegrityValidator(x.GetRequiredService<Gp5TextReader>()))
             .AddScoped<Gp5DocumentComponentsReader>()
             .AddScoped<IGp5DocumentComponentsReader>(x => new Gp5DocumentComponentsReaderIntegrityValidator(x.GetRequiredService<Gp5DocumentComponentsReader>()))
@@ -62,6 +47,19 @@ internal static class DependencyInjection
     {
         serviceCollection.AddDecoratedScoped(DescriptorChain.For<TService, TReader>().With<TIntegrityValidator>());
         serviceCollection.AddDecoratedScoped<TService, TReader>(builder => builder.With<TIntegrityValidator>());
+
+        // *** TODO: AddReader API prototype ***
+
+        serviceCollection.AddReader(new ReaderOptions<IGp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReader>
+        {
+            IntegrityValidator = new IntegrityValidatorDescriptor<IGp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReader>
+                .For<Gp5BinaryPrimitivesReaderIntegrityValidator>()
+        });
+
+        serviceCollection.AddReader(ReaderOptions.For<IGp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReader>()
+            .WithIntegrityValidator<Gp5BinaryPrimitivesReaderIntegrityValidator>());
+
+        // *** TODO: AddReader API prototype *** 
 
         return serviceCollection;
     }
