@@ -3,18 +3,24 @@ using Microsoft.Extensions.DependencyInjection.Decorator;
 
 namespace TabAmp.Shared.Decorator.DescriptorChain;
 
-public abstract record ServiceDecoratorDescriptor<TService>(
-    ServiceDecoratorDescriptor<TService>? Next,
-    string Name)
+public abstract class ServiceDecoratorDescriptor<TService>(ServiceDecoratorDescriptor<TService>? next)
     where TService : notnull
 {
+    internal ServiceDecoratorDescriptor<TService>? Next { get; set; } = next;
+
     internal abstract TService DecorateService(IServiceProvider serviceProvider, TService service);
 
-    internal sealed record For<TDecorator>(ServiceDecoratorDescriptor<TService>? Next) :
-        ServiceDecoratorDescriptor<TService>(Next, typeof(TDecorator).Name)
+    protected TService DecorateService<TDecorator>(IServiceProvider serviceProvider, TService service)
+        where TDecorator : notnull, TService
+    {
+        return serviceProvider.DecorateService<TService, TDecorator>(service);
+    }
+
+    internal sealed class For<TDecorator>(ServiceDecoratorDescriptor<TService>? next) :
+        ServiceDecoratorDescriptor<TService>(next)
         where TDecorator : notnull, TService
     {
         internal override TService DecorateService(IServiceProvider serviceProvider, TService service) =>
-            serviceProvider.DecorateService<TService, TDecorator>(service);
+            DecorateService<TDecorator>(serviceProvider, service);
     }
 }
