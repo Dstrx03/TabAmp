@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Microsoft.Extensions.DependencyInjection.Decorator;
 
 namespace TabAmp.Shared.Decorator.DescriptorChain;
@@ -16,6 +17,7 @@ public abstract class ServiceDecoratorDescriptor<TService>(ServiceDecoratorDescr
         return serviceProvider.DecorateService<TService, TDecorator>(service);
     }
 
+    [DebuggerDisplay("TDecorator = {typeof(TDecorator).Name}")]
     internal sealed class For<TDecorator>(ServiceDecoratorDescriptor<TService>? next) :
         ServiceDecoratorDescriptor<TService>(next)
         where TDecorator : notnull, TService

@@ -17,6 +17,16 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
         return new(descriptor);
     }
 
+    public ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> With(
+        ServiceDecoratorDescriptor<TService>? descriptor)
+    {
+        if (descriptor is null)
+            return this;
+
+        descriptor.Next = descriptors;
+        return new(descriptor);
+    }
+
     internal ServiceDecoratorDescriptor<TService> BuildDescriptorChain()
     {
         if (IsEmpty)
@@ -26,8 +36,10 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
         var descriptor = descriptors;
         while (descriptor is not null)
         {
-            descriptorChain = descriptor with { Next = descriptorChain };
-            descriptor = descriptor.Next;
+            var next = descriptor.Next;
+            descriptor.Next = descriptorChain;
+            descriptorChain = descriptor;
+            descriptor = next;
         }
 
         return descriptorChain;
