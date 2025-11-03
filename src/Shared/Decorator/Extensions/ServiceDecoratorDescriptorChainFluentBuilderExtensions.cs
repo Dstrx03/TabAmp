@@ -2,18 +2,8 @@
 
 public static class ServiceDecoratorDescriptorChainFluentBuilderExtensions
 {
-    public static bool IsNormalized<TService, TImplementation>(
-        this ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder)
-        where TService : notnull
-        where TImplementation : notnull, TService => builder.IsNormalized;
-
     public static bool IsEmpty<TService, TImplementation>(
         this ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder)
         where TService : notnull
         where TImplementation : notnull, TService => builder.IsEmpty;
-
-    public static bool IsSingle<TService, TImplementation>(
-        this ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder)
-        where TService : notnull
-        where TImplementation : notnull, TService => builder.IsSingle;
 }
