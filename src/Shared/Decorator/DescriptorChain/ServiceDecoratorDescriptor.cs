@@ -12,7 +12,7 @@ public abstract class ServiceDecoratorDescriptor<TService>
 
     internal ServiceDecoratorDescriptor<TService> AppendTo(ServiceDecoratorDescriptor<TService> descriptor)
     {
-        if (Position is not null)
+        if (Position is not null)//TODO: check descriptor.Position is not null
             throw new Exception($"TODO {nameof(AppendTo)} {nameof(Position)}:{Position}");
 
         Position = descriptor?.Position + 1 ?? 0;
@@ -21,10 +21,10 @@ public abstract class ServiceDecoratorDescriptor<TService>
         return this;
     }
 
-    internal void TODO_METHOD_NAME(ServiceDecoratorDescriptor<TService> todo2)
+    internal void ChainTo(ServiceDecoratorDescriptor<TService> todo2)
     {
         if (Position is null)
-            throw new Exception($"TODO {nameof(TODO_METHOD_NAME)} {nameof(Position)}:{Position}");
+            throw new Exception($"TODO {nameof(ChainTo)} {nameof(Position)}:{Position}");
 
         Next = todo2;
     }

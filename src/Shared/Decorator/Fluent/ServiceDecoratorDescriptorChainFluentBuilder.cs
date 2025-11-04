@@ -9,6 +9,7 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
     where TImplementation : notnull, TService
 {
     internal bool IsEmpty => descriptors is null;
+    internal int Count => descriptors?.Position + 1 ?? 0;
 
     public ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> With<TDecorator>()
         where TDecorator : notnull, TService
@@ -36,7 +37,7 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
         while (descriptor is not null)
         {
             var next = descriptor.Next;
-            descriptor.TODO_METHOD_NAME(descriptorChain);//descriptor.Next = descriptorChain;
+            descriptor.ChainTo(descriptorChain);//descriptor.Next = descriptorChain;
             descriptorChain = descriptor;
             descriptor = next;
         }
