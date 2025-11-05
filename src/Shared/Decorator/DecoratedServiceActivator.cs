@@ -8,7 +8,7 @@ internal static class DecoratedServiceActivator
 {
     internal static TService CreateService<TService, TImplementation>(
         IServiceProvider serviceProvider,
-        ServiceDecoratorDescriptor<TService> descriptorChain)
+        ServiceDecoratorDescriptorChain<TService> descriptorChain)
         where TService : notnull
         where TImplementation : notnull, TService
     {

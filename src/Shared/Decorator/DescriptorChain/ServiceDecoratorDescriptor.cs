@@ -1,47 +1,44 @@
-﻿using System;
-using System.Diagnostics;
-using Microsoft.Extensions.DependencyInjection.Decorator;
-
-namespace TabAmp.Shared.Decorator.DescriptorChain;
+﻿namespace TabAmp.Shared.Decorator.DescriptorChain;
 
 public abstract class ServiceDecoratorDescriptor<TService>
     where TService : notnull
 {
+    /*
     internal int? Position { get; private set; }
-    internal ServiceDecoratorDescriptor<TService>? Next { get; private set; }
+    
 
-    internal ServiceDecoratorDescriptor<TService> AppendTo(ServiceDecoratorDescriptor<TService> descriptor)
+    internal ServiceDecoratorDescriptor<TService> AppendTo(ServiceDecoratorDescriptor<TService>? descriptor)
     {
-        if (Position is not null)//TODO: check descriptor.Position is not null
-            throw new Exception($"TODO {nameof(AppendTo)} {nameof(Position)}:{Position}");
+        if (Position is not null)//TODO: check descriptor.Position is not null, check Position value overflow
+            throw TODO_NAME();
 
-        Position = descriptor?.Position + 1 ?? 0;
+        Position = descriptor?.Position + 1 ?? 1;//TODO: zero based is more idiomatic?
         Next = descriptor;
 
         return this;
     }
 
-    internal void ChainTo(ServiceDecoratorDescriptor<TService> todo2)
+    internal ServiceDecoratorDescriptor<TService>? ChainTo(ServiceDecoratorDescriptor<TService>? descriptorChain)
     {
-        if (Position is null)
-            throw new Exception($"TODO {nameof(ChainTo)} {nameof(Position)}:{Position}");
+        var next = Next;
+        Next = descriptorChain;
 
-        Next = todo2;
+        return next;
     }
 
-    internal abstract TService DecorateService(IServiceProvider serviceProvider, TService service);
+    
 
-    protected TService DecorateService<TDecorator>(IServiceProvider serviceProvider, TService service)
-        where TDecorator : notnull, TService
-    {
-        return serviceProvider.DecorateService<TService, TDecorator>(service);
-    }
+    
 
+    private static InvalidOperationException TODO_NAME() => 
+        new($"");
+
+    private static InvalidOperationException ContextAlreadyExistsException(FileSerializationContext context) =>
+        new($"Cannot create the context: {nameof(FileSerializationContext)} already exists in the current scope " +
+            $"with {nameof(FileSerializationContext.FilePath)}: '{context.FilePath}' and cannot be initialized again.");
+
+    //TODO: since base class is more sophisticated, extract to separate file?
     [DebuggerDisplay("TDecorator = {typeof(TDecorator).Name}")]
-    internal sealed class For<TDecorator> : ServiceDecoratorDescriptor<TService>
-        where TDecorator : notnull, TService
-    {
-        internal override TService DecorateService(IServiceProvider serviceProvider, TService service) =>
-            DecorateService<TDecorator>(serviceProvider, service);
-    }
+    
+    */
 }
