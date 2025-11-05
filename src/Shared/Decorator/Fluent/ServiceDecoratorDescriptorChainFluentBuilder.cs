@@ -40,11 +40,8 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
         var descriptor = _descriptors;
         while (descriptor is not null)
         {
-            //TODO: re-implement
-            var next = descriptor.ChainTo(descriptorChain);
-            descriptorChain = descriptor;
-            descriptor = next;
-            //TODO: re-implement
+            descriptorChain = descriptor.ToChain(descriptorChain);
+            descriptor = descriptor.Next;
         }
 
         return descriptorChain;
