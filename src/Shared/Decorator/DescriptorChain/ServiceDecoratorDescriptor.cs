@@ -6,6 +6,10 @@ public abstract class ServiceDecoratorDescriptor<TService>
     internal ServiceDecoratorDescriptor<TService>? Next { get; private set; }
     internal int? Position { get; private set; }
 
+    private ServiceDecoratorDescriptor()
+    {
+    }
+
     internal ServiceDecoratorDescriptor<TService> AppendTo(ServiceDecoratorDescriptor<TService>? descriptor)
     {
         Next = descriptor;
@@ -17,10 +21,10 @@ public abstract class ServiceDecoratorDescriptor<TService>
     internal abstract ServiceDecoratorDescriptorChain<TService> ToChain(
         ServiceDecoratorDescriptorChain<TService> descriptorChain);
 
-    internal sealed class For<TDecorator> : ServiceDecoratorDescriptor<TService>
+    public class For<TDecorator> : ServiceDecoratorDescriptor<TService>
         where TDecorator : notnull, TService
     {
-        internal override ServiceDecoratorDescriptorChain<TService> ToChain(
+        internal sealed override ServiceDecoratorDescriptorChain<TService> ToChain(
             ServiceDecoratorDescriptorChain<TService> descriptorChain)
         {
             return new ServiceDecoratorDescriptorChain<TService>.For<TDecorator>(next: descriptorChain);
