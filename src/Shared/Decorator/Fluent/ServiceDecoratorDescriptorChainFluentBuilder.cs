@@ -34,7 +34,7 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
     internal ServiceDecoratorDescriptorChain<TService> BuildDescriptorChain()
     {
         if (IsEmpty)
-            throw AtLeastOneDescriptorRequiredException(typeof(TService));
+            throw AtLeastOneDescriptorRequiredException();
 
         ServiceDecoratorDescriptorChain<TService> descriptorChain = null!;
         var descriptor = _descriptors;
@@ -47,7 +47,7 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
         return descriptorChain;
     }
 
-    private static InvalidOperationException AtLeastOneDescriptorRequiredException(Type serviceType) =>
-        new($"Cannot build decorator descriptor chain for the decorated type '{serviceType.FullName}'. " +
+    private static InvalidOperationException AtLeastOneDescriptorRequiredException() =>
+        new($"Cannot build decorator descriptor chain for the decorated type '{typeof(TService).FullName}'. " +
             "At least one decorator descriptor is required.");
 }
