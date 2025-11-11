@@ -5,6 +5,10 @@ namespace TabAmp.Shared.Decorator.DescriptorChain;
 public abstract class ServiceDecoratorDescriptor<TService>
     where TService : notnull
 {
+    public const int MaxPosition = StartPosition + byte.MaxValue;
+
+    private const int StartPosition = 1;
+
     internal ServiceDecoratorDescriptor<TService>? Next { get; private set; }
     internal int? Position { get; private set; }
 
@@ -16,17 +20,26 @@ public abstract class ServiceDecoratorDescriptor<TService>
 
     internal ServiceDecoratorDescriptor<TService> AppendTo(ServiceDecoratorDescriptor<TService>? descriptors)
     {
-        if (IsAppended) throw A();
-        if (descriptors?.IsAppended == false) throw B();
-        if (descriptors?.Position >= 10) throw C();
+        if (IsAppended)
+            throw CannotAppendDescriptorAlreadyAppended();
+
+        if (descriptors?.IsAppended == false)
+            throw CannotAppendToNotAppendedDescriptor();
+
+        if (descriptors?.Position >= MaxPosition)
+            throw CannotAppendCollectionExceededSupportedLimit();
+
         Next = descriptors;
-        Position = descriptors?.Position + 1 ?? 1;
+        Position = descriptors?.Position + 1 ?? StartPosition;
+
         return this;
     }
 
     internal ServiceDecoratorDescriptorChain<TService> ToChain(ServiceDecoratorDescriptorChain<TService> descriptorChain)
     {
-        if (!IsAppended) throw D();
+        if (!IsAppended)
+            throw CannotConvertDescriptorIsNotAppended();
+
         return CreateDescriptorChainNode(descriptorChain);
     }
 
@@ -42,11 +55,24 @@ public abstract class ServiceDecoratorDescriptor<TService>
             return new ServiceDecoratorDescriptorChain<TService>.For<TDecorator>(next: descriptorChain);
         }
     }
-    private static InvalidOperationException A() => new("TODO: message A");
-    private static InvalidOperationException B() => new("TODO: message B");
-    private static InvalidOperationException C() => new("TODO: message C");
-    private static InvalidOperationException D() => new("TODO: message D");
-    //private static InvalidOperationException ContextAlreadyExistsException() =>
-    //    new($"Cannot create the context: {nameof(FileSerializationContext)} already exists in the current scope " +
-    //        $"with {nameof(FileSerializationContext.FilePath)}: '{context.FilePath}' and cannot be initialized again.");
+
+    private static InvalidOperationException CannotAppendDescriptorAlreadyAppended() =>
+        new("Cannot append decorator descriptor for 'TDecorator': " +
+            "already appended at position 1. " +
+            "Decorated type: 'TService'.");
+
+    private static InvalidOperationException CannotAppendToNotAppendedDescriptor() =>
+        new("Cannot append decorator descriptor for 'TDecorator1' " +
+            "to descriptor for 'TDecorator2' that is not part of a collection. " +
+            "Decorated type: 'TService'.");
+
+    private static InvalidOperationException CannotAppendCollectionExceededSupportedLimit() =>
+        new("Cannot append decorator descriptor for 'TDecorator': " +
+            "collection exceeded the supported limit of 10. " +
+            "Decorated type: 'TService'.");
+
+    private static InvalidOperationException CannotConvertDescriptorIsNotAppended() =>
+        new("Cannot convert decorator descriptor to a decorator descriptor chain node: " +
+            "descriptor for 'TDecorator' is not part of a collection. " +
+            "Decorated type: 'TService'.");
 }
