@@ -5,9 +5,8 @@ namespace TabAmp.Shared.Decorator.DescriptorChain;
 public abstract class ServiceDecoratorDescriptor<TService>
     where TService : notnull
 {
-    public const int MaxPosition = StartPosition + byte.MaxValue;
-
-    private const int StartPosition = 1;
+    private const int MinPosition = 1;
+    private const int MaxPosition = int.MaxValue;
 
     internal ServiceDecoratorDescriptor<TService>? Next { get; private set; }
     internal int? Position { get; private set; }
@@ -32,7 +31,7 @@ public abstract class ServiceDecoratorDescriptor<TService>
             throw CannotAppendCollectionExceededSupportedLimit(this);
 
         Next = descriptors;
-        Position = descriptors?.Position + 1 ?? StartPosition;
+        Position = descriptors?.Position + 1 ?? MinPosition;
 
         return this;
     }
