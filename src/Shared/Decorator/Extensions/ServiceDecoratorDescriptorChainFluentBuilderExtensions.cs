@@ -9,11 +9,6 @@ public static class ServiceDecoratorDescriptorChainFluentBuilderExtensions
         where TService : notnull
         where TImplementation : notnull, TService => builder.IsEmpty;
 
-    public static int Count<TService, TImplementation>(
-        this ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder)
-        where TService : notnull
-        where TImplementation : notnull, TService => builder.Count;
-
     public static ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> With<TService, TImplementation>(
         this ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder,
         ServiceDecoratorDescriptor<TService>? descriptor)
