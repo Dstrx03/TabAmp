@@ -1,5 +1,5 @@
 ﻿using System;
-using TabAmp.Shared.Decorator;
+using TabAmp.Shared.Decorator.Activators;
 
 namespace Microsoft.Extensions.DependencyInjection.Decorator;
 
