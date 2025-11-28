@@ -295,6 +295,6 @@ public static class ServiceCollectionDecoratorExtensions
     {
         ArgumentNullException.ThrowIfNull(configureDescriptorChain);
 
-        return configureDescriptorChain(DescriptorChain.For<TService, TImplementation>());
+        return configureDescriptorChain(DescriptorChainConfiguration.For<TService, TImplementation>());
     }
 }

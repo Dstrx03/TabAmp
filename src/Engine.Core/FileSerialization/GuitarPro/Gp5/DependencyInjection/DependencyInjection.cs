@@ -44,7 +44,7 @@ internal static class DependencyInjection
         where TReader : notnull, TService
         where TIntegrityValidator : notnull, TService
     {
-        serviceCollection.AddDecoratedScoped(DescriptorChain.For<TService, TReader>().With<TIntegrityValidator>());
+        serviceCollection.AddDecoratedScoped(DescriptorChainConfiguration.For<TService, TReader>().With<TIntegrityValidator>());
         serviceCollection.AddDecoratedScoped<TService, TReader>(builder => builder.With<TIntegrityValidator>());
 
         // *** TODO: AddReader API prototype ***
