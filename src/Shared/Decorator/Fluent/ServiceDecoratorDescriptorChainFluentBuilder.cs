@@ -9,11 +9,10 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
 {
     private readonly ServiceDecoratorDescriptor<TService> _descriptors;
 
-    internal bool IsEmpty => _descriptors is null;
-    internal int Count => _descriptors?.Position ?? 0;
-
     private ServiceDecoratorDescriptorChainFluentBuilder(ServiceDecoratorDescriptor<TService> descriptors) =>
         _descriptors = descriptors;
+
+    internal bool IsEmpty => _descriptors is null;
 
     public ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> With<TDecorator>()
         where TDecorator : notnull, TService
