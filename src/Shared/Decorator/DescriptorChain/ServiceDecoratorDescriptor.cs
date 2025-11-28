@@ -5,82 +5,71 @@ namespace TabAmp.Shared.Decorator.DescriptorChain;
 public abstract class ServiceDecoratorDescriptor<TService>
     where TService : notnull
 {
-    private const int MinPosition = 1;
-    private const int MaxPosition = int.MaxValue;
-
     internal ServiceDecoratorDescriptor<TService>? Next { get; private set; }
-    internal int? Position { get; private set; }
+
+    public bool IsBound { get; private set; }
 
     private ServiceDecoratorDescriptor()
     {
     }
 
-    public bool IsAppended => Position is not null;
-
-    private protected abstract string? DecoratorTypeFullName { get; }
-
-    internal ServiceDecoratorDescriptor<TService> AppendTo(ServiceDecoratorDescriptor<TService>? descriptors)
+    internal ServiceDecoratorDescriptor<TService> AppendTo(ServiceDecoratorDescriptor<TService>? target)
     {
-        if (IsAppended)
-            throw CannotAppendDescriptorAlreadyAppended(this);
+        if (IsBound)
+            throw CannotAppendDescriptorAlreadyBoundException(this);
 
-        if (descriptors?.IsAppended == false)
-            throw CannotAppendToNotAppendedDescriptor(this, descriptors);
+        if (target?.IsBound == false)
+            throw CannotAppendTargetDescriptorIsNotBoundException(this, target);
 
-        if (descriptors?.Position >= MaxPosition)
-            throw CannotAppendCollectionExceededSupportedLimit(this);
-
-        Next = descriptors;
-        Position = descriptors?.Position + 1 ?? MinPosition;
+        Next = target;
+        IsBound = true;
 
         return this;
     }
 
     internal ServiceDecoratorDescriptorChain<TService> ToChain(ServiceDecoratorDescriptorChain<TService> descriptorChain)
     {
-        if (!IsAppended)
-            throw CannotConvertToChainDescriptorIsNotAppended(this);
+        if (!IsBound)
+            throw CannotConvertToChainDescriptorIsNotBoundException(this);
 
-        return CreateDescriptorChainNode(descriptorChain);
+        return CreateDescriptorChain(descriptorChain);
     }
 
-    private protected abstract ServiceDecoratorDescriptorChain<TService> CreateDescriptorChainNode(
+    private protected abstract ServiceDecoratorDescriptorChain<TService> CreateDescriptorChain(
         ServiceDecoratorDescriptorChain<TService> descriptorChain);
+
+    private protected abstract Type ToDecoratorType();
 
     public class For<TDecorator> : ServiceDecoratorDescriptor<TService>
         where TDecorator : notnull, TService
     {
-        private protected sealed override string? DecoratorTypeFullName => typeof(TDecorator).FullName;
-
-        private protected sealed override ServiceDecoratorDescriptorChain<TService> CreateDescriptorChainNode(
+        private protected sealed override ServiceDecoratorDescriptorChain<TService> CreateDescriptorChain(
             ServiceDecoratorDescriptorChain<TService> descriptorChain)
         {
-            return new ServiceDecoratorDescriptorChain<TService>.For<TDecorator>(next: descriptorChain);
+            return new ServiceDecoratorDescriptorChain<TService>.For<TDecorator>(descriptorChain);
         }
+
+        private protected sealed override Type ToDecoratorType() => typeof(TDecorator);
     }
 
-    private static InvalidOperationException CannotAppendDescriptorAlreadyAppended(
+    private static InvalidOperationException CannotAppendDescriptorAlreadyBoundException(
         ServiceDecoratorDescriptor<TService> descriptor) =>
-        new($"Cannot append decorator descriptor for '{descriptor.DecoratorTypeFullName}': " +
-            $"already appended at position {descriptor.Position}. " +
+        new($"Cannot append decorator descriptor for '{descriptor.ToDecoratorType().FullName}': " +
+            "descriptor is already bound to the chain configuration. " +
             $"Decorated type: '{typeof(TService).FullName}'.");
 
-    private static InvalidOperationException CannotAppendToNotAppendedDescriptor(
+    private static ArgumentException CannotAppendTargetDescriptorIsNotBoundException(
         ServiceDecoratorDescriptor<TService> descriptor,
-        ServiceDecoratorDescriptor<TService> descriptors) =>
-        new($"Cannot append decorator descriptor for '{descriptor.DecoratorTypeFullName}' " +
-            $"to descriptor for '{descriptors.DecoratorTypeFullName}' that is not part of a collection. " +
-            $"Decorated type: '{typeof(TService).FullName}'.");
+        ServiceDecoratorDescriptor<TService> target) =>
+        new($"Cannot append decorator descriptor for '{descriptor.ToDecoratorType().FullName}' " +
+            $"to decorator descriptor for '{target.ToDecoratorType().FullName}': " +
+            "target descriptor is not bound to the chain configuration. " +
+            $"Decorated type: '{typeof(TService).FullName}'.",
+            nameof(target));
 
-    private static InvalidOperationException CannotAppendCollectionExceededSupportedLimit(
+    private static InvalidOperationException CannotConvertToChainDescriptorIsNotBoundException(
         ServiceDecoratorDescriptor<TService> descriptor) =>
-        new($"Cannot append decorator descriptor for '{descriptor.DecoratorTypeFullName}': " +
-            $"collection exceeded the supported limit of {MaxPosition}. " +
-            $"Decorated type: '{typeof(TService).FullName}'.");
-
-    private static InvalidOperationException CannotConvertToChainDescriptorIsNotAppended(
-        ServiceDecoratorDescriptor<TService> descriptor) =>
-        new("Cannot convert decorator descriptor to a decorator descriptor chain node: " +
-            $"descriptor for '{descriptor.DecoratorTypeFullName}' is not part of a collection. " +
+        new($"Cannot convert decorator descriptor for '{descriptor.ToDecoratorType().FullName}' " +
+            "to decorator descriptor chain: descriptor is not bound to the chain configuration. " +
             $"Decorated type: '{typeof(TService).FullName}'.");
 }
