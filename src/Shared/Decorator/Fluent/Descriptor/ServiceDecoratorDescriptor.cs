@@ -1,6 +1,7 @@
 ﻿using System;
+using TabAmp.Shared.Decorator.DescriptorChain;
 
-namespace TabAmp.Shared.Decorator.DescriptorChain;
+namespace TabAmp.Shared.Decorator.Fluent.Descriptor;
 
 public abstract class ServiceDecoratorDescriptor<TService>
     where TService : notnull

@@ -1,4 +1,4 @@
-﻿using TabAmp.Shared.Decorator.DescriptorChain;
+﻿using TabAmp.Shared.Decorator.Fluent.Descriptor;
 
 namespace TabAmp.Shared.Decorator.Fluent.Extensions;
 
