@@ -283,6 +283,22 @@ public static class ServiceCollectionDecoratorExtensions
             DecoratedServiceActivator.CreateService<TService, TImplementation>(serviceProvider, descriptorChain));
     }
 
+    public static void AddDecorated()
+    {
+    }
+
+    public static void AddKeyedDecorated()
+    {
+    }
+
+    public static void TryAddDecorated()
+    {
+    }
+
+    public static void TryAddKeyedDecorated()
+    {
+    }
+
     public delegate ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> ConfigureDescriptorChain<TService, TImplementation>(
         ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder)
         where TService : notnull
