@@ -283,19 +283,27 @@ public static class ServiceCollectionDecoratorExtensions
             DecoratedServiceActivator.CreateService<TService, TImplementation>(serviceProvider, descriptorChain));
     }
 
-    public static void AddDecorated()
+    public static void AddDecorated<TService, TImplementation>(ServiceLifetime lifetime)
+        where TService : notnull
+        where TImplementation : notnull, TService
     {
     }
 
-    public static void AddKeyedDecorated()
+    public static void AddKeyedDecorated<TService, TImplementation>(ServiceLifetime lifetime)
+        where TService : notnull
+        where TImplementation : notnull, TService
     {
     }
 
-    public static void TryAddDecorated()
+    public static void TryAddDecorated<TService, TImplementation>(ServiceLifetime lifetime)
+        where TService : notnull
+        where TImplementation : notnull, TService
     {
     }
 
-    public static void TryAddKeyedDecorated()
+    public static void TryAddKeyedDecorated<TService, TImplementation>(ServiceLifetime lifetime)
+        where TService : notnull
+        where TImplementation : notnull, TService
     {
     }
 
