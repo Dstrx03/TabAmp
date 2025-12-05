@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using TabAmp.Shared.Decorator.Activators;
+using TabAmp.Shared.Decorator.DescriptorChain;
 using TabAmp.Shared.Decorator.Fluent;
 
 namespace Microsoft.Extensions.DependencyInjection.Decorator;
@@ -283,16 +284,31 @@ public static class ServiceCollectionDecoratorExtensions
             DecoratedServiceActivator.CreateService<TService, TImplementation>(serviceProvider, descriptorChain));
     }
 
-    public static void AddDecorated<TService, TImplementation>(ServiceLifetime lifetime)
+    public static void AddDecorated<TService, TImplementation>(
+        this IServiceCollection serviceCollection,
+        ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder,
+        ServiceLifetime lifetime)
         where TService : notnull
         where TImplementation : notnull, TService
     {
+        ArgumentNullException.ThrowIfNull(serviceCollection);
+
+        var descriptors = DescribeDecoratedService(builder, lifetime);
+        Add(serviceCollection, descriptors);
     }
 
-    public static void AddKeyedDecorated<TService, TImplementation>(ServiceLifetime lifetime)
+    public static void AddKeyedDecorated<TService, TImplementation>(
+        this IServiceCollection serviceCollection,
+        object? serviceKey,
+        ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder,
+        ServiceLifetime lifetime)
         where TService : notnull
         where TImplementation : notnull, TService
     {
+        ArgumentNullException.ThrowIfNull(serviceCollection);
+
+        var descriptors = DescribeKeyedDecoratedService(serviceKey, builder, lifetime);
+        Add(serviceCollection, descriptors);
     }
 
     public static void TryAddDecorated<TService, TImplementation>(ServiceLifetime lifetime)
@@ -320,5 +336,59 @@ public static class ServiceCollectionDecoratorExtensions
         ArgumentNullException.ThrowIfNull(configureDescriptorChain);
 
         return configureDescriptorChain(DescriptorChainConfiguration.For<TService, TImplementation>());
+    }
+
+    private static void Add<TService>(
+        IServiceCollection serviceCollection,
+        (ServiceDecoratorDescriptorChain<TService>, ServiceDescriptor) descriptors)
+        where TService : notnull
+    {
+        var (_, serviceDescriptor) = descriptors;
+        serviceCollection.Add(serviceDescriptor);
+    }
+
+    private static void TryAdd<TService>(
+        IServiceCollection serviceCollection,
+        (ServiceDecoratorDescriptorChain<TService>, ServiceDescriptor) descriptors)
+        where TService : notnull
+    {
+        var (_, serviceDescriptor) = descriptors;
+        serviceCollection.TryAdd(serviceDescriptor);
+    }
+
+    private static (ServiceDecoratorDescriptorChain<TService>, ServiceDescriptor) DescribeDecoratedService<TService, TImplementation>(
+        ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder,
+        ServiceLifetime lifetime)
+        where TService : notnull
+        where TImplementation : notnull, TService
+    {
+        var descriptorChain = builder.BuildDescriptorChain();
+
+        var serviceDescriptor = ServiceDescriptor.Describe(
+            serviceType: typeof(TService),
+            implementationFactory: serviceProvider =>
+                DecoratedServiceActivator.CreateService<TService, TImplementation>(serviceProvider, descriptorChain),
+            lifetime: lifetime);
+
+        return (descriptorChain, serviceDescriptor);
+    }
+
+    private static (ServiceDecoratorDescriptorChain<TService>, ServiceDescriptor) DescribeKeyedDecoratedService<TService, TImplementation>(
+        object? serviceKey,
+        ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder,
+        ServiceLifetime lifetime)
+        where TService : notnull
+        where TImplementation : notnull, TService
+    {
+        var descriptorChain = builder.BuildDescriptorChain();
+
+        var keyedServiceDescriptor = ServiceDescriptor.DescribeKeyed(
+            serviceType: typeof(TService),
+            serviceKey: serviceKey,
+            implementationFactory: (serviceProvider, _) =>
+                DecoratedServiceActivator.CreateService<TService, TImplementation>(serviceProvider, descriptorChain),
+            lifetime: lifetime);
+
+        return (descriptorChain, keyedServiceDescriptor);
     }
 }
