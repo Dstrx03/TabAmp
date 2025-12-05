@@ -311,16 +311,31 @@ public static class ServiceCollectionDecoratorExtensions
         Add(serviceCollection, descriptors);
     }
 
-    public static void TryAddDecorated<TService, TImplementation>(ServiceLifetime lifetime)
+    public static void TryAddDecorated<TService, TImplementation>(
+        this IServiceCollection serviceCollection,
+        ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder,
+        ServiceLifetime lifetime)
         where TService : notnull
         where TImplementation : notnull, TService
     {
+        ArgumentNullException.ThrowIfNull(serviceCollection);
+
+        var descriptors = DescribeDecoratedService(builder, lifetime);
+        TryAdd(serviceCollection, descriptors);
     }
 
-    public static void TryAddKeyedDecorated<TService, TImplementation>(ServiceLifetime lifetime)
+    public static void TryAddKeyedDecorated<TService, TImplementation>(
+        this IServiceCollection serviceCollection,
+        object? serviceKey,
+        ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder,
+        ServiceLifetime lifetime)
         where TService : notnull
         where TImplementation : notnull, TService
     {
+        ArgumentNullException.ThrowIfNull(serviceCollection);
+
+        var descriptors = DescribeKeyedDecoratedService(serviceKey, builder, lifetime);
+        TryAdd(serviceCollection, descriptors);
     }
 
     public delegate ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> ConfigureDescriptorChain<TService, TImplementation>(
