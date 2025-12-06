@@ -15,7 +15,7 @@ internal static class DecoratedServiceActivator
         ArgumentNullException.ThrowIfNull(serviceProvider);
         ArgumentNullException.ThrowIfNull(descriptorChain);
 
-        TService service = ActivatorUtilities.CreateInstance<TImplementation>(serviceProvider);
+        var service = GetImplementationService<TService, TImplementation>(serviceProvider, descriptorChain);
         var descriptor = descriptorChain;
         while (descriptor is not null)
         {
@@ -24,5 +24,17 @@ internal static class DecoratedServiceActivator
         }
 
         return service;
+    }
+
+    private static TService GetImplementationService<TService, TImplementation>(
+        IServiceProvider serviceProvider,
+        ServiceDecoratorDescriptorChain<TService> descriptorChain)
+        where TService : notnull
+        where TImplementation : notnull, TService
+    {
+        if (descriptorChain.TODO_NAME)
+            return serviceProvider.GetRequiredKeyedService<TImplementation>(serviceKey: descriptorChain);
+
+        return ActivatorUtilities.CreateInstance<TImplementation>(serviceProvider);
     }
 }

@@ -7,6 +7,7 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
     where TService : notnull
 {
     internal ServiceDecoratorDescriptorChain<TService>? Next { get; }
+    internal bool TODO_NAME { get; } = true;
 
     private ServiceDecoratorDescriptorChain(ServiceDecoratorDescriptorChain<TService>? next) =>
         Next = next;
