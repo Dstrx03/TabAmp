@@ -1,6 +1,6 @@
 ﻿using TabAmp.Shared.Decorator.Fluent;
 
-namespace Microsoft.Extensions.DependencyInjection.Decorator;
+namespace TabAmp.Shared.Decorator;
 
 public static class DescriptorChainConfiguration
 {
