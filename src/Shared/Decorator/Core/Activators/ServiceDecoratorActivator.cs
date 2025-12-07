@@ -2,7 +2,7 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace TabAmp.Shared.Decorator.Activators;
+namespace TabAmp.Shared.Decorator.Core.Activators;
 
 internal static class ServiceDecoratorActivator
 {

@@ -1,8 +1,8 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using TabAmp.Shared.Decorator.Activators;
-using TabAmp.Shared.Decorator.DescriptorChain;
+using TabAmp.Shared.Decorator.Core.Activators;
+using TabAmp.Shared.Decorator.Core.DescriptorChain;
 using TabAmp.Shared.Decorator.Fluent;
 
 namespace TabAmp.Shared.Decorator;
@@ -321,7 +321,7 @@ public static class ServiceCollectionDecoratorExtensions
     {
         ArgumentNullException.ThrowIfNull(configureDescriptorChain);
 
-        var builder = DescriptorChainConfiguration.For<TService, TImplementation>();
+        var builder = TODO_NAME.For<TService, TImplementation>();
         return configureDescriptorChain(builder);
     }
 

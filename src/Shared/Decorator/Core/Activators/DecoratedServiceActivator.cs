@@ -1,8 +1,8 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
-using TabAmp.Shared.Decorator.DescriptorChain;
+using TabAmp.Shared.Decorator.Core.DescriptorChain;
 
-namespace TabAmp.Shared.Decorator.Activators;
+namespace TabAmp.Shared.Decorator.Core.Activators;
 
 internal static class DecoratedServiceActivator
 {
