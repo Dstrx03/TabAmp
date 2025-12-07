@@ -1,10 +1,12 @@
 ﻿using System;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Decorator;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using TabAmp.Shared.Decorator.Activators;
 using TabAmp.Shared.Decorator.DescriptorChain;
 using TabAmp.Shared.Decorator.Fluent;
 
-namespace Microsoft.Extensions.DependencyInjection.Decorator;
+namespace TabAmp.Shared.Decorator;
 
 public static class ServiceCollectionDecoratorExtensions
 {

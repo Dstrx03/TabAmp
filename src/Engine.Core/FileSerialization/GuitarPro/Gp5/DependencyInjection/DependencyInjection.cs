@@ -11,6 +11,7 @@ using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Rse;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Text;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Tracks;
 using TabAmp.Engine.Core.Score;
+using TabAmp.Shared.Decorator;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.DependencyInjection;
 

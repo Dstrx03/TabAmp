@@ -1,9 +1,9 @@
 ﻿using System;
 using TabAmp.Shared.Decorator.Activators;
 
-namespace Microsoft.Extensions.DependencyInjection.Decorator;
+namespace TabAmp.Shared.Decorator.Core;
 
-public static class ServiceProviderDecoratorExtensions
+public static class ServiceProviderDecoratorCoreExtensions
 {
     public static TService DecorateService<TService, TDecorator>(this IServiceProvider serviceProvider, TService service)
         where TService : notnull
