@@ -1,4 +1,5 @@
 ﻿using System;
+using TabAmp.Shared.Decorator.Core.Activators;
 
 namespace TabAmp.Shared.Decorator.Core.DescriptorChain;
 
@@ -11,13 +12,13 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
     private ServiceDecoratorDescriptorChain(ServiceDecoratorDescriptorChain<TService>? next) =>
         Next = next;
 
-    internal abstract TService DecorateService(IServiceProvider serviceProvider, TService service);
+    internal abstract TService CreateDecorator(IServiceProvider serviceProvider, TService service);
 
     internal sealed class For<TDecorator>(ServiceDecoratorDescriptorChain<TService>? next) :
         ServiceDecoratorDescriptorChain<TService>(next)
         where TDecorator : notnull, TService
     {
-        internal override TService DecorateService(IServiceProvider serviceProvider, TService service) =>
-            serviceProvider.DecorateService<TService, TDecorator>(service);
+        internal override TService CreateDecorator(IServiceProvider serviceProvider, TService service) =>
+            ServiceDecoratorActivator.CreateDecorator<TService, TDecorator>(serviceProvider, service);
     }
 }
