@@ -38,11 +38,13 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
 
         ServiceDecoratorDescriptorChain<TService> descriptorChain = null!;
         var descriptor = _descriptors;
-        while (descriptor is not null)
+        while (descriptor.Next is not null)
         {
             descriptorChain = descriptor.ToDescriptorChainNode(descriptorChain);
             descriptor = descriptor.Next;
         }
+
+        descriptorChain = descriptor.ToDescriptorChainRootNode(descriptorChain, implementationServiceKey: default);
 
         return descriptorChain;
     }
