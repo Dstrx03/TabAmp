@@ -28,67 +28,48 @@ public abstract class ServiceDecoratorDescriptor<TService>
         return this;
     }
 
-    internal ServiceDecoratorDescriptorChain<TService> ToDescriptorChainNode(
-        ServiceDecoratorDescriptorChain<TService> descriptorChain)
-    {
-        ThrowIfCannotConvertToDescriptorChain();
-        return CreateDescriptorChainNode(descriptorChain);
-    }
-
-    private protected abstract ServiceDecoratorDescriptorChain<TService> CreateDescriptorChainNode(
+    internal abstract ServiceDecoratorDescriptorChain<TService> ToDescriptorChainNode(
         ServiceDecoratorDescriptorChain<TService> descriptorChain);
 
-    internal ServiceDecoratorDescriptorChain<TService> ToDescriptorChainRootNode(
-        ServiceDecoratorDescriptorChain<TService> descriptorChain)
-    {
-        ThrowIfCannotConvertToDescriptorChain();
-        return CreateDescriptorChainRootNode(descriptorChain);
-    }
-
-    private protected abstract ServiceDecoratorDescriptorChain<TService> CreateDescriptorChainRootNode(
+    internal abstract ServiceDecoratorDescriptorChain<TService> ToDescriptorChainRootNode(
         ServiceDecoratorDescriptorChain<TService> descriptorChain);
 
-    internal ServiceDecoratorDescriptorChain<TService> ToDescriptorChainRootNode(
-        ServiceDecoratorDescriptorChain<TService> descriptorChain,
-        object? implementationServiceKey)
-    {
-        ThrowIfCannotConvertToDescriptorChain();
-        return CreateDescriptorChainRootNode(descriptorChain, implementationServiceKey);
-    }
-
-    private protected abstract ServiceDecoratorDescriptorChain<TService> CreateDescriptorChainRootNode(
+    internal abstract ServiceDecoratorDescriptorChain<TService> ToDescriptorChainRootNode(
         ServiceDecoratorDescriptorChain<TService> descriptorChain,
         object? implementationServiceKey);
-
-    private void ThrowIfCannotConvertToDescriptorChain()
-    {
-        if (!IsBound)
-            throw CannotConvertToDescriptorChainDescriptorIsNotBoundException(this);
-    }
 
     private protected abstract Type ToDecoratorType();
 
     public class For<TDecorator> : ServiceDecoratorDescriptor<TService>
         where TDecorator : notnull, TService
     {
-        private protected sealed override ServiceDecoratorDescriptorChain<TService> CreateDescriptorChainNode(
+        internal sealed override ServiceDecoratorDescriptorChain<TService> ToDescriptorChainNode(
             ServiceDecoratorDescriptorChain<TService> descriptorChain)
         {
+            if (!IsBound)
+                throw CannotConvertToDescriptorChainDescriptorIsNotBoundException(this);
+
             return new ServiceDecoratorDescriptorChain<TService>.Node<TDecorator>(
                 next: descriptorChain);
         }
 
-        private protected sealed override ServiceDecoratorDescriptorChain<TService> CreateDescriptorChainRootNode(
+        internal sealed override ServiceDecoratorDescriptorChain<TService> ToDescriptorChainRootNode(
             ServiceDecoratorDescriptorChain<TService> descriptorChain)
         {
+            if (!IsBound)
+                throw CannotConvertToDescriptorChainDescriptorIsNotBoundException(this);
+
             return new ServiceDecoratorDescriptorChain<TService>.RootNode<TDecorator>(
                 next: descriptorChain);
         }
 
-        private protected sealed override ServiceDecoratorDescriptorChain<TService> CreateDescriptorChainRootNode(
+        internal sealed override ServiceDecoratorDescriptorChain<TService> ToDescriptorChainRootNode(
             ServiceDecoratorDescriptorChain<TService> descriptorChain,
             object? implementationServiceKey)
         {
+            if (!IsBound)
+                throw CannotConvertToDescriptorChainDescriptorIsNotBoundException(this);
+
             return new ServiceDecoratorDescriptorChain<TService>.RootNode<TDecorator>(
                 next: descriptorChain,
                 implementationServiceKey: implementationServiceKey);
