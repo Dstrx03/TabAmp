@@ -31,11 +31,11 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
         public object? ImplementationServiceKey { get; }
 
         public RootNode(ServiceDecoratorDescriptorChain<TService>? next, object? implementationServiceKey) :
-            this(next) => ImplementationServiceKey = implementationServiceKey ?? DefaultImplementationServiceKey;
+            this(next) => ImplementationServiceKey = implementationServiceKey ?? CreateDefaultImplementationServiceKey();
 
         internal override TService CreateDecorator(IServiceProvider serviceProvider, TService service) =>
             ServiceDecoratorActivator.CreateDecorator<TService, TDecorator>(serviceProvider, service);
 
-        private object DefaultImplementationServiceKey => this;
+        private object CreateDefaultImplementationServiceKey() => this;
     }
 }
