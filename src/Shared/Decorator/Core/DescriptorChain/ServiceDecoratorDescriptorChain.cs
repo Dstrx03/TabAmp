@@ -14,11 +14,27 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
 
     internal abstract TService CreateDecorator(IServiceProvider serviceProvider, TService service);
 
-    internal sealed class For<TDecorator>(ServiceDecoratorDescriptorChain<TService>? next) :
+    internal sealed class Node<TDecorator>(ServiceDecoratorDescriptorChain<TService>? next) :
         ServiceDecoratorDescriptorChain<TService>(next)
         where TDecorator : notnull, TService
     {
         internal override TService CreateDecorator(IServiceProvider serviceProvider, TService service) =>
             ServiceDecoratorActivator.CreateDecorator<TService, TDecorator>(serviceProvider, service);
+    }
+
+    internal sealed class RootNode<TDecorator>(ServiceDecoratorDescriptorChain<TService>? next) :
+        ServiceDecoratorDescriptorChain<TService>(next),
+        IServiceDecoratorDescriptorChainMetadata
+        where TDecorator : notnull, TService
+    {
+        public object? ImplementationServiceKey { get; }
+
+        public RootNode(ServiceDecoratorDescriptorChain<TService>? next, object? implementationServiceKey) :
+            this(next) => ImplementationServiceKey = implementationServiceKey ?? DefaultImplementationServiceKey;
+
+        internal override TService CreateDecorator(IServiceProvider serviceProvider, TService service) =>
+            ServiceDecoratorActivator.CreateDecorator<TService, TDecorator>(serviceProvider, service);
+
+        private object DefaultImplementationServiceKey => this;
     }
 }
