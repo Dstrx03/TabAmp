@@ -32,8 +32,10 @@ internal static class DecoratedServiceActivator
         where TService : notnull
         where TImplementation : notnull, TService
     {
-        if (descriptorChain.TODO_NAME)
-            return serviceProvider.GetRequiredKeyedService<TImplementation>(serviceKey: descriptorChain);
+        var implementationServiceKey = descriptorChain.Metadata?.ImplementationServiceKey;
+
+        if (implementationServiceKey is not null)
+            return serviceProvider.GetRequiredKeyedService<TImplementation>(serviceKey: implementationServiceKey);
 
         return ActivatorUtilities.CreateInstance<TImplementation>(serviceProvider);
     }
