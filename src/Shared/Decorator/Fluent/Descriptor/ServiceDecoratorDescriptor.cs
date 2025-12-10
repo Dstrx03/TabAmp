@@ -40,7 +40,7 @@ public abstract class ServiceDecoratorDescriptor<TService>
 
     private protected abstract Type ToDecoratorType();
 
-    public class For<TDecorator> : ServiceDecoratorDescriptor<TService>
+    public class Node<TDecorator> : ServiceDecoratorDescriptor<TService>
         where TDecorator : notnull, TService
     {
         internal sealed override ServiceDecoratorDescriptorChain<TService> ToDescriptorChainNode(

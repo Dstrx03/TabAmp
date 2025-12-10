@@ -18,7 +18,7 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
     public ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> With<TDecorator>()
         where TDecorator : notnull, TService
     {
-        var descriptor = new ServiceDecoratorDescriptor<TService>.For<TDecorator>();
+        var descriptor = new ServiceDecoratorDescriptor<TService>.Node<TDecorator>();
         return new(descriptor.AppendTo(_descriptors));
     }
 
