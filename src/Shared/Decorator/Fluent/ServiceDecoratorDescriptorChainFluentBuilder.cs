@@ -44,7 +44,10 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
             descriptor = descriptor.Next;
         }
 
-        descriptorChain = descriptor.ToDescriptorChainRootNode(descriptorChain, implementationServiceKey: default);
+        var hasStandaloneImplementationService = true;
+        descriptorChain = hasStandaloneImplementationService
+            ? descriptor.ToDescriptorChainMetadataNode(descriptorChain)
+            : descriptor.ToDescriptorChainNode(descriptorChain);
 
         return descriptorChain;
     }

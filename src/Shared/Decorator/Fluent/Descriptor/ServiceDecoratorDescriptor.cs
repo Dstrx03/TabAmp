@@ -31,10 +31,10 @@ public abstract class ServiceDecoratorDescriptor<TService>
     internal abstract ServiceDecoratorDescriptorChain<TService> ToDescriptorChainNode(
         ServiceDecoratorDescriptorChain<TService> descriptorChain);
 
-    internal abstract ServiceDecoratorDescriptorChain<TService> ToDescriptorChainRootNode(
+    internal abstract ServiceDecoratorDescriptorChain<TService> ToDescriptorChainMetadataNode(
         ServiceDecoratorDescriptorChain<TService> descriptorChain);
 
-    internal abstract ServiceDecoratorDescriptorChain<TService> ToDescriptorChainRootNode(
+    internal abstract ServiceDecoratorDescriptorChain<TService> ToDescriptorChainMetadataNode(
         ServiceDecoratorDescriptorChain<TService> descriptorChain,
         object? implementationServiceKey);
 
@@ -53,24 +53,24 @@ public abstract class ServiceDecoratorDescriptor<TService>
                 next: descriptorChain);
         }
 
-        internal sealed override ServiceDecoratorDescriptorChain<TService> ToDescriptorChainRootNode(
+        internal sealed override ServiceDecoratorDescriptorChain<TService> ToDescriptorChainMetadataNode(
             ServiceDecoratorDescriptorChain<TService> descriptorChain)
         {
             if (!IsBound)
                 throw CannotConvertToDescriptorChainDescriptorIsNotBoundException(this);
 
-            return new ServiceDecoratorDescriptorChain<TService>.RootNode<TDecorator>(
+            return new ServiceDecoratorDescriptorChain<TService>.MetadataNode<TDecorator>(
                 next: descriptorChain);
         }
 
-        internal sealed override ServiceDecoratorDescriptorChain<TService> ToDescriptorChainRootNode(
+        internal sealed override ServiceDecoratorDescriptorChain<TService> ToDescriptorChainMetadataNode(
             ServiceDecoratorDescriptorChain<TService> descriptorChain,
             object? implementationServiceKey)
         {
             if (!IsBound)
                 throw CannotConvertToDescriptorChainDescriptorIsNotBoundException(this);
 
-            return new ServiceDecoratorDescriptorChain<TService>.RootNode<TDecorator>(
+            return new ServiceDecoratorDescriptorChain<TService>.MetadataNode<TDecorator>(
                 next: descriptorChain,
                 implementationServiceKey: implementationServiceKey);
         }
