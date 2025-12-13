@@ -14,6 +14,7 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
         _descriptors = descriptors;
 
     internal bool IsEmpty => _descriptors is null;
+    internal bool UseStandaloneImplementationService { get; }
 
     public ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> With<TDecorator>()
         where TDecorator : notnull, TService
@@ -44,8 +45,7 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
             descriptor = descriptor.Next;
         }
 
-        var hasStandaloneImplementationService = true;
-        descriptorChain = hasStandaloneImplementationService
+        descriptorChain = UseStandaloneImplementationService
             ? descriptor.ToDescriptorChainMetadataNode(descriptorChain)
             : descriptor.ToDescriptorChainNode(descriptorChain);
 
