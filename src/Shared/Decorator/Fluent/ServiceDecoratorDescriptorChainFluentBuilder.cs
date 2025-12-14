@@ -1,5 +1,6 @@
 ﻿using System;
 using TabAmp.Shared.Decorator.Core.DescriptorChain;
+using TabAmp.Shared.Decorator.Core.Extensions;
 using TabAmp.Shared.Decorator.Fluent.Descriptor;
 
 namespace TabAmp.Shared.Decorator.Fluent;
@@ -14,7 +15,7 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
         _descriptors = descriptors;
 
     internal bool IsEmpty => _descriptors is null;
-    internal bool UseStandaloneImplementationService { get; }
+    internal bool UseStandaloneImplementationService => typeof(TImplementation).IsDisposableOrAsyncDisposable();
 
     public ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> With<TDecorator>()
         where TDecorator : notnull, TService
