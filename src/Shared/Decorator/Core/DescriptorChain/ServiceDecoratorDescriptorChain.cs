@@ -32,12 +32,13 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
     {
         public object? ImplementationServiceKey { get; } = implementationServiceKey;
 
-        public MetadataNode(ServiceDecoratorDescriptorChain<TService>? next)
+        private MetadataNode(ServiceDecoratorDescriptorChain<TService>? next)
             : this(next, null) => ImplementationServiceKey = this;
+
+        internal static MetadataNode<TDecorator> CreateWithDefaultImplementationServiceKey(
+            ServiceDecoratorDescriptorChain<TService>? next) => new(next);
 
         internal override TService CreateDecorator(IServiceProvider serviceProvider, TService service) =>
             ServiceDecoratorActivator.CreateDecorator<TService, TDecorator>(serviceProvider, service);
-
-        private object CreateDefaultImplementationServiceKey() => this;
     }
 }
