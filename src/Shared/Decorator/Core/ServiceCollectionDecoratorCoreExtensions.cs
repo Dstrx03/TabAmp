@@ -133,15 +133,13 @@ public static class ServiceCollectionDecoratorCoreExtensions
         where TService : notnull
         where TImplementation : notnull, TService
     {
-        var implementationServiceKey = descriptorChain.Metadata?.ImplementationServiceKey;
-
-        if (implementationServiceKey is null)
+        if (!descriptorChain.UseStandaloneImplementationService)
             return null;
 
         var implementationType = typeof(TImplementation);
         return ServiceDescriptor.DescribeKeyed(
             serviceType: implementationType,
-            serviceKey: implementationServiceKey,
+            serviceKey: descriptorChain.ImplementationServiceKey,
             implementationType: implementationType,
             lifetime: lifetime);
     }
