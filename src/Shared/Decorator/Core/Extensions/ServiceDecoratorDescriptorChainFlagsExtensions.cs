@@ -6,8 +6,8 @@ namespace TabAmp.Shared.Decorator.Core.Extensions;
 internal static class ServiceDecoratorDescriptorChainFlagsExtensions
 {
     internal static ServiceDecoratorDescriptorChainFlags ToDescriptorChainFlags<TService>(
-        this ServiceDecoratorDescriptorChain<TService>? next,
-        Type decoratorType)
+        this Type decoratorType,
+        ServiceDecoratorDescriptorChain<TService>? next)
         where TService : notnull
     {
         var isDecoratorDisposable = decoratorType.IsDisposable();
@@ -26,12 +26,12 @@ internal static class ServiceDecoratorDescriptorChainFlagsExtensions
     }
 
     internal static ServiceDecoratorDescriptorChainFlags ToDescriptorChainFlags<TService>(
-        this ServiceDecoratorDescriptorChain<TService>? next,
-        Type decoratorType,
+        this Type decoratorType,
+        ServiceDecoratorDescriptorChain<TService>? next,
         ServiceDecoratorDescriptorChainOptions options)
         where TService : notnull
     {
-        var flags = next.ToDescriptorChainFlags(decoratorType);
+        var flags = decoratorType.ToDescriptorChainFlags(next);
 
         var allowA = options.HasFlag(ServiceDecoratorDescriptorChainOptions.AllowA);
 

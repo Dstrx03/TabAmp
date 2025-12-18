@@ -27,7 +27,7 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
     internal abstract TService CreateDecorator(IServiceProvider serviceProvider, TService service);
 
     internal sealed class Node<TDecorator>(ServiceDecoratorDescriptorChain<TService>? next) :
-        ServiceDecoratorDescriptorChain<TService>(next, next.ToDescriptorChainFlags(typeof(TDecorator)))
+        ServiceDecoratorDescriptorChain<TService>(next, typeof(TDecorator).ToDescriptorChainFlags(next))
         where TDecorator : notnull, TService
     {
         internal override TService CreateDecorator(IServiceProvider serviceProvider, TService service) =>
@@ -42,7 +42,7 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
         public HeadNode(ServiceDecoratorDescriptorChain<TService>? next,
             object? implementationServiceKey = null,
             ServiceDecoratorDescriptorChainOptions options = default)
-            : base(next, next.ToDescriptorChainFlags(typeof(TDecorator), options))
+            : base(next, typeof(TDecorator).ToDescriptorChainFlags(next, options))
         {
             ImplementationServiceKey = options.GetImplementationServiceKey(implementationServiceKey, this);
         }
