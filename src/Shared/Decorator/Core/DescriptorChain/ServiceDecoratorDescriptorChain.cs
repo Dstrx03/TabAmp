@@ -44,11 +44,25 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
             ServiceDecoratorDescriptorChainOptions options = default)
             : base(next, typeof(TDecorator).ToDescriptorChainFlags(next, options))
         {
-            ImplementationServiceKey = options.GetImplementationServiceKey(implementationServiceKey, this);
+            ImplementationServiceKey = GetImplementationServiceKey(options, implementationServiceKey);
         }
 
         internal override TService CreateDecorator(IServiceProvider serviceProvider, TService service) =>
             ServiceDecoratorActivator.CreateDecorator<TService, TDecorator>(serviceProvider, service);
+
+        private object? GetImplementationServiceKey(ServiceDecoratorDescriptorChainOptions options,
+            object? implementationServiceKey)
+        {
+            if (!options.HasFlag(ServiceDecoratorDescriptorChainOptions.UseStandaloneImplementationService))
+                return null;
+
+            if (options.HasFlag(ServiceDecoratorDescriptorChainOptions.UseDefaultImplementationServiceKey))
+                return this;
+
+            ArgumentNullException.ThrowIfNull(implementationServiceKey);
+
+            return implementationServiceKey;
+        }
     }
 
     private bool HasFlag(ServiceDecoratorDescriptorChainFlags flag) => (_flags & flag) == flag;
