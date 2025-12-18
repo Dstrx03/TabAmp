@@ -7,47 +7,49 @@ namespace TabAmp.Shared.Decorator.Core.DescriptorChain;
 internal abstract class ServiceDecoratorDescriptorChain<TService>
     where TService : notnull
 {
+    private readonly ServiceDecoratorDescriptorChainFlags _flags;
+
     internal ServiceDecoratorDescriptorChain<TService>? Next { get; }
-    protected ServiceDecoratorDescriptorChainFlags Flags { get; }
 
     private ServiceDecoratorDescriptorChain(ServiceDecoratorDescriptorChain<TService>? next,
-        ServiceDecoratorDescriptorChainFlags flags) => (Next, Flags) = (next, flags);
+        ServiceDecoratorDescriptorChainFlags flags) => (Next, _flags) = (next, flags);
 
     internal virtual object? ImplementationServiceKey => null;
+
     internal bool UseStandaloneImplementationService => ImplementationServiceKey is not null;
+    internal bool UseA => HasFlag(ServiceDecoratorDescriptorChainFlags.AllowA) && AnyDecoratorRequiresDisposal;
 
     internal bool IsDecoratorDisposable => HasFlag(ServiceDecoratorDescriptorChainFlags.IsDecoratorDisposable);
     internal bool IsDecoratorAsyncDisposable => HasFlag(ServiceDecoratorDescriptorChainFlags.IsDecoratorAsyncDisposable);
-    internal bool DecoratorRequiresDisposal => IsDecoratorDisposable || IsDecoratorAsyncDisposable;
+    internal bool DecoratorRequiresDisposal => HasFlag(ServiceDecoratorDescriptorChainFlags.DecoratorRequiresDisposal);
     internal bool AnyDecoratorRequiresDisposal => HasFlag(ServiceDecoratorDescriptorChainFlags.AnyDecoratorRequiresDisposal);
 
     internal abstract TService CreateDecorator(IServiceProvider serviceProvider, TService service);
 
     internal sealed class Node<TDecorator>(ServiceDecoratorDescriptorChain<TService>? next) :
-        ServiceDecoratorDescriptorChain<TService>(next, typeof(TDecorator).ToDescriptorChainFlags(next))
+        ServiceDecoratorDescriptorChain<TService>(next, next.ToDescriptorChainFlags(typeof(TDecorator)))
         where TDecorator : notnull, TService
     {
         internal override TService CreateDecorator(IServiceProvider serviceProvider, TService service) =>
             ServiceDecoratorActivator.CreateDecorator<TService, TDecorator>(serviceProvider, service);
     }
 
-    internal sealed class MetadataNode<TDecorator>(
-        ServiceDecoratorDescriptorChain<TService>? next,
-        object? implementationServiceKey) :
-        ServiceDecoratorDescriptorChain<TService>(next, typeof(TDecorator).ToDescriptorChainFlags(next))
+    internal sealed class HeadNode<TDecorator> : ServiceDecoratorDescriptorChain<TService>
         where TDecorator : notnull, TService
     {
-        internal override object? ImplementationServiceKey { get; } = implementationServiceKey;
+        internal override object? ImplementationServiceKey { get; }
 
-        private MetadataNode(ServiceDecoratorDescriptorChain<TService>? next)
-            : this(next, null) => ImplementationServiceKey = this;
-
-        internal static MetadataNode<TDecorator> CreateWithDefaultImplementationServiceKey(
-            ServiceDecoratorDescriptorChain<TService>? next) => new(next);
+        public HeadNode(ServiceDecoratorDescriptorChain<TService>? next,
+            object? implementationServiceKey = null,
+            ServiceDecoratorDescriptorChainOptions options = default)
+            : base(next, next.ToDescriptorChainFlags(typeof(TDecorator), options))
+        {
+            ImplementationServiceKey = options.GetImplementationServiceKey(implementationServiceKey, this);
+        }
 
         internal override TService CreateDecorator(IServiceProvider serviceProvider, TService service) =>
             ServiceDecoratorActivator.CreateDecorator<TService, TDecorator>(serviceProvider, service);
     }
 
-    private bool HasFlag(ServiceDecoratorDescriptorChainFlags flag) => (Flags & flag) == flag;
+    private bool HasFlag(ServiceDecoratorDescriptorChainFlags flag) => (_flags & flag) == flag;
 }

@@ -36,7 +36,7 @@ public abstract class ServiceDecoratorDescriptor<TService>
             throw CannotConvertToDescriptorChainNodeDescriptorIsNotBoundException(this);
 
         if (useStandaloneImplementationService)
-            return CreateDescriptorChainMetadataNode(descriptorChain);
+            return CreateDescriptorChainHeadNode(descriptorChain);
 
         return CreateDescriptorChainNode(descriptorChain);
     }
@@ -44,7 +44,7 @@ public abstract class ServiceDecoratorDescriptor<TService>
     private protected abstract ServiceDecoratorDescriptorChain<TService> CreateDescriptorChainNode(
         ServiceDecoratorDescriptorChain<TService> descriptorChain);
 
-    private protected abstract ServiceDecoratorDescriptorChain<TService> CreateDescriptorChainMetadataNode(
+    private protected abstract ServiceDecoratorDescriptorChain<TService> CreateDescriptorChainHeadNode(
         ServiceDecoratorDescriptorChain<TService> descriptorChain);
 
     private protected abstract Type ToDecoratorType();
@@ -58,11 +58,12 @@ public abstract class ServiceDecoratorDescriptor<TService>
             return new ServiceDecoratorDescriptorChain<TService>.Node<TDecorator>(next: descriptorChain);
         }
 
-        private protected sealed override ServiceDecoratorDescriptorChain<TService> CreateDescriptorChainMetadataNode(
+        private protected sealed override ServiceDecoratorDescriptorChain<TService> CreateDescriptorChainHeadNode(
             ServiceDecoratorDescriptorChain<TService> descriptorChain)
         {
-            return ServiceDecoratorDescriptorChain<TService>.MetadataNode<TDecorator>
-                .CreateWithDefaultImplementationServiceKey(next: descriptorChain);
+            return new ServiceDecoratorDescriptorChain<TService>.HeadNode<TDecorator>(
+                next: descriptorChain,
+                options: 0);
         }
 
         private protected sealed override Type ToDecoratorType() => typeof(TDecorator);

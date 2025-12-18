@@ -7,7 +7,9 @@ internal enum ServiceDecoratorDescriptorChainFlags : byte
 {
     IsDecoratorDisposable = 0x10,
     IsDecoratorAsyncDisposable = 0x20,
-    AnyDecoratorRequiresDisposal = 0x40
+    DecoratorRequiresDisposal = 0x01,
+    AnyDecoratorRequiresDisposal = 0x40,
+    AllowA = 0x08
 
     /*
     A = 0x01,
