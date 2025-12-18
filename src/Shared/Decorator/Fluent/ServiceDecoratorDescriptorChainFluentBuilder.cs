@@ -46,9 +46,23 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
             descriptor = descriptor.Next;
         }
 
-        descriptorChain = descriptor.ToDescriptorChainNode(descriptorChain, UseStandaloneImplementationService);
+        var options = ComposeDescriptorChainOptions();
+        descriptorChain = descriptor.ToDescriptorChainNode(descriptorChain, options);
 
         return descriptorChain;
+    }
+
+    private ServiceDecoratorDescriptorChainOptions ComposeDescriptorChainOptions()
+    {
+        ServiceDecoratorDescriptorChainOptions options = new();
+
+        if (UseStandaloneImplementationService)
+        {
+            options |= ServiceDecoratorDescriptorChainOptions.UseStandaloneImplementationService;
+            options |= ServiceDecoratorDescriptorChainOptions.UseDefaultImplementationServiceKey;
+        }
+
+        return options;
     }
 
     private static InvalidOperationException AtLeastOneDescriptorRequiredException() =>

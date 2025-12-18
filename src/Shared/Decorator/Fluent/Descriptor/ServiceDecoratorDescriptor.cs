@@ -30,18 +30,10 @@ public abstract class ServiceDecoratorDescriptor<TService>
 
     internal ServiceDecoratorDescriptorChain<TService> ToDescriptorChainNode(
         ServiceDecoratorDescriptorChain<TService> descriptorChain,
-        bool useStandaloneImplementationService = false)
+        ServiceDecoratorDescriptorChainOptions options = default)
     {
         if (!IsBound)
             throw CannotConvertToDescriptorChainNodeDescriptorIsNotBoundException(this);
-
-        ServiceDecoratorDescriptorChainOptions options = new();
-
-        if (useStandaloneImplementationService)
-        {
-            options |= ServiceDecoratorDescriptorChainOptions.UseStandaloneImplementationService;
-            options |= ServiceDecoratorDescriptorChainOptions.UseDefaultImplementationServiceKey;
-        }
 
         if (options == 0)
             return CreateDescriptorChainNode(descriptorChain);
