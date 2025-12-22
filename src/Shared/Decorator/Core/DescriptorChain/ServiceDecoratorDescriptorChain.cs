@@ -24,6 +24,8 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
     internal bool DecoratorRequiresDisposal => HasFlag(ServiceDecoratorDescriptorChainFlags.DecoratorRequiresDisposal);
     internal bool AnyDecoratorRequiresDisposal => HasFlag(ServiceDecoratorDescriptorChainFlags.AnyDecoratorRequiresDisposal);
 
+    private bool HasFlag(ServiceDecoratorDescriptorChainFlags flag) => (_flags & flag) == flag;
+
     internal abstract TService CreateDecorator(IServiceProvider serviceProvider, TService service);
 
     internal sealed class Node<TDecorator>(ServiceDecoratorDescriptorChain<TService>? next) :
@@ -64,6 +66,4 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
             return implementationServiceKey;
         }
     }
-
-    private bool HasFlag(ServiceDecoratorDescriptorChainFlags flag) => (_flags & flag) == flag;
 }
