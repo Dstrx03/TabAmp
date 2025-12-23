@@ -60,8 +60,8 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
 
     internal static ServiceDecoratorDescriptorChain<TService> CreateNode<TDecorator>(
         ServiceDecoratorDescriptorChain<TService>? next,
-        ServiceDecoratorDescriptorChainOptions options,
-        object? implementationServiceKey)
+        ServiceDecoratorDescriptorChainOptions options = default,
+        object? implementationServiceKey = null)
         where TDecorator : notnull, TService
     {
         var useDefaultImplementationServiceKey = options.HasFlag(ServiceDecoratorDescriptorChainOptions.UseDefaultImplementationServiceKey);
