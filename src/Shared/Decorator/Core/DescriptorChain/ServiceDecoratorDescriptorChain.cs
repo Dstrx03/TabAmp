@@ -11,8 +11,14 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
 
     internal ServiceDecoratorDescriptorChain<TService>? Next { get; }
 
-    private ServiceDecoratorDescriptorChain(ServiceDecoratorDescriptorChain<TService>? next,
-        ServiceDecoratorDescriptorChainFlags flags) => (Next, _flags) = (next, flags);
+    private ServiceDecoratorDescriptorChain(
+        ServiceDecoratorDescriptorChain<TService>? next,
+        ServiceDecoratorDescriptorChainOptions options,
+        Type decoratorType)
+    {
+        _flags = ComposeFlags(next, options, decoratorType);
+        Next = next;
+    }
 
     internal virtual object? ImplementationServiceKey => null;
 
@@ -28,42 +34,69 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
 
     internal abstract TService CreateDecorator(IServiceProvider serviceProvider, TService service);
 
-    internal sealed class Node<TDecorator>(ServiceDecoratorDescriptorChain<TService>? next) :
-        ServiceDecoratorDescriptorChain<TService>(next, typeof(TDecorator).ToDescriptorChainFlags(next))
+    private class Node<TDecorator>(
+        ServiceDecoratorDescriptorChain<TService>? next,
+        ServiceDecoratorDescriptorChainOptions options) :
+        ServiceDecoratorDescriptorChain<TService>(next, options, typeof(TDecorator))
         where TDecorator : notnull, TService
     {
         internal override TService CreateDecorator(IServiceProvider serviceProvider, TService service) =>
             ServiceDecoratorActivator.CreateDecorator<TService, TDecorator>(serviceProvider, service);
     }
 
-    internal sealed class HeadNode<TDecorator> : ServiceDecoratorDescriptorChain<TService>
+    private class ImplementationServiceKeyNode<TDecorator> : Node<TDecorator>
         where TDecorator : notnull, TService
     {
-        internal override object? ImplementationServiceKey { get; }
+        internal override object ImplementationServiceKey { get; }
 
-        public HeadNode(ServiceDecoratorDescriptorChain<TService>? next,
-            object? implementationServiceKey = null,
-            ServiceDecoratorDescriptorChainOptions options = default)
-            : base(next, typeof(TDecorator).ToDescriptorChainFlags(next, options))
+        public ImplementationServiceKeyNode(
+            ServiceDecoratorDescriptorChain<TService>? next,
+            ServiceDecoratorDescriptorChainOptions options,
+            object? implementationServiceKey) : base(next, options)
         {
-            ImplementationServiceKey = GetImplementationServiceKey(options, implementationServiceKey);
+            ImplementationServiceKey = implementationServiceKey is null ? this : implementationServiceKey;
+        }
+    }
+
+    internal static ServiceDecoratorDescriptorChain<TService> CreateNode<TDecorator>(
+        ServiceDecoratorDescriptorChain<TService>? next,
+        ServiceDecoratorDescriptorChainOptions options,
+        object? implementationServiceKey)
+        where TDecorator : notnull, TService
+    {
+        var useDefaultImplementationServiceKey = options.HasFlag(ServiceDecoratorDescriptorChainOptions.UseDefaultImplementationServiceKey);
+        var useStandaloneImplementationService = implementationServiceKey is not null || useDefaultImplementationServiceKey;
+
+        if (useStandaloneImplementationService)
+        {
+            if (useDefaultImplementationServiceKey)
+                implementationServiceKey = null;
+
+            return new ImplementationServiceKeyNode<TDecorator>(next, options, implementationServiceKey);
         }
 
-        internal override TService CreateDecorator(IServiceProvider serviceProvider, TService service) =>
-            ServiceDecoratorActivator.CreateDecorator<TService, TDecorator>(serviceProvider, service);
+        return new Node<TDecorator>(next, options);
+    }
 
-        private object? GetImplementationServiceKey(ServiceDecoratorDescriptorChainOptions options,
-            object? implementationServiceKey)
-        {
-            if (!options.HasFlag(ServiceDecoratorDescriptorChainOptions.UseStandaloneImplementationService))
-                return null;
+    private static ServiceDecoratorDescriptorChainFlags ComposeFlags(
+        ServiceDecoratorDescriptorChain<TService>? next,
+        ServiceDecoratorDescriptorChainOptions options,
+        Type decoratorType)
+    {
+        var isDecoratorDisposable = decoratorType.IsDisposable();
+        var isDecoratorAsyncDisposable = decoratorType.IsAsyncDisposable();
+        var decoratorRequiresDisposal = isDecoratorDisposable || isDecoratorAsyncDisposable;
+        var anyDecoratorRequiresDisposal = decoratorRequiresDisposal || (next?.AnyDecoratorRequiresDisposal ?? false);
+        var allowA = options.HasFlag(ServiceDecoratorDescriptorChainOptions.AllowA);
 
-            if (options.HasFlag(ServiceDecoratorDescriptorChainOptions.UseDefaultImplementationServiceKey))
-                return this;
+        ServiceDecoratorDescriptorChainFlags flags = new();
 
-            ArgumentNullException.ThrowIfNull(implementationServiceKey);
+        if (isDecoratorDisposable) flags |= ServiceDecoratorDescriptorChainFlags.IsDecoratorDisposable;
+        if (isDecoratorAsyncDisposable) flags |= ServiceDecoratorDescriptorChainFlags.IsDecoratorAsyncDisposable;
+        if (decoratorRequiresDisposal) flags |= ServiceDecoratorDescriptorChainFlags.DecoratorRequiresDisposal;
+        if (anyDecoratorRequiresDisposal) flags |= ServiceDecoratorDescriptorChainFlags.AnyDecoratorRequiresDisposal;
+        if (allowA) flags |= ServiceDecoratorDescriptorChainFlags.AllowA;
 
-            return implementationServiceKey;
-        }
+        return flags;
     }
 }
