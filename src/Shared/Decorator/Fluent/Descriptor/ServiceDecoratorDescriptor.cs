@@ -35,14 +35,8 @@ public abstract class ServiceDecoratorDescriptor<TService>
         if (!IsBound)
             throw CannotConvertToDescriptorChainNodeDescriptorIsNotBoundException(this);
 
-        if (options == 0)
-            return CreateDescriptorChainNode(descriptorChain);
-
         return CreateDescriptorChainNode(descriptorChain, options);
     }
-
-    private protected abstract ServiceDecoratorDescriptorChain<TService> CreateDescriptorChainNode(
-        ServiceDecoratorDescriptorChain<TService> descriptorChain);
 
     private protected abstract ServiceDecoratorDescriptorChain<TService> CreateDescriptorChainNode(
         ServiceDecoratorDescriptorChain<TService> descriptorChain,
@@ -54,16 +48,10 @@ public abstract class ServiceDecoratorDescriptor<TService>
         where TDecorator : notnull, TService
     {
         private protected sealed override ServiceDecoratorDescriptorChain<TService> CreateDescriptorChainNode(
-            ServiceDecoratorDescriptorChain<TService> descriptorChain)
-        {
-            return new ServiceDecoratorDescriptorChain<TService>.Node<TDecorator>(next: descriptorChain);
-        }
-
-        private protected sealed override ServiceDecoratorDescriptorChain<TService> CreateDescriptorChainNode(
             ServiceDecoratorDescriptorChain<TService> descriptorChain,
             ServiceDecoratorDescriptorChainOptions options)
         {
-            return new ServiceDecoratorDescriptorChain<TService>.HeadNode<TDecorator>(next: descriptorChain, options: options);
+            return ServiceDecoratorDescriptorChain<TService>.CreateNode<TDecorator>(next: descriptorChain, options: options);
         }
 
         private protected sealed override Type ToDecoratorType() => typeof(TDecorator);

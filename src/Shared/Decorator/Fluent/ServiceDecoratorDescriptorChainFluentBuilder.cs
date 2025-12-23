@@ -57,10 +57,7 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
         ServiceDecoratorDescriptorChainOptions options = new();
 
         if (UseStandaloneImplementationService)
-        {
-            options |= ServiceDecoratorDescriptorChainOptions.UseStandaloneImplementationService;
             options |= ServiceDecoratorDescriptorChainOptions.UseDefaultImplementationServiceKey;
-        }
 
         return options;
     }
