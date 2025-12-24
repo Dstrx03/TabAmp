@@ -11,7 +11,12 @@ internal class A<TService> : DispatchProxy, IDisposable
     private readonly List<IDisposable> _dspsbls = [];
     private TService? _service;
     protected override object? Invoke(MethodInfo? targetMethod, object?[]? args) => targetMethod.Invoke(_service, args);
-    public void Dispose() => throw new NotImplementedException();
+    public void Dispose()
+    {
+        foreach (var d in _dspsbls) d.Dispose();
+        throw new NotImplementedException();
+    }
+
     internal void TODO1(TService service, ServiceDecoratorDescriptorChain<TService> descriptor)
     {
         if (descriptor.IsDecoratorDisposable) _dspsbls.Add((IDisposable)service);
