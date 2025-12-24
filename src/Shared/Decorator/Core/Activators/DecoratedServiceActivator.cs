@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using TabAmp.Shared.Decorator.Core.Decorators;
 using TabAmp.Shared.Decorator.Core.DescriptorChain;
@@ -50,6 +51,6 @@ internal static class DecoratedServiceActivator
         if (!descriptorChain.UseA)
             return null;
 
-        return new();
+        return (A<TService>)(object)DispatchProxy.Create<TService, A<TService>>();
     }
 }
