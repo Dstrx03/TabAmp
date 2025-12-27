@@ -1,29 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using TabAmp.Shared.Decorator.Core.DescriptorChain;
+using System.Threading.Tasks;
 
 namespace TabAmp.Shared.Decorator.Core.Decorators;
 
-internal class A<TService> : DispatchProxy, IDisposable
+internal class A<TService> : DispatchProxy, IDisposable, IAsyncDisposable
     where TService : notnull
 {
-    private readonly List<IDisposable> _dspsbls = [];
+    private bool _disposed;
+    private readonly List<TService> _disposables = [];
+
     private TService? _service;
-    protected override object? Invoke(MethodInfo? targetMethod, object?[]? args) => targetMethod.Invoke(_service, args);
-    public void Dispose()
+
+    internal void TODO1(TService service)
     {
-        foreach (var d in _dspsbls) d.Dispose();
-        throw new NotImplementedException();
+        if (!(service is IDisposable || service is IAsyncDisposable))
+            return;
+
+        _disposables.Add(service);
     }
 
-    internal void TODO1(TService service, ServiceDecoratorDescriptorChain<TService> descriptor)
-    {
-        if (descriptor.IsDecoratorDisposable) _dspsbls.Add((IDisposable)service);
-    }
     internal TService TODO2(TService service)
     {
         _service = service;
+
         return (TService)(object)this;
     }
+
+    protected override object? Invoke(MethodInfo? targetMethod, object?[]? args) => targetMethod.Invoke(_service, args);
+
+    public void Dispose() => DisposeCore();
+    public ValueTask DisposeAsync() => DisposeAsyncCore();
+
+    private void DisposeCore() => throw new NotImplementedException();
+    private ValueTask DisposeAsyncCore() => throw new NotImplementedException();
 }
