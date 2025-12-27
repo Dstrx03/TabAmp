@@ -23,7 +23,7 @@ internal static class DecoratedServiceActivator
         while (descriptor is not null)
         {
             service = descriptor.CreateDecorator(serviceProvider, service);
-            a?.TODO1(service);
+            a?.CaptureDisposable(service);
             descriptor = descriptor.Next;
         }
 

@@ -13,7 +13,7 @@ internal class A<TService> : DispatchProxy, IDisposable, IAsyncDisposable
 
     private TService? _service;
 
-    internal void TODO1(TService service)
+    internal void CaptureDisposable(TService service)
     {
         if (!(service is IDisposable || service is IAsyncDisposable))
             return;
