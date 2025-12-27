@@ -26,10 +26,6 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
 
     internal bool UseStandaloneImplementationService => ImplementationServiceKey is not null;
     internal bool UseA => HasFlag(Flags.AllowA) && (Next?.AnyDecoratorRequiresDisposal ?? false);
-
-    internal bool IsDecoratorDisposable => HasFlag(Flags.IsDecoratorDisposable);
-    internal bool IsDecoratorAsyncDisposable => HasFlag(Flags.IsDecoratorAsyncDisposable);
-    internal bool DecoratorRequiresDisposal => HasFlag(Flags.DecoratorRequiresDisposal);
     internal bool AnyDecoratorRequiresDisposal => HasFlag(Flags.AnyDecoratorRequiresDisposal);
 
     private bool HasFlag(ServiceDecoratorDescriptorChainFlags flag) => (_flags & flag) == flag;
@@ -85,17 +81,11 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
         ServiceDecoratorDescriptorChainOptions options,
         Type decoratorType)
     {
-        var isDecoratorDisposable = decoratorType.IsDisposable();
-        var isDecoratorAsyncDisposable = decoratorType.IsAsyncDisposable();
-        var decoratorRequiresDisposal = isDecoratorDisposable || isDecoratorAsyncDisposable;
-        var anyDecoratorRequiresDisposal = decoratorRequiresDisposal || (next?.AnyDecoratorRequiresDisposal ?? false);
+        var anyDecoratorRequiresDisposal = decoratorType.RequiresDisposal() || (next?.AnyDecoratorRequiresDisposal ?? false);
         var allowA = options.HasFlag(Options.AllowA);
 
         ServiceDecoratorDescriptorChainFlags flags = new();
 
-        if (isDecoratorDisposable) flags |= Flags.IsDecoratorDisposable;
-        if (isDecoratorAsyncDisposable) flags |= Flags.IsDecoratorAsyncDisposable;
-        if (decoratorRequiresDisposal) flags |= Flags.DecoratorRequiresDisposal;
         if (anyDecoratorRequiresDisposal) flags |= Flags.AnyDecoratorRequiresDisposal;
         if (allowA) flags |= Flags.AllowA;
 
