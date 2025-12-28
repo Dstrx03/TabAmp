@@ -15,7 +15,7 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
         _descriptors = descriptors;
 
     internal bool IsEmpty => _descriptors is null;
-    internal bool UseStandaloneImplementationService => typeof(TImplementation).RequiresDisposal();
+    internal bool UseStandaloneImplementationService => typeof(TImplementation).IsDisposable();
 
     public ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> With<TDecorator>()
         where TDecorator : notnull, TService
