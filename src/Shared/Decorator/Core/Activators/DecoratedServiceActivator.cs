@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using TabAmp.Shared.Decorator.Core.Decorators;
 using TabAmp.Shared.Decorator.Core.DescriptorChain;
+using TabAmp.Shared.Decorator.Core.DisposableContainer;
 
 namespace TabAmp.Shared.Decorator.Core.Activators;
 
@@ -18,17 +18,19 @@ internal static class DecoratedServiceActivator
         ArgumentNullException.ThrowIfNull(descriptorChain);
 
         var service = GetImplementationService<TService, TImplementation>(serviceProvider, descriptorChain);
-        var a = GetA(descriptorChain);
+        var disposableContainer = GetDisposableContainer(descriptorChain);
+
         var descriptor = descriptorChain;
         while (descriptor is not null)
         {
             service = descriptor.CreateDecorator(serviceProvider, service);
-            a?.CaptureDisposable(service);
+            disposableContainer?.CaptureDisposableDecorator(serviceDecorator: service);
+
             descriptor = descriptor.Next;
         }
 
-        if (a is not null)
-            service = a.TODO2(service);
+        if (disposableContainer is not null)
+            service = disposableContainer.DecorateService(decoratedService: service);
 
         return service;
     }
@@ -45,12 +47,15 @@ internal static class DecoratedServiceActivator
         return serviceProvider.GetRequiredKeyedService<TImplementation>(serviceKey: descriptorChain.ImplementationServiceKey);
     }
 
-    private static A<TService>? GetA<TService>(ServiceDecoratorDescriptorChain<TService> descriptorChain)
+    private static ServiceDecoratorDisposableContainer<TService>? GetDisposableContainer<TService>(
+        ServiceDecoratorDescriptorChain<TService> descriptorChain)
         where TService : notnull
     {
-        if (!descriptorChain.UseA)
+        if (!descriptorChain.UseDisposableContainer)
             return null;
 
-        return (A<TService>)(object)DispatchProxy.Create<TService, A<TService>>();
+        var disposableContainer = DispatchProxy.Create<TService, ServiceDecoratorDisposableContainer<TService>>();
+
+        return (ServiceDecoratorDisposableContainer<TService>)(object)disposableContainer;
     }
 }
