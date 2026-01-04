@@ -1,9 +1,12 @@
-﻿using TabAmp.Shared.Decorator.Fluent.Descriptor;
+﻿namespace TabAmp.Shared.Decorator.Fluent.Extensions;
 
-namespace TabAmp.Shared.Decorator.Fluent.Extensions;
-
-public static class ServiceDecoratorDescriptorChainFluentBuilderExtensions
+public static class ServiceDecoratorDescriptorChainFluentBuilderPropertiesExtensions
 {
+    public static bool IsDisposableContainerAllowed<TService, TImplementation>(
+        this ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder)
+        where TService : notnull
+        where TImplementation : notnull, TService => builder.IsDisposableContainerAllowed;
+
     public static bool IsEmpty<TService, TImplementation>(
         this ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder)
         where TService : notnull
@@ -13,10 +16,4 @@ public static class ServiceDecoratorDescriptorChainFluentBuilderExtensions
         this ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder)
         where TService : notnull
         where TImplementation : notnull, TService => builder.UseStandaloneImplementationService;
-
-    public static ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> With<TService, TImplementation>(
-        this ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder,
-        ServiceDecoratorDescriptor<TService>? descriptor)
-        where TService : notnull
-        where TImplementation : notnull, TService => builder.With(descriptor);
 }

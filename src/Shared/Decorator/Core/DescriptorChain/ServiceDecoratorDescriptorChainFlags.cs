@@ -6,7 +6,7 @@ namespace TabAmp.Shared.Decorator.Core.DescriptorChain;
 internal enum ServiceDecoratorDescriptorChainFlags : byte
 {
     HasDisposableDecorator = 0x40,
-    AllowA = 0x08
+    IsDisposableContainerAllowed = 0x08
 
     /*
     A = 0x01,

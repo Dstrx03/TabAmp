@@ -17,8 +17,8 @@ internal static class DecoratedServiceActivator
         ArgumentNullException.ThrowIfNull(serviceProvider);
         ArgumentNullException.ThrowIfNull(descriptorChain);
 
-        var service = GetImplementationService<TService, TImplementation>(serviceProvider, descriptorChain);
-        var disposableContainer = GetDisposableContainer(descriptorChain);
+        var service = ResolveImplementationService<TService, TImplementation>(serviceProvider, descriptorChain);
+        var disposableContainer = ResolveDisposableContainer(descriptorChain, implementationService: service);
 
         var descriptor = descriptorChain;
         while (descriptor is not null)
@@ -35,7 +35,7 @@ internal static class DecoratedServiceActivator
         return service;
     }
 
-    private static TService GetImplementationService<TService, TImplementation>(
+    private static TService ResolveImplementationService<TService, TImplementation>(
         IServiceProvider serviceProvider,
         ServiceDecoratorDescriptorChain<TService> descriptorChain)
         where TService : notnull
@@ -47,15 +47,30 @@ internal static class DecoratedServiceActivator
         return serviceProvider.GetRequiredKeyedService<TImplementation>(serviceKey: descriptorChain.ImplementationServiceKey);
     }
 
-    private static ServiceDecoratorDisposableContainer<TService>? GetDisposableContainer<TService>(
-        ServiceDecoratorDescriptorChain<TService> descriptorChain)
+    private static ServiceDecoratorDisposableContainer<TService>? ResolveDisposableContainer<TService>(
+        ServiceDecoratorDescriptorChain<TService> descriptorChain,
+        TService implementationService)
         where TService : notnull
     {
         if (!descriptorChain.UseDisposableContainer)
             return null;
 
-        var disposableContainer = DispatchProxy.Create<TService, ServiceDecoratorDisposableContainer<TService>>();
+        if (!descriptorChain.IsDisposableContainerAllowed)
+            throw DisposableContainerIsNotAllowed(typeof(TService));
+
+        var disposableContainer = implementationService switch
+        {
+            IDisposable and IAsyncDisposable => throw new NotImplementedException("TODO"),
+            IDisposable => throw new NotImplementedException("TODO"),
+            IAsyncDisposable => throw new NotImplementedException("TODO"),
+            _ => DispatchProxy.Create<TService, ServiceDecoratorDisposableContainer<TService>>()
+        };
 
         return (ServiceDecoratorDisposableContainer<TService>)(object)disposableContainer;
     }
+
+    private static InvalidOperationException DisposableContainerIsNotAllowed(Type serviceType) =>
+        new($"Unable to activate decorated type '{serviceType.FullName}'. " +
+            "At least one inner decorator type requires disposal, " +
+            "but the use of a decorator disposable container is not allowed.");
 }

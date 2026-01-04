@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TabAmp.Shared.Decorator.Core.DisposableContainer;
 
-internal class ServiceDecoratorDisposableContainer<TService> : DispatchProxy, IDisposable, IAsyncDisposable
+internal sealed class ServiceDecoratorDisposableContainer<TService> : DispatchProxy, IDisposable, IAsyncDisposable
     where TService : notnull
 {
     private bool _disposed;

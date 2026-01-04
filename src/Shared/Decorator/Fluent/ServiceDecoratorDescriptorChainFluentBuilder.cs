@@ -11,8 +11,15 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
 {
     private readonly ServiceDecoratorDescriptor<TService> _descriptors;
 
-    private ServiceDecoratorDescriptorChainFluentBuilder(ServiceDecoratorDescriptor<TService> descriptors) =>
+    internal bool IsDisposableContainerAllowed { get; } = false;
+
+    private ServiceDecoratorDescriptorChainFluentBuilder(
+        ServiceDecoratorDescriptor<TService> descriptors,
+        bool isDisposableContainerAllowed)
+    {
         _descriptors = descriptors;
+        IsDisposableContainerAllowed = isDisposableContainerAllowed;
+    }
 
     internal bool IsEmpty => _descriptors is null;
     internal bool UseStandaloneImplementationService => typeof(TImplementation).IsDisposable();
@@ -20,8 +27,8 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
     public ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> With<TDecorator>()
         where TDecorator : notnull, TService
     {
-        var descriptor = new ServiceDecoratorDescriptor<TService>.Node<TDecorator>();
-        return new(descriptor.AppendTo(_descriptors));
+        var descriptor = new ServiceDecoratorDescriptor<TService>.For<TDecorator>();
+        return new(descriptor.AppendTo(_descriptors), IsDisposableContainerAllowed);
     }
 
     internal ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> With(
@@ -30,8 +37,11 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
         if (descriptor is null)
             return this;
 
-        return new(descriptor.AppendTo(_descriptors));
+        return new(descriptor.AppendTo(_descriptors), IsDisposableContainerAllowed);
     }
+
+    internal ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> AllowDisposableContainer() =>
+        new(_descriptors, isDisposableContainerAllowed: true);
 
     internal ServiceDecoratorDescriptorChain<TService> BuildDescriptorChain()
     {
@@ -58,6 +68,9 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
 
         if (UseStandaloneImplementationService)
             options |= ServiceDecoratorDescriptorChainOptions.UseDefaultImplementationServiceKey;
+
+        if (IsDisposableContainerAllowed)
+            options |= ServiceDecoratorDescriptorChainOptions.IsDisposableContainerAllowed;
 
         return options;
     }
