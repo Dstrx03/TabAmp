@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TabAmp.Shared.Decorator.Core.DisposableContainer;
 
-internal sealed class ServiceDecoratorDisposableContainer<TService> : DispatchProxy, IDisposable, IAsyncDisposable
+internal abstract class ServiceDecoratorDisposableContainer<TService> : DispatchProxy
     where TService : notnull
 {
     private bool _disposed;
@@ -31,9 +31,6 @@ internal sealed class ServiceDecoratorDisposableContainer<TService> : DispatchPr
     protected override object? Invoke(MethodInfo? targetMethod, object?[]? args) =>
         targetMethod.Invoke(_decoratedService, args);
 
-    public void Dispose() => DisposeCore();
-    public ValueTask DisposeAsync() => DisposeAsyncCore();
-
-    private void DisposeCore() => throw new NotImplementedException();
-    private ValueTask DisposeAsyncCore() => throw new NotImplementedException();
+    protected void DisposeCore() => throw new NotImplementedException();
+    protected ValueTask DisposeAsyncCore() => throw new NotImplementedException();
 }

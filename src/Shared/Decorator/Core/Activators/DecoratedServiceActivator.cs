@@ -63,7 +63,7 @@ internal static class DecoratedServiceActivator
             IDisposable and IAsyncDisposable => throw new NotImplementedException("TODO"),
             IDisposable => throw new NotImplementedException("TODO"),
             IAsyncDisposable => throw new NotImplementedException("TODO"),
-            _ => DispatchProxy.Create<TService, ServiceDecoratorDisposableContainer<TService>>()
+            _ => DispatchProxy.Create<TService, DefaultServiceDecoratorDisposableContainer<TService>>()
         };
 
         return (ServiceDecoratorDisposableContainer<TService>)(object)disposableContainer;
