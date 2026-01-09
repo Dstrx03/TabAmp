@@ -29,10 +29,7 @@ internal static class DecoratedServiceActivator
             descriptor = descriptor.Next;
         }
 
-        if (disposableContainer is not null)
-            service = disposableContainer.DecorateService(decoratedService: service);
-
-        return service;
+        return disposableContainer?.DecorateService(decoratedService: service) ?? service;
     }
 
     private static TService ResolveImplementationService<TService, TImplementation>(

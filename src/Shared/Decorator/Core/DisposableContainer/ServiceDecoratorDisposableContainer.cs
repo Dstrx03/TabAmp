@@ -25,7 +25,6 @@ internal abstract class ServiceDecoratorDisposableContainer<TService> : Dispatch
     internal TService DecorateService(TService decoratedService)
     {
         _decoratedService = decoratedService;
-
         return (TService)(object)this;
     }
 
