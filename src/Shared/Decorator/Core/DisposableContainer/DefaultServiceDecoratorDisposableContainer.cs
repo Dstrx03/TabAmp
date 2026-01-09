@@ -7,7 +7,7 @@ internal class DefaultServiceDecoratorDisposableContainer<TService> :
     ServiceDecoratorDisposableContainer<TService>,
     IDisposable,
     IAsyncDisposable
-    where TService : notnull
+    where TService : class
 {
     public void Dispose() => DisposeCore();
     public ValueTask DisposeAsync() => DisposeAsyncCore();

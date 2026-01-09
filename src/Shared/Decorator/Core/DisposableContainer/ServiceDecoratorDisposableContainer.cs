@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace TabAmp.Shared.Decorator.Core.DisposableContainer;
 
 internal abstract class ServiceDecoratorDisposableContainer<TService> : DispatchProxy
-    where TService : notnull
+    where TService : class
 {
     private bool _disposed;
     private readonly List<TService> _disposableDecorators = [];
