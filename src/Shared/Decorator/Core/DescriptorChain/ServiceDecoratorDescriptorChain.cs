@@ -7,7 +7,7 @@ using Options = TabAmp.Shared.Decorator.Core.DescriptorChain.ServiceDecoratorDes
 namespace TabAmp.Shared.Decorator.Core.DescriptorChain;
 
 internal abstract class ServiceDecoratorDescriptorChain<TService>
-    where TService : notnull
+    where TService : class
 {
     private readonly ServiceDecoratorDescriptorChainFlags _flags;
 
@@ -36,14 +36,14 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
         ServiceDecoratorDescriptorChain<TService>? next,
         ServiceDecoratorDescriptorChainOptions options) :
         ServiceDecoratorDescriptorChain<TService>(next, options, typeof(TDecorator))
-        where TDecorator : notnull, TService
+        where TDecorator : class, TService
     {
         internal override TService CreateDecorator(IServiceProvider serviceProvider, TService service) =>
             ServiceDecoratorActivator.CreateDecorator<TService, TDecorator>(serviceProvider, service);
     }
 
     private class ImplementationServiceKeyNode<TDecorator> : Node<TDecorator>
-        where TDecorator : notnull, TService
+        where TDecorator : class, TService
     {
         internal override object ImplementationServiceKey { get; }
 
@@ -60,7 +60,7 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
         ServiceDecoratorDescriptorChain<TService>? next,
         ServiceDecoratorDescriptorChainOptions options = default,
         object? implementationServiceKey = null)
-        where TDecorator : notnull, TService
+        where TDecorator : class, TService
     {
         var useDefaultImplementationServiceKey = options.HasFlag(Options.UseDefaultImplementationServiceKey);
         var useStandaloneImplementationService = implementationServiceKey is not null || useDefaultImplementationServiceKey;

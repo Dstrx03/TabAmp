@@ -13,8 +13,8 @@ public static class ServiceCollectionDecoratorCoreExtensions
         this IServiceCollection serviceCollection,
         ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder,
         ServiceLifetime lifetime)
-        where TService : notnull
-        where TImplementation : notnull, TService
+        where TService : class
+        where TImplementation : class, TService
     {
         ArgumentNullException.ThrowIfNull(serviceCollection);
 
@@ -27,8 +27,8 @@ public static class ServiceCollectionDecoratorCoreExtensions
         object? serviceKey,
         ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder,
         ServiceLifetime lifetime)
-        where TService : notnull
-        where TImplementation : notnull, TService
+        where TService : class
+        where TImplementation : class, TService
     {
         ArgumentNullException.ThrowIfNull(serviceCollection);
 
@@ -40,8 +40,8 @@ public static class ServiceCollectionDecoratorCoreExtensions
         this IServiceCollection serviceCollection,
         ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder,
         ServiceLifetime lifetime)
-        where TService : notnull
-        where TImplementation : notnull, TService
+        where TService : class
+        where TImplementation : class, TService
     {
         ArgumentNullException.ThrowIfNull(serviceCollection);
 
@@ -54,8 +54,8 @@ public static class ServiceCollectionDecoratorCoreExtensions
         object? serviceKey,
         ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder,
         ServiceLifetime lifetime)
-        where TService : notnull
-        where TImplementation : notnull, TService
+        where TService : class
+        where TImplementation : class, TService
     {
         ArgumentNullException.ThrowIfNull(serviceCollection);
 
@@ -86,8 +86,8 @@ public static class ServiceCollectionDecoratorCoreExtensions
     private static DecoratedServiceDescriptors DescribeDecoratedService<TService, TImplementation>(
         ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder,
         ServiceLifetime lifetime)
-        where TService : notnull
-        where TImplementation : notnull, TService
+        where TService : class
+        where TImplementation : class, TService
     {
         var descriptorChain = builder.BuildDescriptorChain();
 
@@ -108,8 +108,8 @@ public static class ServiceCollectionDecoratorCoreExtensions
         object? serviceKey,
         ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder,
         ServiceLifetime lifetime)
-        where TService : notnull
-        where TImplementation : notnull, TService
+        where TService : class
+        where TImplementation : class, TService
     {
         var descriptorChain = builder.BuildDescriptorChain();
 
@@ -130,8 +130,8 @@ public static class ServiceCollectionDecoratorCoreExtensions
     private static ServiceDescriptor? DescribeImplementationService<TService, TImplementation>(
         ServiceDecoratorDescriptorChain<TService> descriptorChain,
         ServiceLifetime lifetime)
-        where TService : notnull
-        where TImplementation : notnull, TService
+        where TService : class
+        where TImplementation : class, TService
     {
         if (!descriptorChain.UseStandaloneImplementationService)
             return null;

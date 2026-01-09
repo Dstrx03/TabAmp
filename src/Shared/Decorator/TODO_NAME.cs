@@ -5,6 +5,6 @@ namespace TabAmp.Shared.Decorator;
 public static class TODO_NAME
 {
     public static ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> For<TService, TImplementation>()
-        where TService : notnull
-        where TImplementation : notnull, TService => new();
+        where TService : class
+        where TImplementation : class, TService => new();
 }

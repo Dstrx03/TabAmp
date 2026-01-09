@@ -7,11 +7,11 @@ public static class ServiceDecoratorDescriptorChainFluentBuilderMethodsExtension
     public static ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> With<TService, TImplementation>(
         this ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder,
         ServiceDecoratorDescriptor<TService>? descriptor)
-        where TService : notnull
-        where TImplementation : notnull, TService => builder.With(descriptor);
+        where TService : class
+        where TImplementation : class, TService => builder.With(descriptor);
 
     public static ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> AllowDisposableContainer<TService, TImplementation>(
         this ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder)
-        where TService : notnull
-        where TImplementation : notnull, TService => builder.AllowDisposableContainer();
+        where TService : class
+        where TImplementation : class, TService => builder.AllowDisposableContainer();
 }

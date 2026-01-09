@@ -41,8 +41,8 @@ internal static class DependencyInjection
     private static IServiceCollection AddGp5Reader<TService, TReader, TIntegrityValidator>(
         this IServiceCollection serviceCollection)
         where TService : class
-        where TReader : notnull, TService
-        where TIntegrityValidator : notnull, TService
+        where TReader : class, TService
+        where TIntegrityValidator : class, TService
     {
         serviceCollection.AddDecoratedScoped(TODO_NAME.For<TService, TReader>().With<TIntegrityValidator>());
         serviceCollection.AddDecoratedScoped<TService, TReader>(builder => builder.With<TIntegrityValidator>());

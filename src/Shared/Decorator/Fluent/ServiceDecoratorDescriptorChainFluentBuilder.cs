@@ -6,8 +6,8 @@ using TabAmp.Shared.Decorator.Fluent.Descriptor;
 namespace TabAmp.Shared.Decorator.Fluent;
 
 public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation>
-    where TService : notnull
-    where TImplementation : notnull, TService
+    where TService : class
+    where TImplementation : class, TService
 {
     private readonly ServiceDecoratorDescriptor<TService> _descriptors;
 
@@ -25,7 +25,7 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
     internal bool UseStandaloneImplementationService => typeof(TImplementation).IsDisposable();
 
     public ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> With<TDecorator>()
-        where TDecorator : notnull, TService
+        where TDecorator : class, TService
     {
         var descriptor = new ServiceDecoratorDescriptor<TService>.For<TDecorator>();
         return new(descriptor.AppendTo(_descriptors), IsDisposableContainerAllowed);

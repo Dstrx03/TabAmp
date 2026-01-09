@@ -7,8 +7,8 @@ namespace TabAmp.Shared.Decorator.Core.Activators;
 internal static class ServiceDecoratorActivator
 {
     internal static TService CreateDecorator<TService, TDecorator>(IServiceProvider serviceProvider, TService service)
-        where TService : notnull
-        where TDecorator : notnull, TService
+        where TService : class
+        where TDecorator : class, TService
     {
         ArgumentNullException.ThrowIfNull(serviceProvider);
         ArgumentNullException.ThrowIfNull(service);

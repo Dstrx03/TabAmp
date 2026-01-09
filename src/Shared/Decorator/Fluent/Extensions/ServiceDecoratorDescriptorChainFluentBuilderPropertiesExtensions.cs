@@ -4,16 +4,16 @@ public static class ServiceDecoratorDescriptorChainFluentBuilderPropertiesExtens
 {
     public static bool IsDisposableContainerAllowed<TService, TImplementation>(
         this ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder)
-        where TService : notnull
-        where TImplementation : notnull, TService => builder.IsDisposableContainerAllowed;
+        where TService : class
+        where TImplementation : class, TService => builder.IsDisposableContainerAllowed;
 
     public static bool IsEmpty<TService, TImplementation>(
         this ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder)
-        where TService : notnull
-        where TImplementation : notnull, TService => builder.IsEmpty;
+        where TService : class
+        where TImplementation : class, TService => builder.IsEmpty;
 
     public static bool UseStandaloneImplementationService<TService, TImplementation>(
         this ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder)
-        where TService : notnull
-        where TImplementation : notnull, TService => builder.UseStandaloneImplementationService;
+        where TService : class
+        where TImplementation : class, TService => builder.UseStandaloneImplementationService;
 }

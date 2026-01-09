@@ -11,8 +11,8 @@ internal static class DecoratedServiceActivator
     internal static TService CreateService<TService, TImplementation>(
         IServiceProvider serviceProvider,
         ServiceDecoratorDescriptorChain<TService> descriptorChain)
-        where TService : notnull
-        where TImplementation : notnull, TService
+        where TService : class
+        where TImplementation : class, TService
     {
         ArgumentNullException.ThrowIfNull(serviceProvider);
         ArgumentNullException.ThrowIfNull(descriptorChain);
@@ -38,8 +38,8 @@ internal static class DecoratedServiceActivator
     private static TService ResolveImplementationService<TService, TImplementation>(
         IServiceProvider serviceProvider,
         ServiceDecoratorDescriptorChain<TService> descriptorChain)
-        where TService : notnull
-        where TImplementation : notnull, TService
+        where TService : class
+        where TImplementation : class, TService
     {
         if (!descriptorChain.UseStandaloneImplementationService)
             return ActivatorUtilities.CreateInstance<TImplementation>(serviceProvider);
@@ -50,7 +50,7 @@ internal static class DecoratedServiceActivator
     private static ServiceDecoratorDisposableContainer<TService>? ResolveDisposableContainer<TService>(
         ServiceDecoratorDescriptorChain<TService> descriptorChain,
         TService implementationService)
-        where TService : notnull
+        where TService : class
     {
         if (!descriptorChain.UseDisposableContainer)
             return null;
