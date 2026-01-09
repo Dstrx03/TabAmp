@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -31,6 +32,25 @@ internal abstract class ServiceDecoratorDisposableContainer<TService> : Dispatch
     protected override object? Invoke(MethodInfo? targetMethod, object?[]? args) =>
         targetMethod.Invoke(_decoratedService, args);
 
-    protected void DisposeCore() => throw new NotImplementedException();
+    protected void DisposeCore()
+    {
+        if (_disposed)
+            return;
+
+        _disposed = true;
+
+        for (var i = _disposableDecorators.Count - 1; i >= 0; i--)
+        {
+            if (_disposableDecorators[i] is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
+            else
+            {
+                throw new UnreachableException();
+            }
+        }
+    }
+
     protected ValueTask DisposeAsyncCore() => throw new NotImplementedException();
 }
