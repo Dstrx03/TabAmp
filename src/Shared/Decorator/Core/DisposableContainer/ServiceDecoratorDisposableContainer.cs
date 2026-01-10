@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace TabAmp.Shared.Decorator.Core.DisposableContainer;
@@ -9,17 +10,15 @@ namespace TabAmp.Shared.Decorator.Core.DisposableContainer;
 internal abstract class ServiceDecoratorDisposableContainer<TService> : DispatchProxy
     where TService : class
 {
-    private bool _disposed;
-    private readonly List<TService> _disposableDecorators = [];
+    private int _disposed;
+    private List<TService> _disposableDecorators = [];
 
     private TService? _decoratedService;
 
     internal void CaptureDisposableDecorator(TService serviceDecorator)
     {
-        if (!(serviceDecorator is IDisposable || serviceDecorator is IAsyncDisposable))
-            return;
-
-        _disposableDecorators.Add(serviceDecorator);
+        if (serviceDecorator is IDisposable || serviceDecorator is IAsyncDisposable)
+            _disposableDecorators.Add(serviceDecorator);
     }
 
     internal TService DecorateService(TService decoratedService)
@@ -33,10 +32,8 @@ internal abstract class ServiceDecoratorDisposableContainer<TService> : Dispatch
 
     protected void DisposeCore()
     {
-        if (_disposed)
-            return;
-
-        _disposed = true;
+        var disposed = BeginDispose();
+        if (disposed) return;
 
         for (var i = _disposableDecorators.Count - 1; i >= 0; i--)
         {
@@ -48,8 +45,14 @@ internal abstract class ServiceDecoratorDisposableContainer<TService> : Dispatch
             {
                 throw new UnreachableException();
             }
+
+            _disposableDecorators[i] = null!;
         }
+
+        _disposableDecorators = null!;
     }
 
     protected ValueTask DisposeAsyncCore() => throw new NotImplementedException();
+
+    private bool BeginDispose() => Interlocked.Exchange(ref _disposed, 1) != 0;
 }
