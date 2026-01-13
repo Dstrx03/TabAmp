@@ -22,7 +22,7 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
     }
 
     internal bool IsEmpty => _descriptors is null;
-    internal bool UseStandaloneImplementationService => //typeof(TImplementation).IsDisposable();
+    internal bool UseStandaloneImplementationService => IsImplementationServiceDisposable();
 
     public ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> With<TDecorator>()
         where TDecorator : class, TService
@@ -74,6 +74,9 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
 
         return options;
     }
+
+    private static bool IsImplementationServiceDisposable() =>
+        typeof(TImplementation).IsDisposable() || typeof(TImplementation).IsAsyncDisposable();
 
     private static InvalidOperationException AtLeastOneDescriptorRequiredException() =>
         new($"Cannot build decorator descriptor chain for the decorated type '{typeof(TService).FullName}'. " +
