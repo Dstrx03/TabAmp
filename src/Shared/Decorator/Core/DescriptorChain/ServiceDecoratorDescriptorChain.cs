@@ -80,7 +80,7 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
         ServiceDecoratorDescriptorChainOptions options,
         Type decoratorType)
     {
-        var isDecoratorDisposable = decoratorType.IsDisposable();
+        var isDecoratorDisposable = //decoratorType.IsDisposable();
         var isDisposableContainerAllowed = options.HasFlag(Options.IsDisposableContainerAllowed);
 
         ServiceDecoratorDescriptorChainFlags flags = new();
