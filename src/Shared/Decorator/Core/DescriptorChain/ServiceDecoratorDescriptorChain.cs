@@ -65,7 +65,7 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
         object? implementationServiceKey = null)
         where TDecorator : class, TService
     {
-        var useDefaultImplementationServiceKey = options.HasFlag(Options.UseDefaultImplementationServiceKey);
+        var useDefaultImplementationServiceKey = options.HasOption(Options.UseDefaultImplementationServiceKey);
         var useStandaloneImplementationService = implementationServiceKey is not null || useDefaultImplementationServiceKey;
 
         if (useStandaloneImplementationService)
@@ -88,7 +88,7 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
         var isServiceAsyncDisposable = next?.HasFlag(Flags.IsServiceAsyncDisposable) ?? typeof(TService).IsAsyncDisposable();
         var isDecoratorDisposable = decoratorType.IsDisposable();
         var isDecoratorAsyncDisposable = decoratorType.IsAsyncDisposable();
-        var isDisposableContainerAllowed = options.HasFlag(Options.IsDisposableContainerAllowed);
+        var isDisposableContainerAllowed = options.HasOption(Options.IsDisposableContainerAllowed);
 
         ServiceDecoratorDescriptorChainFlags flags = new();
 
