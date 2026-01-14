@@ -30,7 +30,7 @@ public abstract class ServiceDecoratorDescriptor<TService>
 
     internal ServiceDecoratorDescriptorChain<TService> ToDescriptorChainNode(
         ServiceDecoratorDescriptorChain<TService> descriptorChain,
-        ServiceDecoratorDescriptorChainOptions options = default)
+        ServiceDecoratorDescriptorChainOptions options)
     {
         if (!IsBound)
             throw CannotConvertToDescriptorChainNodeDescriptorIsNotBoundException(this);

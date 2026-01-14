@@ -5,6 +5,6 @@ namespace TabAmp.Shared.Decorator.Core.DescriptorChain;
 [Flags]
 internal enum ServiceDecoratorDescriptorChainOptions : byte
 {
-    UseDefaultImplementationServiceKey = 0x20,
-    IsDisposableContainerAllowed = 0x40
+    IsDisposableContainerAllowed = 0x01,
+    UseDefaultImplementationServiceKey = 0x02
 }
