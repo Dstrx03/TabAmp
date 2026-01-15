@@ -30,7 +30,8 @@ internal static class DecoratedServiceActivator
             descriptor = descriptor.Next;
         }
 
-        return disposableContainer?.DecorateService(decoratedService: service) ?? service;
+        //return disposableContainer?.DecorateService(decoratedService: service) ?? service;
+        return service;
     }
 
     private static void CreateDecorator<TService>(
@@ -40,12 +41,21 @@ internal static class DecoratedServiceActivator
         ServiceDecoratorDescriptorChain<TService> descriptor)
         where TService : class
     {
-        service = descriptor.CreateDecorator(serviceProvider, service);
-        if (descriptor.IsDecoratorDisposable || descriptor.IsDecoratorAsyncDisposable)
+        var decorator = descriptor.CreateDecorator(serviceProvider, service);
+
+        var isInner = descriptor.Next is not null;
+        var isDisposable = descriptor.IsDecoratorDisposable || descriptor.IsDecoratorAsyncDisposable;
+
+        if (isDisposable && (isInner || disposableContainer != null))
         {
             disposableContainer ??= ResolveDisposableContainer(descriptor);
-            disposableContainer.CaptureDisposableDecorator(serviceDecorator: service);
+            disposableContainer.CaptureDisposableDecorator(serviceDecorator: decorator);
         }
+
+        if (!isInner && disposableContainer != null)
+            decorator = disposableContainer.DecorateService(decoratedService: decorator);
+
+        service = decorator;
     }
 
     private static TService ResolveImplementationService<TService, TImplementation>(
