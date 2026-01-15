@@ -18,18 +18,34 @@ internal static class DecoratedServiceActivator
         ArgumentNullException.ThrowIfNull(descriptorChain);
 
         var service = ResolveImplementationService<TService, TImplementation>(serviceProvider, descriptorChain);
-        var disposableContainer = ResolveDisposableContainer(descriptorChain, implementationService: service);
+        ServiceDecoratorDisposableContainer<TService>? disposableContainer = null;
+        //var disposableContainer = ResolveDisposableContainer(descriptorChain, implementationService: service);
 
         var descriptor = descriptorChain;
         while (descriptor is not null)
         {
-            service = descriptor.CreateDecorator(serviceProvider, service);
-            disposableContainer?.CaptureDisposableDecorator(serviceDecorator: service);
-
+            //service = descriptor.CreateDecorator(serviceProvider, service);
+            //disposableContainer?.CaptureDisposableDecorator(serviceDecorator: service);
+            CreateDecorator(ref service, ref disposableContainer, serviceProvider, descriptor);
             descriptor = descriptor.Next;
         }
 
         return disposableContainer?.DecorateService(decoratedService: service) ?? service;
+    }
+
+    private static void CreateDecorator<TService>(
+        ref TService service,
+        ref ServiceDecoratorDisposableContainer<TService>? disposableContainer,
+        IServiceProvider serviceProvider,
+        ServiceDecoratorDescriptorChain<TService> descriptor)
+        where TService : class
+    {
+        service = descriptor.CreateDecorator(serviceProvider, service);
+        if (descriptor.IsDecoratorDisposable || descriptor.IsDecoratorAsyncDisposable)
+        {
+            disposableContainer ??= ResolveDisposableContainer(descriptor);
+            disposableContainer.CaptureDisposableDecorator(serviceDecorator: service);
+        }
     }
 
     private static TService ResolveImplementationService<TService, TImplementation>(
@@ -44,22 +60,18 @@ internal static class DecoratedServiceActivator
         return serviceProvider.GetRequiredKeyedService<TImplementation>(serviceKey: descriptorChain.ImplementationServiceKey);
     }
 
-    private static ServiceDecoratorDisposableContainer<TService>? ResolveDisposableContainer<TService>(
-        ServiceDecoratorDescriptorChain<TService> descriptorChain,
-        TService implementationService)
+    private static ServiceDecoratorDisposableContainer<TService> ResolveDisposableContainer<TService>(
+        ServiceDecoratorDescriptorChain<TService> descriptor)
         where TService : class
     {
-        if (!descriptorChain.UseDisposableContainer)
-            return null;
-
-        if (!descriptorChain.IsDisposableContainerAllowed)
+        if (!descriptor.IsDisposableContainerAllowed)
             throw DisposableContainerIsNotAllowed(typeof(TService));
 
-        var disposableContainer = implementationService switch
+        var disposableContainer = descriptor switch
         {
-            IDisposable and IAsyncDisposable => throw new NotImplementedException("TODO"),
-            IDisposable => throw new NotImplementedException("TODO"),
-            IAsyncDisposable => throw new NotImplementedException("TODO"),
+            { IsServiceDisposable: true, IsServiceAsyncDisposable: true } => throw new NotImplementedException("TODO"),
+            { IsServiceDisposable: true } => throw new NotImplementedException("TODO"),
+            { IsServiceAsyncDisposable: true } => throw new NotImplementedException("TODO"),
             _ => DispatchProxy.Create<TService, DefaultServiceDecoratorDisposableContainer<TService>>()
         };
 
