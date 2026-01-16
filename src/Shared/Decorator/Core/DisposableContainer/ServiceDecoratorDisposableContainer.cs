@@ -40,7 +40,7 @@ internal abstract class ServiceDecoratorDisposableContainer<TService> : Dispatch
             }
             else if (_disposableDecorators[i] is IAsyncDisposable)
             {
-                throw new InvalidOperationException("*TODO*");
+                throw DecoratorOnlyImplementsIAsyncDisposableException(_disposableDecorators[i].GetType());
             }
             else
             {
@@ -56,4 +56,8 @@ internal abstract class ServiceDecoratorDisposableContainer<TService> : Dispatch
     protected ValueTask DisposeAsyncCore() => throw new NotImplementedException();
 
     private bool BeginDispose() => Interlocked.Exchange(ref _disposed, 1) != 0;
+
+    private static InvalidOperationException DecoratorOnlyImplementsIAsyncDisposableException(Type decoratorType) =>
+        new($"Decorator type '{decoratorType.FullName}' only implements IAsyncDisposable. " +
+            "Use DisposeAsync to dispose the container.");
 }

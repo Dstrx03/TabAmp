@@ -71,7 +71,7 @@ internal static class DecoratedServiceActivator
         where TService : class
     {
         if (!descriptor.IsDisposableContainerAllowed)
-            throw DisposableContainerIsNotAllowed(typeof(TService));
+            throw DisposableContainerIsNotAllowedException(typeof(TService));
 
         var disposableContainer = descriptor switch
         {
@@ -84,7 +84,7 @@ internal static class DecoratedServiceActivator
         return (ServiceDecoratorDisposableContainer<TService>)(object)disposableContainer;
     }
 
-    private static InvalidOperationException DisposableContainerIsNotAllowed(Type serviceType) =>
+    private static InvalidOperationException DisposableContainerIsNotAllowedException(Type serviceType) =>
         new($"Unable to activate decorated type '{serviceType.FullName}'. " +
             "At least one inner decorator type requires disposal, " +
             "but the use of a decorator disposable container is not allowed.");
