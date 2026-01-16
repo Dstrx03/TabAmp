@@ -15,11 +15,8 @@ internal abstract class ServiceDecoratorDisposableContainer<TService> : Dispatch
 
     private TService? _decoratedService;
 
-    internal void CaptureDisposableDecorator(TService serviceDecorator)
-    {
-        if (serviceDecorator is IDisposable || serviceDecorator is IAsyncDisposable)
-            _disposableDecorators.Add(serviceDecorator);
-    }
+    internal void CaptureDisposableDecorator(TService serviceDecorator) =>
+        _disposableDecorators.Add(serviceDecorator);
 
     internal TService DecorateService(TService decoratedService)
     {
@@ -40,6 +37,10 @@ internal abstract class ServiceDecoratorDisposableContainer<TService> : Dispatch
             if (_disposableDecorators[i] is IDisposable disposable)
             {
                 disposable.Dispose();
+            }
+            else if (_disposableDecorators[i] is IAsyncDisposable)
+            {
+                throw new InvalidOperationException("*TODO*");
             }
             else
             {

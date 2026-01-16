@@ -19,18 +19,14 @@ internal static class DecoratedServiceActivator
 
         var service = ResolveImplementationService<TService, TImplementation>(serviceProvider, descriptorChain);
         ServiceDecoratorDisposableContainer<TService>? disposableContainer = null;
-        //var disposableContainer = ResolveDisposableContainer(descriptorChain, implementationService: service);
 
         var descriptor = descriptorChain;
         while (descriptor is not null)
         {
-            //service = descriptor.CreateDecorator(serviceProvider, service);
-            //disposableContainer?.CaptureDisposableDecorator(serviceDecorator: service);
             CreateDecorator(ref service, ref disposableContainer, serviceProvider, descriptor);
             descriptor = descriptor.Next;
         }
 
-        //return disposableContainer?.DecorateService(decoratedService: service) ?? service;
         return service;
     }
 
