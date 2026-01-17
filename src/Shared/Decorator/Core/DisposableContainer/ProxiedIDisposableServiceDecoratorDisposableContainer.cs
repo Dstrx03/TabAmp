@@ -9,9 +9,24 @@ internal class ProxiedIDisposableServiceDecoratorDisposableContainer<TService> :
     IAsyncDisposable
     where TService : class
 {
+    private static bool IsDisposeInvoke_TODONAME(MethodInfo targetMethod)
+    {
+        var isName = string.Equals(targetMethod.Name, nameof(IDisposable.Dispose), StringComparison.Ordinal);
+        var isRetType = targetMethod.ReturnType == typeof(void);
+        var isDecType = targetMethod.DeclaringType == typeof(IDisposable);
+        return isName && isRetType && isDecType;
+    }
+
     protected override object? Invoke(MethodInfo? targetMethod, object?[]? args)
     {
-        throw new NotImplementedException();
+
+        if (IsDisposeInvoke_TODONAME(targetMethod))
+        {
+            DisposeCore();
+            return null;
+        }
+
+        //throw new NotImplementedException();
 
         return base.Invoke(targetMethod, args);
     }
