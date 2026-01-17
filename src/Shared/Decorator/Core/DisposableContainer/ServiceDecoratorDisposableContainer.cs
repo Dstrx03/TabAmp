@@ -57,6 +57,12 @@ internal abstract class ServiceDecoratorDisposableContainer<TService> : Dispatch
 
     private bool BeginDispose() => Interlocked.Exchange(ref _disposed, 1) != 0;
 
+    protected static bool IsDisposeMethodSignature(MethodInfo targetMethod) =>
+        targetMethod.DeclaringType == typeof(IDisposable)
+        && string.Equals(targetMethod.Name, nameof(IDisposable.Dispose), StringComparison.Ordinal)
+        && targetMethod.GetParameters().Length == 0
+        && targetMethod.ReturnType == typeof(void);
+
     private static InvalidOperationException DecoratorOnlyImplementsIAsyncDisposableException(Type decoratorType) =>
         new($"Decorator type '{decoratorType.FullName}' only implements IAsyncDisposable. " +
             "Use DisposeAsync to dispose the container.");
