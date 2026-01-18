@@ -59,7 +59,7 @@ internal abstract class ServiceDecoratorDisposableContainer<TService> : Dispatch
 
     protected static bool IsDisposeMethodSignature(MethodInfo targetMethod) =>
         targetMethod.DeclaringType == typeof(IDisposable)
-        && string.Equals(targetMethod.Name, nameof(IDisposable.Dispose), StringComparison.Ordinal)
+        && targetMethod.Name.Equals(nameof(IDisposable.Dispose), StringComparison.Ordinal)
         && targetMethod.GetParameters().Length == 0
         && targetMethod.ReturnType == typeof(void);
 
