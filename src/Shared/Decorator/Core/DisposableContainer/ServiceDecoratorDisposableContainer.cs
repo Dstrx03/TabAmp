@@ -29,33 +29,68 @@ internal abstract class ServiceDecoratorDisposableContainer<TService> : Dispatch
 
     protected void DisposeCore()
     {
-        var disposed = BeginDispose();
-        if (disposed) return;
+        var disposableDecorators = BeginDispose();
 
-        for (var i = _disposableDecorators.Count - 1; i >= 0; i--)
+        if (disposableDecorators is null)
+            return;
+
+        for (var i = disposableDecorators.Count - 1; i >= 0; i--)
         {
-            if (_disposableDecorators[i] is IDisposable disposable)
+            var decorator = disposableDecorators[i];
+            disposableDecorators[i] = null!;
+
+            if (decorator is IDisposable disposable)
             {
                 disposable.Dispose();
             }
-            else if (_disposableDecorators[i] is IAsyncDisposable)
+            else if (decorator is IAsyncDisposable)
             {
-                throw DecoratorOnlyImplementsIAsyncDisposableException(_disposableDecorators[i].GetType());
+                throw DecoratorOnlyImplementsIAsyncDisposableException(decorator.GetType());
             }
             else
             {
                 throw new UnreachableException();
             }
-
-            _disposableDecorators[i] = null!;
         }
-
-        _disposableDecorators = null!;
     }
 
-    protected ValueTask DisposeAsyncCore() => throw new NotImplementedException();
+    protected async ValueTask DisposeAsyncCore()
+    {
+        var disposableDecorators = BeginDispose();
 
-    private bool BeginDispose() => Interlocked.Exchange(ref _disposed, 1) != 0;
+        if (disposableDecorators is null)
+            return;
+
+        for (var i = disposableDecorators.Count - 1; i >= 0; i--)
+        {
+            var decorator = disposableDecorators[i];
+            disposableDecorators[i] = null!;
+
+            if (decorator is IAsyncDisposable asyncDisposable)
+            {
+                await asyncDisposable.DisposeAsync().ConfigureAwait(false);
+            }
+            else if (decorator is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
+            else
+            {
+                throw new UnreachableException();
+            }
+        }
+    }
+
+    private List<TService>? BeginDispose()
+    {
+        if (Interlocked.Exchange(ref _disposed, 1) != 0)
+            return null;
+
+        var disposableDecorators = _disposableDecorators;
+        _disposableDecorators = null!;
+
+        return disposableDecorators;
+    }
 
     protected static bool IsDisposeMethodSignature(MethodInfo targetMethod) =>
         targetMethod.DeclaringType == typeof(IDisposable)
