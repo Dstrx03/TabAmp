@@ -75,9 +75,12 @@ internal static class DecoratedServiceActivator
 
         var disposableContainer = descriptor switch
         {
-            { IsServiceDisposable: true, IsServiceAsyncDisposable: true } => throw new NotImplementedException("TODO"),
-            { IsServiceDisposable: true } => DispatchProxy.Create<TService, ProxiedIDisposableServiceDecoratorDisposableContainer<TService>>(),
-            { IsServiceAsyncDisposable: true } => throw new NotImplementedException("TODO"),
+            { IsServiceDisposable: true, IsServiceAsyncDisposable: true } =>
+                DispatchProxy.Create<TService, ProxiedIDisposableIAsyncDisposableServiceDecoratorDisposableContainer<TService>>(),
+            { IsServiceDisposable: true } =>
+                DispatchProxy.Create<TService, ProxiedIDisposableServiceDecoratorDisposableContainer<TService>>(),
+            { IsServiceAsyncDisposable: true } =>
+                DispatchProxy.Create<TService, ProxiedIAsyncDisposableServiceDecoratorDisposableContainer<TService>>(),
             _ => DispatchProxy.Create<TService, DefaultServiceDecoratorDisposableContainer<TService>>()
         };
 

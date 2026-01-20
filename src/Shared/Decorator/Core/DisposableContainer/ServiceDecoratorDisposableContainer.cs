@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,8 +25,18 @@ internal abstract class ServiceDecoratorDisposableContainer<TService> : Dispatch
         return (TService)(object)this;
     }
 
-    protected override object? Invoke(MethodInfo? targetMethod, object?[]? args) =>
-        targetMethod.Invoke(_decoratedService, args);
+    protected override object? Invoke(MethodInfo? targetMethod, object?[]? args)
+    {
+        try
+        {
+            return targetMethod!.Invoke(_decoratedService, args);
+        }
+        catch (TargetInvocationException exception) when (exception.InnerException is not null)
+        {
+            ExceptionDispatchInfo.Capture(exception.InnerException).Throw();
+            throw new UnreachableException();
+        }
+    }
 
     protected void DisposeCore()
     {
@@ -94,9 +105,15 @@ internal abstract class ServiceDecoratorDisposableContainer<TService> : Dispatch
 
     protected static bool IsDisposeMethodSignature(MethodInfo targetMethod) =>
         targetMethod.DeclaringType == typeof(IDisposable)
-        && targetMethod.Name.Equals(nameof(IDisposable.Dispose), StringComparison.Ordinal)
+        && targetMethod.Name == nameof(IDisposable.Dispose)
         && targetMethod.GetParameters().Length == 0
         && targetMethod.ReturnType == typeof(void);
+
+    protected static bool IsDisposeAsyncMethodSignature(MethodInfo targetMethod) =>
+        targetMethod.DeclaringType == typeof(IAsyncDisposable)
+        && targetMethod.Name == nameof(IAsyncDisposable.DisposeAsync)
+        && targetMethod.GetParameters().Length == 0
+        && targetMethod.ReturnType == typeof(ValueTask);
 
     private static InvalidOperationException DecoratorOnlyImplementsIAsyncDisposableException(Type decoratorType) =>
         new($"Decorator type '{decoratorType.FullName}' only implements IAsyncDisposable. " +
