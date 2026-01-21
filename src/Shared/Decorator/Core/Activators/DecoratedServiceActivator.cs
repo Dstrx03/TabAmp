@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using TabAmp.Shared.Decorator.Core.DescriptorChain;
 using TabAmp.Shared.Decorator.Core.DisposableContainer;
@@ -73,18 +72,7 @@ internal static class DecoratedServiceActivator
         if (!descriptor.IsDisposableContainerAllowed)
             throw DisposableContainerIsNotAllowedException(typeof(TService));
 
-        var disposableContainer = descriptor switch
-        {
-            { IsServiceDisposable: true, IsServiceAsyncDisposable: true } =>
-                DispatchProxy.Create<TService, ProxiedIDisposableIAsyncDisposableServiceDecoratorDisposableContainer<TService>>(),
-            { IsServiceDisposable: true } =>
-                DispatchProxy.Create<TService, ProxiedIDisposableServiceDecoratorDisposableContainer<TService>>(),
-            { IsServiceAsyncDisposable: true } =>
-                DispatchProxy.Create<TService, ProxiedIAsyncDisposableServiceDecoratorDisposableContainer<TService>>(),
-            _ => DispatchProxy.Create<TService, DefaultServiceDecoratorDisposableContainer<TService>>()
-        };
-
-        return (ServiceDecoratorDisposableContainer<TService>)(object)disposableContainer;
+        return ServiceDecoratorDisposableContainer<TService>.Create(descriptor);
     }
 
     private static InvalidOperationException DisposableContainerIsNotAllowedException(Type serviceType) =>
