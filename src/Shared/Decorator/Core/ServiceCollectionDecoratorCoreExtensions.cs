@@ -90,6 +90,7 @@ public static class ServiceCollectionDecoratorCoreExtensions
         where TImplementation : class, TService
     {
         var descriptorChain = builder.BuildDescriptorChain();
+        descriptorChain.Validate();
 
         var implementationServiceDescriptor =
             DescribeImplementationService<TService, TImplementation>(descriptorChain, lifetime);
@@ -112,6 +113,7 @@ public static class ServiceCollectionDecoratorCoreExtensions
         where TImplementation : class, TService
     {
         var descriptorChain = builder.BuildDescriptorChain();
+        descriptorChain.Validate();
 
         var implementationServiceDescriptor =
             DescribeImplementationService<TService, TImplementation>(descriptorChain, lifetime);
