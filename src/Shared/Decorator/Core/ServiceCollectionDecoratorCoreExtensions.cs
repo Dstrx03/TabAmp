@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using TabAmp.Shared.Decorator.Core.Activators;
 using TabAmp.Shared.Decorator.Core.DescriptorChain;
+using TabAmp.Shared.Decorator.Core.DescriptorChain.Validation;
 using TabAmp.Shared.Decorator.Fluent;
 
 namespace TabAmp.Shared.Decorator.Core;
@@ -97,7 +98,7 @@ public static class ServiceCollectionDecoratorCoreExtensions
         where TService : class
         where TImplementation : class, TService
     {
-        descriptorChain.Validate();
+        ServiceDecoratorDescriptorChainValidator.ValidateAndThrow(descriptorChain);
 
         var implementationServiceDescriptor =
             DescribeImplementationService<TService, TImplementation>(descriptorChain, lifetime);
@@ -119,7 +120,7 @@ public static class ServiceCollectionDecoratorCoreExtensions
         where TService : class
         where TImplementation : class, TService
     {
-        descriptorChain.Validate();
+        ServiceDecoratorDescriptorChainValidator.ValidateAndThrow(descriptorChain);
 
         var implementationServiceDescriptor =
             DescribeImplementationService<TService, TImplementation>(descriptorChain, lifetime);

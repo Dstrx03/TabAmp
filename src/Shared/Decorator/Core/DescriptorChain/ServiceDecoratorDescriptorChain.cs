@@ -33,8 +33,6 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
 
     private bool HasFlag(ServiceDecoratorDescriptorChainFlags flag) => (_flags & flag) == flag;
 
-    internal void Validate() => throw new NotImplementedException();
-
     internal abstract TService CreateDecorator(IServiceProvider serviceProvider, TService service);
 
     private class Node<TDecorator>(
