@@ -16,7 +16,8 @@ internal static class ServiceDecoratorDescriptorChainValidator
         ArgumentNullException.ThrowIfNull(descriptorChain);
         List<Exception>? errors = null;
         errors ??= [];
-        errors.Add(new NotImplementedException("TODO..."));
+        errors.Add(new NotImplementedException("TODO... #1"));
+        errors.Add(new NotImplementedException("TODO... #2"));
         return new(errors);
     }
 }

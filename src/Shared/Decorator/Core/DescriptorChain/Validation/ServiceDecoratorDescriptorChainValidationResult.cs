@@ -12,8 +12,10 @@ internal readonly ref struct ServiceDecoratorDescriptorChainValidationResult(Lis
 
     internal void ThrowFirstErrorIfAny()
     {
-        var firstError = Errors?[0];
-        if (firstError is not null)
-            throw firstError;
+        if (!IsValid)
+        {
+            var errors = Errors!.Value;
+            throw errors[0];
+        }
     }
 }
