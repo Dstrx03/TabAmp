@@ -22,18 +22,24 @@ internal static class DecoratedServiceActivator
         var descriptor = descriptorChain;
         while (descriptor is not null)
         {
-            CreateDecorator(ref service, ref disposableContainer, serviceProvider, descriptor);
+            CreateDecorator(service: ref service,
+                disposableContainer: ref disposableContainer,
+                descriptor: descriptor,
+                serviceProvider: serviceProvider,
+                descriptorChain: descriptorChain);
+
             descriptor = descriptor.Next;
         }
 
-        return service;
+        return disposableContainer?.DecorateService(decoratedService: service) ?? service;
     }
 
     private static void CreateDecorator<TService>(
         ref TService service,
         ref ServiceDecoratorDisposableContainer<TService>? disposableContainer,
+        ServiceDecoratorDescriptorChain<TService> descriptor,
         IServiceProvider serviceProvider,
-        ServiceDecoratorDescriptorChain<TService> descriptor)
+        ServiceDecoratorDescriptorChain<TService> descriptorChain)
         where TService : class
     {
         var decorator = descriptor.CreateDecorator(serviceProvider, service);
@@ -43,12 +49,9 @@ internal static class DecoratedServiceActivator
 
         if (isDisposable && (isInner || disposableContainer != null))
         {
-            disposableContainer ??= ResolveDisposableContainer(descriptor);
+            disposableContainer ??= ResolveDisposableContainer(descriptorChain);
             disposableContainer.CaptureDisposableDecorator(serviceDecorator: decorator);
         }
-
-        if (!isInner && disposableContainer != null)
-            decorator = disposableContainer.DecorateService(decoratedService: decorator);
 
         service = decorator;
     }
@@ -66,13 +69,13 @@ internal static class DecoratedServiceActivator
     }
 
     private static ServiceDecoratorDisposableContainer<TService> ResolveDisposableContainer<TService>(
-        ServiceDecoratorDescriptorChain<TService> descriptor)
+        ServiceDecoratorDescriptorChain<TService> descriptorChain)
         where TService : class
     {
-        if (!descriptor.IsDisposableContainerAllowed)
+        if (!descriptorChain.IsDisposableContainerAllowed)
             throw DisposableContainerIsNotAllowedException(typeof(TService));
 
-        return ServiceDecoratorDisposableContainer<TService>.Create(descriptor);
+        return ServiceDecoratorDisposableContainer<TService>.Create(descriptorChain);
     }
 
     private static InvalidOperationException DisposableContainerIsNotAllowedException(Type serviceType) =>

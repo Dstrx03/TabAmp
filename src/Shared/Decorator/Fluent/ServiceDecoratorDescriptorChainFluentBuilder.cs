@@ -49,16 +49,15 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
             throw AtLeastOneDescriptorRequiredException();
 
         ServiceDecoratorDescriptorChain<TService> descriptorChain = null!;
-        var options = ComposeDescriptorChainOptions();
 
         var descriptor = _descriptors;
         while (descriptor.Next is not null)
         {
-            descriptorChain = descriptor.ToDescriptorChainNode(descriptorChain, options);
+            descriptorChain = descriptor.ToDescriptorChainNode(descriptorChain);
             descriptor = descriptor.Next;
         }
 
-        options = ComposeDescriptorChainHeadNodeOptions(options);
+        var options = ComposeDescriptorChainOptions();
         descriptorChain = descriptor.ToDescriptorChainNode(descriptorChain, options);
 
         return descriptorChain;
@@ -68,17 +67,11 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
     {
         ServiceDecoratorDescriptorChainOptions options = new();
 
-        if (IsDisposableContainerAllowed)
-            options |= ServiceDecoratorDescriptorChainOptions.IsDisposableContainerAllowed;
-
-        return options;
-    }
-
-    private ServiceDecoratorDescriptorChainOptions ComposeDescriptorChainHeadNodeOptions(
-        ServiceDecoratorDescriptorChainOptions options)
-    {
         if (UseStandaloneImplementationService)
             options |= ServiceDecoratorDescriptorChainOptions.UseDefaultImplementationServiceKey;
+
+        if (IsDisposableContainerAllowed)
+            options |= ServiceDecoratorDescriptorChainOptions.IsDisposableContainerAllowed;
 
         return options;
     }

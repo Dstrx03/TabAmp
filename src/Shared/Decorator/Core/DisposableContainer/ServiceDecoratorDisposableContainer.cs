@@ -105,9 +105,9 @@ internal abstract class ServiceDecoratorDisposableContainer<TService> : Dispatch
     }
 
     internal static ServiceDecoratorDisposableContainer<TService> Create(
-        ServiceDecoratorDescriptorChain<TService> descriptor)
+        ServiceDecoratorDescriptorChain<TService> descriptorChain)
     {
-        var disposableContainerType = descriptor switch
+        var disposableContainerType = descriptorChain switch
         {
             { IsServiceDisposable: true, IsServiceAsyncDisposable: true } =>
                 typeof(ProxiedIDisposableIAsyncDisposableServiceDecoratorDisposableContainer<TService>),
