@@ -98,7 +98,8 @@ public static class ServiceCollectionDecoratorCoreExtensions
         where TService : class
         where TImplementation : class, TService
     {
-        ServiceDecoratorDescriptorChainValidator.ValidateAndThrow(descriptorChain);
+        if (descriptorChain.UsePreRegistrationValidation)
+            ServiceDecoratorDescriptorChainValidator.ValidateAndThrow(descriptorChain);
 
         var implementationServiceDescriptor =
             DescribeImplementationService<TService, TImplementation>(descriptorChain, lifetime);
@@ -120,7 +121,8 @@ public static class ServiceCollectionDecoratorCoreExtensions
         where TService : class
         where TImplementation : class, TService
     {
-        ServiceDecoratorDescriptorChainValidator.ValidateAndThrow(descriptorChain);
+        if (descriptorChain.UsePreRegistrationValidation)
+            ServiceDecoratorDescriptorChainValidator.ValidateAndThrow(descriptorChain);
 
         var implementationServiceDescriptor =
             DescribeImplementationService<TService, TImplementation>(descriptorChain, lifetime);

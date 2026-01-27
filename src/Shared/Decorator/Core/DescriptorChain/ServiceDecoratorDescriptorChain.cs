@@ -25,6 +25,7 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
     internal virtual object? ImplementationServiceKey => null;
 
     internal bool UseStandaloneImplementationService => ImplementationServiceKey is not null;
+    internal bool UsePreRegistrationValidation => true;
     internal bool IsServiceDisposable => HasFlag(Flags.IsServiceDisposable);
     internal bool IsServiceAsyncDisposable => HasFlag(Flags.IsServiceAsyncDisposable);
     internal bool IsDecoratorDisposable => HasFlag(Flags.IsDecoratorDisposable);
