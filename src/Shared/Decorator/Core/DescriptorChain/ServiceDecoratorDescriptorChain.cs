@@ -25,7 +25,7 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
     internal virtual object? ImplementationServiceKey => null;
 
     internal bool UseStandaloneImplementationService => ImplementationServiceKey is not null;
-    internal bool UsePreRegistrationValidation => true;
+    internal bool UsePreRegistrationValidation => !HasFlag(Flags.SkipPreRegistrationValidation);
     internal bool IsServiceDisposable => HasFlag(Flags.IsServiceDisposable);
     internal bool IsServiceAsyncDisposable => HasFlag(Flags.IsServiceAsyncDisposable);
     internal bool IsDecoratorDisposable => HasFlag(Flags.IsDecoratorDisposable);
@@ -90,6 +90,7 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
         var isDecoratorDisposable = decoratorType.IsDisposable();
         var isDecoratorAsyncDisposable = decoratorType.IsAsyncDisposable();
         var isDisposableContainerAllowed = options.HasOption(Options.IsDisposableContainerAllowed);
+        var skipPreRegistrationValidation = false;
 
         ServiceDecoratorDescriptorChainFlags flags = new();
 
@@ -98,6 +99,7 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
         if (isDecoratorDisposable) flags |= Flags.IsDecoratorDisposable;
         if (isDecoratorAsyncDisposable) flags |= Flags.IsDecoratorAsyncDisposable;
         if (isDisposableContainerAllowed) flags |= Flags.IsDisposableContainerAllowed;
+        if (skipPreRegistrationValidation) flags |= Flags.SkipPreRegistrationValidation;
 
         return flags;
     }

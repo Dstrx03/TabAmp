@@ -9,5 +9,6 @@ internal enum ServiceDecoratorDescriptorChainFlags : byte
     IsServiceAsyncDisposable = 0x02,
     IsDecoratorDisposable = 0x04,
     IsDecoratorAsyncDisposable = 0x08,
-    IsDisposableContainerAllowed = 0x10
+    IsDisposableContainerAllowed = 0x10,
+    SkipPreRegistrationValidation = 0x20
 }
