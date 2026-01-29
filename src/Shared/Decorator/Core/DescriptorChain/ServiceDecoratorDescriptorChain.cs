@@ -1,7 +1,6 @@
 ﻿using System;
 using TabAmp.Shared.Decorator.Core.Activators;
 using TabAmp.Shared.Decorator.Core.Extensions;
-using Flags = TabAmp.Shared.Decorator.Core.DescriptorChain.ServiceDecoratorDescriptorChainFlags;
 using Options = TabAmp.Shared.Decorator.Core.DescriptorChain.ServiceDecoratorDescriptorChainOptions;
 
 namespace TabAmp.Shared.Decorator.Core.DescriptorChain;
@@ -9,7 +8,8 @@ namespace TabAmp.Shared.Decorator.Core.DescriptorChain;
 internal abstract class ServiceDecoratorDescriptorChain<TService>
     where TService : class
 {
-    private readonly ServiceDecoratorDescriptorChainFlags _flags;
+    private readonly ChainFlags _chainFlags;
+    private readonly DescriptorFlags _descriptorFlags;
 
     internal ServiceDecoratorDescriptorChain<TService>? Next { get; }
 
@@ -18,21 +18,27 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
         ServiceDecoratorDescriptorChainOptions options,
         Type decoratorType)
     {
-        _flags = ComposeFlags(next, options, decoratorType);
+        _chainFlags = ComposeChainFlags(next);
+        _descriptorFlags = ComposeDescriptorFlags(options, decoratorType);
+
         Next = next;
     }
 
     internal virtual object? ImplementationServiceKey => null;
 
     internal bool UseStandaloneImplementationService => ImplementationServiceKey is not null;
-    internal bool UsePreRegistrationValidation => !HasFlag(Flags.SkipPreRegistrationValidation);
-    internal bool IsServiceDisposable => HasFlag(Flags.IsServiceDisposable);
-    internal bool IsServiceAsyncDisposable => HasFlag(Flags.IsServiceAsyncDisposable);
-    internal bool IsDecoratorDisposable => HasFlag(Flags.IsDecoratorDisposable);
-    internal bool IsDecoratorAsyncDisposable => HasFlag(Flags.IsDecoratorAsyncDisposable);
-    internal bool IsDisposableContainerAllowed => HasFlag(Flags.IsDisposableContainerAllowed);
+    internal bool UsePreRegistrationValidation => !HasFlag(DescriptorFlags.SkipPreRegistrationValidation);
 
-    private bool HasFlag(ServiceDecoratorDescriptorChainFlags flag) => (_flags & flag) == flag;
+    internal bool IsServiceDisposable => HasFlag(ChainFlags.IsServiceDisposable);
+    internal bool IsServiceAsyncDisposable => HasFlag(ChainFlags.IsServiceAsyncDisposable);
+
+    internal bool IsDecoratorDisposable => HasFlag(DescriptorFlags.IsDecoratorDisposable);
+    internal bool IsDecoratorAsyncDisposable => HasFlag(DescriptorFlags.IsDecoratorAsyncDisposable);
+
+    internal bool IsDisposableContainerAllowed => HasFlag(DescriptorFlags.IsDisposableContainerAllowed);
+
+    private bool HasFlag(ChainFlags flag) => (_chainFlags & flag) == flag;
+    private bool HasFlag(DescriptorFlags flag) => (_descriptorFlags & flag) == flag;
 
     internal abstract TService CreateDecorator(IServiceProvider serviceProvider, TService service);
 
@@ -80,27 +86,52 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
         return new Node<TDecorator>(next, options);
     }
 
-    private static ServiceDecoratorDescriptorChainFlags ComposeFlags(
-        ServiceDecoratorDescriptorChain<TService>? next,
-        ServiceDecoratorDescriptorChainOptions options,
-        Type decoratorType)
+    private static ChainFlags ComposeChainFlags(ServiceDecoratorDescriptorChain<TService>? next)
     {
-        var isServiceDisposable = next?.HasFlag(Flags.IsServiceDisposable) ?? typeof(TService).IsDisposable();
-        var isServiceAsyncDisposable = next?.HasFlag(Flags.IsServiceAsyncDisposable) ?? typeof(TService).IsAsyncDisposable();
+        if (next is not null)
+            return next._chainFlags;
+
+        var isServiceDisposable = typeof(TService).IsDisposable();
+        var isServiceAsyncDisposable = typeof(TService).IsAsyncDisposable();
+
+        ChainFlags flags = new();
+
+        if (isServiceDisposable) flags |= ChainFlags.IsServiceDisposable;
+        if (isServiceAsyncDisposable) flags |= ChainFlags.IsServiceAsyncDisposable;
+
+        return flags;
+    }
+
+    private static DescriptorFlags ComposeDescriptorFlags(ServiceDecoratorDescriptorChainOptions options, Type decoratorType)
+    {
         var isDecoratorDisposable = decoratorType.IsDisposable();
         var isDecoratorAsyncDisposable = decoratorType.IsAsyncDisposable();
         var isDisposableContainerAllowed = options.HasOption(Options.IsDisposableContainerAllowed);
-        var skipPreRegistrationValidation = false;
+        var skipPreRegistrationValidation = options.HasOption(Options.SkipPreRegistrationValidation);
 
-        ServiceDecoratorDescriptorChainFlags flags = new();
+        DescriptorFlags flags = new();
 
-        if (isServiceDisposable) flags |= Flags.IsServiceDisposable;
-        if (isServiceAsyncDisposable) flags |= Flags.IsServiceAsyncDisposable;
-        if (isDecoratorDisposable) flags |= Flags.IsDecoratorDisposable;
-        if (isDecoratorAsyncDisposable) flags |= Flags.IsDecoratorAsyncDisposable;
-        if (isDisposableContainerAllowed) flags |= Flags.IsDisposableContainerAllowed;
-        if (skipPreRegistrationValidation) flags |= Flags.SkipPreRegistrationValidation;
+        if (isDecoratorDisposable) flags |= DescriptorFlags.IsDecoratorDisposable;
+        if (isDecoratorAsyncDisposable) flags |= DescriptorFlags.IsDecoratorAsyncDisposable;
+        if (isDisposableContainerAllowed) flags |= DescriptorFlags.IsDisposableContainerAllowed;
+        if (skipPreRegistrationValidation) flags |= DescriptorFlags.SkipPreRegistrationValidation;
 
         return flags;
+    }
+
+    [Flags]
+    private enum ChainFlags : byte
+    {
+        IsServiceDisposable = 0x01,
+        IsServiceAsyncDisposable = 0x02
+    }
+
+    [Flags]
+    private enum DescriptorFlags : byte
+    {
+        IsDecoratorDisposable = 0x01,
+        IsDecoratorAsyncDisposable = 0x02,
+        IsDisposableContainerAllowed = 0x04,
+        SkipPreRegistrationValidation = 0x08
     }
 }
