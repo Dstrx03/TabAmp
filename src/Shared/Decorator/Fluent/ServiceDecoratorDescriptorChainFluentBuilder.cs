@@ -9,16 +9,23 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
     where TService : class
     where TImplementation : class, TService
 {
-    private readonly ServiceDecoratorDescriptor<TService> _descriptors;
+    private readonly ServiceDecoratorDescriptor<TService>? _descriptors;
 
     internal bool IsDisposableContainerAllowed { get; } = false;
+    internal bool UsePreRegistrationValidation { get; } = true;
+
+    public ServiceDecoratorDescriptorChainFluentBuilder()
+    {
+    }
 
     private ServiceDecoratorDescriptorChainFluentBuilder(
-        ServiceDecoratorDescriptor<TService> descriptors,
-        bool isDisposableContainerAllowed)
+        ServiceDecoratorDescriptor<TService>? descriptors,
+        bool isDisposableContainerAllowed,
+        bool usePreRegistrationValidation)
     {
         _descriptors = descriptors;
         IsDisposableContainerAllowed = isDisposableContainerAllowed;
+        UsePreRegistrationValidation = usePreRegistrationValidation;
     }
 
     internal bool IsEmpty => _descriptors is null;
@@ -28,7 +35,7 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
         where TDecorator : class, TService
     {
         var descriptor = new ServiceDecoratorDescriptor<TService>.For<TDecorator>();
-        return new(descriptor.AppendTo(_descriptors), IsDisposableContainerAllowed);
+        return new(descriptor.AppendTo(_descriptors), IsDisposableContainerAllowed, UsePreRegistrationValidation);
     }
 
     internal ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> With(
@@ -37,11 +44,14 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
         if (descriptor is null)
             return this;
 
-        return new(descriptor.AppendTo(_descriptors), IsDisposableContainerAllowed);
+        return new(descriptor.AppendTo(_descriptors), IsDisposableContainerAllowed, UsePreRegistrationValidation);
     }
 
     internal ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> AllowDisposableContainer() =>
-        new(_descriptors, isDisposableContainerAllowed: true);
+        new(_descriptors, isDisposableContainerAllowed: true, UsePreRegistrationValidation);
+
+    internal ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> SkipPreRegistrationValidation() =>
+        new(_descriptors, IsDisposableContainerAllowed, usePreRegistrationValidation: false);
 
     internal ServiceDecoratorDescriptorChain<TService> BuildDescriptorChain()
     {
@@ -50,7 +60,7 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
 
         ServiceDecoratorDescriptorChain<TService> descriptorChain = null!;
 
-        var descriptor = _descriptors;
+        var descriptor = _descriptors!;
         while (descriptor.Next is not null)
         {
             descriptorChain = descriptor.ToDescriptorChainNode(descriptorChain);
@@ -72,6 +82,9 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
 
         if (IsDisposableContainerAllowed)
             options |= ServiceDecoratorDescriptorChainOptions.IsDisposableContainerAllowed;
+
+        if (!UsePreRegistrationValidation)
+            options |= ServiceDecoratorDescriptorChainOptions.SkipPreRegistrationValidation;
 
         return options;
     }

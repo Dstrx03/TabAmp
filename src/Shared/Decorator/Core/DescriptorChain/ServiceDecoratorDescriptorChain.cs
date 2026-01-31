@@ -20,7 +20,6 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
     {
         _chainFlags = ComposeChainFlags(next);
         _descriptorFlags = ComposeDescriptorFlags(options, decoratorType);
-
         Next = next;
     }
 

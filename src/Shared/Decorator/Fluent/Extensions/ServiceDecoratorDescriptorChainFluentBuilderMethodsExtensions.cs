@@ -14,4 +14,9 @@ public static class ServiceDecoratorDescriptorChainFluentBuilderMethodsExtension
         this ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder)
         where TService : class
         where TImplementation : class, TService => builder.AllowDisposableContainer();
+
+    public static ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> SkipPreRegistrationValidation<TService, TImplementation>(
+        this ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder)
+        where TService : class
+        where TImplementation : class, TService => builder.SkipPreRegistrationValidation();
 }
