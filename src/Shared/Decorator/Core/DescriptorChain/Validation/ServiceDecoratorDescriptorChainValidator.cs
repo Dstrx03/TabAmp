@@ -14,29 +14,40 @@ internal static class ServiceDecoratorDescriptorChainValidator
         where TService : class
     {
         ArgumentNullException.ThrowIfNull(descriptorChain);
+
         List<Exception>? errors = null;
-        if (HasDisposableContainer(descriptorChain) && !descriptorChain.IsDisposableContainerAllowed) AddError(ref errors, new InvalidOperationException("TODO: ..."));
+
+        if (HasDisposableContainer(descriptorChain) && !descriptorChain.IsDisposableContainerAllowed)
+            AddDisposableContainerIsNotAllowedError(ref errors);
+
         return new(errors);
     }
 
     private static bool HasDisposableContainer<TService>(ServiceDecoratorDescriptorChain<TService> descriptorChain)
         where TService : class
     {
-        var hasDisposableContainer = false;
         var descriptor = descriptorChain;
-        while (descriptor is not null)
+        while (descriptor.Next is not null)
         {
-            var isInner = descriptor.Next is not null;
-            var isDisposable = descriptor.IsDecoratorDisposable || descriptor.IsDecoratorAsyncDisposable;
-            if (isDisposable && (isInner || hasDisposableContainer)) hasDisposableContainer = true;
+            if (descriptor.IsDecoratorDisposable || descriptor.IsDecoratorAsyncDisposable)
+                return true;
+
             descriptor = descriptor.Next;
         }
-        return hasDisposableContainer;
+
+        return false;
     }
+
+    private static void AddDisposableContainerIsNotAllowedError(ref List<Exception>? errors) =>
+        AddError(ref errors, DisposableContainerIsNotAllowedException());
 
     private static void AddError(ref List<Exception>? errors, Exception error)
     {
         errors ??= [];
         errors.Add(error);
     }
+
+    private static InvalidOperationException DisposableContainerIsNotAllowedException() =>
+        new("At least one inner decorator type requires disposal, " +
+            "but the use of a decorator disposable container is not allowed.");
 }
