@@ -15,14 +15,19 @@ internal static class ServiceDecoratorDescriptorChainValidator
     {
         ArgumentNullException.ThrowIfNull(descriptorChain);
         List<Exception>? errors = null;
-        errors ??= [];
-        errors.Add(new NotImplementedException("TODO... #0"));
-        errors.Add(new NotImplementedException("TODO... #1"));
-        errors.Add(new NotImplementedException("TODO... #2"));
+        var hasDisposableContainer = false;
         var descriptor = descriptorChain;
         while (descriptor is not null)
         {
+            var isInner = descriptor.Next is not null;
+            var isDisposable = descriptor.IsDecoratorDisposable || descriptor.IsDecoratorAsyncDisposable;
+            if (isDisposable && (isInner || hasDisposableContainer)) hasDisposableContainer = true;
             descriptor = descriptor.Next;
+        }
+        if (hasDisposableContainer && !descriptorChain.IsDisposableContainerAllowed)
+        {
+            errors ??= [];
+            errors.Add(new InvalidOperationException("TODO: ..."));
         }
         return new(errors);
     }
