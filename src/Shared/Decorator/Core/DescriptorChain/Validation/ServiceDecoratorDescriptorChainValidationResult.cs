@@ -6,16 +6,15 @@ namespace TabAmp.Shared.Decorator.Core.DescriptorChain.Validation;
 
 internal readonly ref struct ServiceDecoratorDescriptorChainValidationResult(List<Exception>? errors)
 {
-    internal ImmutableArray<Exception>? Errors { get; } = errors?.ToImmutableArray();
+    internal ImmutableArray<Exception> Errors { get; } = errors?.ToImmutableArray() ?? [];
 
-    internal bool IsValid => Errors?.IsEmpty ?? true;
+    internal bool IsValid => Errors.IsEmpty;
 
     internal void ThrowFirstErrorIfAny()
     {
         if (!IsValid)
         {
-            var errors = Errors!.Value;
-            throw errors[0];
+            throw Errors[0];
         }
     }
 }
