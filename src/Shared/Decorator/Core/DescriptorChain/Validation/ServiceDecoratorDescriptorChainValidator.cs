@@ -7,7 +7,7 @@ internal static class ServiceDecoratorDescriptorChainValidator
 {
     internal static void ValidateAndThrow<TService>(
         ServiceDecoratorDescriptorChain<TService> descriptorChain)
-        where TService : class => Validate(descriptorChain).ThrowFirstErrorIfAny();
+        where TService : class => Validate(descriptorChain).ThrowIfAnyErrors();
 
     internal static ServiceDecoratorDescriptorChainValidationResult Validate<TService>(
         ServiceDecoratorDescriptorChain<TService> descriptorChain)
