@@ -13,6 +13,9 @@ internal readonly ref struct ServiceDecoratorDescriptorChainValidationResult(Lis
 
     internal void ThrowIfAnyErrors()
     {
-        if (!IsValid) throw _errors[0];
+        if (IsValid)
+            return;
+
+        throw new ServiceDecoratorDescriptorChainValidationException(null, Errors);
     }
 }
