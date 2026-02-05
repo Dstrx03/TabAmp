@@ -11,11 +11,11 @@ internal readonly ref struct ServiceDecoratorDescriptorChainValidationResult(Lis
     internal IEnumerable<Exception> Errors => _errors;
     internal bool IsValid => _errors.IsEmpty;
 
-    internal void ThrowIfAnyErrors()
+    internal void ThrowIfAnyErrors(string? message = null)
     {
         if (IsValid)
             return;
 
-        throw new ServiceDecoratorDescriptorChainValidationException(null, Errors);
+        throw new ServiceDecoratorDescriptorChainValidationException(message, Errors);
     }
 }
