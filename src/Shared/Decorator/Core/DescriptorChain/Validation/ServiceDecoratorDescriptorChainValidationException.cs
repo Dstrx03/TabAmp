@@ -18,7 +18,9 @@ internal class ServiceDecoratorDescriptorChainValidationException : Exception
 
     private static string ComposeMessage(string? message, IEnumerable<Exception> errors)
     {
-        var customComponent = message is not null ? $"{message} " : string.Empty;
+        var useCustomComponent = !string.IsNullOrEmpty(message) && !string.IsNullOrWhiteSpace(message);
+
+        var customComponent = useCustomComponent ? $"{message} " : string.Empty;
         var errorsComponent = string.Join(string.Empty, errors.Select(error => $"{Environment.NewLine} - {error.Message}"));
 
         return string.Format(MessageTemplate, customComponent, errorsComponent);

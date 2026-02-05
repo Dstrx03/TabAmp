@@ -156,8 +156,16 @@ public static class ServiceCollectionDecoratorCoreExtensions
     private static void ValidateDescriptorChain<TService>(ServiceDecoratorDescriptorChain<TService> descriptorChain)
         where TService : class
     {
-        if (descriptorChain.UsePreRegistrationValidation)
-            ServiceDecoratorDescriptorChainValidator.Validate(descriptorChain).ThrowIfAnyErrors();
+        if (!descriptorChain.UsePreRegistrationValidation)
+            return;
+
+        var validationResult = ServiceDecoratorDescriptorChainValidator.Validate(descriptorChain);
+
+        if (validationResult.IsValid)
+            return;
+
+        var message = $"Unable to register decorated type '{typeof(TService).FullName}'.";
+        validationResult.ThrowIfAnyErrors(message);
     }
 
     private readonly ref struct DecoratedServiceDescriptors(
