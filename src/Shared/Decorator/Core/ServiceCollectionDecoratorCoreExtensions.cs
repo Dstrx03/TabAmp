@@ -164,8 +164,7 @@ public static class ServiceCollectionDecoratorCoreExtensions
         if (validationResult.IsValid)
             return;
 
-        var message = $"Unable to register decorated type '{typeof(TService).FullName}'.";
-        validationResult.ThrowIfAnyErrors(message);
+        validationResult.ThrowIfAnyErrors($"Unable to register decorated type '{typeof(TService).FullName}'.");
     }
 
     private readonly ref struct DecoratedServiceDescriptors(

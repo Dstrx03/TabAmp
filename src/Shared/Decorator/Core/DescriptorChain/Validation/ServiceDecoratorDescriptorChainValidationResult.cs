@@ -4,9 +4,12 @@ using System.Collections.Immutable;
 
 namespace TabAmp.Shared.Decorator.Core.DescriptorChain.Validation;
 
-internal readonly ref struct ServiceDecoratorDescriptorChainValidationResult(List<Exception>? errors)
+internal readonly ref struct ServiceDecoratorDescriptorChainValidationResult
 {
-    private readonly ImmutableArray<Exception> _errors = errors?.ToImmutableArray() ?? [];
+    private readonly ImmutableArray<Exception> _errors;
+
+    internal ServiceDecoratorDescriptorChainValidationResult(List<Exception>? errors) =>
+        _errors = errors?.ToImmutableArray() ?? [];
 
     internal IEnumerable<Exception> Errors => _errors;
     internal bool IsValid => _errors.IsEmpty;
