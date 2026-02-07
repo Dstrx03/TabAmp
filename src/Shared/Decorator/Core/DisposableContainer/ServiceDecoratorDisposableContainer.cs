@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
-using TabAmp.Shared.Decorator.Core.DescriptorChain;
 
 namespace TabAmp.Shared.Decorator.Core.DisposableContainer;
 
@@ -102,23 +101,6 @@ internal abstract class ServiceDecoratorDisposableContainer<TService> : Dispatch
         _disposableDecorators = null!;
 
         return disposableDecorators;
-    }
-
-    internal static ServiceDecoratorDisposableContainer<TService> Create(
-        ServiceDecoratorDescriptorChain<TService> descriptorChain)
-    {
-        var disposableContainerType = descriptorChain switch
-        {
-            { IsServiceDisposable: true, IsServiceAsyncDisposable: true } =>
-                typeof(ProxiedIDisposableIAsyncDisposableServiceDecoratorDisposableContainer<TService>),
-            { IsServiceDisposable: true } =>
-                typeof(ProxiedIDisposableServiceDecoratorDisposableContainer<TService>),
-            { IsServiceAsyncDisposable: true } =>
-                typeof(ProxiedIAsyncDisposableServiceDecoratorDisposableContainer<TService>),
-            _ => typeof(DefaultServiceDecoratorDisposableContainer<TService>)
-        };
-
-        return (ServiceDecoratorDisposableContainer<TService>)Create(typeof(TService), disposableContainerType);
     }
 
     protected static bool IsDisposeMethodSignature(MethodInfo targetMethod) =>
