@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using TabAmp.Shared.Decorator.Fluent;
 
 namespace TabAmp.Shared.Decorator.Core.DescriptorChain.Validation;
 
@@ -20,6 +21,10 @@ internal static class ServiceDecoratorDescriptorChainValidator
             if (!TryAdd(ref errors, error, stopOnFirstError))
                 return new(error);
         }
+
+        var errA = DisposableContainerIsNotAllowedException();
+        if (!TryAdd(ref errors, errA, stopOnFirstError))
+            return new(errA);
 
         var err0 = new NotSupportedException("Some error.");
         if (!TryAdd(ref errors, err0, stopOnFirstError))
@@ -64,5 +69,10 @@ internal static class ServiceDecoratorDescriptorChainValidator
 
     private static InvalidOperationException DisposableContainerIsNotAllowedException() =>
         new("At least one inner decorator type requires disposal, " +
-            "but the use of a decorator disposable container is not allowed.");
+            "but the use of a decorator disposable container is not allowed. " +
+            $"Use {nameof(ServiceDecoratorDescriptorChainFluentBuilder<object, object>)}" +
+            $".{nameof(ServiceDecoratorDescriptorChainFluentBuilder<object, object>.AllowDisposableContainer)} " +
+            $"({nameof(ServiceDecoratorDescriptorChainOptions)}" +
+            $".{nameof(ServiceDecoratorDescriptorChainOptions.IsDisposableContainerAllowed)}) " +
+            "to allow the use of a decorator disposable container.");
 }

@@ -3,6 +3,7 @@ using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using TabAmp.Shared.Decorator.Core.DescriptorChain;
 using TabAmp.Shared.Decorator.Core.DisposableContainer;
+using TabAmp.Shared.Decorator.Fluent;
 
 namespace TabAmp.Shared.Decorator.Core.Activators;
 
@@ -90,5 +91,10 @@ internal static class DecoratedServiceActivator
     private static InvalidOperationException DisposableContainerIsNotAllowedException(Type serviceType) =>
         new($"Unable to activate decorated type '{serviceType.FullName}'. " +
             "At least one inner decorator type requires disposal, " +
-            "but the use of a decorator disposable container is not allowed.");
+            "but the use of a decorator disposable container is not allowed. " +
+            $"Use {nameof(ServiceDecoratorDescriptorChainFluentBuilder<object, object>)}" +
+            $".{nameof(ServiceDecoratorDescriptorChainFluentBuilder<object, object>.AllowDisposableContainer)} " +
+            $"({nameof(ServiceDecoratorDescriptorChainOptions)}" +
+            $".{nameof(ServiceDecoratorDescriptorChainOptions.IsDisposableContainerAllowed)}) " +
+            "to allow the use of a decorator disposable container.");
 }
