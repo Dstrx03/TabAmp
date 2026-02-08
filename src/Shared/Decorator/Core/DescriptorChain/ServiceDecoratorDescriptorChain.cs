@@ -28,6 +28,7 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
     internal bool UseStandaloneImplementationService => ImplementationServiceKey is not null;
     internal bool UsePreRegistrationValidation => !HasFlag(DescriptorFlags.SkipPreRegistrationValidation);
 
+    internal bool IsServiceInterface => HasFlag(ChainFlags.IsServiceInterface);
     internal bool IsServiceDisposable => HasFlag(ChainFlags.IsServiceDisposable);
     internal bool IsServiceAsyncDisposable => HasFlag(ChainFlags.IsServiceAsyncDisposable);
 
@@ -90,11 +91,15 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
         if (next is not null)
             return next._chainFlags;
 
-        var isServiceDisposable = typeof(TService).IsDisposable();
-        var isServiceAsyncDisposable = typeof(TService).IsAsyncDisposable();
+        var serviceType = typeof(TService);
+
+        var isServiceInterface = serviceType.IsInterface;
+        var isServiceDisposable = serviceType.IsDisposable();
+        var isServiceAsyncDisposable = serviceType.IsAsyncDisposable();
 
         ChainFlags flags = new();
 
+        if (isServiceInterface) flags |= ChainFlags.IsServiceInterface;
         if (isServiceDisposable) flags |= ChainFlags.IsServiceDisposable;
         if (isServiceAsyncDisposable) flags |= ChainFlags.IsServiceAsyncDisposable;
 
@@ -121,8 +126,9 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
     [Flags]
     private enum ChainFlags : byte
     {
-        IsServiceDisposable = 0x01,
-        IsServiceAsyncDisposable = 0x02
+        IsServiceInterface = 0x01,
+        IsServiceDisposable = 0x02,
+        IsServiceAsyncDisposable = 0x04
     }
 
     [Flags]

@@ -74,6 +74,9 @@ internal static class DecoratedServiceActivator
         ServiceDecoratorDescriptorChain<TService> descriptorChain)
         where TService : class
     {
+        if (!descriptorChain.IsServiceInterface)
+            throw new NotImplementedException("TODO ...");
+
         if (!descriptorChain.IsDisposableContainerAllowed)
             throw DisposableContainerIsNotAllowedException(typeof(TService));
 
