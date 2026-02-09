@@ -19,7 +19,7 @@ internal static class ServiceDecoratorDescriptorChainValidator
 
         if (hasDisposableContainer && !descriptorChain.IsServiceInterface)
         {
-            var error = DisposableContainerCannotBeUsedWithNonInterfaceException();
+            var error = DisposableContainerCannotBeUsedWhenServiceIsNotInterface();
             if (!TryAdd(ref errors, error, stopOnFirstError))
                 return new(error);
         }
@@ -60,8 +60,10 @@ internal static class ServiceDecoratorDescriptorChainValidator
         return true;
     }
 
-    private static NotSupportedException DisposableContainerCannotBeUsedWithNonInterfaceException() =>
-        new("Decorator disposable container cannot be used with a decorated type that is not an interface.");
+    private static NotSupportedException DisposableContainerCannotBeUsedWhenServiceIsNotInterface() =>
+        new("At least one inner decorator type requires disposal, " +
+            "but the decorator disposable container cannot be used " +
+            "when the decorated type is not an interface.");
 
     private static InvalidOperationException DisposableContainerIsNotAllowedException() =>
         new("At least one inner decorator type requires disposal, " +
