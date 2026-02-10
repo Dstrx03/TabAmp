@@ -53,12 +53,12 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
     internal ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> SkipPreRegistrationValidation() =>
         new(_descriptors, IsDisposableContainerAllowed, usePreRegistrationValidation: false);
 
-    internal ServiceDecoratorDescriptorChain<TService> BuildDescriptorChain()
+    internal ServiceDecoratorDescriptorChain<TService, TImplementation> BuildDescriptorChain()
     {
         if (IsEmpty)
             throw AtLeastOneDescriptorRequiredException();
 
-        ServiceDecoratorDescriptorChain<TService> descriptorChain = null!;
+        ServiceDecoratorDescriptorChain<TService, TImplementation> descriptorChain = null!;
 
         var descriptor = _descriptors!;
         while (descriptor.Next is not null)

@@ -20,7 +20,7 @@ public static class ServiceCollectionDecoratorCoreExtensions
         ArgumentNullException.ThrowIfNull(serviceCollection);
 
         var descriptorChain = builder.BuildDescriptorChain();
-        var descriptors = DescribeDecoratedService<TService, TImplementation>(descriptorChain, lifetime);
+        var descriptors = DescribeDecoratedService(descriptorChain, lifetime);
 
         Add(serviceCollection, descriptors);
     }
@@ -36,7 +36,7 @@ public static class ServiceCollectionDecoratorCoreExtensions
         ArgumentNullException.ThrowIfNull(serviceCollection);
 
         var descriptorChain = builder.BuildDescriptorChain();
-        var descriptors = DescribeKeyedDecoratedService<TService, TImplementation>(serviceKey, descriptorChain, lifetime);
+        var descriptors = DescribeKeyedDecoratedService(serviceKey, descriptorChain, lifetime);
 
         Add(serviceCollection, descriptors);
     }
@@ -51,7 +51,7 @@ public static class ServiceCollectionDecoratorCoreExtensions
         ArgumentNullException.ThrowIfNull(serviceCollection);
 
         var descriptorChain = builder.BuildDescriptorChain();
-        var descriptors = DescribeDecoratedService<TService, TImplementation>(descriptorChain, lifetime);
+        var descriptors = DescribeDecoratedService(descriptorChain, lifetime);
 
         TryAdd(serviceCollection, descriptors);
     }
@@ -67,7 +67,7 @@ public static class ServiceCollectionDecoratorCoreExtensions
         ArgumentNullException.ThrowIfNull(serviceCollection);
 
         var descriptorChain = builder.BuildDescriptorChain();
-        var descriptors = DescribeKeyedDecoratedService<TService, TImplementation>(serviceKey, descriptorChain, lifetime);
+        var descriptors = DescribeKeyedDecoratedService(serviceKey, descriptorChain, lifetime);
 
         TryAdd(serviceCollection, descriptors);
     }
@@ -93,51 +93,47 @@ public static class ServiceCollectionDecoratorCoreExtensions
     }
 
     private static DecoratedServiceDescriptors DescribeDecoratedService<TService, TImplementation>(
-        ServiceDecoratorDescriptorChain<TService> descriptorChain,
+        ServiceDecoratorDescriptorChain<TService, TImplementation> descriptorChain,
         ServiceLifetime lifetime)
         where TService : class
         where TImplementation : class, TService
     {
         ValidateDescriptorChain(descriptorChain);
 
-        var implementationServiceDescriptor =
-            DescribeImplementationService<TService, TImplementation>(descriptorChain, lifetime);
+        var implementationServiceDescriptor = DescribeImplementationService(descriptorChain, lifetime);
 
         var decoratedServiceDescriptor = ServiceDescriptor.Describe(
             serviceType: typeof(TService),
             implementationFactory: serviceProvider =>
-                DecoratedServiceActivator.CreateService<TService, TImplementation>(serviceProvider, descriptorChain),
+                DecoratedServiceActivator.CreateService(serviceProvider, descriptorChain),
             lifetime: lifetime);
 
-        return new(implementationService: implementationServiceDescriptor,
-            decoratedService: decoratedServiceDescriptor);
+        return new(implementationService: implementationServiceDescriptor, decoratedService: decoratedServiceDescriptor);
     }
 
     private static DecoratedServiceDescriptors DescribeKeyedDecoratedService<TService, TImplementation>(
         object? serviceKey,
-        ServiceDecoratorDescriptorChain<TService> descriptorChain,
+        ServiceDecoratorDescriptorChain<TService, TImplementation> descriptorChain,
         ServiceLifetime lifetime)
         where TService : class
         where TImplementation : class, TService
     {
         ValidateDescriptorChain(descriptorChain);
 
-        var implementationServiceDescriptor =
-            DescribeImplementationService<TService, TImplementation>(descriptorChain, lifetime);
+        var implementationServiceDescriptor = DescribeImplementationService(descriptorChain, lifetime);
 
         var decoratedServiceDescriptor = ServiceDescriptor.DescribeKeyed(
             serviceType: typeof(TService),
             serviceKey: serviceKey,
             implementationFactory: (serviceProvider, _) =>
-                DecoratedServiceActivator.CreateService<TService, TImplementation>(serviceProvider, descriptorChain),
+                DecoratedServiceActivator.CreateService(serviceProvider, descriptorChain),
             lifetime: lifetime);
 
-        return new(implementationService: implementationServiceDescriptor,
-            decoratedService: decoratedServiceDescriptor);
+        return new(implementationService: implementationServiceDescriptor, decoratedService: decoratedServiceDescriptor);
     }
 
     private static ServiceDescriptor? DescribeImplementationService<TService, TImplementation>(
-        ServiceDecoratorDescriptorChain<TService> descriptorChain,
+        ServiceDecoratorDescriptorChain<TService, TImplementation> descriptorChain,
         ServiceLifetime lifetime)
         where TService : class
         where TImplementation : class, TService
@@ -153,8 +149,10 @@ public static class ServiceCollectionDecoratorCoreExtensions
             lifetime: lifetime);
     }
 
-    private static void ValidateDescriptorChain<TService>(ServiceDecoratorDescriptorChain<TService> descriptorChain)
+    private static void ValidateDescriptorChain<TService, TImplementation>(
+        ServiceDecoratorDescriptorChain<TService, TImplementation> descriptorChain)
         where TService : class
+        where TImplementation : class, TService
     {
         if (!descriptorChain.UsePreRegistrationValidation)
             return;

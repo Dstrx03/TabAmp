@@ -6,10 +6,11 @@ namespace TabAmp.Shared.Decorator.Core.DescriptorChain.Validation;
 
 internal static class ServiceDecoratorDescriptorChainValidator
 {
-    internal static ServiceDecoratorDescriptorChainValidationResult Validate<TService>(
-        ServiceDecoratorDescriptorChain<TService> descriptorChain,
+    internal static ServiceDecoratorDescriptorChainValidationResult Validate<TService, TImplementation>(
+        ServiceDecoratorDescriptorChain<TService, TImplementation> descriptorChain,
         bool stopOnFirstError = false)
         where TService : class
+        where TImplementation : class, TService
     {
         ArgumentNullException.ThrowIfNull(descriptorChain);
 
@@ -34,8 +35,10 @@ internal static class ServiceDecoratorDescriptorChainValidator
         return new(errors);
     }
 
-    private static bool HasDisposableContainer<TService>(ServiceDecoratorDescriptorChain<TService> descriptorChain)
+    private static bool HasDisposableContainer<TService, TImplementation>(
+        ServiceDecoratorDescriptorChain<TService, TImplementation> descriptorChain)
         where TService : class
+        where TImplementation : class, TService
     {
         var descriptor = descriptorChain;
         while (descriptor.Next is not null)

@@ -28,9 +28,10 @@ public abstract class ServiceDecoratorDescriptor<TService>
         return this;
     }
 
-    internal ServiceDecoratorDescriptorChain<TService> ToDescriptorChainNode(
-        ServiceDecoratorDescriptorChain<TService> descriptorChain,
+    internal ServiceDecoratorDescriptorChain<TService, TImplementation> ToDescriptorChainNode<TImplementation>(
+        ServiceDecoratorDescriptorChain<TService, TImplementation> descriptorChain,
         ServiceDecoratorDescriptorChainOptions options = default)
+        where TImplementation : class, TService
     {
         if (!IsBound)
             throw CannotConvertToDescriptorChainNodeDescriptorIsNotBoundException(this);
@@ -38,20 +39,22 @@ public abstract class ServiceDecoratorDescriptor<TService>
         return CreateDescriptorChainNode(descriptorChain, options);
     }
 
-    private protected abstract ServiceDecoratorDescriptorChain<TService> CreateDescriptorChainNode(
-        ServiceDecoratorDescriptorChain<TService> descriptorChain,
-        ServiceDecoratorDescriptorChainOptions options);
+    private protected abstract ServiceDecoratorDescriptorChain<TService, TImplementation> CreateDescriptorChainNode<TImplementation>(
+        ServiceDecoratorDescriptorChain<TService, TImplementation> descriptorChain,
+        ServiceDecoratorDescriptorChainOptions options)
+        where TImplementation : class, TService;
 
     private protected abstract Type ToDecoratorType();
 
     public class For<TDecorator> : ServiceDecoratorDescriptor<TService>
         where TDecorator : class, TService
     {
-        private protected sealed override ServiceDecoratorDescriptorChain<TService> CreateDescriptorChainNode(
-            ServiceDecoratorDescriptorChain<TService> descriptorChain,
+        private protected sealed override ServiceDecoratorDescriptorChain<TService, TImplementation> CreateDescriptorChainNode<TImplementation>(
+            ServiceDecoratorDescriptorChain<TService, TImplementation> descriptorChain,
             ServiceDecoratorDescriptorChainOptions options)
         {
-            return ServiceDecoratorDescriptorChain<TService>.CreateNode<TDecorator>(next: descriptorChain, options: options);
+            return ServiceDecoratorDescriptorChain<TService, TImplementation>
+                .CreateNode<TDecorator>(next: descriptorChain, options: options);
         }
 
         private protected sealed override Type ToDecoratorType() => typeof(TDecorator);

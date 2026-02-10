@@ -11,14 +11,14 @@ internal static class DecoratedServiceActivator
 {
     internal static TService CreateService<TService, TImplementation>(
         IServiceProvider serviceProvider,
-        ServiceDecoratorDescriptorChain<TService> descriptorChain)
+        ServiceDecoratorDescriptorChain<TService, TImplementation> descriptorChain)
         where TService : class
         where TImplementation : class, TService
     {
         ArgumentNullException.ThrowIfNull(serviceProvider);
         ArgumentNullException.ThrowIfNull(descriptorChain);
 
-        var service = ResolveImplementationService<TService, TImplementation>(serviceProvider, descriptorChain);
+        var service = ResolveImplementationService(serviceProvider, descriptorChain);
         ServiceDecoratorDisposableContainer<TService>? disposableContainer = null;
 
         var descriptor = descriptorChain;
@@ -36,13 +36,14 @@ internal static class DecoratedServiceActivator
         return disposableContainer?.DecorateService(decoratedService: service) ?? service;
     }
 
-    private static void CreateDecorator<TService>(
+    private static void CreateDecorator<TService, TImplementation>(
         ref TService service,
         ref ServiceDecoratorDisposableContainer<TService>? disposableContainer,
-        ServiceDecoratorDescriptorChain<TService> descriptor,
+        ServiceDecoratorDescriptorChain<TService, TImplementation> descriptor,
         IServiceProvider serviceProvider,
-        ServiceDecoratorDescriptorChain<TService> descriptorChain)
+        ServiceDecoratorDescriptorChain<TService, TImplementation> descriptorChain)
         where TService : class
+        where TImplementation : class, TService
     {
         var decorator = descriptor.CreateDecorator(serviceProvider, service);
 
@@ -60,7 +61,7 @@ internal static class DecoratedServiceActivator
 
     private static TService ResolveImplementationService<TService, TImplementation>(
         IServiceProvider serviceProvider,
-        ServiceDecoratorDescriptorChain<TService> descriptorChain)
+        ServiceDecoratorDescriptorChain<TService, TImplementation> descriptorChain)
         where TService : class
         where TImplementation : class, TService
     {
@@ -70,9 +71,10 @@ internal static class DecoratedServiceActivator
         return serviceProvider.GetRequiredKeyedService<TImplementation>(serviceKey: descriptorChain.ImplementationServiceKey);
     }
 
-    private static ServiceDecoratorDisposableContainer<TService> ResolveDisposableContainer<TService>(
-        ServiceDecoratorDescriptorChain<TService> descriptorChain)
+    private static ServiceDecoratorDisposableContainer<TService> ResolveDisposableContainer<TService, TImplementation>(
+        ServiceDecoratorDescriptorChain<TService, TImplementation> descriptorChain)
         where TService : class
+        where TImplementation : class, TService
     {
         if (!descriptorChain.IsServiceInterface)
             throw DisposableContainerCannotBeUsedWhenServiceIsNotInterface(typeof(TService));
