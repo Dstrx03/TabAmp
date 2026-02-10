@@ -5,16 +5,17 @@ using Options = TabAmp.Shared.Decorator.Core.DescriptorChain.ServiceDecoratorDes
 
 namespace TabAmp.Shared.Decorator.Core.DescriptorChain;
 
-internal abstract class ServiceDecoratorDescriptorChain<TService>
+internal abstract class ServiceDecoratorDescriptorChain<TService, TImplementation>
     where TService : class
+    where TImplementation : class, TService
 {
     private readonly ChainFlags _chainFlags;
     private readonly DescriptorFlags _descriptorFlags;
 
-    internal ServiceDecoratorDescriptorChain<TService>? Next { get; }
+    internal ServiceDecoratorDescriptorChain<TService, TImplementation>? Next { get; }
 
     private ServiceDecoratorDescriptorChain(
-        ServiceDecoratorDescriptorChain<TService>? next,
+        ServiceDecoratorDescriptorChain<TService, TImplementation>? next,
         ServiceDecoratorDescriptorChainOptions options,
         Type decoratorType)
     {
@@ -43,9 +44,9 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
     internal abstract TService CreateDecorator(IServiceProvider serviceProvider, TService service);
 
     private class Node<TDecorator>(
-        ServiceDecoratorDescriptorChain<TService>? next,
+        ServiceDecoratorDescriptorChain<TService, TImplementation>? next,
         ServiceDecoratorDescriptorChainOptions options) :
-        ServiceDecoratorDescriptorChain<TService>(next, options, typeof(TDecorator))
+        ServiceDecoratorDescriptorChain<TService, TImplementation>(next, options, typeof(TDecorator))
         where TDecorator : class, TService
     {
         internal override TService CreateDecorator(IServiceProvider serviceProvider, TService service) =>
@@ -58,7 +59,7 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
         internal override object ImplementationServiceKey { get; }
 
         public ImplementationServiceKeyNode(
-            ServiceDecoratorDescriptorChain<TService>? next,
+            ServiceDecoratorDescriptorChain<TService, TImplementation>? next,
             ServiceDecoratorDescriptorChainOptions options,
             object? implementationServiceKey) : base(next, options)
         {
@@ -66,8 +67,8 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
         }
     }
 
-    internal static ServiceDecoratorDescriptorChain<TService> CreateNode<TDecorator>(
-        ServiceDecoratorDescriptorChain<TService>? next,
+    internal static ServiceDecoratorDescriptorChain<TService, TImplementation> CreateNode<TDecorator>(
+        ServiceDecoratorDescriptorChain<TService, TImplementation>? next,
         ServiceDecoratorDescriptorChainOptions options = default,
         object? implementationServiceKey = null)
         where TDecorator : class, TService
@@ -86,7 +87,7 @@ internal abstract class ServiceDecoratorDescriptorChain<TService>
         return new Node<TDecorator>(next, options);
     }
 
-    private static ChainFlags ComposeChainFlags(ServiceDecoratorDescriptorChain<TService>? next)
+    private static ChainFlags ComposeChainFlags(ServiceDecoratorDescriptorChain<TService, TImplementation>? next)
     {
         if (next is not null)
             return next._chainFlags;
