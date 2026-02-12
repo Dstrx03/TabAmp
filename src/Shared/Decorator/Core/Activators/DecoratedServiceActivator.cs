@@ -77,7 +77,7 @@ internal static class DecoratedServiceActivator
         where TImplementation : class, TService
     {
         if (!descriptorChain.IsServiceInterface)
-            throw DisposableContainerCannotBeUsedWhenServiceIsNotInterface(typeof(TService));
+            throw DisposableContainerCannotBeUsedWhenServiceIsNotInterfaceException(typeof(TService));
 
         if (!descriptorChain.IsDisposableContainerAllowed)
             throw DisposableContainerIsNotAllowedException(typeof(TService));
@@ -93,7 +93,7 @@ internal static class DecoratedServiceActivator
         return (ServiceDecoratorDisposableContainer<TService>)DispatchProxy.Create(typeof(TService), disposableContainerType);
     }
 
-    private static NotSupportedException DisposableContainerCannotBeUsedWhenServiceIsNotInterface(Type serviceType) =>
+    private static NotSupportedException DisposableContainerCannotBeUsedWhenServiceIsNotInterfaceException(Type serviceType) =>
         new($"Unable to activate decorated type '{serviceType.FullName}'. " +
             "At least one inner decorator type requires disposal, " +
             "but the decorator disposable container cannot be used " +

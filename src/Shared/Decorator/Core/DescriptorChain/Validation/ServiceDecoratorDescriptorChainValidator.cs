@@ -16,11 +16,19 @@ internal static class ServiceDecoratorDescriptorChainValidator
 
         List<Exception>? errors = null;
 
+        if ((descriptorChain.IsImplementationServiceDisposable || descriptorChain.IsImplementationServiceAsyncDisposable)
+            && !descriptorChain.UseStandaloneImplementationService)
+        {
+            var error = TODO();
+            if (!TryAdd(ref errors, error, stopOnFirstError))
+                return new(error);
+        }
+
         var hasDisposableContainer = HasDisposableContainer(descriptorChain);
 
         if (hasDisposableContainer && !descriptorChain.IsServiceInterface)
         {
-            var error = DisposableContainerCannotBeUsedWhenServiceIsNotInterface();
+            var error = DisposableContainerCannotBeUsedWhenServiceIsNotInterfaceException();
             if (!TryAdd(ref errors, error, stopOnFirstError))
                 return new(error);
         }
@@ -63,7 +71,10 @@ internal static class ServiceDecoratorDescriptorChainValidator
         return true;
     }
 
-    private static NotSupportedException DisposableContainerCannotBeUsedWhenServiceIsNotInterface() =>
+    private static InvalidOperationException TODO() =>
+        new("TODO ...");
+
+    private static NotSupportedException DisposableContainerCannotBeUsedWhenServiceIsNotInterfaceException() =>
         new("At least one inner decorator type requires disposal, " +
             "but the decorator disposable container cannot be used " +
             "when the decorated type is not an interface.");
