@@ -33,6 +33,9 @@ internal abstract class ServiceDecoratorDescriptorChain<TService, TImplementatio
     internal bool IsServiceDisposable => HasFlag(ChainFlags.IsServiceDisposable);
     internal bool IsServiceAsyncDisposable => HasFlag(ChainFlags.IsServiceAsyncDisposable);
 
+    internal bool IsImplementationServiceDisposable => HasFlag(ChainFlags.IsImplementationServiceDisposable);
+    internal bool IsImplementationServiceAsyncDisposable => HasFlag(ChainFlags.IsImplementationServiceAsyncDisposable);
+
     internal bool IsDecoratorDisposable => HasFlag(DescriptorFlags.IsDecoratorDisposable);
     internal bool IsDecoratorAsyncDisposable => HasFlag(DescriptorFlags.IsDecoratorAsyncDisposable);
 
@@ -93,16 +96,21 @@ internal abstract class ServiceDecoratorDescriptorChain<TService, TImplementatio
             return next._chainFlags;
 
         var serviceType = typeof(TService);
+        var implementationServiceType = typeof(TImplementation);
 
         var isServiceInterface = serviceType.IsInterface;
         var isServiceDisposable = serviceType.IsDisposable();
         var isServiceAsyncDisposable = serviceType.IsAsyncDisposable();
+        var isImplementationServiceDisposable = implementationServiceType.IsDisposable();
+        var isImplementationServiceAsyncDisposable = implementationServiceType.IsAsyncDisposable();
 
         ChainFlags flags = new();
 
         if (isServiceInterface) flags |= ChainFlags.IsServiceInterface;
         if (isServiceDisposable) flags |= ChainFlags.IsServiceDisposable;
         if (isServiceAsyncDisposable) flags |= ChainFlags.IsServiceAsyncDisposable;
+        if (isImplementationServiceDisposable) flags |= ChainFlags.IsImplementationServiceDisposable;
+        if (isImplementationServiceAsyncDisposable) flags |= ChainFlags.IsImplementationServiceAsyncDisposable;
 
         return flags;
     }
@@ -129,7 +137,9 @@ internal abstract class ServiceDecoratorDescriptorChain<TService, TImplementatio
     {
         IsServiceInterface = 0x01,
         IsServiceDisposable = 0x02,
-        IsServiceAsyncDisposable = 0x04
+        IsServiceAsyncDisposable = 0x04,
+        IsImplementationServiceDisposable = 0x08,
+        IsImplementationServiceAsyncDisposable = 0x10
     }
 
     [Flags]
