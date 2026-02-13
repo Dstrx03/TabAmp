@@ -72,7 +72,11 @@ internal static class ServiceDecoratorDescriptorChainValidator
     }
 
     private static InvalidOperationException TODO(Type implementationServiceType) =>
-        new($"Decorated implementation type '{implementationServiceType.FullName}' requires disposal and must be registered as standalone service.");
+        new($"Decorated implementation type '{implementationServiceType.FullName}' requires disposal " +
+            $"and must be registered as standalone service. " +
+            $"Specify implementation service key or " +
+            $"use {nameof(ServiceDecoratorDescriptorChainOptions)}" +
+            $".{nameof(ServiceDecoratorDescriptorChainOptions.UseDefaultImplementationServiceKey)}.");
 
     private static NotSupportedException DisposableContainerCannotBeUsedWhenServiceIsNotInterfaceException() =>
         new("At least one inner decorator type requires disposal, " +
