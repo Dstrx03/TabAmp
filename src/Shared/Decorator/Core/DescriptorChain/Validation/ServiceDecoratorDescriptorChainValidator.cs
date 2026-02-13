@@ -19,7 +19,7 @@ internal static class ServiceDecoratorDescriptorChainValidator
         if ((descriptorChain.IsImplementationServiceDisposable || descriptorChain.IsImplementationServiceAsyncDisposable)
             && !descriptorChain.UseStandaloneImplementationService)
         {
-            var error = TODO();
+            var error = TODO(typeof(TImplementation));
             if (!TryAdd(ref errors, error, stopOnFirstError))
                 return new(error);
         }
@@ -71,8 +71,8 @@ internal static class ServiceDecoratorDescriptorChainValidator
         return true;
     }
 
-    private static InvalidOperationException TODO() =>
-        new("TODO ...");
+    private static InvalidOperationException TODO(Type implementationServiceType) =>
+        new($"Decorated implementation type '{implementationServiceType.FullName}' requires disposal and must be registered as standalone service.");
 
     private static NotSupportedException DisposableContainerCannotBeUsedWhenServiceIsNotInterfaceException() =>
         new("At least one inner decorator type requires disposal, " +
