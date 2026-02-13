@@ -14,6 +14,15 @@ internal static class ServiceDecoratorDescriptorChainValidator
     {
         ArgumentNullException.ThrowIfNull(descriptorChain);
 
+        return ValidateCore(descriptorChain, stopOnFirstError);
+    }
+
+    private static ServiceDecoratorDescriptorChainValidationResult ValidateCore<TService, TImplementation>(
+        ServiceDecoratorDescriptorChain<TService, TImplementation> descriptorChain,
+        bool stopOnFirstError)
+        where TService : class
+        where TImplementation : class, TService
+    {
         List<Exception>? errors = null;
 
         var isImplementationServiceDisposable = descriptorChain.IsImplementationServiceDisposable
