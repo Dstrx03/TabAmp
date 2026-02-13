@@ -16,10 +16,12 @@ internal static class ServiceDecoratorDescriptorChainValidator
 
         List<Exception>? errors = null;
 
-        if ((descriptorChain.IsImplementationServiceDisposable || descriptorChain.IsImplementationServiceAsyncDisposable)
-            && !descriptorChain.UseStandaloneImplementationService)
+        var isImplementationServiceDisposable = descriptorChain.IsImplementationServiceDisposable
+            || descriptorChain.IsImplementationServiceAsyncDisposable;
+
+        if (isImplementationServiceDisposable && !descriptorChain.UseStandaloneImplementationService)
         {
-            var error = DisposableImplementationServiceMustBeStandaloneException(typeof(TImplementation));
+            var error = DisposableImplementationServiceMustBeRegisteredAsStandaloneException(typeof(TImplementation));
             if (!TryAdd(ref errors, error, stopOnFirstError))
                 return new(error);
         }
@@ -71,7 +73,7 @@ internal static class ServiceDecoratorDescriptorChainValidator
         return true;
     }
 
-    private static InvalidOperationException DisposableImplementationServiceMustBeStandaloneException(
+    private static InvalidOperationException DisposableImplementationServiceMustBeRegisteredAsStandaloneException(
         Type implementationServiceType) =>
         new($"Decorated implementation type '{implementationServiceType.FullName}' requires disposal " +
             "and must be registered as standalone service. " +
