@@ -4,11 +4,11 @@ using System.Linq;
 
 namespace TabAmp.Shared.Decorator.Core.DescriptorChain.Validation;
 
-internal class ServiceDecoratorDescriptorChainValidationException : Exception
+public class ServiceDecoratorDescriptorChainValidationException : Exception
 {
     private const string MessageTemplate = "{0}Decorator descriptor chain error(s):{1}";
 
-    internal IEnumerable<Exception> Errors { get; }
+    public IEnumerable<Exception> Errors { get; }
 
     internal ServiceDecoratorDescriptorChainValidationException(string? message, IEnumerable<Exception> errors)
         : base(ComposeMessage(message, errors), errors.FirstOrDefault())

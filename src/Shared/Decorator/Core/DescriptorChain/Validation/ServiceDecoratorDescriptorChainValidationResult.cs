@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 
 namespace TabAmp.Shared.Decorator.Core.DescriptorChain.Validation;
 
-internal readonly ref struct ServiceDecoratorDescriptorChainValidationResult
+public readonly ref struct ServiceDecoratorDescriptorChainValidationResult
 {
     private readonly ImmutableArray<Exception> _errors;
 
@@ -14,10 +14,10 @@ internal readonly ref struct ServiceDecoratorDescriptorChainValidationResult
     internal ServiceDecoratorDescriptorChainValidationResult(IEnumerable<Exception>? errors) =>
         _errors = errors?.ToImmutableArray() ?? [];
 
-    internal IEnumerable<Exception> Errors => _errors;
-    internal bool IsValid => _errors.IsEmpty;
+    public IEnumerable<Exception> Errors => _errors;
+    public bool IsValid => _errors.IsEmpty;
 
-    internal void ThrowIfAnyErrors(string? message = null)
+    public void ThrowIfAnyErrors(string? message = null)
     {
         if (IsValid)
             return;

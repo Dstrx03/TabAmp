@@ -4,9 +4,9 @@ using TabAmp.Shared.Decorator.Fluent;
 
 namespace TabAmp.Shared.Decorator.Core.DescriptorChain.Validation;
 
-internal static class ServiceDecoratorDescriptorChainValidator
+public static class ServiceDecoratorDescriptorChainValidator
 {
-    internal static ServiceDecoratorDescriptorChainValidationResult Validate<TService, TImplementation>(
+    public static ServiceDecoratorDescriptorChainValidationResult Validate<TService, TImplementation>(
         ServiceDecoratorDescriptorChain<TService, TImplementation> descriptorChain,
         bool stopOnFirstError = false)
         where TService : class
