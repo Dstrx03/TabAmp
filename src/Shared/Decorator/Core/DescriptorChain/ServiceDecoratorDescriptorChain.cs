@@ -5,14 +5,14 @@ using Options = TabAmp.Shared.Decorator.Core.DescriptorChain.ServiceDecoratorDes
 
 namespace TabAmp.Shared.Decorator.Core.DescriptorChain;
 
-internal abstract class ServiceDecoratorDescriptorChain<TService, TImplementation>
+public abstract class ServiceDecoratorDescriptorChain<TService, TImplementation>
     where TService : class
     where TImplementation : class, TService
 {
     private readonly ChainFlags _chainFlags;
     private readonly DescriptorFlags _descriptorFlags;
 
-    internal ServiceDecoratorDescriptorChain<TService, TImplementation>? Next { get; }
+    public ServiceDecoratorDescriptorChain<TService, TImplementation>? Next { get; }
 
     private ServiceDecoratorDescriptorChain(
         ServiceDecoratorDescriptorChain<TService, TImplementation>? next,
@@ -24,22 +24,22 @@ internal abstract class ServiceDecoratorDescriptorChain<TService, TImplementatio
         Next = next;
     }
 
-    internal virtual object? ImplementationServiceKey => null;
+    public virtual object? ImplementationServiceKey => null;
 
-    internal bool UseStandaloneImplementationService => ImplementationServiceKey is not null;
-    internal bool UsePreRegistrationValidation => !HasFlag(DescriptorFlags.SkipPreRegistrationValidation);
+    public bool UseStandaloneImplementationService => ImplementationServiceKey is not null;
+    public bool UsePreRegistrationValidation => !HasFlag(DescriptorFlags.SkipPreRegistrationValidation);
 
-    internal bool IsServiceInterface => HasFlag(ChainFlags.IsServiceInterface);
-    internal bool IsServiceDisposable => HasFlag(ChainFlags.IsServiceDisposable);
-    internal bool IsServiceAsyncDisposable => HasFlag(ChainFlags.IsServiceAsyncDisposable);
+    public bool IsServiceInterface => HasFlag(ChainFlags.IsServiceInterface);
+    public bool IsServiceDisposable => HasFlag(ChainFlags.IsServiceDisposable);
+    public bool IsServiceAsyncDisposable => HasFlag(ChainFlags.IsServiceAsyncDisposable);
 
-    internal bool IsImplementationServiceDisposable => HasFlag(ChainFlags.IsImplementationServiceDisposable);
-    internal bool IsImplementationServiceAsyncDisposable => HasFlag(ChainFlags.IsImplementationServiceAsyncDisposable);
+    public bool IsImplementationServiceDisposable => HasFlag(ChainFlags.IsImplementationServiceDisposable);
+    public bool IsImplementationServiceAsyncDisposable => HasFlag(ChainFlags.IsImplementationServiceAsyncDisposable);
 
-    internal bool IsDecoratorDisposable => HasFlag(DescriptorFlags.IsDecoratorDisposable);
-    internal bool IsDecoratorAsyncDisposable => HasFlag(DescriptorFlags.IsDecoratorAsyncDisposable);
+    public bool IsDecoratorDisposable => HasFlag(DescriptorFlags.IsDecoratorDisposable);
+    public bool IsDecoratorAsyncDisposable => HasFlag(DescriptorFlags.IsDecoratorAsyncDisposable);
 
-    internal bool IsDisposableContainerAllowed => HasFlag(DescriptorFlags.IsDisposableContainerAllowed);
+    public bool IsDisposableContainerAllowed => HasFlag(DescriptorFlags.IsDisposableContainerAllowed);
 
     private bool HasFlag(ChainFlags flag) => (_chainFlags & flag) == flag;
     private bool HasFlag(DescriptorFlags flag) => (_descriptorFlags & flag) == flag;
@@ -59,7 +59,7 @@ internal abstract class ServiceDecoratorDescriptorChain<TService, TImplementatio
     private class ImplementationServiceKeyNode<TDecorator> : Node<TDecorator>
         where TDecorator : class, TService
     {
-        internal override object ImplementationServiceKey { get; }
+        public override object ImplementationServiceKey { get; }
 
         public ImplementationServiceKeyNode(
             ServiceDecoratorDescriptorChain<TService, TImplementation>? next,
@@ -70,7 +70,7 @@ internal abstract class ServiceDecoratorDescriptorChain<TService, TImplementatio
         }
     }
 
-    internal static ServiceDecoratorDescriptorChain<TService, TImplementation> CreateNode<TDecorator>(
+    public static ServiceDecoratorDescriptorChain<TService, TImplementation> CreateNode<TDecorator>(
         ServiceDecoratorDescriptorChain<TService, TImplementation>? next,
         ServiceDecoratorDescriptorChainOptions options = default,
         object? implementationServiceKey = null)
