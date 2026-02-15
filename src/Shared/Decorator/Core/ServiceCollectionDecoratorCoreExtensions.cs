@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using TabAmp.Shared.Decorator.Core.Activators;
 using TabAmp.Shared.Decorator.Core.DescriptorChain;
 using TabAmp.Shared.Decorator.Core.DescriptorChain.Validation;
-using TabAmp.Shared.Decorator.Fluent;
 
 namespace TabAmp.Shared.Decorator.Core;
 
@@ -12,63 +11,59 @@ public static class ServiceCollectionDecoratorCoreExtensions
 {
     public static void AddDecorated<TService, TImplementation>(
         this IServiceCollection serviceCollection,
-        ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder,
+        ServiceDecoratorDescriptorChain<TService, TImplementation> descriptorChain,
         ServiceLifetime lifetime)
         where TService : class
         where TImplementation : class, TService
     {
         ArgumentNullException.ThrowIfNull(serviceCollection);
+        ArgumentNullException.ThrowIfNull(descriptorChain);
 
-        var descriptorChain = builder.BuildDescriptorChain();
         var descriptors = DescribeDecoratedService(descriptorChain, lifetime);
-
         Add(serviceCollection, descriptors);
     }
 
     public static void AddKeyedDecorated<TService, TImplementation>(
         this IServiceCollection serviceCollection,
         object? serviceKey,
-        ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder,
+        ServiceDecoratorDescriptorChain<TService, TImplementation> descriptorChain,
         ServiceLifetime lifetime)
         where TService : class
         where TImplementation : class, TService
     {
         ArgumentNullException.ThrowIfNull(serviceCollection);
+        ArgumentNullException.ThrowIfNull(descriptorChain);
 
-        var descriptorChain = builder.BuildDescriptorChain();
         var descriptors = DescribeKeyedDecoratedService(serviceKey, descriptorChain, lifetime);
-
         Add(serviceCollection, descriptors);
     }
 
     public static void TryAddDecorated<TService, TImplementation>(
         this IServiceCollection serviceCollection,
-        ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder,
+        ServiceDecoratorDescriptorChain<TService, TImplementation> descriptorChain,
         ServiceLifetime lifetime)
         where TService : class
         where TImplementation : class, TService
     {
         ArgumentNullException.ThrowIfNull(serviceCollection);
+        ArgumentNullException.ThrowIfNull(descriptorChain);
 
-        var descriptorChain = builder.BuildDescriptorChain();
         var descriptors = DescribeDecoratedService(descriptorChain, lifetime);
-
         TryAdd(serviceCollection, descriptors);
     }
 
     public static void TryAddKeyedDecorated<TService, TImplementation>(
         this IServiceCollection serviceCollection,
         object? serviceKey,
-        ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder,
+        ServiceDecoratorDescriptorChain<TService, TImplementation> descriptorChain,
         ServiceLifetime lifetime)
         where TService : class
         where TImplementation : class, TService
     {
         ArgumentNullException.ThrowIfNull(serviceCollection);
+        ArgumentNullException.ThrowIfNull(descriptorChain);
 
-        var descriptorChain = builder.BuildDescriptorChain();
         var descriptors = DescribeKeyedDecoratedService(serviceKey, descriptorChain, lifetime);
-
         TryAdd(serviceCollection, descriptors);
     }
 
