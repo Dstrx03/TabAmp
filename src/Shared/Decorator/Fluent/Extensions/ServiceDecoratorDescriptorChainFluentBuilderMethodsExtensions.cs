@@ -1,4 +1,5 @@
-﻿using TabAmp.Shared.Decorator.Fluent.Descriptor;
+﻿using TabAmp.Shared.Decorator.Core.DescriptorChain;
+using TabAmp.Shared.Decorator.Fluent.Descriptor;
 
 namespace TabAmp.Shared.Decorator.Fluent.Extensions;
 
@@ -19,4 +20,9 @@ public static class ServiceDecoratorDescriptorChainFluentBuilderMethodsExtension
         this ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder)
         where TService : class
         where TImplementation : class, TService => builder.SkipPreRegistrationValidation();
+
+    public static ServiceDecoratorDescriptorChain<TService, TImplementation> BuildDescriptorChain<TService, TImplementation>(
+        this ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder)
+        where TService : class
+        where TImplementation : class, TService => builder.BuildDescriptorChain();
 }

@@ -11,6 +11,8 @@ using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Text;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Tracks;
 using TabAmp.Engine.Core.Score;
 using TabAmp.Shared.Decorator;
+using TabAmp.Shared.Decorator.Core;
+using TabAmp.Shared.Decorator.Fluent.Extensions;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.DependencyInjection;
 
@@ -44,8 +46,9 @@ internal static class DependencyInjection
         where TReader : class, TService
         where TIntegrityValidator : class, TService
     {
-        serviceCollection.AddDecoratedScoped(TODO_NAME.For<TService, TReader>().With<TIntegrityValidator>());
         serviceCollection.AddDecoratedScoped<TService, TReader>(builder => builder.With<TIntegrityValidator>());
+        serviceCollection.AddDecoratedScoped(TODO_NAME.For<TService, TReader>().With<TIntegrityValidator>());
+        serviceCollection.AddDecorated(TODO_NAME.For<TService, TReader>().With<TIntegrityValidator>().BuildDescriptorChain(), ServiceLifetime.Scoped);
 
         // *** TODO: AddReader API prototype ***
         /*
