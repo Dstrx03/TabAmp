@@ -283,7 +283,7 @@ public static class ServiceCollectionDecoratorExtensions
     {
         ArgumentNullException.ThrowIfNull(configureDescriptorChain);
 
-        var builder = TODO_NAME.For<TService, TImplementation>();
+        var builder = ConfigureDescriptorChain.For<TService, TImplementation>();
         return configureDescriptorChain(builder);
     }
 }

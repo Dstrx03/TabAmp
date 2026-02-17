@@ -47,8 +47,8 @@ internal static class DependencyInjection
         where TIntegrityValidator : class, TService
     {
         serviceCollection.AddDecoratedScoped<TService, TReader>(builder => builder.With<TIntegrityValidator>());
-        serviceCollection.AddDecoratedScoped(TODO_NAME.For<TService, TReader>().With<TIntegrityValidator>());
-        serviceCollection.AddDecorated(TODO_NAME.For<TService, TReader>().With<TIntegrityValidator>().BuildDescriptorChain(), ServiceLifetime.Scoped);
+        serviceCollection.AddDecoratedScoped(ConfigureDescriptorChain.For<TService, TReader>().With<TIntegrityValidator>());
+        serviceCollection.AddDecorated(ConfigureDescriptorChain.For<TService, TReader>().With<TIntegrityValidator>().BuildDescriptorChain(), ServiceLifetime.Scoped);
 
         // *** TODO: AddReader API prototype ***
         /*
