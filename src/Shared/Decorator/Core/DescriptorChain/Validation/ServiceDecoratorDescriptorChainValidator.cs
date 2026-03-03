@@ -14,9 +14,10 @@ public static class ServiceDecoratorDescriptorChainValidator
     {
         ArgumentNullException.ThrowIfNull(descriptorChain);
 
-        return ValidateCore(descriptorChain, stopOnFirstError);
+        return _ValidateCore_TEMP(descriptorChain, stopOnFirstError);
     }
 
+    [Obsolete]
     private static ServiceDecoratorDescriptorChainValidationResult ValidateCore<TService, TImplementation>(
         ServiceDecoratorDescriptorChain<TService, TImplementation> descriptorChain,
         bool stopOnFirstError)
@@ -52,6 +53,49 @@ public static class ServiceDecoratorDescriptorChainValidator
         }
 
         return new(errors);
+    }
+
+    [Obsolete]
+    private static ServiceDecoratorDescriptorChainValidationResult _ValidateCore_TEMP<TService, TImplementation>(
+        ServiceDecoratorDescriptorChain<TService, TImplementation> descriptorChain,
+        bool stopOnFirstError)
+        where TService : class
+        where TImplementation : class, TService
+    {
+        List<Exception>? errors = null;
+
+        var isImplementationServiceDisposable = descriptorChain.IsImplementationServiceDisposable
+            || descriptorChain.IsImplementationServiceAsyncDisposable;
+
+        if (isImplementationServiceDisposable && !descriptorChain.UseStandaloneImplementationService)
+        {
+            var error = DisposableImplementationServiceMustBeRegisteredAsStandaloneException(typeof(TImplementation));
+            if (!TryAdd(ref errors, error, stopOnFirstError))
+                return new(error);
+        }
+
+        var hasDisposableContainer = HasDisposableContainer(descriptorChain);
+
+        if (hasDisposableContainer && !descriptorChain.IsServiceInterface)
+        {
+            var error = DisposableContainerCannotBeUsedWhenServiceIsNotInterfaceException();
+            if (!TryAdd(ref errors, error, stopOnFirstError))
+                return new(error);
+        }
+
+        if (hasDisposableContainer && !descriptorChain.IsDisposableContainerAllowed)
+        {
+            var error = DisposableContainerIsNotAllowedException();
+            if (!TryAdd(ref errors, error, stopOnFirstError))
+                return new(error);
+        }
+
+        return new(errors);
+    }
+
+    private static void _Validate_TODO()
+    {
+
     }
 
     private static bool HasDisposableContainer<TService, TImplementation>(
