@@ -32,7 +32,7 @@ public static class ServiceDecoratorDescriptorChainValidator
         if (isImplementationServiceDisposable && !descriptorChain.UseStandaloneImplementationService)
         {
             var error = DisposableImplementationServiceMustBeRegisteredAsStandaloneException(typeof(TImplementation));
-            if (!TryAdd(ref errors, error, stopOnFirstError))
+            if (!error.TryAddTo(ref errors, stopOnFirstError))
                 return new(error);
         }
 
@@ -41,14 +41,14 @@ public static class ServiceDecoratorDescriptorChainValidator
         if (hasDisposableContainer && !descriptorChain.IsServiceInterface)
         {
             var error = DisposableContainerCannotBeUsedWhenServiceIsNotInterfaceException();
-            if (!TryAdd(ref errors, error, stopOnFirstError))
+            if (!error.TryAddTo(ref errors, stopOnFirstError))
                 return new(error);
         }
 
         if (hasDisposableContainer && !descriptorChain.IsDisposableContainerAllowed)
         {
             var error = DisposableContainerIsNotAllowedException();
-            if (!TryAdd(ref errors, error, stopOnFirstError))
+            if (!error.TryAddTo(ref errors, stopOnFirstError))
                 return new(error);
         }
 
@@ -70,7 +70,7 @@ public static class ServiceDecoratorDescriptorChainValidator
         if (isImplementationServiceDisposable && !descriptorChain.UseStandaloneImplementationService)
         {
             var error = DisposableImplementationServiceMustBeRegisteredAsStandaloneException(typeof(TImplementation));
-            if (!TryAdd(ref errors, error, stopOnFirstError))
+            if (!error.TryAddTo(ref errors, stopOnFirstError))
                 return new(error);
         }
 
@@ -79,14 +79,14 @@ public static class ServiceDecoratorDescriptorChainValidator
         if (hasDisposableContainer && !descriptorChain.IsServiceInterface)
         {
             var error = DisposableContainerCannotBeUsedWhenServiceIsNotInterfaceException();
-            if (!TryAdd(ref errors, error, stopOnFirstError))
+            if (!error.TryAddTo(ref errors, stopOnFirstError))
                 return new(error);
         }
 
         if (hasDisposableContainer && !descriptorChain.IsDisposableContainerAllowed)
         {
             var error = DisposableContainerIsNotAllowedException();
-            if (!TryAdd(ref errors, error, stopOnFirstError))
+            if (!error.TryAddTo(ref errors, stopOnFirstError))
                 return new(error);
         }
 
@@ -115,7 +115,7 @@ public static class ServiceDecoratorDescriptorChainValidator
         return false;
     }
 
-    private static bool TryAdd(ref List<Exception>? errors, Exception error, bool stopOnFirstError)
+    private static bool TryAddTo(this Exception error, ref List<Exception>? errors, bool stopOnFirstError)
     {
         if (stopOnFirstError)
             return false;
