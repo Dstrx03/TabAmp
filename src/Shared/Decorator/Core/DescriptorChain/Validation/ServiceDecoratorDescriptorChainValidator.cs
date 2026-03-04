@@ -90,12 +90,22 @@ public static class ServiceDecoratorDescriptorChainValidator
                 return new(error);
         }
 
+        if (Validate(ref errors, stopOnFirstError).ShouldStopOn(out var yas))
+            return new(yas);
+
         return new(errors);
     }
 
-    private static void _Validate_TODO()
+    private static Exception? Validate(ref List<Exception>? errors, bool stopOnFirstError)
     {
+        if (true)
+        {
+            var error = new Exception("yas");
+            if (!error.TryAddTo(ref errors, stopOnFirstError))
+                return error;
+        }
 
+        return null;
     }
 
     private static bool HasDisposableContainer<TService, TImplementation>(
@@ -113,6 +123,12 @@ public static class ServiceDecoratorDescriptorChainValidator
         }
 
         return false;
+    }
+
+    private static bool ShouldStopOn(this Exception? source, out Exception? error)
+    {
+        error = source;
+        return error is not null;
     }
 
     private static bool TryAddTo(this Exception error, ref List<Exception>? errors, bool stopOnFirstError)
