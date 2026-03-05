@@ -14,18 +14,24 @@ public static class ServiceDecoratorDescriptorChainValidator
     {
         ArgumentNullException.ThrowIfNull(descriptorChain);
 
-        return _ValidateCore_TEMP(descriptorChain, stopOnFirstError);
+        List<Exception>? errors = null;
+
+        if (ValidateChain(descriptorChain, ref errors, stopOnFirstError).ShouldStopOn(out var chainError)) 
+            return new(chainError);
+
+        if (ValidateDescriptors(descriptorChain, ref errors, stopOnFirstError).ShouldStopOn(out var descriptorsError)) 
+            return new(descriptorsError);
+
+        return new(errors);
     }
 
-    [Obsolete]
-    private static ServiceDecoratorDescriptorChainValidationResult ValidateCore<TService, TImplementation>(
+    private static Exception? ValidateChain<TService, TImplementation>(
         ServiceDecoratorDescriptorChain<TService, TImplementation> descriptorChain,
+        ref List<Exception>? errors,
         bool stopOnFirstError)
         where TService : class
         where TImplementation : class, TService
     {
-        List<Exception>? errors = null;
-
         var isImplementationServiceDisposable = descriptorChain.IsImplementationServiceDisposable
             || descriptorChain.IsImplementationServiceAsyncDisposable;
 
@@ -33,74 +39,31 @@ public static class ServiceDecoratorDescriptorChainValidator
         {
             var error = DisposableImplementationServiceMustBeRegisteredAsStandaloneException(typeof(TImplementation));
             if (!error.TryAddTo(ref errors, stopOnFirstError))
-                return new(error);
+                return error;
         }
 
-        var hasDisposableContainer = HasDisposableContainer(descriptorChain);
-
-        if (hasDisposableContainer && !descriptorChain.IsServiceInterface)
-        {
-            var error = DisposableContainerCannotBeUsedWhenServiceIsNotInterfaceException();
-            if (!error.TryAddTo(ref errors, stopOnFirstError))
-                return new(error);
-        }
-
-        if (hasDisposableContainer && !descriptorChain.IsDisposableContainerAllowed)
-        {
-            var error = DisposableContainerIsNotAllowedException();
-            if (!error.TryAddTo(ref errors, stopOnFirstError))
-                return new(error);
-        }
-
-        return new(errors);
+        return null;
     }
 
-    [Obsolete]
-    private static ServiceDecoratorDescriptorChainValidationResult _ValidateCore_TEMP<TService, TImplementation>(
+    private static Exception? ValidateDescriptors<TService, TImplementation>(
         ServiceDecoratorDescriptorChain<TService, TImplementation> descriptorChain,
+        ref List<Exception>? errors,
         bool stopOnFirstError)
         where TService : class
         where TImplementation : class, TService
     {
-        List<Exception>? errors = null;
-
-        var isImplementationServiceDisposable = descriptorChain.IsImplementationServiceDisposable
-            || descriptorChain.IsImplementationServiceAsyncDisposable;
-
-        if (isImplementationServiceDisposable && !descriptorChain.UseStandaloneImplementationService)
-        {
-            var error = DisposableImplementationServiceMustBeRegisteredAsStandaloneException(typeof(TImplementation));
-            if (!error.TryAddTo(ref errors, stopOnFirstError))
-                return new(error);
-        }
-
         var hasDisposableContainer = HasDisposableContainer(descriptorChain);
 
         if (hasDisposableContainer && !descriptorChain.IsServiceInterface)
         {
             var error = DisposableContainerCannotBeUsedWhenServiceIsNotInterfaceException();
             if (!error.TryAddTo(ref errors, stopOnFirstError))
-                return new(error);
+                return error;
         }
 
         if (hasDisposableContainer && !descriptorChain.IsDisposableContainerAllowed)
         {
             var error = DisposableContainerIsNotAllowedException();
-            if (!error.TryAddTo(ref errors, stopOnFirstError))
-                return new(error);
-        }
-
-        if (Validate(ref errors, stopOnFirstError).ShouldStopOn(out var yas))
-            return new(yas);
-
-        return new(errors);
-    }
-
-    private static Exception? Validate(ref List<Exception>? errors, bool stopOnFirstError)
-    {
-        if (true)
-        {
-            var error = new Exception("yas");
             if (!error.TryAddTo(ref errors, stopOnFirstError))
                 return error;
         }
