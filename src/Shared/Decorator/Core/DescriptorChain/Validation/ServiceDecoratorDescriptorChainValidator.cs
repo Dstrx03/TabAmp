@@ -16,10 +16,10 @@ public static class ServiceDecoratorDescriptorChainValidator
 
         List<Exception>? errors = null;
 
-        if (ValidateChain(descriptorChain, ref errors, stopOnFirstError).ShouldStopOn(out var chainError)) 
+        if (ValidateChain(descriptorChain, ref errors, stopOnFirstError).ShouldStopOn(out var chainError))
             return new(chainError);
 
-        if (ValidateDescriptors(descriptorChain, ref errors, stopOnFirstError).ShouldStopOn(out var descriptorsError)) 
+        if (ValidateDescriptors(descriptorChain, ref errors, stopOnFirstError).ShouldStopOn(out var descriptorsError))
             return new(descriptorsError);
 
         return new(errors);
