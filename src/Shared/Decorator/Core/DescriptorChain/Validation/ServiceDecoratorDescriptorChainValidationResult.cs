@@ -8,8 +8,8 @@ public readonly ref struct ServiceDecoratorDescriptorChainValidationResult
 {
     private readonly ImmutableArray<Exception> _errors;
 
-    internal ServiceDecoratorDescriptorChainValidationResult(Exception error) =>
-        _errors = [error];
+    internal ServiceDecoratorDescriptorChainValidationResult(Exception? error) =>
+        _errors = error is not null ? [error] : [];
 
     internal ServiceDecoratorDescriptorChainValidationResult(IEnumerable<Exception>? errors) =>
         _errors = errors?.ToImmutableArray() ?? [];
