@@ -35,31 +35,23 @@ internal static class CtorHelper
 
     internal static TODO DiscoverAndValidateDecoratorConstructorInfo<TService, TDecorator>(ref List<Exception>? errors, bool stopOnFirstError) where TDecorator : TService
     {
-        var e = new Exception("...");
-        if (!e.TryAddTo(ref errors, stopOnFirstError))
-            return TODO.NotOk(e);
+        var someRandomError = new Exception("...");
+        if (!someRandomError.TryAddTo(ref errors, stopOnFirstError))
+            return TODO.StopOn(someRandomError);
 
-        return TODO.Ok(null);
+        return TODO.TODO_NAME(null);
     }
 
-    internal readonly ref struct TODO // TODO: private
+    internal readonly ref struct TODO
     {
-        internal ConstructorInfo ConstructorInfo { get; }
+        internal ConstructorInfo? ConstructorInfo { get; }
         internal Exception? Error { get; }
 
-        private TODO(ConstructorInfo constructorInfo, Exception? error) =>
+        private TODO(ConstructorInfo? constructorInfo, Exception? error) =>
             (ConstructorInfo, Error) = (constructorInfo, error);
 
-        internal bool HasError => Error is not null;
-
-        public static TODO Ok(ConstructorInfo constructorInfo) => new(constructorInfo, error: null);
-        public static TODO NotOk(Exception? error) => new(constructorInfo: null!, error);
-
-        public void Deconstruct(out ConstructorInfo constructorInfo, out Exception? error) // TODO: not useful?
-        {
-            constructorInfo = ConstructorInfo;
-            error = Error;
-        }
+        public static TODO TODO_NAME(ConstructorInfo? constructorInfo) => new(constructorInfo, error: null);
+        public static TODO StopOn(Exception error) => new(constructorInfo: null, error);
     }
 
     private static InvalidOperationException MultipleServiceTypeParametersDecoratorConstructorException(
