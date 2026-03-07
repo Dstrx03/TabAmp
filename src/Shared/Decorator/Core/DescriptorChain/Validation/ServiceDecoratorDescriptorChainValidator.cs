@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using TabAmp.Shared.Decorator.Core.Extensions;
 using TabAmp.Shared.Decorator.Fluent;
 
 namespace TabAmp.Shared.Decorator.Core.DescriptorChain.Validation;
@@ -86,23 +87,6 @@ public static class ServiceDecoratorDescriptorChainValidator
         }
 
         return false;
-    }
-
-    private static bool ShouldStopOn(this Exception? source, out Exception? error)
-    {
-        error = source;
-        return error is not null;
-    }
-
-    private static bool TryAddTo(this Exception error, ref List<Exception>? errors, bool stopOnFirstError)
-    {
-        if (stopOnFirstError)
-            return false;
-
-        errors ??= [];
-        errors.Add(error);
-
-        return true;
     }
 
     private static InvalidOperationException DisposableImplementationServiceMustBeRegisteredAsStandaloneException(
