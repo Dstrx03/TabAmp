@@ -1,77 +1,59 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using TabAmp.Shared.Decorator.Core.Extensions;
+using System.Linq;
+using TabAmp.Shared.Decorator.Core.DescriptorChain.Validation;
 
 namespace TabAmp.Shared.Decorator.Core.Activators;
 
-internal static class CtorHelper
+/*internal*/
+public static class CtorHelper
 {
-    private static ConstructorInfo DiscoverDecoratorConstructorInfo<TService, TDecorator>()
-        where TDecorator : TService
+    public static ServiceDecoratorDescriptorChainValidationResult A(bool stopOnFirstError = false)
     {
-        var serviceType = typeof(TService);
-        var decoratorType = typeof(TDecorator);
+        var input = new Input();
+        var bOutput = B(input);
 
-        ConstructorInfo? constructorInfo = null;
-        foreach (var constructor in decoratorType.GetConstructors())
+        throw new NotImplementedException();
+    }
+
+    public static Output B(Input input)
+    {
+        if (true)
         {
-            foreach (var parameter in constructor.GetParameters())
-            {
-                if (parameter.ParameterType != serviceType)
-                    continue;
-
-                if (constructorInfo == constructor)
-                    throw MultipleServiceTypeParametersDecoratorConstructorException(serviceType, decoratorType, constructorInfo);
-                else if (constructorInfo is not null)
-                    throw AmbiguousDecoratorConstructorException(decoratorType, constructorInfo, constructor);
-
-                constructorInfo = constructor;
-            }
+            var error = new InvalidOperationException("B error...");
+            if (input.ShouldStopOn(error, out input))
+                return input;
         }
 
-        return constructorInfo ?? throw MissingDecoratorConstructorException(serviceType, decoratorType);
+        throw new NotImplementedException();
     }
 
-    internal static TODO DiscoverAndValidateDecoratorConstructorInfo<TService, TDecorator>(ref List<Exception>? errors, bool stopOnFirstError) where TDecorator : TService
+    public static void C()
     {
-        var someRandomError = new Exception("...");
-        if (!someRandomError.TryAddTo(ref errors, stopOnFirstError))
-            return TODO.StopOn(someRandomError);
-
-        return TODO.TODO_NAME(null);
+        throw new NotImplementedException();
     }
 
-    internal readonly ref struct TODO
+    public static int D()
     {
-        internal ConstructorInfo? ConstructorInfo { get; }
-        internal Exception? Error { get; }
-
-        private TODO(ConstructorInfo? constructorInfo, Exception? error) =>
-            (ConstructorInfo, Error) = (constructorInfo, error);
-
-        public static TODO TODO_NAME(ConstructorInfo? constructorInfo) => new(constructorInfo, error: null);
-        public static TODO StopOn(Exception error) => new(constructorInfo: null, error);
+        throw new NotImplementedException();
+        return 12345;
     }
 
-    private static InvalidOperationException MultipleServiceTypeParametersDecoratorConstructorException(
-        Type serviceType,
-        Type decoratorType,
-        ConstructorInfo constructorInfo) =>
-        new($"Unable to activate decorator type '{decoratorType.FullName}'. " +
-            $"Constructor has multiple parameters of the decorated type '{serviceType.FullName}':{Environment.NewLine}" +
-            $"{constructorInfo}");
+    public readonly ref struct Input
+    {
+        public bool ShouldStopOn(Exception error, out Input input)
+        {
+            input = new();
+            return false;
+        }
 
-    private static InvalidOperationException AmbiguousDecoratorConstructorException(
-        Type decoratorType,
-        ConstructorInfo constructorInfo,
-        ConstructorInfo constructorInfoOther) =>
-        new($"Unable to activate decorator type '{decoratorType.FullName}'. " +
-            $"The following constructors are ambiguous:{Environment.NewLine}" +
-            $"{constructorInfo}{Environment.NewLine}" +
-            $"{constructorInfoOther}");
+        public static implicit operator Output(Input input) => new();
+    }
 
-    private static InvalidOperationException MissingDecoratorConstructorException(Type serviceType, Type decoratorType) =>
-        new($"Unable to activate decorator type '{decoratorType.FullName}'. " +
-            $"Missing constructor with a parameter for the decorated type '{serviceType.FullName}'.");
+    public readonly ref struct Output
+    {
+    }
+}
+
+public static class Extensions
+{
 }
