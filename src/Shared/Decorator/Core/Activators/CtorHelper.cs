@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Linq;
 using TabAmp.Shared.Decorator.Core.DescriptorChain.Validation;
+using static TabAmp.Shared.Decorator.Core.Activators.CtorHelper;
 
 namespace TabAmp.Shared.Decorator.Core.Activators;
 
@@ -10,50 +10,60 @@ public static class CtorHelper
     public static ServiceDecoratorDescriptorChainValidationResult A(bool stopOnFirstError = false)
     {
         var input = new Input();
-        var bOutput = B(input);
 
-        throw new NotImplementedException();
+        if (B(input).FooBar(ref input))
+            return input;
+
+        if (C(input).FooBar(ref input))
+            return input;
+
+        return input;
     }
 
-    public static Output B(Input input)
+    private static Output B(Input input)
     {
         if (true)
         {
             var error = new InvalidOperationException("B error...");
-            if (input.ShouldStopOn(error, out input))
+            if (error.FooBar(ref input))
                 return input;
         }
 
-        throw new NotImplementedException();
+        return input;
     }
 
-    public static void C()
+    private static Output C(Input input)
     {
-        throw new NotImplementedException();
+        if (true)
+        {
+            var error = new InvalidOperationException("C error...");
+            if (error.FooBar(ref input))
+                return input;
+        }
+
+        return input;
     }
 
-    public static int D()
+    public static int GetD() => D();
+
+    private static int D()
     {
-        throw new NotImplementedException();
         return 12345;
     }
 
     public readonly ref struct Input
     {
-        public bool ShouldStopOn(Exception error, out Input input)
-        {
-            input = new();
-            return false;
-        }
-
         public static implicit operator Output(Input input) => new();
+        public static implicit operator ServiceDecoratorDescriptorChainValidationResult(Input input) => new();
     }
 
     public readonly ref struct Output
     {
+        public bool FooBar(ref Input input) => false;
     }
 }
 
 public static class Extensions
 {
+    public static bool FooBar(this Exception error, ref Input input) => false;
 }
