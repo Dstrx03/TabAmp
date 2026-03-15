@@ -15,13 +15,19 @@ public readonly ref struct Context
         StopOnFirstError = stopOnFirstError;
     }
 
-    private Context WithError(Exception error)
+    internal Context WithError(Exception error)
     {
+        if (StopOnFirstError)
+            return this;
+
         var errors = _errors ?? [];
         errors.Add(error);
 
         return new(errors, stopOnFirstError: StopOnFirstError);
     }
 
-    internal static Context Init_TODONAME(bool stopOnFirstError) => new(errors: null, stopOnFirstError: stopOnFirstError);
+    internal ValidationResult ToResult() => new(_errors);
+
+    internal static Context Init_TODONAME(bool stopOnFirstError) =>
+        new(errors: null, stopOnFirstError: stopOnFirstError);
 }
