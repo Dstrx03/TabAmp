@@ -26,6 +26,7 @@ public readonly ref struct Context
         return new(errors, stopOnFirstError: StopOnFirstError);
     }
 
+    public Scope ToScope() => Scope.FromContext(this);
     internal ValidationResult ToResult() => new(_errors);
 
     internal static Context Init_TODONAME(bool stopOnFirstError) =>
