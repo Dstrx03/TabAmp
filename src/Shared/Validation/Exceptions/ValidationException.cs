@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TabAmp.Shared.Validation;
+namespace TabAmp.Shared.Validation.Exceptions;
 
 public class ValidationException : Exception
 {

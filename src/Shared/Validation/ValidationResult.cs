@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using TabAmp.Shared.Validation.Exceptions;
 
 namespace TabAmp.Shared.Validation;
 

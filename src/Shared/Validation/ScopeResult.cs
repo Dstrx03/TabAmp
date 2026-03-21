@@ -1,5 +1,5 @@
 ﻿namespace TabAmp.Shared.Validation;
 
-public readonly ref struct ScopeResult
+internal readonly ref struct ScopeResult
 {
 }
