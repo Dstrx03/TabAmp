@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -42,5 +43,37 @@ internal readonly ref struct Errors
         return errors;
     }
 
+    public Enumerator GetEnumerator() => new();
+
     private static Errors Empty => new();
+
+    public ref struct Enumerator : IEnumerator<Exception>
+    {
+        private readonly Errors _errors;
+        private int _index;
+        private Enumerator(Errors errors) => _errors = errors;
+        public readonly Exception Current => _errors switch
+        {
+            { IsSingle: true } => (_errors._errors as Exception)!,
+            { IsMany: true } => (_errors._errors as List<Exception>)![_index],
+            _ => throw new UnreachableException()
+        };
+        readonly object IEnumerator.Current => Current;
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
+        public bool MoveNext()
+        {
+            if (_errors.IsEmpty)
+                return false;
+
+            return _index++ == 0;
+            throw new NotImplementedException();
+        }
+        public void Reset()
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
