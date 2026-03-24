@@ -4,19 +4,16 @@ using System.Diagnostics;
 
 namespace TabAmp.Shared.Validation;
 
-internal readonly ref struct Errors
+[DebuggerDisplay("Count = {Count}")]
+public readonly ref struct Errors
 {
     private readonly object? _storage;
     private readonly int _length;
-
-    public Errors() => throw ThrowHelper.TODO(typeof(Errors));
 
     private Errors(object? storage, int length) =>
         (_storage, _length) = (storage, length);
 
     public int Count => _length;
-
-    public bool Any => _length > 0;
     public bool IsEmpty => _length == 0;
 
     private bool IsSingle => _length == 1;
@@ -57,14 +54,17 @@ internal readonly ref struct Errors
     public ref struct Enumerator
     {
         private readonly Errors _errors;
-        private int _index = -1;
+        private int _index;
 
-        public Enumerator() => throw ThrowHelper.TODO(typeof(Enumerator));
-
-        private Enumerator(Errors errors) => _errors = errors;
+        internal Enumerator(Errors errors)
+        {
+            _errors = errors;
+            _index = -1;
+        }
 
         public readonly Exception Current => _errors switch
         {
+            { IsEmpty: true } => null!,
             { IsSingle: true } => _errors.AsSingle,
             { IsMany: true } => _errors.AsMany[_index],
             _ => throw new UnreachableException()
@@ -77,7 +77,5 @@ internal readonly ref struct Errors
 
             return ++_index < _errors._length;
         }
-
-        private static Enumerator FromErrors(Errors errors) => new(errors);
     }
 }
