@@ -1,12 +1,11 @@
-﻿using System;
-using TabAmp.Shared.Validation;
+﻿using TabAmp.Shared.Validation;
 
 namespace TabAmp.Cli.Console;
 
 internal static class Tests
 {
-    public static ValidationResult SomeValidationMethod(bool stopOnFirstError = false)
+    public static ValidationResult SomeValidationMethod(Scope scope = default)
     {
-        throw new NotImplementedException();
+        return scope.ToResult();
     }
 }

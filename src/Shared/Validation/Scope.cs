@@ -1,5 +1,14 @@
-﻿namespace TabAmp.Shared.Validation;
+﻿using System;
 
-internal readonly ref struct Scope
+namespace TabAmp.Shared.Validation;
+
+public readonly ref struct Scope
 {
+    private readonly Context _context;
+
+    private Scope(Context context) => _context = context;
+
+    internal Scope With(Exception error) => new(_context.With(error));
+
+    public ValidationResult ToResult() => new(_context);
 }

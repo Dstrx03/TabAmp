@@ -56,7 +56,7 @@ public readonly ref struct Errors
         _ => throw new UnreachableException()
     };
 
-    public Enumerator GetEnumerator() => new();
+    public Enumerator GetEnumerator() => new(this);
 
     public ref struct Enumerator
     {
