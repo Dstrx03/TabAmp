@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace TabAmp.Shared.Validation;
 
@@ -22,7 +23,7 @@ public readonly ref struct Errors
     private Exception AsSingle => (_storage as Exception)!;
     private List<Exception> AsMany => (_storage as List<Exception>)!;
 
-    private Errors Add(Exception error)
+    internal Errors Add(Exception error)
     {
         ArgumentNullException.ThrowIfNull(error);
 
@@ -47,9 +48,15 @@ public readonly ref struct Errors
         return storage;
     }
 
-    public Enumerator GetEnumerator() => new();
+    public List<Exception> ToList() => this switch
+    {
+        { IsEmpty: true } => [],
+        { IsSingle: true } => [AsSingle],
+        { IsMany: true } => [.. AsMany.Take(_length)],
+        _ => throw new UnreachableException()
+    };
 
-    private static Errors Empty => new();
+    public Enumerator GetEnumerator() => new();
 
     public ref struct Enumerator
     {

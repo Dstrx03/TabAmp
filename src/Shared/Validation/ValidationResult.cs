@@ -1,28 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using TabAmp.Shared.Validation.Exceptions;
+﻿using TabAmp.Shared.Validation.Exceptions;
 
 namespace TabAmp.Shared.Validation;
 
 public readonly ref struct ValidationResult
 {
-    private readonly ImmutableArray<Exception> _errors;
+    private readonly Context _context;
 
-    internal ValidationResult(Exception? error) =>
-        _errors = error is not null ? [error] : [];
+    internal ValidationResult(Context context) => _context = context;
 
-    internal ValidationResult(IEnumerable<Exception>? errors) =>
-        _errors = errors?.ToImmutableArray() ?? [];
-
-    public IEnumerable<Exception> Errors => _errors;
-    public bool IsValid => _errors.IsEmpty;
+    public Errors Errors => _context.Errors;
+    public bool IsValid => Errors.IsEmpty;
 
     public void ThrowIfAnyErrors(string? message = null)
     {
         if (IsValid)
             return;
 
-        throw new ValidationException(message, Errors);
+        throw new ValidationException(message, Errors.ToList());
     }
 }

@@ -1,14 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace TabAmp.Shared.Validation;
 
 internal readonly ref struct Context
 {
-    private readonly List<Exception>? _errors;
-    public bool StopOnFirstError { get; }
-    internal Context WithError(Exception error)
+    internal Errors Errors { get; }
+    internal bool StopOnFirstError { get; }
+
+    internal Context(bool stopOnFirstError) => StopOnFirstError = stopOnFirstError;
+
+    private Context(Errors errors, bool stopOnFirstError)
     {
-        throw new NotImplementedException();
+        Errors = errors;
+        StopOnFirstError = stopOnFirstError;
     }
+
+    internal Context With(Exception error) => new(Errors.Add(error), stopOnFirstError: StopOnFirstError);
 }
