@@ -8,6 +8,8 @@ public readonly ref struct Scope
 
     private Scope(Context context) => _context = context;
 
+    public bool ShouldStop => _context.StopOnFirstError && !_context.Errors.IsEmpty;
+
     internal Scope With(Exception error) => new(_context.With(error));
 
     public ValidationResult ToResult() => new(_context);
