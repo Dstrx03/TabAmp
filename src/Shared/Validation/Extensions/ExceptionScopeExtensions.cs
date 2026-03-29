@@ -9,9 +9,4 @@ public static class ExceptionScopeExtensions
         scope = scope.With(error);
         return scope;
     }
-
-    internal static bool WithError_TODONAME(this Exception error, ref Scope scope)
-    {
-        throw new NotImplementedException();
-    }
 }
