@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 
 namespace TabAmp.Shared.Validation;
 
@@ -9,14 +8,20 @@ namespace TabAmp.Shared.Validation;
 public readonly ref struct Errors
 {
     private readonly object? _storage;
+    private readonly int _start;
     private readonly int _length;
 
-    private Errors(object? storage, int length) =>
-        (_storage, _length) = (storage, length);
+    private Errors(object? storage, int start, int length)
+    {
+        _storage = storage;
+        _start = start;
+        _length = length;
+    }
 
-    public int Count => _length;
-    public bool IsEmpty => _length == 0;
+    public int Count => _length - _start;
+    public bool IsEmpty => Count == 0;
 
+    private bool IsNull => _length == 0;
     private bool IsSingle => _length == 1;
     private bool IsMany => _length > 1;
 
@@ -27,15 +32,15 @@ public readonly ref struct Errors
     {
         ArgumentNullException.ThrowIfNull(error);
 
-        object errors = this switch
+        object storage = this switch
         {
-            { IsEmpty: true } => error,
+            { IsNull: true } => error,
             { IsSingle: true } => AddAsSingle(error),
             { IsMany: true } => AddAsMany(error),
             _ => throw new UnreachableException()
         };
 
-        return new(errors, _length + 1);
+        return new(storage, _start, _length + 1);
     }
 
     private List<Exception> AddAsSingle(Exception error) => [AsSingle, error];
@@ -48,41 +53,66 @@ public readonly ref struct Errors
         return storage;
     }
 
-    public List<Exception> ToList() => this switch
+    public List<Exception> ToList()
     {
-        { IsEmpty: true } => [],
-        { IsSingle: true } => [AsSingle],
-        { IsMany: true } => [.. AsMany.Take(_length)],
-        _ => throw new UnreachableException()
-    };
+        throw new NotImplementedException();
+        /*return this switch
+        {
+            { IsEmpty: true } => [],
+            { IsSingle: true } => [AsSingle],
+            { IsMany: true } => [.. AsMany.Take(_length)],
+            _ => throw new UnreachableException()
+        };*/
+    }
 
     public Enumerator GetEnumerator() => new(this);
 
     public ref struct Enumerator
     {
         private readonly Errors _errors;
+
         private int _index;
+        private Exception? _current;
 
         internal Enumerator(Errors errors)
         {
             _errors = errors;
-            _index = -1;
+            _index = errors._start;
         }
 
-        public readonly Exception Current => _errors switch
+        public readonly Exception Current
         {
-            { IsEmpty: true } => null!,
-            { IsSingle: true } => _errors.AsSingle,
-            { IsMany: true } => _errors.AsMany[_index],
-            _ => throw new UnreachableException()
-        };
+            get
+            {
+                /*return _errors switch
+                {
+                    { IsEmpty: true } => null!,
+                    { IsSingle: true } => _errors.AsSingle,
+                    { IsMany: true } => _errors.AsMany[_index],
+                    _ => throw new UnreachableException()
+                };*/
+                if (_index <= _errors._start) throw new InvalidOperationException("todo...");
+                return _current!;
+            }
+        }
 
         public bool MoveNext()
         {
-            if (_errors.IsEmpty)
-                return false;
+            if ((uint)_index < (uint)_errors._length)
+            {
+                _current = _errors switch
+                {
+                    { IsSingle: true } => _errors.AsSingle,
+                    { IsMany: true } => _errors.AsMany[_index],
+                    _ => throw new UnreachableException()
+                };
+                _index++;
+                return true;
+            }
 
-            return ++_index < _errors._length;
+            _current = null;
+            _index = -1;
+            return false;
         }
     }
 }
