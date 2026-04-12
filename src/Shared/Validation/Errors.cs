@@ -53,17 +53,13 @@ public readonly ref struct Errors
         return storage;
     }
 
-    public List<Exception> ToList()
+    public List<Exception> ToList() => this switch
     {
-        throw new NotImplementedException();
-        /*return this switch
-        {
-            { IsEmpty: true } => [],
-            { IsSingle: true } => [AsSingle],
-            { IsMany: true } => [.. AsMany.Take(_length)],
-            _ => throw new UnreachableException()
-        };*/
-    }
+        { IsEmpty: true } => [],
+        { IsSingle: true } => [AsSingle],
+        { IsMany: true } => AsMany.Slice(_start, _length),
+        _ => throw new UnreachableException()
+    };
 
     public Enumerator GetEnumerator() => new(this);
 
