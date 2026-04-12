@@ -80,21 +80,7 @@ public readonly ref struct Errors
             _index = errors._start;
         }
 
-        public readonly Exception Current
-        {
-            get
-            {
-                /*return _errors switch
-                {
-                    { IsEmpty: true } => null!,
-                    { IsSingle: true } => _errors.AsSingle,
-                    { IsMany: true } => _errors.AsMany[_index],
-                    _ => throw new UnreachableException()
-                };*/
-                if (_index <= _errors._start) throw new InvalidOperationException("todo...");
-                return _current!;
-            }
-        }
+        public readonly Exception Current => _current!;
 
         public bool MoveNext()
         {
@@ -107,11 +93,13 @@ public readonly ref struct Errors
                     _ => throw new UnreachableException()
                 };
                 _index++;
+
                 return true;
             }
 
             _current = null;
             _index = -1;
+
             return false;
         }
     }
