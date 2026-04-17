@@ -16,4 +16,6 @@ internal readonly ref struct Context
     }
 
     internal Context With(Exception error) => new(Errors.Add(error), stopOnFirstError: StopOnFirstError);
+
+    internal Context ToInner() => new(Errors.ToInner(), stopOnFirstError: StopOnFirstError);
 }

@@ -12,5 +12,6 @@ public readonly ref struct Scope
 
     internal Scope With(Exception error) => new(_context.With(error));
 
+    public Scope ToInner() => new(_context.ToInner());
     public ValidationResult ToResult() => new(_context);
 }

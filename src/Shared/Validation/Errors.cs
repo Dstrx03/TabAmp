@@ -40,7 +40,7 @@ public readonly ref struct Errors
             _ => throw new UnreachableException()
         };
 
-        return new(storage, _start, _length + 1);
+        return new(storage, start: _start, length: _length + 1);
     }
 
     private List<Exception> AddAsSingle(Exception error) => [AsSingle, error];
@@ -52,6 +52,8 @@ public readonly ref struct Errors
 
         return storage;
     }
+
+    internal Errors ToInner() => new(_storage, start: _length, length: _length);
 
     public List<Exception> ToList() => this switch
     {
