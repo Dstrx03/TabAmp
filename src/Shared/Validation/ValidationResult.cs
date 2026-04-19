@@ -1,7 +1,9 @@
-﻿using TabAmp.Shared.Validation.Exceptions;
+﻿using System.Diagnostics;
+using TabAmp.Shared.Validation.Exceptions;
 
 namespace TabAmp.Shared.Validation;
 
+[DebuggerDisplay("IsValid = {IsValid}")]
 public readonly ref struct ValidationResult
 {
     private readonly Context _context;

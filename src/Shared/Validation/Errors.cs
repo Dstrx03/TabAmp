@@ -59,7 +59,7 @@ public readonly ref struct Errors
     {
         { IsEmpty: true } => [],
         { IsSingle: true } => [AsSingle],
-        { IsMany: true } => AsMany.Slice(_start, _length),
+        { IsMany: true } => AsMany.Slice(_start, Count),
         _ => throw new UnreachableException()
     };
 
