@@ -6,12 +6,18 @@ namespace TabAmp.Shared.Validation;
 [DebuggerDisplay("IsValid = {IsValid}")]
 public readonly ref struct ValidationResult
 {
-    private readonly Context _context;
+    private readonly Scope _scope;
 
-    internal ValidationResult(Context context) => _context = context;
+    internal ValidationResult(Scope scope) => _scope = scope;
 
-    public Errors Errors => _context.Errors;
+    public Errors Errors => _scope.Context.Errors;
     public bool IsValid => Errors.IsEmpty;
+
+    public Scope CaptureBy(ref Scope outer)
+    {
+        outer = _scope.FromOuter(outer);
+        return outer;
+    }
 
     public void ThrowIfAnyErrors(string? message = null)
     {

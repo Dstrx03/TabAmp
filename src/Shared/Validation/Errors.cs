@@ -54,6 +54,7 @@ public readonly ref struct Errors
     }
 
     internal Errors ToInner() => new(_storage, start: _length, length: _length);
+    internal Errors FromOuter(Errors outer) => new(_storage, start: outer._start, length: _length);
 
     public List<Exception> ToList() => this switch
     {

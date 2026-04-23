@@ -16,6 +16,7 @@ internal static class Tests
         new InvalidOperationException("some error").CaptureBy(ref scope);
 
         var result = InnerValidationMethod(scope.ToInner());
+        result.CaptureBy(ref scope);
 
         return scope.ToResult();
     }

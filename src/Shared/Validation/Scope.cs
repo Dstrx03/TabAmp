@@ -4,14 +4,16 @@ namespace TabAmp.Shared.Validation;
 
 public readonly ref struct Scope
 {
-    private readonly Context _context;
+    internal Context Context { get; }
 
-    private Scope(Context context) => _context = context;
+    private Scope(Context context) => Context = context;
 
-    public bool ShouldStop => _context.StopOnFirstError && !_context.Errors.IsEmpty;
+    public bool ShouldStop => Context.StopOnFirstError && !Context.Errors.IsEmpty;
 
-    internal Scope With(Exception error) => new(_context.With(error));
+    internal Scope With(Exception error) => new(Context.With(error));
 
-    public Scope ToInner() => new(_context.ToInner());
-    public ValidationResult ToResult() => new(_context);
+    public Scope ToInner() => new(Context.ToInner());
+    internal Scope FromOuter(Scope outer) => new(Context.FromOuter(outer.Context));
+
+    public ValidationResult ToResult() => new(this);
 }
