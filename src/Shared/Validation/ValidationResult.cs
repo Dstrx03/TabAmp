@@ -27,3 +27,24 @@ public readonly ref struct ValidationResult
         throw new ValidationException(message, Errors.ToList());
     }
 }
+
+[DebuggerDisplay("IsValid = {IsValid}, Value = {Value}")]
+public readonly ref struct ValidationResult<TValue>
+{
+    private readonly ValidationResult _result;
+
+    public TValue Value { get; }
+
+    internal ValidationResult(ValidationResult result, TValue value)
+    {
+        _result = result;
+        Value = value;
+    }
+
+    public Errors Errors => _result.Errors;
+    public bool IsValid => _result.IsValid;
+
+    public Scope CaptureBy(ref Scope outer) => _result.CaptureBy(ref outer);
+
+    public void ThrowIfAnyErrors(string? message = null) => _result.ThrowIfAnyErrors(message);
+}
