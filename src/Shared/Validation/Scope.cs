@@ -8,6 +8,10 @@ public readonly ref struct Scope
 {
     internal Context Context { get; }
 
+    public Scope(bool stopOnFirstError) : this(new Context(stopOnFirstError: stopOnFirstError))
+    {
+    }
+
     private Scope(Context context) => Context = context;
 
     public bool ShouldStop => Context.StopOnFirstError && !Context.Errors.IsEmpty;

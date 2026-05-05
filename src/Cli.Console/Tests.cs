@@ -16,7 +16,10 @@ internal static class Tests
 
     public static void Run()
     {
-        var result = SomeValidationMethod();
+        var result = SomeValidationMethod(new(stopOnFirstError: true));
+
+        foreach (var error in result.Errors)
+            System.Console.WriteLine($" - {error.Message}");
     }
 
     private static ValidationResult SomeValidationMethod(Scope scope = default)
