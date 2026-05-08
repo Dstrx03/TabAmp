@@ -19,6 +19,8 @@ public readonly ref struct ValidationResult
         return outer;
     }
 
+    public bool ShouldStop(ref Scope outer) => CaptureBy(ref outer).ShouldStop;
+
     public void ThrowIfAnyErrors(string? message = null)
     {
         if (IsValid)
@@ -45,6 +47,8 @@ public readonly ref struct ValidationResult<TValue>
     public bool IsValid => _result.IsValid;
 
     public Scope CaptureBy(ref Scope outer) => _result.CaptureBy(ref outer);
+
+    public bool ShouldStop(ref Scope outer) => _result.ShouldStop(ref outer);
 
     public void ThrowIfAnyErrors(string? message = null) => _result.ThrowIfAnyErrors(message);
 }

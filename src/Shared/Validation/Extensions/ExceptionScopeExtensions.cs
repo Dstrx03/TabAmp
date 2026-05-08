@@ -9,4 +9,7 @@ public static class ExceptionScopeExtensions
         scope = scope.With(error);
         return scope;
     }
+
+    public static bool ShouldStop(this Exception error, ref Scope scope) =>
+        error.CaptureBy(ref scope).ShouldStop;
 }

@@ -38,17 +38,17 @@ internal static class Tests
         if (HasError("SomeValidationMethod_A"))
         {
             var error = new InvalidOperationException("SomeValidationMethod error A.");
-            if (error.CaptureBy(ref scope).ShouldStop)
-                return scope.ToResult();
+            if (error.ShouldStop(ref scope))
+                return scope;
         }
 
-        if (SomeInnerValidationMethod(scope.ToInner()).CaptureBy(ref scope).ShouldStop)
-            return scope.ToResult();
+        if (SomeInnerValidationMethod(scope.ToInner()).ShouldStop(ref scope))
+            return scope;
 
-        if (SomeValueValidationMethod(scope.ToInner()).CaptureBy(ref scope).ShouldStop)
-            return scope.ToResult();
+        if (SomeValueValidationMethod(scope.ToInner()).ShouldStop(ref scope))
+            return scope;
 
-        return scope.ToResult();
+        return scope;
     }
 
     private static ValidationResult SomeInnerValidationMethod(Scope scope = default)
@@ -56,14 +56,14 @@ internal static class Tests
         if (HasError("SomeInnerValidationMethod_A"))
         {
             var error = new InvalidOperationException("SomeInnerValidationMethod error A.");
-            if (error.CaptureBy(ref scope).ShouldStop)
-                return scope.ToResult();
+            if (error.ShouldStop(ref scope))
+                return scope;
         }
 
-        if (SomeInnerInnerValidationMethod(scope.ToInner()).CaptureBy(ref scope).ShouldStop)
-            return scope.ToResult();
+        if (SomeInnerInnerValidationMethod(scope.ToInner()).ShouldStop(ref scope))
+            return scope;
 
-        return scope.ToResult();
+        return scope;
     }
 
     private static ValidationResult SomeInnerInnerValidationMethod(Scope scope = default)
@@ -71,18 +71,18 @@ internal static class Tests
         if (HasError("SomeInnerInnerValidationMethod_A"))
         {
             var error = new InvalidOperationException("SomeInnerInnerValidationMethod error A.");
-            if (error.CaptureBy(ref scope).ShouldStop)
-                return scope.ToResult();
+            if (error.ShouldStop(ref scope))
+                return scope;
         }
 
         if (HasError("SomeInnerInnerValidationMethod_B"))
         {
             var error = new InvalidOperationException("SomeInnerInnerValidationMethod error B.");
-            if (error.CaptureBy(ref scope).ShouldStop)
-                return scope.ToResult();
+            if (error.ShouldStop(ref scope))
+                return scope;
         }
 
-        return scope.ToResult();
+        return scope;
     }
 
     private static ValidationResult<int> SomeValueValidationMethod(Scope scope = default)
@@ -90,7 +90,7 @@ internal static class Tests
         if (HasError("SomeValueValidationMethod_A"))
         {
             var error = new InvalidOperationException("SomeValueValidationMethod error A.");
-            if (error.CaptureBy(ref scope).ShouldStop)
+            if (error.ShouldStop(ref scope))
                 return scope.ToResult<int>();
         }
 

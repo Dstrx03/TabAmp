@@ -24,4 +24,6 @@ public readonly ref struct Scope
     public ValidationResult ToResult() => new(this);
     public ValidationResult<TValue> ToResult<TValue>() => new(ToResult(), default!);
     public ValidationResult<TValue> ToResult<TValue>(TValue value) => new(ToResult(), value);
+
+    public static implicit operator ValidationResult(Scope scope) => scope.ToResult();
 }
