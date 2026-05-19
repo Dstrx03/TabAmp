@@ -32,6 +32,9 @@ public readonly ref struct Errors
     {
         ArgumentNullException.ThrowIfNull(error);
 
+        if (_length == int.MaxValue)
+            throw ExceededSupportedLimitException();
+
         object storage = this switch
         {
             { IsNull: true } => error,
@@ -48,13 +51,32 @@ public readonly ref struct Errors
     private List<Exception> AddAsMany(Exception error)
     {
         var storage = AsMany;
+
+        if (storage.Count != _length)
+            throw StorageAsManyInconsistentStateException(storage, _length);
+
         storage.Add(error);
 
         return storage;
     }
 
     internal Errors ToInner() => new(_storage, start: _length, length: _length);
-    internal Errors FromOuter(Errors outer) => new(_storage, start: outer._start, length: _length);
+
+    internal Errors FromOuter(Errors outer)
+    {
+        if (outer._start > _start)
+            throw OuterScopeCannotReferenceLaterErrorRangeThanCurrentScopeException(outer, _start);
+
+        if (outer._length > _length)
+            throw OuterScopeCannotContainMoreErrorsThanCurrentScopeException(outer, _length);
+
+        var mustReferenceSameStorage = (outer.IsSingle && IsSingle) || outer.IsMany;
+
+        if (mustReferenceSameStorage && outer._storage != _storage)
+            throw OuterAndCurrentScopesMustReferenceSameStorageException();
+
+        return new(_storage, start: outer._start, length: _length);
+    }
 
     public List<Exception> ToList() => this switch
     {
@@ -102,4 +124,22 @@ public readonly ref struct Errors
             return false;
         }
     }
+
+    private static InvalidOperationException ExceededSupportedLimitException() =>
+        new("The number of captured errors exceeded the supported limit.");
+
+    private static InvalidOperationException StorageAsManyInconsistentStateException(List<Exception> storage, int length) =>
+        new("The captured error collection is in an inconsistent state. " +
+            $"Storage count: {storage.Count}. Expected length: {length}.");
+
+    private static InvalidOperationException OuterScopeCannotReferenceLaterErrorRangeThanCurrentScopeException(Errors outer, int start) =>
+        new("The outer scope cannot reference a later error range than the current scope. " +
+            $"Outer start: {outer._start}. Current start: {start}.");
+
+    private static InvalidOperationException OuterScopeCannotContainMoreErrorsThanCurrentScopeException(Errors outer, int length) =>
+        new("The outer scope cannot contain more errors than the current scope. " +
+            $"Outer length: {outer._length}. Current length: {length}.");
+
+    private static InvalidOperationException OuterAndCurrentScopesMustReferenceSameStorageException() =>
+        new("The outer and current scopes must reference the same error storage.");
 }

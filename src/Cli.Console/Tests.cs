@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using TabAmp.Shared.Validation;
 using TabAmp.Shared.Validation.Extensions;
 
@@ -7,7 +8,7 @@ namespace TabAmp.Cli.Console;
 
 internal static class Tests
 {
-    private static readonly HashSet<string> _errors = [
+    private static readonly HashSet<string> _errorsAll = [
         "SomeValidationMethod_A",
         "SomeInnerValidationMethod_A",
         "SomeInnerInnerValidationMethod_A",
@@ -17,10 +18,21 @@ internal static class Tests
         "SomeInnerValueValidationMethod_A"
     ];
 
+    private static HashSet<string> _errors = null!;
+
     public static void Run()
     {
         var stopOnFirstError = false;
 
+        RunNormal(stopOnFirstError);
+        RunExhaustive(stopOnFirstError);
+    }
+
+    private static void RunNormal(bool stopOnFirstError)
+    {
+        System.Console.WriteLine("\nNORMAL RUN: START");
+
+        _errors = _errorsAll;
         var result = SomeValidationMethod(new(stopOnFirstError: stopOnFirstError));
         var valueResult = SomeValueValidationMethod(new(stopOnFirstError: stopOnFirstError));
 
@@ -31,6 +43,22 @@ internal static class Tests
         System.Console.WriteLine($"\nvalueResult: {valueResult.IsValid}, '{valueResult.Value}' (stopOnFirstError: {stopOnFirstError})");
         foreach (var error in valueResult.Errors)
             System.Console.WriteLine($" - {error.Message}");
+
+        System.Console.WriteLine("\nNORMAL RUN: OK");
+    }
+
+    private static void RunExhaustive(bool stopOnFirstError)
+    {
+        System.Console.WriteLine("\nEXHAUSTIVE RUN: START");
+
+        foreach (var errors in GetErrorsExhaustive(_errorsAll))
+        {
+            _errors = errors;
+            SomeValidationMethod(new(stopOnFirstError: stopOnFirstError));
+            SomeValueValidationMethod(new(stopOnFirstError: stopOnFirstError));
+        }
+
+        System.Console.WriteLine("EXHAUSTIVE RUN: OK");
     }
 
     private static ValidationResult SomeValidationMethod(Scope scope = default)
@@ -127,4 +155,25 @@ internal static class Tests
     }
 
     private static bool HasError(string error) => _errors.Contains(error);
+
+    public static IEnumerable<HashSet<T>> GetErrorsExhaustive<T>(HashSet<T> source)
+    {
+        var items = source.ToArray();
+        var count = items.Length;
+
+        for (var mask = 0; mask < (1 << count); mask++)
+        {
+            var combination = new HashSet<T>();
+
+            for (var i = 0; i < count; i++)
+            {
+                if ((mask & (1 << i)) != 0)
+                {
+                    combination.Add(items[i]);
+                }
+            }
+
+            yield return combination;
+        }
+    }
 }

@@ -18,5 +18,15 @@ internal readonly ref struct Context
     internal Context With(Exception error) => new(Errors.Add(error), stopOnFirstError: StopOnFirstError);
 
     internal Context ToInner() => new(Errors.ToInner(), stopOnFirstError: StopOnFirstError);
-    internal Context FromOuter(Context outer) => new(Errors.FromOuter(outer.Errors), stopOnFirstError: StopOnFirstError);
+
+    internal Context FromOuter(Context outer)
+    {
+        if (outer.StopOnFirstError != StopOnFirstError)
+            throw OuterAndCurrentScopesNotCompatibleException();
+
+        return new(Errors.FromOuter(outer.Errors), stopOnFirstError: StopOnFirstError);
+    }
+
+    private static InvalidOperationException OuterAndCurrentScopesNotCompatibleException() =>
+        new("The outer and current scopes are not compatible.");
 }
