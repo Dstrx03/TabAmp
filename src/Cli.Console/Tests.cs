@@ -40,9 +40,27 @@ internal static class Tests
         foreach (var error in result.Errors)
             System.Console.WriteLine($" - {error.Message}");
 
+        try
+        {
+            result.ThrowIfAnyErrors();
+        }
+        catch (Exception e)
+        {
+            System.Console.WriteLine($"\nExpected {e}");
+        }
+
         System.Console.WriteLine($"\nvalueResult: {valueResult.IsValid}, '{valueResult.Value}' (stopOnFirstError: {stopOnFirstError})");
         foreach (var error in valueResult.Errors)
             System.Console.WriteLine($" - {error.Message}");
+
+        try
+        {
+            valueResult.ThrowIfAnyErrors();
+        }
+        catch (Exception e)
+        {
+            System.Console.WriteLine($"\nExpected {e}");
+        }
 
         System.Console.WriteLine("\nNORMAL RUN: OK");
     }
