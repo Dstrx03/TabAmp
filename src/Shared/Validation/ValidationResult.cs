@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using TabAmp.Shared.Validation.Exceptions;
+using TabAmp.Shared.Validation.Formatters;
 
 namespace TabAmp.Shared.Validation;
 
@@ -21,12 +22,16 @@ public readonly ref struct ValidationResult
 
     public bool ShouldStop(ref Scope outer) => CaptureBy(ref outer).ShouldStop;
 
-    public void ThrowIfAnyErrors(string? message = null)
+    public void ThrowIfAnyErrors(string? message = null) =>
+        ThrowIfAnyErrors(new MultilineValidationExceptionMessageFormatter(message));
+
+    public void ThrowIfAnyErrors<TMessageFormatter>(TMessageFormatter messageFormatter)
+        where TMessageFormatter : IValidationExceptionMessageFormatter, allows ref struct
     {
         if (IsValid)
             return;
 
-        throw new ValidationException(message, Errors.ToList());
+        throw new ValidationException(messageFormatter.Format(Errors), Errors.ToList());
     }
 }
 
@@ -51,4 +56,10 @@ public readonly ref struct ValidationResult<TValue>
     public bool ShouldStop(ref Scope outer) => _result.ShouldStop(ref outer);
 
     public void ThrowIfAnyErrors(string? message = null) => _result.ThrowIfAnyErrors(message);
+
+    public void ThrowIfAnyErrors<TMessageFormatter>(TMessageFormatter messageFormatter)
+        where TMessageFormatter : IValidationExceptionMessageFormatter, allows ref struct
+    {
+        _result.ThrowIfAnyErrors(messageFormatter);
+    }
 }

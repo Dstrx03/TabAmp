@@ -46,7 +46,7 @@ internal static class Tests
         }
         catch (Exception e)
         {
-            System.Console.WriteLine($"\nExpected {e}");
+            System.Console.WriteLine($"\nCATCH {e}");
         }
 
         System.Console.WriteLine($"\nvalueResult: {valueResult.IsValid}, '{valueResult.Value}' (stopOnFirstError: {stopOnFirstError})");
@@ -59,7 +59,7 @@ internal static class Tests
         }
         catch (Exception e)
         {
-            System.Console.WriteLine($"\nExpected {e}");
+            System.Console.WriteLine($"\nCATCH {e}");
         }
 
         System.Console.WriteLine("\nNORMAL RUN: OK");
