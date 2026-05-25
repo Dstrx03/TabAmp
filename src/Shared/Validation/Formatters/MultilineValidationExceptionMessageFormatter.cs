@@ -5,7 +5,7 @@ namespace TabAmp.Shared.Validation.Formatters;
 
 public readonly ref struct MultilineValidationExceptionMessageFormatter(string? message) : IValidationExceptionMessageFormatter
 {
-    private const string DefaultSummary = "TODO...";
+    private const string DefaultSummary = "The following error(s) occurred:";
 
     public string Format(Errors errors)
     {
