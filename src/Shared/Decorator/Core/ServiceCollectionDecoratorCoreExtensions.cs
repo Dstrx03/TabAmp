@@ -154,10 +154,11 @@ public static class ServiceCollectionDecoratorCoreExtensions
 
         var validationResult = ServiceDecoratorDescriptorChainValidator.Validate(descriptorChain);
 
-        if (validationResult.IsValid)
+        if (validationResult.IsSuccess)
             return;
 
-        validationResult.ThrowIfAnyErrors($"Unable to register decorated type '{typeof(TService).FullName}'.");
+        var message = $"Unable to register decorated type '{typeof(TService).FullName}'. Decorator descriptor chain error(s):";
+        validationResult.ThrowIfAnyErrors(message);
     }
 
     private readonly ref struct DecoratedServiceDescriptors(
