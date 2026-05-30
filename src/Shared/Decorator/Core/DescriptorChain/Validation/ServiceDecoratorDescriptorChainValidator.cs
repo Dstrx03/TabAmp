@@ -1,55 +1,51 @@
 ﻿using System;
-using System.Collections.Generic;
-using TabAmp.Shared.Decorator.Core.Extensions;
 using TabAmp.Shared.Decorator.Fluent;
+using TabAmp.Shared.Fuse;
+using TabAmp.Shared.Fuse.Extensions;
 
 namespace TabAmp.Shared.Decorator.Core.DescriptorChain.Validation;
 
 public static class ServiceDecoratorDescriptorChainValidator
 {
-    public static ServiceDecoratorDescriptorChainValidationResult Validate<TService, TImplementation>(
+    public static FuseResult Validate<TService, TImplementation>(
         ServiceDecoratorDescriptorChain<TService, TImplementation> descriptorChain,
-        bool stopOnFirstError = false)
+        FuseScope scope = default)
         where TService : class
         where TImplementation : class, TService
     {
         ArgumentNullException.ThrowIfNull(descriptorChain);
 
-        List<Exception>? errors = null;
+        if (ValidateChain(descriptorChain, scope.ToInner()).ShouldStop(ref scope))
+            return scope;
 
-        if (ValidateChain(descriptorChain, ref errors, stopOnFirstError).ShouldStopOn(out var chainError))
-            return new(chainError);
+        if (ValidateDescriptors(descriptorChain, scope.ToInner()).ShouldStop(ref scope))
+            return scope;
 
-        if (ValidateDescriptors(descriptorChain, ref errors, stopOnFirstError).ShouldStopOn(out var descriptorsError))
-            return new(descriptorsError);
-
-        return new(errors);
+        return scope;
     }
 
-    private static Exception? ValidateChain<TService, TImplementation>(
+    private static FuseResult ValidateChain<TService, TImplementation>(
         ServiceDecoratorDescriptorChain<TService, TImplementation> descriptorChain,
-        ref List<Exception>? errors,
-        bool stopOnFirstError)
+        FuseScope scope = default)
         where TService : class
         where TImplementation : class, TService
     {
-        var isImplementationServiceDisposable = descriptorChain.IsImplementationServiceDisposable
-            || descriptorChain.IsImplementationServiceAsyncDisposable;
+        var isImplementationServiceDisposable =
+            descriptorChain.IsImplementationServiceDisposable ||
+            descriptorChain.IsImplementationServiceAsyncDisposable;
 
         if (isImplementationServiceDisposable && !descriptorChain.UseStandaloneImplementationService)
         {
             var error = DisposableImplementationServiceMustBeRegisteredAsStandaloneException(typeof(TImplementation));
-            if (!error.TryAddTo(ref errors, stopOnFirstError))
-                return error;
+            if (error.ShouldStop(ref scope)) return scope;
         }
 
-        return null;
+        return scope;
     }
 
-    private static Exception? ValidateDescriptors<TService, TImplementation>(
+    private static FuseResult ValidateDescriptors<TService, TImplementation>(
         ServiceDecoratorDescriptorChain<TService, TImplementation> descriptorChain,
-        ref List<Exception>? errors,
-        bool stopOnFirstError)
+        FuseScope scope = default)
         where TService : class
         where TImplementation : class, TService
     {
@@ -58,18 +54,16 @@ public static class ServiceDecoratorDescriptorChainValidator
         if (hasDisposableContainer && !descriptorChain.IsServiceInterface)
         {
             var error = DisposableContainerCannotBeUsedWhenServiceIsNotInterfaceException();
-            if (!error.TryAddTo(ref errors, stopOnFirstError))
-                return error;
+            if (error.ShouldStop(ref scope)) return scope;
         }
 
         if (hasDisposableContainer && !descriptorChain.IsDisposableContainerAllowed)
         {
             var error = DisposableContainerIsNotAllowedException();
-            if (!error.TryAddTo(ref errors, stopOnFirstError))
-                return error;
+            if (error.ShouldStop(ref scope)) return scope;
         }
 
-        return null;
+        return scope;
     }
 
     private static bool HasDisposableContainer<TService, TImplementation>(
