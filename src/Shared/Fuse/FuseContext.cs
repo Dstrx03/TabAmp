@@ -1,25 +1,25 @@
 ﻿using System;
 
-namespace TabAmp.Shared.Validation;
+namespace TabAmp.Shared.Fuse;
 
-internal readonly ref struct Context
+internal readonly ref struct FuseContext
 {
-    internal Errors Errors { get; }
+    internal FuseErrors Errors { get; }
     internal bool StopOnFirstError { get; }
 
-    internal Context(bool stopOnFirstError) => StopOnFirstError = stopOnFirstError;
+    internal FuseContext(bool stopOnFirstError) => StopOnFirstError = stopOnFirstError;
 
-    private Context(Errors errors, bool stopOnFirstError)
+    private FuseContext(FuseErrors errors, bool stopOnFirstError)
     {
         Errors = errors;
         StopOnFirstError = stopOnFirstError;
     }
 
-    internal Context With(Exception error) => new(Errors.Add(error), stopOnFirstError: StopOnFirstError);
+    internal FuseContext With(Exception error) => new(Errors.Add(error), stopOnFirstError: StopOnFirstError);
 
-    internal Context ToInner() => new(Errors.ToInner(), stopOnFirstError: StopOnFirstError);
+    internal FuseContext ToInner() => new(Errors.ToInner(), stopOnFirstError: StopOnFirstError);
 
-    internal Context FromOuter(Context outer)
+    internal FuseContext FromOuter(FuseContext outer)
     {
         if (outer.StopOnFirstError != StopOnFirstError)
             throw OuterAndCurrentScopesNotCompatibleException();

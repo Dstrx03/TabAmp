@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace TabAmp.Shared.Validation;
+namespace TabAmp.Shared.Fuse;
 
 [DebuggerDisplay("Count = {Count}")]
-public readonly ref struct Errors
+public readonly ref struct FuseErrors
 {
     private readonly object? _storage;
     private readonly int _start;
     private readonly int _length;
 
-    private Errors(object? storage, int start, int length)
+    private FuseErrors(object? storage, int start, int length)
     {
         _storage = storage;
         _start = start;
@@ -28,7 +28,7 @@ public readonly ref struct Errors
     private Exception AsSingle => (_storage as Exception)!;
     private List<Exception> AsMany => (_storage as List<Exception>)!;
 
-    internal Errors Add(Exception error)
+    internal FuseErrors Add(Exception error)
     {
         ArgumentNullException.ThrowIfNull(error);
 
@@ -60,9 +60,9 @@ public readonly ref struct Errors
         return storage;
     }
 
-    internal Errors ToInner() => new(_storage, start: _length, length: _length);
+    internal FuseErrors ToInner() => new(_storage, start: _length, length: _length);
 
-    internal Errors FromOuter(Errors outer)
+    internal FuseErrors FromOuter(FuseErrors outer)
     {
         if (outer._start > _start)
             throw OuterScopeCannotReferenceLaterErrorRangeThanCurrentScopeException(outer, _start);
@@ -90,12 +90,12 @@ public readonly ref struct Errors
 
     public ref struct Enumerator
     {
-        private readonly Errors _errors;
+        private readonly FuseErrors _errors;
 
         private int _index;
         private Exception? _current;
 
-        internal Enumerator(Errors errors)
+        internal Enumerator(FuseErrors errors)
         {
             _errors = errors;
             _index = errors._start;
@@ -132,11 +132,11 @@ public readonly ref struct Errors
         new("The captured error collection is in an inconsistent state. " +
             $"Storage count: {storage.Count}. Expected length: {length}.");
 
-    private static InvalidOperationException OuterScopeCannotReferenceLaterErrorRangeThanCurrentScopeException(Errors outer, int start) =>
+    private static InvalidOperationException OuterScopeCannotReferenceLaterErrorRangeThanCurrentScopeException(FuseErrors outer, int start) =>
         new("The outer scope cannot reference a later error range than the current scope. " +
             $"Outer start: {outer._start}. Current start: {start}.");
 
-    private static InvalidOperationException OuterScopeCannotContainMoreErrorsThanCurrentScopeException(Errors outer, int length) =>
+    private static InvalidOperationException OuterScopeCannotContainMoreErrorsThanCurrentScopeException(FuseErrors outer, int length) =>
         new("The outer scope cannot contain more errors than the current scope. " +
             $"Outer length: {outer._length}. Current length: {length}.");
 

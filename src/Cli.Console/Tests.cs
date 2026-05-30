@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TabAmp.Shared.Validation;
-using TabAmp.Shared.Validation.Extensions;
+using TabAmp.Shared.Fuse;
+using TabAmp.Shared.Fuse.Extensions;
 
 namespace TabAmp.Cli.Console;
 
@@ -36,7 +36,7 @@ internal static class Tests
         var result = SomeValidationMethod(new(stopOnFirstError: stopOnFirstError));
         var valueResult = SomeValueValidationMethod(new(stopOnFirstError: stopOnFirstError));
 
-        System.Console.WriteLine($"\nresult: {result.IsValid} (stopOnFirstError: {stopOnFirstError})");
+        System.Console.WriteLine($"\nresult: {result.IsSuccess} (stopOnFirstError: {stopOnFirstError})");
         foreach (var error in result.Errors)
             System.Console.WriteLine($" - {error.Message}");
 
@@ -49,7 +49,7 @@ internal static class Tests
             System.Console.WriteLine($"\nCATCH {e}");
         }
 
-        System.Console.WriteLine($"\nvalueResult: {valueResult.IsValid}, '{valueResult.Value}' (stopOnFirstError: {stopOnFirstError})");
+        System.Console.WriteLine($"\nvalueResult: {valueResult.IsSuccess}, '{valueResult.Value}' (stopOnFirstError: {stopOnFirstError})");
         foreach (var error in valueResult.Errors)
             System.Console.WriteLine($" - {error.Message}");
 
@@ -79,7 +79,7 @@ internal static class Tests
         System.Console.WriteLine("EXHAUSTIVE RUN: OK");
     }
 
-    private static ValidationResult SomeValidationMethod(Scope scope = default)
+    private static FuseResult SomeValidationMethod(FuseScope scope = default)
     {
         if (HasError("SomeValidationMethod_A"))
         {
@@ -97,7 +97,7 @@ internal static class Tests
         return scope;
     }
 
-    private static ValidationResult SomeInnerValidationMethod(Scope scope = default)
+    private static FuseResult SomeInnerValidationMethod(FuseScope scope = default)
     {
         if (HasError("SomeInnerValidationMethod_A"))
         {
@@ -112,7 +112,7 @@ internal static class Tests
         return scope;
     }
 
-    private static ValidationResult SomeInnerInnerValidationMethod(Scope scope = default)
+    private static FuseResult SomeInnerInnerValidationMethod(FuseScope scope = default)
     {
         if (HasError("SomeInnerInnerValidationMethod_A"))
         {
@@ -131,7 +131,7 @@ internal static class Tests
         return scope;
     }
 
-    private static ValidationResult<int> SomeValueValidationMethod(Scope scope = default)
+    private static FuseResult<int> SomeValueValidationMethod(FuseScope scope = default)
     {
         if (HasError("SomeValueValidationMethod_A"))
         {
@@ -143,7 +143,7 @@ internal static class Tests
         var valueResult = SomeInnerValueValidationMethod(scope.ToInner());
         valueResult.CaptureBy(ref scope);
 
-        if (!valueResult.IsValid)
+        if (!valueResult.IsSuccess)
             return scope.ToResult<int>();
 
         var value = valueResult.Value!.Value;
@@ -160,7 +160,7 @@ internal static class Tests
         return scope.ToResult(result);
     }
 
-    private static ValidationResult<int?> SomeInnerValueValidationMethod(Scope scope = default)
+    private static FuseResult<int?> SomeInnerValueValidationMethod(FuseScope scope = default)
     {
         if (HasError("SomeInnerValueValidationMethod_A"))
         {

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Text;
 
-namespace TabAmp.Shared.Validation.Formatters;
+namespace TabAmp.Shared.Fuse.Formatters;
 
-public readonly ref struct MultilineValidationExceptionMessageFormatter(string? message) : IValidationExceptionMessageFormatter
+public readonly ref struct MultilineFuseFailureMessageFormatter(string? message) : IFuseFailureMessageFormatter
 {
     private const string DefaultSummary = "The following error(s) occurred:";
 
-    public string Format(Errors errors)
+    public string Format(FuseErrors errors)
     {
         var stringBuilder = new StringBuilder();
 
