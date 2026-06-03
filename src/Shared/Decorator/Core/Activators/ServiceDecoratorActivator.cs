@@ -13,10 +13,16 @@ internal static class ServiceDecoratorActivator
         ArgumentNullException.ThrowIfNull(serviceProvider);
         ArgumentNullException.ThrowIfNull(service);
 
-        var constructorInfo = DiscoverDecoratorConstructorInfo<TService, TDecorator>();
-        var parameters = ResolveDecoratorParameters(serviceProvider, service, constructorInfo);
+        var constructorInfo = ResolveDecoratorConstructorInfo<TService, TDecorator>();
+        var parameters = ResolveDecoratorConstructorParameters(serviceProvider, service, constructorInfo);
 
         return (TService)constructorInfo.Invoke(parameters);
+    }
+
+    private static ConstructorInfo ResolveDecoratorConstructorInfo<TService, TDecorator>()
+        where TDecorator : TService
+    {
+        return DiscoverDecoratorConstructorInfo<TService, TDecorator>();
     }
 
     private static ConstructorInfo DiscoverDecoratorConstructorInfo<TService, TDecorator>()
@@ -45,7 +51,7 @@ internal static class ServiceDecoratorActivator
         return constructorInfo ?? throw MissingDecoratorConstructorException(serviceType, decoratorType);
     }
 
-    private static object[] ResolveDecoratorParameters<TService>(
+    private static object[] ResolveDecoratorConstructorParameters<TService>(
         IServiceProvider serviceProvider,
         TService service,
         ConstructorInfo constructorInfo)
