@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace TabAmp.Shared.Decorator.Core.Activators;
+namespace TabAmp.Shared.Decorator.Core.ConstructorDiscovery;
 
 internal static class ServiceDecoratorConstructorDiscovery
 {
