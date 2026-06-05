@@ -35,28 +35,40 @@ internal static class ServiceDecoratorConstructorDiscovery
     internal static FuseResult<ConstructorInfo> DiscoverConstructor<TService, TDecorator>(FuseScope scope = default)
         where TDecorator : TService
     {
-        var serviceType = typeof(TService);
-        var decoratorType = typeof(TDecorator);
-
-        ConstructorInfo? constructorInfo = null;
-        foreach (var constructor in decoratorType.GetConstructors())
+        var serviceType=typeof(TService);
+        var decoratorType=typeof(TDecorator);
+        ConstructorInfo? constructorInfo=null;
+        foreach(var constructor in decoratorType.GetConstructors())
         {
-            foreach (var parameter in constructor.GetParameters())
+            var serviceTypeParametersCount=0;
+            foreach(var parameter in constructor.GetParameters())
             {
-                if (parameter.ParameterType != serviceType)
-                    continue;
-
-                if (constructorInfo == constructor)
-                    throw MultipleServiceTypeParametersDecoratorConstructorException(serviceType, decoratorType, constructorInfo);
-                else if (constructorInfo is not null)
-                    throw AmbiguousDecoratorConstructorException(decoratorType, constructorInfo, constructor);
-
-                constructorInfo = constructor;
+                if(parameter.ParameterType==serviceType)serviceTypeParametersCount++;
             }
+            var hasServiceTypeParameters=serviceTypeParametersCount>0;
+            var useConstructor=hasServiceTypeParameters;
+            if(serviceTypeParametersCount>1)
+            {
+                //throw MultipleServiceTypeParametersDecoratorConstructorException(serviceType, decoratorType, constructorInfo);
+                var error=MultipleServiceTypeParametersDecoratorConstructorException(serviceType, decoratorType, constructorInfo);
+                if(error.ShouldStop(ref scope))return scope.ToResult<ConstructorInfo>();
+                useConstructor=false;
+            }
+            if(hasServiceTypeParameters&&constructorInfo is not null)
+            {
+                //throw AmbiguousDecoratorConstructorException(decoratorType, constructorInfo, constructor);
+                var error=AmbiguousDecoratorConstructorException(decoratorType, constructorInfo, constructor);
+                if(error.ShouldStop(ref scope))return scope.ToResult<ConstructorInfo>();
+                useConstructor=false;
+            }
+            if (useConstructor&&constructorInfo is null)constructorInfo = constructor;
         }
-
         //return constructorInfo ?? throw MissingDecoratorConstructorException(serviceType, decoratorType);
-        if (constructorInfo is null) MissingDecoratorConstructorException(serviceType, decoratorType).CaptureBy(ref scope);
+        if (constructorInfo is null)
+        {
+            MissingDecoratorConstructorException(serviceType, decoratorType).CaptureBy(ref scope);
+            return scope.ToResult<ConstructorInfo>();
+        }
         return scope.ToResult(constructorInfo);
     }
 
