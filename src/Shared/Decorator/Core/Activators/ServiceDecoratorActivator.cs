@@ -23,7 +23,11 @@ internal static class ServiceDecoratorActivator
     private static ConstructorInfo ResolveDecoratorConstructorInfo<TService, TDecorator>()
         where TDecorator : TService
     {
-        return ServiceDecoratorConstructorDiscovery.DiscoverConstructor<TService, TDecorator>();
+        var constructorInfoResult = ServiceDecoratorConstructorDiscovery
+            .DiscoverConstructor<TService, TDecorator>(new(stopOnFirstError: true));
+
+        constructorInfoResult.ThrowIfAnyErrors();
+        return constructorInfoResult.Value;
     }
 
     private static object[] ResolveDecoratorConstructorParameters<TService>(
