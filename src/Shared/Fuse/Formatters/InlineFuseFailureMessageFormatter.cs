@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 
 namespace TabAmp.Shared.Fuse.Formatters;
 
@@ -10,9 +9,7 @@ public readonly ref struct InlineFuseFailureMessageFormatter(string? message) : 
         var stringBuilder = new StringBuilder();
 
         FormatSummary(stringBuilder);
-
-        foreach (var error in errors)
-            FormatErrorLine(stringBuilder, error);
+        FormatErrorLine(stringBuilder, errors);
 
         return stringBuilder.ToString();
     }
@@ -26,9 +23,15 @@ public readonly ref struct InlineFuseFailureMessageFormatter(string? message) : 
         stringBuilder.Append(' ');
     }
 
-    private static void FormatErrorLine(StringBuilder stringBuilder, Exception error)
+    private static void FormatErrorLine(StringBuilder stringBuilder, FuseErrors errors)
     {
-        stringBuilder.Append(error.Message);
-        stringBuilder.Append(' ');
+        var isFirst = true;
+        foreach (var error in errors)
+        {
+            if (isFirst) isFirst = false;
+            else stringBuilder.Append(' ');
+
+            stringBuilder.Append(error.Message);
+        }
     }
 }

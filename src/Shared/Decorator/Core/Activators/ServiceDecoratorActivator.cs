@@ -2,6 +2,8 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using TabAmp.Shared.Decorator.Core.ConstructorDiscovery;
+using TabAmp.Shared.Fuse;
+using TabAmp.Shared.Fuse.Formatters;
 
 namespace TabAmp.Shared.Decorator.Core.Activators;
 
@@ -26,7 +28,7 @@ internal static class ServiceDecoratorActivator
         var constructorInfoResult = ServiceDecoratorConstructorDiscovery
             .DiscoverConstructor<TService, TDecorator>(new(stopOnFirstError: true));
 
-        constructorInfoResult.ThrowIfAnyErrors();
+        constructorInfoResult.ThrowIfAnyErrors(new UnableToActivateDecoratorTypeMessageFormatter<TDecorator>());
         return constructorInfoResult.Value;
     }
 
@@ -47,5 +49,14 @@ internal static class ServiceDecoratorActivator
         }
 
         return parameters;
+    }
+
+    private readonly ref struct UnableToActivateDecoratorTypeMessageFormatter<TDecorator> : IFuseFailureMessageFormatter
+    {
+        public string Format(FuseErrors errors)
+        {
+            var message = $"Unable to activate decorator type '{typeof(TDecorator).FullName}'.";
+            return new InlineFuseFailureMessageFormatter(message).Format(errors);
+        }
     }
 }
