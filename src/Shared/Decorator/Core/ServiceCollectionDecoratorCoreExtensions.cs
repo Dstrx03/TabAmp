@@ -4,6 +4,8 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using TabAmp.Shared.Decorator.Core.Activators;
 using TabAmp.Shared.Decorator.Core.DescriptorChain;
 using TabAmp.Shared.Decorator.Core.DescriptorChain.Validation;
+using TabAmp.Shared.Fuse;
+using TabAmp.Shared.Fuse.Formatters;
 
 namespace TabAmp.Shared.Decorator.Core;
 
@@ -152,13 +154,8 @@ public static class ServiceCollectionDecoratorCoreExtensions
         if (!descriptorChain.UsePreRegistrationValidation)
             return;
 
-        var validationResult = ServiceDecoratorDescriptorChainValidator.Validate(descriptorChain);
-
-        if (validationResult.IsSuccess)
-            return;
-
-        var message = $"Unable to register decorated type '{typeof(TService).FullName}'. Decorator descriptor chain error(s):";
-        validationResult.ThrowIfAnyErrors(message);
+        ServiceDecoratorDescriptorChainValidator.Validate(descriptorChain)
+            .ThrowIfAnyErrors(new UnableToRegisterDecoratedTypeMessageFormatter<TService>());
     }
 
     private readonly ref struct DecoratedServiceDescriptors(
@@ -172,6 +169,15 @@ public static class ServiceCollectionDecoratorCoreExtensions
         {
             implementationService = ImplementationService;
             decoratedService = DecoratedService;
+        }
+    }
+
+    private readonly ref struct UnableToRegisterDecoratedTypeMessageFormatter<TService> : IFuseFailureMessageFormatter
+    {
+        public string Format(FuseErrors errors)
+        {
+            var message = $"Unable to register decorated type '{typeof(TService).FullName}'. Decorator descriptor chain error(s):";
+            return new MultilineFuseFailureMessageFormatter(message).Format(errors);
         }
     }
 }
