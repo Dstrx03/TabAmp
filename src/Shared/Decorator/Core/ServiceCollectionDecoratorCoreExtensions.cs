@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using TabAmp.Shared.Decorator.Core.Activators;
 using TabAmp.Shared.Decorator.Core.DescriptorChain;
-using TabAmp.Shared.Decorator.Core.DescriptorChain.Validation;
 using TabAmp.Shared.Fuse;
 using TabAmp.Shared.Fuse.Formatters;
 

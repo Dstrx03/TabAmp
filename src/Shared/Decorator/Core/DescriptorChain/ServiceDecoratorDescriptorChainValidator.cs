@@ -3,7 +3,7 @@ using TabAmp.Shared.Decorator.Fluent;
 using TabAmp.Shared.Fuse;
 using TabAmp.Shared.Fuse.Extensions;
 
-namespace TabAmp.Shared.Decorator.Core.DescriptorChain.Validation;
+namespace TabAmp.Shared.Decorator.Core.DescriptorChain;
 
 public static class ServiceDecoratorDescriptorChainValidator
 {
