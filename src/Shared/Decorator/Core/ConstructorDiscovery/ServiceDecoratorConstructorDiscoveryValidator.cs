@@ -7,9 +7,6 @@ public static class ServiceDecoratorConstructorDiscoveryValidator
     public static FuseResult Validate<TService, TDecorator>(FuseScope scope = default)
         where TDecorator : TService
     {
-        ServiceDecoratorConstructorDiscovery.DiscoverConstructor<TService, TDecorator>(scope.ToInner())
-            .CaptureBy(ref scope);
-
-        return scope;
+        return ServiceDecoratorConstructorDiscovery.DiscoverConstructor<TService, TDecorator>(scope);
     }
 }

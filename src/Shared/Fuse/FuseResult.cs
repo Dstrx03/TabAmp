@@ -62,4 +62,8 @@ public readonly ref struct FuseResult<TValue>
     {
         _result.ThrowIfAnyErrors(messageFormatter);
     }
+
+    public FuseResult AsWithoutValue() => _result;
+
+    public static implicit operator FuseResult(FuseResult<TValue> result) => result.AsWithoutValue();
 }
