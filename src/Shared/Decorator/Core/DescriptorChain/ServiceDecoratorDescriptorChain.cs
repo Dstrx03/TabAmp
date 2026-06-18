@@ -1,6 +1,8 @@
 ﻿using System;
 using TabAmp.Shared.Decorator.Core.Activators;
+using TabAmp.Shared.Decorator.Core.ConstructorDiscovery;
 using TabAmp.Shared.Decorator.Core.Extensions;
+using TabAmp.Shared.Fuse;
 using Options = TabAmp.Shared.Decorator.Core.DescriptorChain.ServiceDecoratorDescriptorChainOptions;
 
 namespace TabAmp.Shared.Decorator.Core.DescriptorChain;
@@ -46,6 +48,8 @@ public abstract class ServiceDecoratorDescriptorChain<TService, TImplementation>
 
     internal abstract TService CreateDecorator(IServiceProvider serviceProvider, TService service);
 
+    internal abstract FuseResult ValidateDecoratorConstructor(FuseScope scope = default);
+
     private class Node<TDecorator>(
         ServiceDecoratorDescriptorChain<TService, TImplementation>? next,
         ServiceDecoratorDescriptorChainOptions options) :
@@ -54,6 +58,9 @@ public abstract class ServiceDecoratorDescriptorChain<TService, TImplementation>
     {
         internal override TService CreateDecorator(IServiceProvider serviceProvider, TService service) =>
             ServiceDecoratorActivator.CreateDecorator<TService, TDecorator>(serviceProvider, service);
+
+        internal override FuseResult ValidateDecoratorConstructor(FuseScope scope = default) =>
+            ServiceDecoratorConstructorDiscoveryValidator.ValidateConstructor<TService, TDecorator>(scope);
     }
 
     private class ImplementationServiceKeyNode<TDecorator> : Node<TDecorator>

@@ -51,6 +51,15 @@ public static class ServiceDecoratorDescriptorChainValidator
     {
         var hasDisposableContainer = HasDisposableContainer(descriptorChain);
 
+        var descriptor = descriptorChain;
+        while (descriptor is not null)
+        {
+            if (descriptor.ValidateDecoratorConstructor(scope.ToInner()).ShouldStop(ref scope))
+                return scope;
+
+            descriptor = descriptor.Next;
+        }
+
         if (hasDisposableContainer && !descriptorChain.IsServiceInterface)
         {
             var error = DisposableContainerCannotBeUsedWhenServiceIsNotInterfaceException();
