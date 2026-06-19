@@ -34,14 +34,14 @@ internal static class ServiceDecoratorConstructorDiscovery
 
             if (serviceTypeParametersCount > 1)
             {
-                var error = MultipleServiceTypeParametersDecoratorConstructorException(serviceType, constructor);
+                var error = MultipleServiceTypeParametersDecoratorConstructorException(serviceType, decoratorType, constructor);
                 if (error.ShouldStop(ref scope)) return scope.ToResult<ConstructorInfo>();
                 useConstructor = false;
             }
 
             if (isConstructorDiscovered && constructorInfo is not null)
             {
-                var error = AmbiguousDecoratorConstructorException(constructorInfo, constructor);
+                var error = AmbiguousDecoratorConstructorException(decoratorType, constructorInfo, constructor);
                 if (error.ShouldStop(ref scope)) return scope.ToResult<ConstructorInfo>();
                 useConstructor = false;
             }
@@ -52,7 +52,7 @@ internal static class ServiceDecoratorConstructorDiscovery
 
         if (isConstructorMissing)
         {
-            var error = MissingDecoratorConstructorException(serviceType);
+            var error = MissingDecoratorConstructorException(serviceType, decoratorType);
             if (error.ShouldStop(ref scope)) return scope.ToResult<ConstructorInfo>();
         }
 
@@ -61,17 +61,19 @@ internal static class ServiceDecoratorConstructorDiscovery
 
     private static InvalidOperationException MultipleServiceTypeParametersDecoratorConstructorException(
         Type serviceType,
+        Type decoratorType,
         ConstructorInfo constructorInfo) =>
         new($"Constructor has multiple parameters of the decorated type '{serviceType.FullName}':{Environment.NewLine}" +
             $"{constructorInfo}");
 
     private static InvalidOperationException AmbiguousDecoratorConstructorException(
+        Type decoratorType,
         ConstructorInfo constructorInfo,
         ConstructorInfo constructorInfoOther) =>
         new($"The following constructors are ambiguous:{Environment.NewLine}" +
             $"{constructorInfo}{Environment.NewLine}" +
             $"{constructorInfoOther}");
 
-    private static InvalidOperationException MissingDecoratorConstructorException(Type serviceType) =>
+    private static InvalidOperationException MissingDecoratorConstructorException(Type serviceType, Type decoratorType) =>
         new($"Missing constructor with a parameter for the decorated type '{serviceType.FullName}'.");
 }
