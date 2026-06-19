@@ -64,7 +64,8 @@ internal static class ServiceDecoratorConstructorDiscovery
         Type decoratorType,
         ConstructorInfo constructorInfo) =>
         new($"Constructor has multiple parameters of the decorated type '{serviceType.FullName}':{Environment.NewLine}" +
-            $"{constructorInfo}");
+            $"{constructorInfo}{Environment.NewLine}" +
+            $"(Decorator type '{decoratorType.FullName}')");
 
     private static InvalidOperationException AmbiguousDecoratorConstructorException(
         Type decoratorType,
@@ -72,8 +73,10 @@ internal static class ServiceDecoratorConstructorDiscovery
         ConstructorInfo constructorInfoOther) =>
         new($"The following constructors are ambiguous:{Environment.NewLine}" +
             $"{constructorInfo}{Environment.NewLine}" +
-            $"{constructorInfoOther}");
+            $"{constructorInfoOther}{Environment.NewLine}" +
+            $"(Decorator type '{decoratorType.FullName}')");
 
     private static InvalidOperationException MissingDecoratorConstructorException(Type serviceType, Type decoratorType) =>
-        new($"Missing constructor with a parameter for the decorated type '{serviceType.FullName}'.");
+        new($"Missing constructor with a parameter for the decorated type '{serviceType.FullName}'. " +
+            $"(Decorator type '{decoratorType.FullName}')");
 }
