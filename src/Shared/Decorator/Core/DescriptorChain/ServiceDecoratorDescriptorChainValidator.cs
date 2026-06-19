@@ -49,11 +49,17 @@ public static class ServiceDecoratorDescriptorChainValidator
         where TService : class
         where TImplementation : class, TService
     {
-        var hasDisposableContainer = HasDisposableContainer(descriptorChain);
+        var hasDisposableContainer = false;
 
         var descriptor = descriptorChain;
         while (descriptor is not null)
         {
+            var isInner = descriptor.Next is not null;
+            var isDisposable = descriptor.IsDecoratorDisposable || descriptor.IsDecoratorAsyncDisposable;
+
+            if (isDisposable && isInner)
+                hasDisposableContainer = true;
+
             if (descriptor.ValidateDecoratorConstructor(scope.ToInner()).ShouldStop(ref scope))
                 return scope;
 
@@ -73,23 +79,6 @@ public static class ServiceDecoratorDescriptorChainValidator
         }
 
         return scope;
-    }
-
-    private static bool HasDisposableContainer<TService, TImplementation>(
-        ServiceDecoratorDescriptorChain<TService, TImplementation> descriptorChain)
-        where TService : class
-        where TImplementation : class, TService
-    {
-        var descriptor = descriptorChain;
-        while (descriptor.Next is not null)
-        {
-            if (descriptor.IsDecoratorDisposable || descriptor.IsDecoratorAsyncDisposable)
-                return true;
-
-            descriptor = descriptor.Next;
-        }
-
-        return false;
     }
 
     private static InvalidOperationException DisposableImplementationServiceMustBeRegisteredAsStandaloneException(
