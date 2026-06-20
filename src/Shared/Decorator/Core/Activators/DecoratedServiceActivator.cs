@@ -45,6 +45,9 @@ internal static class DecoratedServiceActivator
         where TService : class
         where TImplementation : class, TService
     {
+        if (descriptor.ShouldSkipDecorator())
+            return;
+
         var decorator = descriptor.CreateDecorator(serviceProvider, service);
 
         var isInner = descriptor.Next is not null;
