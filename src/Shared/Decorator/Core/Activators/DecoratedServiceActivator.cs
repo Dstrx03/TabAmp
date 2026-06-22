@@ -18,7 +18,7 @@ internal static class DecoratedServiceActivator
         ArgumentNullException.ThrowIfNull(serviceProvider);
         ArgumentNullException.ThrowIfNull(descriptorChain);
 
-        var service = ResolveImplementationService(serviceProvider, descriptorChain);
+        TService? service = null;
         ServiceDecoratorDisposableContainer<TService>? disposableContainer = null;
 
         var descriptor = descriptorChain;
@@ -33,11 +33,12 @@ internal static class DecoratedServiceActivator
             descriptor = descriptor.Next;
         }
 
+        service ??= CreateImplementationService<TService, TImplementation>(serviceProvider);
         return disposableContainer?.DecorateService(decoratedService: service) ?? service;
     }
 
     private static void CreateDecorator<TService, TImplementation>(
-        ref TService service,
+        ref TService? service,
         ref ServiceDecoratorDisposableContainer<TService>? disposableContainer,
         ServiceDecoratorDescriptorChain<TService, TImplementation> descriptor,
         IServiceProvider serviceProvider,
@@ -48,6 +49,7 @@ internal static class DecoratedServiceActivator
         if (descriptor.ShouldSkipDecorator())
             return;
 
+        service ??= ResolveImplementationService(serviceProvider, descriptorChain);
         var decorator = descriptor.CreateDecorator(serviceProvider, service);
 
         var isInner = descriptor.Next is not null;
