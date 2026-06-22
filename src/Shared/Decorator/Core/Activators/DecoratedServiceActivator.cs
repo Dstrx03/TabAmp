@@ -68,9 +68,26 @@ internal static class DecoratedServiceActivator
         where TService : class
         where TImplementation : class, TService
     {
-        if (!descriptorChain.UseStandaloneImplementationService)
-            return ActivatorUtilities.CreateInstance<TImplementation>(serviceProvider);
+        if (descriptorChain.UseStandaloneImplementationService)
+            return CreateStandaloneImplementationService(serviceProvider, descriptorChain);
 
+        return CreateImplementationService<TService, TImplementation>(serviceProvider);
+    }
+
+    private static TService CreateImplementationService<TService, TImplementation>(
+        IServiceProvider serviceProvider)
+        where TService : class
+        where TImplementation : class, TService
+    {
+        return ActivatorUtilities.CreateInstance<TImplementation>(serviceProvider);
+    }
+
+    private static TService CreateStandaloneImplementationService<TService, TImplementation>(
+        IServiceProvider serviceProvider,
+        ServiceDecoratorDescriptorChain<TService, TImplementation> descriptorChain)
+        where TService : class
+        where TImplementation : class, TService
+    {
         return serviceProvider.GetRequiredKeyedService<TImplementation>(serviceKey: descriptorChain.ImplementationServiceKey);
     }
 
