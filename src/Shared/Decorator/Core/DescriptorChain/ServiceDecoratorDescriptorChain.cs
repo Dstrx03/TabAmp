@@ -14,15 +14,19 @@ public abstract class ServiceDecoratorDescriptorChain<TService, TImplementation>
     private readonly ChainFlags _chainFlags;
     private readonly DescriptorFlags _descriptorFlags;
 
+    private readonly object _useDecoratorPredicate;
+
     public ServiceDecoratorDescriptorChain<TService, TImplementation>? Next { get; }
 
     private ServiceDecoratorDescriptorChain(
         ServiceDecoratorDescriptorChain<TService, TImplementation>? next,
         ServiceDecoratorDescriptorChainOptions options,
-        Type decoratorType)
+        Type decoratorType,
+        object useDecoratorPredicate)
     {
         _chainFlags = ComposeChainFlags(next);
         _descriptorFlags = ComposeDescriptorFlags(options, decoratorType);
+        _useDecoratorPredicate = useDecoratorPredicate;
         Next = next;
     }
 
@@ -54,8 +58,9 @@ public abstract class ServiceDecoratorDescriptorChain<TService, TImplementation>
 
     private class Node<TDecorator>(
         ServiceDecoratorDescriptorChain<TService, TImplementation>? next,
-        ServiceDecoratorDescriptorChainOptions options) :
-        ServiceDecoratorDescriptorChain<TService, TImplementation>(next, options, typeof(TDecorator))
+        ServiceDecoratorDescriptorChainOptions options,
+        object useDecoratorPredicate) :
+        ServiceDecoratorDescriptorChain<TService, TImplementation>(next, options, typeof(TDecorator), useDecoratorPredicate)
         where TDecorator : class, TService
     {
         internal override TService CreateDecorator(IServiceProvider serviceProvider, TService service) =>
@@ -73,7 +78,8 @@ public abstract class ServiceDecoratorDescriptorChain<TService, TImplementation>
         public ImplementationServiceKeyNode(
             ServiceDecoratorDescriptorChain<TService, TImplementation>? next,
             ServiceDecoratorDescriptorChainOptions options,
-            object? implementationServiceKey) : base(next, options)
+            object? implementationServiceKey,
+            object useDecoratorPredicate) : base(next, options, useDecoratorPredicate)
         {
             ImplementationServiceKey = implementationServiceKey is null ? this : implementationServiceKey;
         }
