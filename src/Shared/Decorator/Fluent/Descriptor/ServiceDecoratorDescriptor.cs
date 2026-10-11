@@ -46,7 +46,7 @@ public abstract class ServiceDecoratorDescriptor<TService>
 
     private protected abstract Type ToDecoratorType();
 
-    public class For<TDecorator> : ServiceDecoratorDescriptor<TService>
+    public class For<TDecorator>(object? useDecoratorPredicate = null) : ServiceDecoratorDescriptor<TService>
         where TDecorator : class, TService
     {
         private protected sealed override ServiceDecoratorDescriptorChain<TService, TImplementation> CreateDescriptorChainNode<TImplementation>(
@@ -54,7 +54,7 @@ public abstract class ServiceDecoratorDescriptor<TService>
             ServiceDecoratorDescriptorChainOptions options)
         {
             return ServiceDecoratorDescriptorChain<TService, TImplementation>
-                .CreateNode<TDecorator>(next: descriptorChain, options: options);
+                .CreateNode<TDecorator>(next: descriptorChain, options: options, useDecoratorPredicate: useDecoratorPredicate);
         }
 
         private protected sealed override Type ToDecoratorType() => typeof(TDecorator);

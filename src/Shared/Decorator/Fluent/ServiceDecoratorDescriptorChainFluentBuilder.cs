@@ -31,10 +31,10 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
     internal bool IsEmpty => _descriptors is null;
     internal bool UseStandaloneImplementationService => IsImplementationServiceDisposable();
 
-    public ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> With<TDecorator>()
+    public ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> With<TDecorator>(object? useWhen = null)
         where TDecorator : class, TService
     {
-        var descriptor = new ServiceDecoratorDescriptor<TService>.For<TDecorator>();
+        var descriptor = new ServiceDecoratorDescriptor<TService>.For<TDecorator>(useDecoratorPredicate: useWhen);
         return new(descriptor.AppendTo(_descriptors), IsDisposableContainerAllowed, UsePreRegistrationValidation);
     }
 
