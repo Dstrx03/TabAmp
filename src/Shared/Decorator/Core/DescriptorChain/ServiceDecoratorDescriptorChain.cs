@@ -50,7 +50,7 @@ public abstract class ServiceDecoratorDescriptorChain<TService, TImplementation>
     private bool HasFlag(ChainFlags flag) => (_chainFlags & flag) == flag;
     private bool HasFlag(DescriptorFlags flag) => (_descriptorFlags & flag) == flag;
 
-    internal bool ShouldSkipDecorator() => false;
+    internal bool ShouldSkipDecorator(object todo) => !_useDecoratorPredicate?.Invoke(todo) ?? false;
 
     internal abstract TService CreateDecorator(IServiceProvider serviceProvider, TService service);
 
