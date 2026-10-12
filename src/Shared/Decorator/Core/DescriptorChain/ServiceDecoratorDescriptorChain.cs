@@ -14,7 +14,7 @@ public abstract class ServiceDecoratorDescriptorChain<TService, TImplementation>
     private readonly ChainFlags _chainFlags;
     private readonly DescriptorFlags _descriptorFlags;
 
-    private readonly object? _useDecoratorPredicate;
+    private readonly Predicate<object>? _useDecoratorPredicate;
 
     public ServiceDecoratorDescriptorChain<TService, TImplementation>? Next { get; }
 
@@ -22,7 +22,7 @@ public abstract class ServiceDecoratorDescriptorChain<TService, TImplementation>
         ServiceDecoratorDescriptorChain<TService, TImplementation>? next,
         ServiceDecoratorDescriptorChainOptions options,
         Type decoratorType,
-        object? useDecoratorPredicate)
+        Predicate<object>? useDecoratorPredicate)
     {
         _chainFlags = ComposeChainFlags(next);
         _descriptorFlags = ComposeDescriptorFlags(options, decoratorType);
@@ -59,7 +59,7 @@ public abstract class ServiceDecoratorDescriptorChain<TService, TImplementation>
     private class Node<TDecorator>(
         ServiceDecoratorDescriptorChain<TService, TImplementation>? next,
         ServiceDecoratorDescriptorChainOptions options,
-        object? useDecoratorPredicate) :
+        Predicate<object>? useDecoratorPredicate) :
         ServiceDecoratorDescriptorChain<TService, TImplementation>(next, options, typeof(TDecorator), useDecoratorPredicate)
         where TDecorator : class, TService
     {
@@ -79,7 +79,7 @@ public abstract class ServiceDecoratorDescriptorChain<TService, TImplementation>
             ServiceDecoratorDescriptorChain<TService, TImplementation>? next,
             ServiceDecoratorDescriptorChainOptions options,
             object? implementationServiceKey,
-            object? useDecoratorPredicate) : base(next, options, useDecoratorPredicate)
+            Predicate<object>? useDecoratorPredicate) : base(next, options, useDecoratorPredicate)
         {
             ImplementationServiceKey = implementationServiceKey is null ? this : implementationServiceKey;
         }
@@ -89,7 +89,7 @@ public abstract class ServiceDecoratorDescriptorChain<TService, TImplementation>
         ServiceDecoratorDescriptorChain<TService, TImplementation>? next,
         ServiceDecoratorDescriptorChainOptions options = default,
         object? implementationServiceKey = null,
-        object? useDecoratorPredicate = null)
+        Predicate<object>? useDecoratorPredicate = null)
         where TDecorator : class, TService
     {
         var useDefaultImplementationServiceKey = options.HasOption(Options.UseDefaultImplementationServiceKey);
