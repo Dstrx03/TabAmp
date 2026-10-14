@@ -46,7 +46,7 @@ internal static class DecoratedServiceActivator
         where TService : class
         where TImplementation : class, TService
     {
-        if (descriptor.ShouldSkipDecorator(null))
+        if (descriptor.ShouldSkipDecorator(serviceProvider))
             return;
 
         service ??= ResolveImplementationService(serviceProvider, descriptorChain);

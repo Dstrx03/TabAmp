@@ -46,7 +46,7 @@ public abstract class ServiceDecoratorDescriptor<TService>
 
     private protected abstract Type ToDecoratorType();
 
-    public class For<TDecorator>(Predicate<object>? useDecoratorPredicate = null) : ServiceDecoratorDescriptor<TService>
+    public class For<TDecorator>(Predicate<IServiceProvider>? useDecoratorPredicate = null) : ServiceDecoratorDescriptor<TService>
         where TDecorator : class, TService
     {
         private protected sealed override ServiceDecoratorDescriptorChain<TService, TImplementation> CreateDescriptorChainNode<TImplementation>(

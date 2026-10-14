@@ -31,7 +31,8 @@ public readonly ref struct ServiceDecoratorDescriptorChainFluentBuilder<TService
     internal bool IsEmpty => _descriptors is null;
     internal bool UseStandaloneImplementationService => IsImplementationServiceDisposable();
 
-    public ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> With<TDecorator>(Predicate<object>? useWhen = null)
+    public ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> With<TDecorator>(
+        Predicate<IServiceProvider>? useWhen = null)
         where TDecorator : class, TService
     {
         var descriptor = new ServiceDecoratorDescriptor<TService>.For<TDecorator>(useDecoratorPredicate: useWhen);
