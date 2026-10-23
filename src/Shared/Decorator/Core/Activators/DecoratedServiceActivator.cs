@@ -19,13 +19,16 @@ internal static class DecoratedServiceActivator
         ArgumentNullException.ThrowIfNull(descriptorChain);
 
         TService? service = null;
+
         ServiceDecoratorDisposableContainer<TService>? disposableContainer = null;
+        TService? firstDisposableDecorator = null;
 
         var descriptor = descriptorChain;
         while (descriptor is not null)
         {
             CreateDecorator(service: ref service,
                 disposableContainer: ref disposableContainer,
+                firstDisposableDecorator: ref firstDisposableDecorator,
                 descriptor: descriptor,
                 serviceProvider: serviceProvider,
                 descriptorChain: descriptorChain);
@@ -40,6 +43,7 @@ internal static class DecoratedServiceActivator
     private static void CreateDecorator<TService, TImplementation>(
         ref TService? service,
         ref ServiceDecoratorDisposableContainer<TService>? disposableContainer,
+        ref TService? firstDisposableDecorator,
         ServiceDecoratorDescriptorChain<TService, TImplementation> descriptor,
         IServiceProvider serviceProvider,
         ServiceDecoratorDescriptorChain<TService, TImplementation> descriptorChain)
