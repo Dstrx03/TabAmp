@@ -59,11 +59,14 @@ internal static class DecoratedServiceActivator
         var isInner = descriptor.Next is not null;
         var isDisposable = descriptor.IsDecoratorDisposable || descriptor.IsDecoratorAsyncDisposable;
 
-        if (isDisposable && (isInner || disposableContainer != null))
-        {
-            disposableContainer ??= ResolveDisposableContainer(descriptorChain);
+        if (disposableContainer == null && firstDisposableDecorator != null)
+            disposableContainer = ResolveDisposableContainer(descriptorChain, firstDisposableDecorator);
+
+        if (disposableContainer != null && isDisposable /*&& (isInner || disposableContainer != null)*/)
             disposableContainer.CaptureDisposableDecorator(serviceDecorator: decorator);
-        }
+
+        if (firstDisposableDecorator == null && isDisposable /*&& isInner*/)
+            firstDisposableDecorator = decorator;
 
         service = decorator;
     }
@@ -98,7 +101,8 @@ internal static class DecoratedServiceActivator
     }
 
     private static ServiceDecoratorDisposableContainer<TService> ResolveDisposableContainer<TService, TImplementation>(
-        ServiceDecoratorDescriptorChain<TService, TImplementation> descriptorChain)
+        ServiceDecoratorDescriptorChain<TService, TImplementation> descriptorChain,
+        TService firstDisposableDecorator)
         where TService : class
         where TImplementation : class, TService
     {
@@ -116,7 +120,10 @@ internal static class DecoratedServiceActivator
             _ => typeof(DefaultServiceDecoratorDisposableContainer<TService>)
         };
 
-        return (ServiceDecoratorDisposableContainer<TService>)DispatchProxy.Create(typeof(TService), disposableContainerType);
+        var disposableContainer = (ServiceDecoratorDisposableContainer<TService>)DispatchProxy.Create(typeof(TService), disposableContainerType);
+        disposableContainer.CaptureDisposableDecorator(serviceDecorator: firstDisposableDecorator);
+
+        return disposableContainer;
     }
 
     private static NotSupportedException DisposableContainerCannotBeUsedWhenServiceIsNotInterfaceException(Type serviceType) =>
