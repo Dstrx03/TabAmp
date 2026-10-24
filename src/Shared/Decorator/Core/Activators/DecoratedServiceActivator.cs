@@ -56,16 +56,15 @@ internal static class DecoratedServiceActivator
         service ??= ResolveImplementationService(serviceProvider, descriptorChain);
         var decorator = descriptor.CreateDecorator(serviceProvider, service);
 
-        var isInner = descriptor.Next is not null;
         var isDisposable = descriptor.IsDecoratorDisposable || descriptor.IsDecoratorAsyncDisposable;
 
         if (disposableContainer == null && firstDisposableDecorator != null)
             disposableContainer = ResolveDisposableContainer(descriptorChain, firstDisposableDecorator);
 
-        if (disposableContainer != null && isDisposable /*&& (isInner || disposableContainer != null)*/)
+        if (disposableContainer != null && isDisposable)
             disposableContainer.CaptureDisposableDecorator(serviceDecorator: decorator);
 
-        if (firstDisposableDecorator == null && isDisposable /*&& isInner*/)
+        if (firstDisposableDecorator == null && isDisposable)
             firstDisposableDecorator = decorator;
 
         service = decorator;
@@ -112,6 +111,17 @@ internal static class DecoratedServiceActivator
         if (!descriptorChain.IsDisposableContainerAllowed)
             throw DisposableContainerIsNotAllowedException(typeof(TService));
 
+        var disposableContainer = CreateDisposableContainer(descriptorChain);
+        disposableContainer.CaptureDisposableDecorator(serviceDecorator: firstDisposableDecorator);
+
+        return disposableContainer;
+    }
+
+    private static ServiceDecoratorDisposableContainer<TService> CreateDisposableContainer<TService, TImplementation>(
+        ServiceDecoratorDescriptorChain<TService, TImplementation> descriptorChain)
+        where TService : class
+        where TImplementation : class, TService
+    {
         var disposableContainerType = descriptorChain switch
         {
             { IsServiceDisposable: true, IsServiceAsyncDisposable: true } => typeof(ProxiedIDisposableIAsyncDisposableServiceDecoratorDisposableContainer<TService>),
@@ -120,10 +130,7 @@ internal static class DecoratedServiceActivator
             _ => typeof(DefaultServiceDecoratorDisposableContainer<TService>)
         };
 
-        var disposableContainer = (ServiceDecoratorDisposableContainer<TService>)DispatchProxy.Create(typeof(TService), disposableContainerType);
-        disposableContainer.CaptureDisposableDecorator(serviceDecorator: firstDisposableDecorator);
-
-        return disposableContainer;
+        return (ServiceDecoratorDisposableContainer<TService>)DispatchProxy.Create(typeof(TService), disposableContainerType);
     }
 
     private static NotSupportedException DisposableContainerCannotBeUsedWhenServiceIsNotInterfaceException(Type serviceType) =>
