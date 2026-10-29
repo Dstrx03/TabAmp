@@ -2,4 +2,5 @@
 
 internal readonly ref struct ReaderOptions
 {
+    public readonly IIntegrityValidatorDescriptor? IntegrityValidator { get; init; }
 }
