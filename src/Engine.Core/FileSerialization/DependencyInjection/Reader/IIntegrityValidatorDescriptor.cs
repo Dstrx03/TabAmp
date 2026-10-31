@@ -1,5 +1,8 @@
-﻿namespace TabAmp.Engine.Core.FileSerialization.DependencyInjection.Reader;
+﻿using TabAmp.Shared.Decorator.Fluent.Descriptor;
 
-internal interface IIntegrityValidatorDescriptor
+namespace TabAmp.Engine.Core.FileSerialization.DependencyInjection.Reader;
+
+internal interface IIntegrityValidatorDescriptor<TService> : IServiceDecoratorDescriptorHost<TService>
+    where TService : class
 {
 }
