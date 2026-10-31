@@ -4,4 +4,13 @@ internal readonly ref struct ReaderOptions<TService>
     where TService : class
 {
     public readonly IIntegrityValidatorDescriptor<TService>? IntegrityValidator { get; init; }
+
+    public ReaderOptions<TService> WithIntegrityValidator<TIntegrityValidator>()
+        where TIntegrityValidator : class, TService
+    {
+        return new()
+        {
+            IntegrityValidator = new IIntegrityValidatorDescriptor<TService>.For<TIntegrityValidator>()
+        };
+    }
 }
