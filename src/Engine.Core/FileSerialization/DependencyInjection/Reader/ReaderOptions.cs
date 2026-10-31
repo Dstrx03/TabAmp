@@ -1,5 +1,11 @@
 ﻿namespace TabAmp.Engine.Core.FileSerialization.DependencyInjection.Reader;
 
+internal static class ReaderOptions
+{
+    public static ReaderOptions<TService> For<TService>()
+        where TService : class => new();
+}
+
 internal readonly ref struct ReaderOptions<TService>
     where TService : class
 {
