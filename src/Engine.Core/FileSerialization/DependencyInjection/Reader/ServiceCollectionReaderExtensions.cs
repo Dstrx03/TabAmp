@@ -16,7 +16,7 @@ internal static class ServiceCollectionReaderExtensions
 
     public static IServiceCollection AddReader<TService, TReader>(
         this IServiceCollection serviceCollection,
-        ReaderOptions<TService> options)
+        ReaderOptions<TService, TReader> options)
         where TService : class
         where TReader : class, TService
     {

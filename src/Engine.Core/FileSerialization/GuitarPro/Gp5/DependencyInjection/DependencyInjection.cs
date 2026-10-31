@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.Processor;
+using TabAmp.Engine.Core.FileSerialization.DependencyInjection.Reader;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.BinaryPrimitives;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.DocumentComponents;
@@ -10,9 +11,6 @@ using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Rse;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Text;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.Tracks;
 using TabAmp.Engine.Core.Score;
-using TabAmp.Shared.Decorator;
-using TabAmp.Shared.Decorator.Core;
-using TabAmp.Shared.Decorator.Fluent.Extensions;
 
 namespace TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.DependencyInjection;
 
@@ -51,16 +49,15 @@ internal static class DependencyInjection
         //serviceCollection.AddDecorated(ConfigureDescriptorChain.For<TService, TReader>().With<TIntegrityValidator>().BuildDescriptorChain(), ServiceLifetime.Scoped);
 
         // *** TODO: AddReader API prototype ***
-        /*
+
         serviceCollection.AddReader(new ReaderOptions<IGp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReader>
         {
-            IntegrityValidator = new IntegrityValidatorDescriptor<IGp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReader>
-                .For<Gp5BinaryPrimitivesReaderIntegrityValidator>()
+            IntegrityValidator = new IIntegrityValidatorDescriptor<IGp5BinaryPrimitivesReader>.For<Gp5BinaryPrimitivesReaderIntegrityValidator>()
         });
 
         serviceCollection.AddReader(ReaderOptions.For<IGp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReader>()
             .WithIntegrityValidator<Gp5BinaryPrimitivesReaderIntegrityValidator>());
-        */
+
         // *** TODO: AddReader API prototype *** 
 
         return serviceCollection;
