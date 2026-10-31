@@ -21,6 +21,10 @@ internal static class ServiceCollectionReaderExtensions
         where TReader : class, TService
     {
         var builder = ConfigureDescriptorChain.For<TService, TReader>().With(options.IntegrityValidator?.Descriptor);
-        return serviceCollection.AddReader<TService, TReader>();
+
+        if (builder.GetIsEmpty())
+            return serviceCollection.AddReader<TService, TReader>();
+
+        return serviceCollection.AddDecoratedScoped(builder);
     }
 }
