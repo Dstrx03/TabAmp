@@ -12,14 +12,16 @@ public static class ServiceDecoratorDescriptorChainFluentBuilderMethodsExtension
         where TImplementation : class, TService => builder.With(descriptor);
 
     public static ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> AllowDisposableContainer<TService, TImplementation>(
-        this ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder)
+        this ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder,
+        bool shouldAllow = true)
         where TService : class
-        where TImplementation : class, TService => builder.AllowDisposableContainer();
+        where TImplementation : class, TService => shouldAllow ? builder.AllowDisposableContainer() : builder;
 
     public static ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> SkipPreRegistrationValidation<TService, TImplementation>(
-        this ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder)
+        this ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder,
+        bool shouldSkip = true)
         where TService : class
-        where TImplementation : class, TService => builder.SkipPreRegistrationValidation();
+        where TImplementation : class, TService => shouldSkip ? builder.SkipPreRegistrationValidation() : builder;
 
     public static ServiceDecoratorDescriptorChain<TService, TImplementation> BuildDescriptorChain<TService, TImplementation>(
         this ServiceDecoratorDescriptorChainFluentBuilder<TService, TImplementation> builder)
