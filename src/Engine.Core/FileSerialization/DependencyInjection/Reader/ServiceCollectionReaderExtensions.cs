@@ -20,7 +20,9 @@ internal static class ServiceCollectionReaderExtensions
         where TService : class
         where TReader : class, TService
     {
-        var builder = ConfigureDescriptorChain.For<TService, TReader>().With(options.IntegrityValidator?.Descriptor);
+        var builder = ConfigureDescriptorChain.For<TService, TReader>()
+            .With(options.IntegrityValidator?.Descriptor)
+            .SkipPreRegistrationValidation(options.ShouldSkipPreRegistrationValidation);
 
         if (builder.GetIsEmpty())
             return serviceCollection.AddReader<TService, TReader>();
