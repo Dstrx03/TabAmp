@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.Processor;
-using TabAmp.Engine.Core.FileSerialization.DependencyInjection.Reader;
+using TabAmp.Engine.Core.FileSerialization.Common.DependencyInjection.Reader;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.BinaryPrimitives;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.Deserialization.DocumentComponents;

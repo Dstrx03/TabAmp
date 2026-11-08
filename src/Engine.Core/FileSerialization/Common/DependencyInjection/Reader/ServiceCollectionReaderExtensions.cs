@@ -2,7 +2,7 @@
 using TabAmp.Shared.Decorator;
 using TabAmp.Shared.Decorator.Fluent.Extensions;
 
-namespace TabAmp.Engine.Core.FileSerialization.DependencyInjection.Reader;
+namespace TabAmp.Engine.Core.FileSerialization.Common.DependencyInjection.Reader;
 
 internal static class ServiceCollectionReaderExtensions
 {
