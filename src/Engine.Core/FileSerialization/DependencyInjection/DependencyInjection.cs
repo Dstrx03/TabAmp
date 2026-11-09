@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.Context;
 using TabAmp.Engine.Core.FileSerialization.Common.Components.IO.Serial;
-using TabAmp.Engine.Core.FileSerialization.Common.DependencyInjection.Reader;
 using TabAmp.Engine.Core.FileSerialization.GuitarPro.Gp5.DependencyInjection;
 
 namespace TabAmp.Engine.Core.FileSerialization.DependencyInjection;
@@ -32,5 +31,5 @@ public static class DependencyInjection
     }
 
     private static IServiceCollection AddSerialFileReader(this IServiceCollection serviceCollection) =>
-        serviceCollection.AddReader<ISerialFileReader, SerialFileReader>();
+        serviceCollection.AddScoped<ISerialFileReader, SerialFileReader>();
 }
