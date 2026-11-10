@@ -18,22 +18,24 @@ internal static class DependencyInjection
 {
     public static IServiceCollection AddGp5(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddScoped<IFileDeserializer<Gp5Score>, Gp5FileDeserializer>()
-            .AddGp5Reader<IGp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReaderIntegrityValidator>()
-            .AddScoped<Gp5TextReader>()
-            .AddScoped<IGp5TextReader>(x => new Gp5TextReaderIntegrityValidator(x.GetRequiredService<Gp5TextReader>()))
-            .AddScoped<Gp5DocumentComponentsReader>()
-            .AddScoped<IGp5DocumentComponentsReader>(x => new Gp5DocumentComponentsReaderIntegrityValidator(x.GetRequiredService<Gp5DocumentComponentsReader>()))
-            .AddScoped<Gp5MusicalNotationReader>()
-            .AddScoped<IGp5MusicalNotationReader>(x => new Gp5MusicalNotationReaderIntegrityValidator(x.GetRequiredService<Gp5MusicalNotationReader>()))
-            .AddScoped<Gp5TracksReader>()
-            .AddScoped<IGp5TracksReader>(x => new Gp5TracksReaderIntegrityValidator(x.GetRequiredService<Gp5TracksReader>()))
-            .AddScoped<Gp5MeasuresReader>()
-            .AddScoped<IGp5MeasuresReader>(x => new Gp5MeasuresReaderIntegrityValidator(x.GetRequiredService<Gp5MeasuresReader>()))
-            .AddScoped<Gp5EffectsReader>()
-            .AddScoped<IGp5EffectsReader>(x => new Gp5EffectsReaderIntegrityValidator(x.GetRequiredService<Gp5EffectsReader>()))
-            .AddScoped<Gp5RseReader>()
-            .AddScoped<IGp5RseReader>(x => new Gp5RseReaderIntegrityValidator(x.GetRequiredService<Gp5RseReader>()));
+        serviceCollection.AddScoped<IFileDeserializer<Gp5Score>, Gp5FileDeserializer>();
+
+        serviceCollection.AddReader(ReaderOptions.For<IGp5BinaryPrimitivesReader, Gp5BinaryPrimitivesReader>()
+            .WithIntegrityValidator<Gp5BinaryPrimitivesReaderIntegrityValidator>());
+        serviceCollection.AddReader(ReaderOptions.For<IGp5TextReader, Gp5TextReader>()
+            .WithIntegrityValidator<Gp5TextReaderIntegrityValidator>());
+        serviceCollection.AddReader(ReaderOptions.For<IGp5DocumentComponentsReader, Gp5DocumentComponentsReader>()
+            .WithIntegrityValidator<Gp5DocumentComponentsReaderIntegrityValidator>());
+        serviceCollection.AddReader(ReaderOptions.For<IGp5MusicalNotationReader, Gp5MusicalNotationReader>()
+            .WithIntegrityValidator<Gp5MusicalNotationReaderIntegrityValidator>());
+        serviceCollection.AddReader(ReaderOptions.For<IGp5TracksReader, Gp5TracksReader>()
+            .WithIntegrityValidator<Gp5TracksReaderIntegrityValidator>());
+        serviceCollection.AddReader(ReaderOptions.For<IGp5MeasuresReader, Gp5MeasuresReader>()
+            .WithIntegrityValidator<Gp5MeasuresReaderIntegrityValidator>());
+        serviceCollection.AddReader(ReaderOptions.For<IGp5EffectsReader, Gp5EffectsReader>()
+            .WithIntegrityValidator<Gp5EffectsReaderIntegrityValidator>());
+        serviceCollection.AddReader(ReaderOptions.For<IGp5RseReader, Gp5RseReader>()
+            .WithIntegrityValidator<Gp5RseReaderIntegrityValidator>());
 
         return serviceCollection;
     }
