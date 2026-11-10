@@ -4,10 +4,10 @@ namespace TabAmp.Engine.Core.FileSerialization.Common.Exceptions.IO.Operation;
 
 internal partial class EndOfFileOperationException
 {
-    public abstract class With : OperationExceptionFluentBuilderSelectOperationStage<EndOfFileOperationException> { }
+    public abstract class With : OperationExceptionFluentBuilderSelectOperationStage<EndOfFileOperationException>;
 }
 
 internal partial class NegativeBytesCountOperationException
 {
-    public abstract class With : OperationExceptionFluentBuilderSelectOperationStage<NegativeBytesCountOperationException> { }
+    public abstract class With : OperationExceptionFluentBuilderSelectOperationStage<NegativeBytesCountOperationException>;
 }

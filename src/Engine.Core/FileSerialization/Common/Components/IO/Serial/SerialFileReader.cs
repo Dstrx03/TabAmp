@@ -31,7 +31,7 @@ internal sealed class SerialFileReader : ISerialFileReader, IDisposable
         _metadata = new FileDeserializationMetadata(_length);
     }
 
-    private FileStream OpenFileStream(FileSerializationContext context)
+    private static FileStream OpenFileStream(FileSerializationContext context)
     {
         var options = new FileStreamOptions
         {
@@ -73,7 +73,7 @@ internal sealed class SerialFileReader : ISerialFileReader, IDisposable
             throw new FileOpenFailedException(Reason.AccessDenied, exception);
         }
 
-        bool IsWin32ErrorInvalidName(IOException exception)
+        static bool IsWin32ErrorInvalidName(IOException exception)
         {
             const int win32ErrorInvalidName = unchecked((int)0x8007007B);
             return OperatingSystem.IsWindows() && exception.HResult == win32ErrorInvalidName;
