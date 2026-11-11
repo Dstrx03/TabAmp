@@ -45,18 +45,14 @@ internal sealed class SerialFileReader : ISerialFileReader, IDisposable
         }
         catch (IOException exception)
         {
-            var reason = Reason.IOError;
-
-            if (exception is FileNotFoundException)
-                reason = Reason.FileNotFound;
-            else if (exception is DriveNotFoundException)
-                reason = Reason.DriveNotFound;
-            else if (exception is DirectoryNotFoundException)
-                reason = Reason.InvalidPath;
-            else if (exception is PathTooLongException)
-                reason = Reason.PathTooLong;
-            else if (IsWin32ErrorInvalidName(exception))
-                reason = Reason.InvalidPath;
+            var reason = exception switch
+            {
+                FileNotFoundException => Reason.FileNotFound,
+                DirectoryNotFoundException => Reason.InvalidPath,
+                PathTooLongException => Reason.PathTooLong,
+                _ when IsWin32ErrorInvalidName(exception) => Reason.InvalidPath,
+                _ => Reason.IOError
+            };
 
             throw new FileOpenFailedException(reason, exception);
         }
