@@ -15,7 +15,7 @@ internal class FileSerializationService : IFileSerializationService
 
     public async Task<T> ReadFileAsync<T>(string filePath, CancellationToken cancellationToken = default)
     {
-        using var scope = _serviceScopeFactory.CreateScope();
+        await using var scope = _serviceScopeFactory.CreateAsyncScope();
 
         scope.ServiceProvider.GetRequiredService<ScopedFileSerializationContextContainer>()
             .CreateContext(filePath, cancellationToken);

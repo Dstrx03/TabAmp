@@ -11,7 +11,7 @@ using static TabAmp.Engine.Core.FileSerialization.Common.Components.IO.Serial.IS
 
 namespace TabAmp.Engine.Core.FileSerialization.Common.Components.IO.Serial;
 
-internal sealed class SerialFileReader : ISerialFileReader, IDisposable
+internal sealed class SerialFileReader : ISerialFileReader, IAsyncDisposable
 {
     private readonly FileSerializationContext _context;
     private readonly ArrayPool<byte> _arrayPool;
@@ -127,9 +127,9 @@ internal sealed class SerialFileReader : ISerialFileReader, IDisposable
         }
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
-        _fileStream?.Dispose();
+        await (_fileStream?.DisposeAsync() ?? ValueTask.CompletedTask);
         _fileStream = null!;
     }
 
